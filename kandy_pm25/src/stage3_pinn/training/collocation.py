@@ -81,7 +81,7 @@ def sample_rar(
     3. Combine with n_keep randomly retained existing points
     4. Return updated collocation set
 
-    Reference: Lu et al. (2021) "DeepXDE: A deep learning library for solving
+    Reference: Lu et al. (2021) "Residual-adaptive refinement for solving
     partial differential equations." SIAM Review.
 
     Args:

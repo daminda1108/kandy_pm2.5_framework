@@ -28,15 +28,16 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).parents[4]))
+sys.path.insert(0, str(Path(__file__).parents[3]))
 from config import LOG_FORMAT, LOG_DATEFMT, MODELS_DIR
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("validate_chiangmai")
 
-CM_RAW_DIR   = Path(__file__).parents[4] / "data" / "raw" / "chiangmai"
+CM_STAGE2_DIR  = Path(__file__).parents[3] / "data" / "processed" / "stage2"
+CM_EXT_DIR     = Path(__file__).parents[3] / "data" / "external" / "chiangmai"
 CHECKPOINT_DIR = MODELS_DIR / "stage2_pretrain"
-RESULTS_DIR  = MODELS_DIR / "stage2_pretrain" / "chiangmai_validation"
+RESULTS_DIR    = MODELS_DIR / "stage2_pretrain" / "chiangmai_validation"
 
 # Physical plausibility thresholds for K-field check
 K_MEDELLIN_REFERENCE = 50.0    # m²/s — expected K from Medellín pre-training
@@ -45,18 +46,27 @@ DIURNAL_TOLERANCE    = 0.3     # |corr(K_cycle, Stull_ref)| must exceed this
 
 
 def load_chiangmai_pm25() -> pd.DataFrame:
-    """Load Chiang Mai PCD PM2.5 ground truth from downloaded CSV."""
-    pm25_csvs = sorted((CM_RAW_DIR / "pm25").glob("pcd_chiangmai_pm25*.csv"))
-    if not pm25_csvs:
+    """
+    Load Chiang Mai non-burning season Stage 2 validation parquet.
+    Uses chiangmai_stage2_nonburning.parquet (May–Dec 2022, burning season excluded).
+    """
+    parquet = CM_STAGE2_DIR / "chiangmai_stage2_nonburning.parquet"
+    if not parquet.exists():
         raise FileNotFoundError(
-            f"No Chiang Mai PM2.5 data in {CM_RAW_DIR / 'pm25'}. "
-            "Run: python download_chiangmai.py --pcd-only"
+            f"Stage 2 non-burning parquet not found: {parquet}\n"
+            "Expected: data/processed/stage2/chiangmai_stage2_nonburning.parquet"
         )
-    df = pd.concat([pd.read_csv(f) for f in pm25_csvs], ignore_index=True)
-    df["date"] = pd.to_datetime(df["date"], errors="coerce")
-    daily = df.groupby("date")["pm25_ugm3"].mean().reset_index()
+    df = pd.read_parquet(parquet)
+    # Rename for compatibility with downstream metrics functions
+    df = df.reset_index().rename(columns={"index": "datetime_utc",
+                                          df.index.name: "datetime_utc"})
+    if "datetime_utc" not in df.columns:
+        df = df.reset_index()
+        df.rename(columns={df.columns[0]: "datetime_utc"}, inplace=True)
+    df["date"] = pd.to_datetime(df["datetime_utc"]).dt.normalize()
+    daily = df.groupby("date")["pm25"].mean().reset_index()
     daily.columns = ["date", "pm25_observed"]
-    log.info(f"Loaded {len(daily)} daily Chiang Mai PM2.5 obs")
+    log.info(f"Loaded {len(daily)} daily Chiang Mai PM2.5 obs from {parquet.name}")
     return daily
 
 
@@ -285,7 +295,7 @@ def main():
         sys.exit(0)
 
     pm25_df = load_chiangmai_pm25()
-    preds   = zero_shot_predict(model, CM_RAW_DIR / "era5")
+    preds   = zero_shot_predict(model, CM_EXT_DIR / "era5")
 
     merged = pm25_df.merge(preds, on="date", how="inner")
     metrics = compute_validation_metrics(merged["pm25_observed"], merged["pm25_pred"])

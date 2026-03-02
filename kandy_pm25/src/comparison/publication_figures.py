@@ -31,49 +31,29 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parents[2]))
 from config import LOG_FORMAT, LOG_DATEFMT, FIGURES_DIR, TABLES_DIR, MODELS_DIR
+from src.utils.plot_style import (
+    apply_style, style_context, save_figure,
+    PM25_CMAP, DIFF_CMAP, WIND_CMAP, DIFF_K_CMAP,
+    SINGLE_COL_IN, DOUBLE_COL_IN, FIG_DPI,
+)
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("publication_figures")
 
-# Journal figure dimensions (mm → inches, 1 mm = 1/25.4 in)
-SINGLE_COL_W = 88  / 25.4   # 3.46 in — single column
-DOUBLE_COL_W = 180 / 25.4   # 7.09 in — double column
-FIG_DPI      = 300
+# Backwards-compat aliases used by figure functions below
+SINGLE_COL_W = SINGLE_COL_IN
+DOUBLE_COL_W = DOUBLE_COL_IN
 
 PUB_DIR = FIGURES_DIR / "publication"
 
 
 def _setup_style() -> None:
-    """Apply a clean journal-style matplotlib rcParams."""
-    try:
-        import matplotlib
-        import matplotlib.pyplot as plt
-        # Try seaborn style; fall back to a clean custom dict
-        style = "seaborn-v0_8-paper" if "seaborn-v0_8-paper" in plt.style.available else "default"
-        plt.style.use(style)
-        matplotlib.rcParams.update({
-            "font.size":        9,
-            "axes.titlesize":   10,
-            "axes.labelsize":   9,
-            "xtick.labelsize":  8,
-            "ytick.labelsize":  8,
-            "legend.fontsize":  8,
-            "figure.dpi":       FIG_DPI,
-            "savefig.dpi":      FIG_DPI,
-            "savefig.bbox":     "tight",
-            "axes.linewidth":   0.8,
-            "lines.linewidth":  1.2,
-        })
-    except ImportError:
-        pass
+    """Apply SciencePlots IEEE style + project rcParams."""
+    apply_style("ieee")
 
 
 def _save(fig, name: str) -> Path:
-    PUB_DIR.mkdir(parents=True, exist_ok=True)
-    out = PUB_DIR / f"{name}.pdf"
-    fig.savefig(out)
-    png = PUB_DIR / f"{name}.png"
-    fig.savefig(png, dpi=FIG_DPI)
+    out = save_figure(fig, name, out_dir=PUB_DIR)
     log.info(f"Figure saved → {out.name}")
     return out
 

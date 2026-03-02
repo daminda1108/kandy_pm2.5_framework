@@ -102,3 +102,6 @@ verify_data_manifest.py
 artifacts/
 knowledge_base/
 .claude/
+API.txt
+kandy_pm25/generate_reports.py
+kandy_pm25/generate_figures.py

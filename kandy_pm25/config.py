@@ -257,9 +257,27 @@ QUANTILE_ALPHAS = [0.05, 0.50, 0.95]  # 90% prediction intervals
 TRANSFER_PRETRAIN_CITY   = "medellin"    # Pre-training source city
 TRANSFER_VALIDATE_CITY   = "chiangmai"   # Held-out validation city (never seen during pre-training)
 
-# Bounding boxes for external cities
+# Bounding boxes for external cities (broad, for ERA5 download)
 MEDELLIN_BBOX  = (-75.65, 6.17, -75.52, 6.31)    # lon_min, lat_min, lon_max, lat_max
 CHIANGMAI_BBOX = (98.93,  18.70, 99.07,  18.87)
+
+# Pre-training sub-domains — 15×15km centred on monitoring network centroids
+# Matches Kandy PINN domain scale (KANDY_PINN_BBOX = 15×15km).
+# Scale matching is critical: Fourier features tuned for 15km spatial features.
+# Medellín: 11/21 stations inside (urban core of Aburrá valley)
+# Chiang Mai: 3/3 stations inside
+MEDELLIN_PINN_BBOX = {
+    "lat_min": 6.1635,
+    "lat_max": 6.2986,
+    "lon_min": -75.6426,
+    "lon_max": -75.5066,
+}
+CHIANGMAI_PINN_BBOX = {
+    "lat_min": 18.7446,
+    "lat_max": 18.8797,
+    "lon_min": 98.8808,
+    "lon_max": 99.0236,
+}
 
 # Pre-training loss weights (physics-dominant phase)
 PRETRAIN_LAMBDA_PHYSICS = 1.0
@@ -280,8 +298,8 @@ FROZEN_LAYERS = [0, 1, 2, 3]
 # ─────────────────────────────────────────────
 
 # Fourier feature embedding (Tancik et al. 2020) — combats spectral bias at 100m
-FOURIER_N     = 256   # Number of Fourier basis functions (doubled for 100m)
-FOURIER_SIGMA = 20.0  # Frequency scale; increased for 100m-scale features
+FOURIER_N     = 256   # Number of Fourier basis functions
+FOURIER_SIGMA = 1.0   # Frequency scale for normalised [-1,1] inputs (σ=1.0 — matches Medellín backbone)
 
 # Anisotropic diffusivity: PINN learns [Kx, Ky] separately
 # Expected: Kx > Ky along Kandy's NE-SW valley axis
@@ -295,11 +313,11 @@ PINN_OUTPUTS  = ["C", "Kx", "Ky"]   # Three-output PINN
 # At lat 7.29°N: 1° lon ≈ 110.0 km, 1° lat ≈ 111.2 km
 # 100m ≈ 0.0009° (0.0009 × 111,000 ≈ 99.9m)
 PINN_OUTPUT_RESOLUTION_DEG = 0.0009  # ~100 m at Kandy latitude
-PINN_HOURS   = 48    # 30-min time steps per day (was 24 hourly)
+PINN_TIMESTEPS_PER_DAY = 48   # 30-min intervals → 48 per day (was PINN_HOURS=24)
 
 PINN_NETWORK = {
-    "hidden_layers": 5,
-    "neurons_per_layer": 64,
+    "hidden_layers": 6,
+    "neurons_per_layer": 128,  # ablation winner C_medium 2026-03-01 — see results/ablation/WINNER.txt
     "activation": "tanh",
     "dropout_p": 0.1,  # MC Dropout probability (§2.8)
 }
@@ -350,10 +368,14 @@ V_DEPOSITION_SENSITIVITY = [0.001, 0.003, 0.01]  # For sensitivity tests
 # ─────────────────────────────────────────────
 
 # FourierPINN architecture (flat aliases for import convenience)
-PINN_FOURIER_FEATURES = FOURIER_N       # 256 random Fourier basis functions
-PINN_FOURIER_SIGMA    = FOURIER_SIGMA   # Frequency scale σ = 20.0
-PINN_HIDDEN_LAYERS    = PINN_NETWORK["hidden_layers"]      # 5
-PINN_HIDDEN_UNITS     = PINN_NETWORK["neurons_per_layer"]  # 64
+PINN_FOURIER_FEATURES = FOURIER_N       # 256 random Fourier basis functions  # ablation winner C_medium 2026-03-01
+PINN_FOURIER_SIGMA    = FOURIER_SIGMA   # Frequency scale σ = 1.0
+PINN_HIDDEN_LAYERS    = PINN_NETWORK["hidden_layers"]      # 6
+PINN_HIDDEN_UNITS     = PINN_NETWORK["neurons_per_layer"]  # 128  # ablation winner C_medium 2026-03-01
+
+# Pre-trained Stage 2 backbone for Stage 3 initialisation.
+# Set to None to cold-start. Path is relative to project root via MODELS_DIR.
+PINN_PRETRAINED_BACKBONE = MODELS_DIR / "stage2_pretrain" / "checkpoints" / "epoch_0450.pt"
 
 # Training hyper-parameters (flat aliases)
 PINN_EPOCHS = PINN_TRAINING["epochs_physics"]   # 12 000
@@ -366,6 +388,46 @@ N_COLLOCATION_BOUNDARY = PINN_N_COLLOCATION_BOUNDARY   # 1 500
 # Physically plausible K bounds (flat aliases from transfer validation gate)
 K_MIN_MS2 = TRANSFER_K_MIN_M2S   # 1.0  m²/s
 K_MAX_MS2 = TRANSFER_K_MAX_M2S   # 100.0 m²/s
+
+# ── V2 DiffusionSubNet (Upgrade 1) ──────────────────────────────────────────
+# Separate 3-layer MLP for Kx, Ky taking [x, y, t, blh_norm, elev_norm] inputs.
+PINN_DIFFUSION_HIDDEN = 32      # neurons in DiffusionSubNet hidden layers (5→32→32→2)
+PINN_BLH_NORM_SCALE   = 2000.0  # m — BLH normalisation denominator (clips to [0,1])
+
+# ── V2 SourceSubNet (Upgrade 2) ──────────────────────────────────────────────
+# Dedicated 4-layer MLP for S with cyclic hour-of-day + day-of-week encoding.
+PINN_SOURCE_HIDDEN      = 48    # neurons in SourceSubNet hidden layers (6→48→48→48→1)
+PINN_SOURCE_CYCLIC_TIME = True  # enable cyclic (sin/cos) time encoding for S head
+
+# ── V2 Reinit flags for Stage 3 Kandy fine-tuning (Upgrade 3) ───────────────
+# Source subnet: Medellín traffic emission spatial patterns are city-specific — always reinit
+PINN_REINIT_SOURCE_AT_KANDY    = True
+# Diffusion subnet: Kandy amphitheatre bowl ≠ Medellín linear valley — reinit K network
+PINN_REINIT_DIFFUSION_AT_KANDY = True
+
+# ── Loss weight schedules per training phase (Upgrade 3) ────────────────────
+# Reference: RESEARCH_PROJECT_DESIGN.md §2.6
+LOSS_SCHEDULE = {
+    "medellin_pretrain": {
+        "lambda_physics": 0.7,   # reduced from 0.9 — prevents trivial physics collapse
+        "lambda_data":    0.2,   # increased from 0.1 — data constrains spatial field
+        "lambda_bc":      0.1,
+        "lambda_k_bound": 0.05,  # DiffusionSubNet soft bound penalty weight
+    },
+    "chiangmai_pretrain": {
+        "lambda_physics": 0.6,
+        "lambda_data":    0.3,
+        "lambda_bc":      0.1,
+        "lambda_k_bound": 0.05,
+    },
+    "kandy_finetune": {
+        "lambda_physics": 0.4,   # physics already embedded in backbone
+        "lambda_data":    0.5,   # Stage 1 observations are precious
+        "lambda_bc":      0.1,
+        "lambda_k_bound": 0.05,
+        "stage1_weight":  True,  # weight by 1/σ² from Stage 1 quantile regression
+    },
+}
 
 DOMAIN_LON_EXTENT_KM = 15.0   # was ~11.1
 DOMAIN_LAT_EXTENT_KM = 15.0   # was ~5.55

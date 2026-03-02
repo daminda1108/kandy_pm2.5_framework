@@ -24,6 +24,9 @@ from config import (
     KANDY_BBOX, LOG_FORMAT, LOG_DATEFMT,
     FIGURES_DIR, WHO_PM25_24H_GUIDELINE, WHO_PM25_ANNUAL_GUIDELINE
 )
+from src.utils.plot_style import apply_style, PM25_CMAP, DIFF_CMAP, FIG_DPI
+
+apply_style("ieee")
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("spatial_maps")
@@ -62,7 +65,7 @@ def plot_annual_mean_map(
     fig, ax = plt.subplots(figsize=(8, 7))
     sc = ax.scatter(
         annual[lon_col], annual[lat_col], c=annual[pm25_col],
-        cmap="YlOrRd", s=12, vmin=0, vmax=60, alpha=0.85,
+        cmap=PM25_CMAP, s=12, vmin=0, vmax=60, alpha=0.85,
     )
     cbar = plt.colorbar(sc, ax=ax, label="PM2.5 (µg/m³)")
     cbar.ax.axhline(y=WHO_PM25_ANNUAL_GUIDELINE, color="green", lw=1.5, label=f"WHO annual ({WHO_PM25_ANNUAL_GUIDELINE})")
@@ -96,7 +99,7 @@ def plot_seasonal_maps(
         seasonal = df_plot[mask].groupby([lat_col, lon_col])[pm25_col].mean().reset_index()
         sc = ax.scatter(
             seasonal[lon_col], seasonal[lat_col], c=seasonal[pm25_col],
-            cmap="YlOrRd", s=8, vmin=0, vmax=vmax, alpha=0.85,
+            cmap=PM25_CMAP, s=8, vmin=0, vmax=vmax, alpha=0.85,
         )
         plt.colorbar(sc, ax=ax, label="PM2.5 (µg/m³)")
         ax.set_title(season, fontsize=11)
@@ -126,7 +129,7 @@ def plot_uncertainty_map(
     fig, ax = plt.subplots(figsize=(7, 6))
     sc = ax.scatter(
         spatial[lon_col], spatial[lat_col], c=spatial["pi_width"],
-        cmap="plasma", s=12, alpha=0.85,
+        cmap=DIFF_CMAP, s=12, alpha=0.85,
     )
     plt.colorbar(sc, ax=ax, label="90% PI width (µg/m³)")
     ax.set_title("Stage 1 Prediction Uncertainty\n(mean 90% PI width)", fontsize=13)
@@ -137,7 +140,7 @@ def plot_uncertainty_map(
 
 def _save_or_show(fig, path: str, show: bool = False) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=150, bbox_inches="tight")
+    fig.savefig(path, dpi=FIG_DPI, bbox_inches="tight")
     log.info(f"Figure saved → {path}")
     if not show:
         import matplotlib.pyplot as plt

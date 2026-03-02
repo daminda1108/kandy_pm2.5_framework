@@ -9,6 +9,19 @@ Three initialisation paths (from transfer_decision.json):
   B. use_pretrained_unfrozen — load backbone, full fine-tune
   C. random_init            — cold start training
 
+Gap fixes implemented (2026-03-02):
+  B1 — Quasi-steady-state 8-snapshot training loop (per epoch: sample date,
+        loop ERA5 snapshots at h=0,3,...,21, call steady_state_pde_loss per
+        snapshot, average PDE loss over 8 snapshots).
+  B2 — BLH plumbing: blh_norm = BLH_m / 2000.0 passed to all model() calls
+        and to steady_state_pde_loss.
+  B3 — t_norm = h/24 per snapshot (not t=0 hardcoded). Data loss evaluates C
+        at all 8 hours and compares the mean to Stage 1 daily-mean PM2.5.
+  B5 — K–BLH correlation regulariser: within-epoch temporal correlation of
+        domain-mean K vs BLH across the 8 snapshots. λ_kblh = 0.01.
+  C2 — model.source_subnet.t_max_hours = 24.0 set after backbone loading so
+        SourceSubNet interprets t_norm as h/24 (hour of day in [0,1]).
+
 Best practice: run with --profile first (20 epochs) to confirm GPU memory.
 
 Usage:
@@ -19,6 +32,8 @@ Usage:
 import argparse
 import json
 import logging
+import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -29,6 +44,7 @@ sys.path.insert(0, str(Path(__file__).parents[3]))
 from config import (
     LOG_FORMAT, LOG_DATEFMT, MODELS_DIR, MERGED_DIR, PINN_GRID_RESOLUTION_M,
     N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, PINN_EPOCHS, PINN_LR,
+    PINN_PRETRAINED_BACKBONE, PINN_BLH_NORM_SCALE,
 )
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
@@ -36,6 +52,42 @@ log = logging.getLogger("train_pinn")
 
 CHECKPOINT_DIR   = MODELS_DIR / "stage3_pinn"
 TRANSFER_DECISION_JSON = MODELS_DIR / "stage2_pretrain" / "chiangmai_validation" / "transfer_decision.json"
+
+WANDB_PROJECT = "kandy-pinn"
+WANDB_ENTITY  = None   # set to your W&B username/team if needed
+
+# ERA5 3-hourly snapshot hours (quasi-steady-state: 8 snapshots per day)
+SNAPSHOT_HOURS = [0, 3, 6, 9, 12, 15, 18, 21]
+
+# K–BLH correlation regularisation weight (B5).
+# Soft prior that penalises K not correlating positively with BLH.
+# λ=0.01 is small — enforces a direction, not a magnitude.
+LAMBDA_KBLH = 0.01
+
+
+def _setup_wandb(run_config: dict):
+    """
+    Initialise a W&B run. Returns run object or None if unavailable/disabled.
+    API key is read from WANDB_API_KEY env var or wandb.login() interactive.
+    """
+    api_key = os.environ.get("WANDB_API_KEY")
+    try:
+        import wandb
+        if api_key:
+            wandb.login(key=api_key, relogin=True)
+        run = wandb.init(
+            project=WANDB_PROJECT,
+            entity=WANDB_ENTITY,
+            name=f"stage3-kandy-{run_config.get('init_mode','?')}",
+            config=run_config,
+            tags=["stage3", "kandy", run_config.get("init_mode", "unknown")],
+            resume="allow",
+        )
+        log.info(f"W&B run: {run.url}")
+        return run
+    except Exception as exc:
+        log.warning(f"W&B init failed ({exc}) — continuing without tracking.")
+        return None
 
 
 def _get_device():
@@ -56,29 +108,59 @@ def load_init_decision() -> dict:
 
 
 def build_model(init_mode: str, device):
-    """Build FourierPINN with appropriate initialisation."""
+    """Build FourierPINN with appropriate initialisation.
+
+    C2 fix: after loading any pretrained backbone, resets
+    model.source_subnet.t_max_hours to 24.0 so SourceSubNet interprets
+    t_norm as h/24 (hour of day) rather than fraction of the 8760-hour
+    Medellín training period.
+    """
+    import torch
     from src.stage3_pinn.models.fourier_pinn import build_fourier_pinn
 
     model = build_fourier_pinn()
     model = model.to(device)
 
     if init_mode in ("use_pretrained_frozen", "use_pretrained_unfrozen"):
-        ckpt_path = MODELS_DIR / "stage2_pretrain" / "pretrained_physics_backbone.pt"
-        if not ckpt_path.exists():
+        ckpt_path = Path(PINN_PRETRAINED_BACKBONE) if PINN_PRETRAINED_BACKBONE else None
+        if ckpt_path is None or not ckpt_path.exists():
             log.warning(f"Pretrained checkpoint not found: {ckpt_path} — falling back to random init")
-            return model, "random_init"
+        else:
+            ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
+            # B4: strict=False because source_subnet.fc1 changed dimension (6→4 inputs).
+            # source_subnet and diffusion_subnet are reinitialised below (gap A4) so
+            # shape mismatches in those subnets are intentionally discarded.
+            # trunk (net.*) and head_C carry the Medellín physics priors intact.
+            missing, unexpected = model.load_state_dict(
+                ckpt["model_state_dict"], strict=False
+            )
+            if missing:
+                log.info(f"Backbone keys not found in checkpoint (new, reinitialised): {missing}")
+            if unexpected:
+                log.info(f"Checkpoint keys not in model (from old arch, discarded): {unexpected}")
+            n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+            log.info(f"Loaded Medellín backbone from {ckpt_path} — {n_params:,} params, strict=False")
 
-        import torch
-        ckpt = torch.load(str(ckpt_path), map_location=device)
-        model.load_state_dict(ckpt["model_state_dict"])
-        log.info(f"Loaded pretrained backbone from {ckpt_path}")
+            # A4: reinitialise subnets — Kandy terrain and source patterns differ from Medellín.
+            # The trunk carries valley-physics spatial representations; subnets are city-specific.
+            from src.stage3_pinn.models.fourier_pinn import (
+                reinit_source_subnet, reinit_diffusion_subnet
+            )
+            reinit_source_subnet(model)
+            reinit_diffusion_subnet(model)
 
-        if init_mode == "use_pretrained_frozen":
-            from src.stage2_transfer.pretrain.layer_freezing import freeze_backbone
-            model = freeze_backbone(model, n_frozen_layers=4)
+            if init_mode == "use_pretrained_frozen":
+                from src.stage2_transfer.pretrain.layer_freezing import freeze_backbone
+                model = freeze_backbone(model, n_frozen_layers=4)
 
     else:
         log.info("Cold-start: using random Xavier initialisation")
+
+    # C2: reset SourceSubNet time scale to one day (h/24 semantics for Stage 3).
+    # In Stage 2, t_max_hours = 8760 (one year). In Stage 3, t_norm = h/24
+    # so t_max_hours must equal 24.0 for sin/cos cyclic encoding to be correct.
+    model.source_subnet.t_max_hours = torch.tensor(24.0)
+    log.info("C2: model.source_subnet.t_max_hours set to 24.0 (Stage 3 quasi-steady-state)")
 
     return model, init_mode
 
@@ -109,6 +191,46 @@ def load_stage1_data() -> "pd.DataFrame":
     return df
 
 
+def _extract_blh_m(df_today: "pd.DataFrame") -> float:
+    """Return a representative BLH in metres from a Stage-1 date slice.
+
+    Uses blh_max (daytime peak BLH) as the daily representative value for
+    diffusivity conditioning. Falls back gracefully if columns are absent.
+    With daily-mean ERA5, all 8 intra-day snapshots share this same BLH —
+    the K–BLH diurnal signal requires 3-hourly ERA5 (future improvement).
+    """
+    if "blh_max" in df_today.columns:
+        return float(df_today["blh_max"].mean())
+    if "blh_min" in df_today.columns:
+        return float(df_today["blh_min"].mean())
+    # Neutral fallback → blh_norm = 1000/2000 = 0.5
+    return 1000.0
+
+
+def _extract_wind(df_today: "pd.DataFrame"):
+    """Return (u10, v10) daily-mean wind in m/s."""
+    u = float(df_today["u10"].mean()) if "u10" in df_today.columns else 0.5
+    v = float(df_today["v10"].mean()) if "v10" in df_today.columns else 0.5
+    return u, v
+
+
+def _extract_precip_mmh(df_today: "pd.DataFrame") -> float:
+    """Return daily total precipitation in mm/h (0 if unavailable)."""
+    # ERA5 'tp' column in the pixel dataset may be in m (ERA5 convention).
+    # Divide by 24 to get mm/h daily average (×1000 to m→mm, /24h).
+    for col, scale in [("tp_mmh", 1.0), ("tp", 1000.0 / 24.0), ("total_precipitation", 1000.0 / 24.0)]:
+        if col in df_today.columns:
+            return max(0.0, float(df_today[col].mean()) * scale)
+    return 0.0
+
+
+def _pearson_corr(a: "torch.Tensor", b: "torch.Tensor") -> "torch.Tensor":
+    """Differentiable Pearson correlation between two 1-D tensors."""
+    a_c = a - a.mean()
+    b_c = b - b.mean()
+    return (a_c * b_c).sum() / (a_c.norm() * b_c.norm() + 1e-8)
+
+
 def train_pinn(
     model,
     stage1_df:  "pd.DataFrame",
@@ -118,25 +240,33 @@ def train_pinn(
     use_rar:    bool = True,
     rar_start:  int  = 200,
     save_every: int  = 100,
+    wandb_run=None,
 ) -> list:
     """
-    Main PINN training loop.
+    Main PINN training loop — Stage 3 quasi-steady-state (gaps B1–B5+C2).
 
-    Each iteration:
-      1. Sample collocation points (uniform or RAR)
-      2. Evaluate PDE residual at interior points
-      3. Evaluate BC loss at boundary points using Stage 1 preds
-      4. Evaluate data loss at Stage 1 pixel locations
-      5. Compute physical constraint losses
-      6. Apply curriculum-weighted total loss, backprop, step optimizer
+    Per-epoch procedure:
+      1. Sample one random date from Stage 1 training dates.
+      2. For each of the 8 ERA5 3-hourly snapshots (h=0,3,...,21):
+           a. Set t_norm = h / 24.0
+           b. Build collocation tensors with this t_norm (same for all N pts)
+           c. Pass blh_norm = BLH_m / 2000.0 to model and PDE loss (B2)
+           d. Compute steady_state_pde_loss (B1) — drops ∂C/∂t algebraically
+           e. Evaluate C at Stage 1 pixel locations for daily-mean constraint (B3)
+           f. Compute domain-mean K for K–BLH correlation accumulation (B5)
+      3. L_pde = mean(L_pde_h) over 8 snapshots.
+      4. C_daily_pred = mean(C_h) over 8 snapshots — compared to Stage 1
+         daily-mean PM2.5 (B3 fix: was t=0 hardcoded, now 8-hour average).
+      5. L_kblh = λ × (1 − Pearson_r(BLH_values, K_means))² (B5).
+      6. total_loss + L_kblh → backward → optimizer step.
 
     Args:
-        model      : FourierPINN model
+        model      : FourierPINN model (C2 fix already applied in build_model)
         stage1_df  : Stage 1 PM2.5 predictions DataFrame
         n_epochs   : Total training epochs
         lr         : Initial learning rate (Adam)
         device     : torch.device
-        use_rar    : Enable RAR after rar_start epoch
+        use_rar    : Enable RAR after rar_start epoch (spatial collocation only)
         rar_start  : Epoch to switch from uniform to RAR collocation
         save_every : Checkpoint save frequency
 
@@ -150,95 +280,197 @@ def train_pinn(
     from src.stage3_pinn.training.loss_functions import (
         data_fidelity_loss, total_loss, LossTracker,
     )
-    from src.stage3_pinn.training.collocation   import sample_uniform, sample_rar, to_tensors
-    from src.stage3_pinn.physics.advection_diffusion import pde_loss
+    from src.stage3_pinn.training.collocation   import sample_uniform, sample_rar
+    from src.stage3_pinn.physics.advection_diffusion import steady_state_pde_loss
     from src.stage3_pinn.physics.constraints    import compute_all_constraints
-    from src.stage3_pinn.domain.boundary_conditions import DirichletBC, NeumannBC
+    from src.stage3_pinn.domain.boundary_conditions import DirichletBC
     from config import KANDY_PINN_BBOX
 
-    optimizer   = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
+    optimizer     = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
     scheduler_opt = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
-    curriculum  = CurriculumScheduler(total_epochs=n_epochs)
-    bc_handler  = DirichletBC(stage1_df)
-    tracker     = LossTracker()
+    curriculum    = CurriculumScheduler(total_epochs=n_epochs)
+    bc_handler    = DirichletBC(stage1_df)
+    tracker       = LossTracker()
 
-    dates  = sorted(stage1_df["date"].unique())
+    dates   = sorted(stage1_df["date"].unique())
     n_dates = len(dates)
+    rng     = np.random.default_rng(42)
+
     log.info(f"Starting PINN training: {n_epochs} epochs, {n_dates} training dates, device={device}")
     curriculum.log_schedule(every=200)
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
-    xy_int, t_int, xy_bnd, t_bnd = sample_uniform(
+    # Initial spatial collocation layout (xy only — t is overridden per snapshot)
+    xy_int_np, _, xy_bnd_np, t_bnd_np = sample_uniform(
         N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, KANDY_PINN_BBOX
     )
 
     for epoch in range(n_epochs):
         model.train()
-        lambdas   = curriculum.step(epoch)
+        lambdas    = curriculum.step(epoch)
         current_lr = scheduler_opt.get_last_lr()[0] if epoch > 0 else lr
 
-        # --- Sample one random date for data/BC loss ---
-        date_today = dates[epoch % n_dates]
+        # Sample one random date for this epoch
+        date_today = dates[rng.integers(0, n_dates)]
         df_today   = stage1_df[stage1_df["date"].astype(str) == str(date_today)]
 
-        # Daily mean and uncertainty-weighted mean wind
-        c1_mean  = float(df_today["pm25_pred"].mean()) if "pm25_pred" in df_today else 0.0
-        wind_u_d = float(df_today["u10"].mean()) if "u10" in df_today.columns else 0.5
-        wind_v_d = float(df_today["v10"].mean()) if "v10" in df_today.columns else 0.5
+        # Extract daily ERA5 scalars for this date
+        blh_m       = _extract_blh_m(df_today)
+        blh_norm    = blh_m / PINN_BLH_NORM_SCALE   # e.g. 800m → 0.40
+        wind_u_d, wind_v_d = _extract_wind(df_today)
+        precip_mmh  = _extract_precip_mmh(df_today)
+        c1_mean     = float(df_today["pm25_pred"].mean()) if "pm25_pred" in df_today else 0.0
 
-        # --- RAR update ---
+        # RAR update (spatial collocation refinement, BLH=default for heuristic)
         if use_rar and epoch >= rar_start and epoch % 50 == 0:
             try:
-                xy_int, t_int = sample_rar(
-                    model, n_coarse=5000, n_add=200, n_keep=N_COLLOCATION_INTERIOR - 200,
-                    xy_current=xy_int, t_current=t_int,
+                xy_int_np, _ = sample_rar(
+                    model, n_coarse=5000, n_add=200,
+                    n_keep=N_COLLOCATION_INTERIOR - 200,
+                    xy_current=xy_int_np,
+                    t_current=np.full((len(xy_int_np), 1), 0.5, dtype=np.float32),
                     wind_u=wind_u_d, wind_v=wind_v_d, device=device,
                 )
             except Exception as e:
                 log.debug(f"RAR update failed at epoch {epoch}: {e}")
 
-        # --- Collocation tensors ---
-        xyt_int, wu_int, wv_int = to_tensors(xy_int, t_int, wind_u_d, wind_v_d, device)
-        xyt_int = xyt_int.requires_grad_(True)
+        # Pre-build Stage-1 pixel tensors (same x,y for all 8 snapshots)
+        x_s1 = torch.tensor(df_today["x_norm"].values[:, None],
+                             dtype=torch.float32, device=device) if len(df_today) > 0 else None
+        y_s1 = torch.tensor(df_today["y_norm"].values[:, None],
+                             dtype=torch.float32, device=device) if len(df_today) > 0 else None
+        if x_s1 is not None:
+            C_target_s1 = torch.tensor(df_today["pm25_pred"].values,
+                                       dtype=torch.float32, device=device)
+            if "weight" in df_today.columns:
+                w_s1 = torch.tensor(df_today["weight"].values,
+                                    dtype=torch.float32, device=device)
+            else:
+                w_s1 = None
 
         optimizer.zero_grad()
 
-        # PDE residual
-        L_pde = pde_loss(model, xyt_int, wu_int, wv_int) if lambdas.pde > 0 else torch.zeros(1, device=device)
+        # ── 8-snapshot quasi-steady-state loop (B1 + B2 + B3) ──────────────
+        L_pde_day   = torch.zeros(1, device=device)
+        C_hourly    = []    # for daily-mean data constraint (B3)
+        k_means     = []    # for K–BLH correlation regulariser (B5)
+        blh_values  = []    # BLH scalars per snapshot (for B5 correlation)
 
-        # Data fidelity vs Stage 1
+        for h in SNAPSHOT_HOURS:
+            t_norm = h / 24.0   # t_norm ∈ {0, 1/8, 2/8, ..., 7/8}
+
+            # Per-snapshot BLH and wind (daily-mean; 3-hourly ERA5 is a future improvement)
+            # blh_norm is the same for all 8 snapshots when using daily-mean ERA5
+            blh_h = blh_norm  # scalar
+
+            # Build interior collocation tensor with t_norm = h/24 for this snapshot
+            t_snap_np  = np.full((len(xy_int_np), 1), t_norm, dtype=np.float32)
+            xyt_int    = torch.tensor(
+                np.hstack([xy_int_np, t_snap_np]),
+                dtype=torch.float32, device=device
+            ).requires_grad_(True)
+
+            wu_int = torch.full((len(xy_int_np), 1), wind_u_d, dtype=torch.float32, device=device)
+            wv_int = torch.full((len(xy_int_np), 1), wind_v_d, dtype=torch.float32, device=device)
+
+            # B2: blh_tensor for this snapshot — shape (N, 1) matching collocation pts
+            blh_tensor = torch.full(
+                (len(xy_int_np), 1), blh_h, dtype=torch.float32, device=device
+            )
+
+            precip_tensor = None
+            if precip_mmh > 0:
+                precip_tensor = torch.full(
+                    (len(xy_int_np), 1), precip_mmh, dtype=torch.float32, device=device
+                )
+
+            # B1: quasi-steady-state PDE loss for this snapshot
+            if lambdas.pde > 0:
+                L_pde_h = steady_state_pde_loss(
+                    model, xyt_int, wu_int, wv_int,
+                    precip=precip_tensor,
+                    blh=blh_tensor,
+                )
+                L_pde_day = L_pde_day + L_pde_h
+
+            # B3: evaluate C at Stage-1 pixel locations for daily-mean constraint
+            if lambdas.data > 0 and x_s1 is not None:
+                t_s1_h   = torch.full_like(x_s1, t_norm)
+                xyt_s1_h = torch.cat([x_s1, y_s1, t_s1_h], dim=1)
+                blh_s1_h = torch.full_like(x_s1, blh_h)
+                C_h, _   = model(xyt_s1_h, blh=blh_s1_h)
+                C_hourly.append(C_h)
+
+            # B5: accumulate domain-mean K for K–BLH correlation regulariser.
+            # Separate forward pass (no spatial grad needed for K alone).
+            with torch.no_grad():
+                _, (Kx_h, Ky_h, _) = model(xyt_int.detach(), blh=blh_tensor)
+                k_means.append(((Kx_h.mean() + Ky_h.mean()) / 2.0).item())
+            blh_values.append(blh_h)
+
+        # Mean PDE loss over 8 snapshots (B1)
+        L_pde = (L_pde_day / len(SNAPSHOT_HOURS)) if lambdas.pde > 0 else torch.zeros(1, device=device)
+
+        # Daily-mean data loss (B3): compare mean(C_h) to Stage-1 daily mean
         L_data = torch.zeros(1, device=device)
-        if lambdas.data > 0 and len(df_today) > 0:
-            try:
-                x_s1 = torch.tensor(df_today["x_norm"].values[:, None], dtype=torch.float32, device=device)
-                y_s1 = torch.tensor(df_today["y_norm"].values[:, None], dtype=torch.float32, device=device)
-                t_s1 = torch.zeros_like(x_s1)
-                xyt_s1 = torch.cat([x_s1, y_s1, t_s1], dim=1)
-                C_pred_s1, _ = model(xyt_s1)
-                C_target = torch.tensor(df_today["pm25_pred"].values, dtype=torch.float32, device=device)
-                w_s1 = torch.tensor(df_today.get("weight", np.ones(len(df_today))).values,
-                                     dtype=torch.float32, device=device) if "weight" in df_today else None
-                L_data = data_fidelity_loss(C_pred_s1.squeeze(), C_target, w_s1)
-            except Exception as e:
-                log.debug(f"Data loss computation failed: {e}")
+        if lambdas.data > 0 and len(C_hourly) > 0:
+            # C_daily_pred: (N_pixels, 1) — mean over 8 hourly evaluations
+            C_daily_pred = torch.stack(C_hourly, dim=0).mean(dim=0)
+            L_data = data_fidelity_loss(C_daily_pred.squeeze(), C_target_s1, w_s1)
 
-        # BC loss
+        # BC loss (uses DirichletBC at domain boundary)
         L_bc = bc_handler.compute_bc_loss(model, str(date_today), device) if lambdas.bc > 0 else torch.zeros(1, device=device)
 
-        # Physics constraints
+        # Physics constraints (K bounds, C positivity, S positivity)
         L_phys = torch.zeros(1, device=device)
         if lambdas.phys > 0:
             try:
-                _, (Kx, Ky, S) = model(xyt_int.detach())
-                C_int, _ = model(xyt_int.detach())
-                c_losses = compute_all_constraints(C_int, Kx, Ky, S, c1_mean)
-                L_phys = c_losses["total"]
+                blh_phys = torch.full(
+                    (len(xy_int_np), 1), blh_norm, dtype=torch.float32, device=device
+                )
+                t_phys_np = np.full((len(xy_int_np), 1), 0.5, dtype=np.float32)
+                xyt_phys  = torch.tensor(
+                    np.hstack([xy_int_np, t_phys_np]),
+                    dtype=torch.float32, device=device
+                )
+                with torch.no_grad():
+                    C_int, (Kx_p, Ky_p, S_p) = model(xyt_phys, blh=blh_phys)
+                c_losses = compute_all_constraints(C_int, Kx_p, Ky_p, S_p, c1_mean)
+                L_phys   = c_losses["total"]
             except Exception as e:
                 log.debug(f"Physics constraint failed: {e}")
 
-        L_total  = total_loss(L_pde, L_data, L_bc, L_phys,
-                              lambdas.pde, lambdas.data, lambdas.bc, lambdas.phys)
+        # K–BLH correlation regulariser (B5)
+        # Soft prior: domain-mean K should correlate positively with BLH across
+        # the 8 intra-day snapshots. With daily-mean ERA5 (blh_values all equal),
+        # variance is zero — regulariser is skipped to avoid NaN.
+        L_kblh = torch.zeros(1, device=device)
+        blh_arr = np.array(blh_values, dtype=np.float32)
+        if blh_arr.std() > 1e-6 and len(k_means) >= 2:
+            blh_t = torch.tensor(blh_arr, dtype=torch.float32, device=device)
+            # Recompute K with gradients for a differentiable regulariser
+            k_means_grad = []
+            for h_idx, h in enumerate(SNAPSHOT_HOURS):
+                t_norm_h  = h / 24.0
+                t_snap_np = np.full((len(xy_int_np), 1), t_norm_h, dtype=np.float32)
+                xyt_h     = torch.tensor(
+                    np.hstack([xy_int_np, t_snap_np]),
+                    dtype=torch.float32, device=device
+                )
+                blh_h_t = torch.full(
+                    (len(xy_int_np), 1), blh_arr[h_idx], dtype=torch.float32, device=device
+                )
+                _, (Kx_g, Ky_g, _) = model(xyt_h, blh=blh_h_t)
+                k_means_grad.append((Kx_g.mean() + Ky_g.mean()) / 2.0)
+            k_t   = torch.stack(k_means_grad)
+            r_kblh = _pearson_corr(blh_t, k_t)
+            L_kblh = LAMBDA_KBLH * (1.0 - r_kblh) ** 2
+
+        L_total = total_loss(L_pde, L_data, L_bc, L_phys,
+                             lambdas.pde, lambdas.data, lambdas.bc, lambdas.phys)
+        L_total = L_total + L_kblh
+
         L_total.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
@@ -249,6 +481,23 @@ def train_pinn(
             float(L_pde), float(L_data), float(L_bc), float(L_phys), float(L_total), current_lr
         )
         tracker.log_epoch(epoch, every=50)
+
+        # ── W&B per-epoch logging ──────────────────────────────────────────
+        if wandb_run is not None:
+            wandb_run.log({
+                "train/L_total":  float(L_total),
+                "train/L_pde":    float(L_pde),
+                "train/L_data":   float(L_data),
+                "train/L_bc":     float(L_bc),
+                "train/L_phys":   float(L_phys),
+                "train/L_kblh":   float(L_kblh),
+                "train/blh_m":    blh_m,
+                "train/lr":       current_lr,
+                "train/lambda_pde":  lambdas.pde,
+                "train/lambda_data": lambdas.data,
+                "train/lambda_bc":   lambdas.bc,
+                "epoch":          epoch,
+            }, step=epoch)
 
         # Checkpoint
         if epoch % save_every == 0 or epoch == n_epochs - 1:
@@ -267,12 +516,14 @@ def train_pinn(
 
 def main():
     parser = argparse.ArgumentParser(description="Stage 3 Kandy PINN training")
-    parser.add_argument("--init",    choices=["A", "B", "C"], default=None,
+    parser.add_argument("--init",     choices=["A", "B", "C"], default=None,
                         help="Init strategy: A=frozen, B=unfrozen, C=cold. Auto from transfer_decision.json if omitted")
-    parser.add_argument("--epochs",  type=int, default=PINN_EPOCHS)
-    parser.add_argument("--lr",      type=float, default=PINN_LR)
-    parser.add_argument("--no-rar",  action="store_true", help="Disable RAR collocation")
-    parser.add_argument("--profile", action="store_true", help="Quick 20-epoch smoke-test")
+    parser.add_argument("--epochs",   type=int, default=PINN_EPOCHS)
+    parser.add_argument("--lr",       type=float, default=PINN_LR)
+    parser.add_argument("--no-rar",   action="store_true", help="Disable RAR collocation")
+    parser.add_argument("--profile",  action="store_true", help="Quick 20-epoch smoke-test")
+    parser.add_argument("--wandb",    action="store_true", help="Enable W&B experiment tracking")
+    parser.add_argument("--no-wandb", action="store_true", help="Disable W&B even if WANDB_API_KEY is set")
     args = parser.parse_args()
 
     device = _get_device()
@@ -292,16 +543,40 @@ def main():
     stage1_df = load_stage1_data()
 
     n_epochs = 20 if args.profile else args.epochs
+
+    # W&B: enabled if --wandb flag given, OR if WANDB_API_KEY is set and --no-wandb not given
+    use_wandb = (args.wandb or bool(os.environ.get("WANDB_API_KEY"))) and not args.no_wandb
+    wandb_run = None
+    if use_wandb:
+        wandb_run = _setup_wandb({
+            "stage":          "stage3_kandy_pinn",
+            "init_mode":      init_mode,
+            "n_epochs":       n_epochs,
+            "lr":             args.lr,
+            "use_rar":        not args.no_rar,
+            "rar_start":      200,
+            "profile_run":    args.profile,
+            "snapshot_hours": SNAPSHOT_HOURS,
+            "lambda_kblh":    LAMBDA_KBLH,
+        })
+
     history  = train_pinn(
         model, stage1_df, n_epochs, args.lr, device,
         use_rar=not args.no_rar,
+        wandb_run=wandb_run,
     )
 
     import pandas as pd
     hist_df = pd.DataFrame(history)
     hist_df.to_csv(CHECKPOINT_DIR / "training_losses.csv", index=False)
     log.info(f"Loss history saved → {CHECKPOINT_DIR / 'training_losses.csv'}")
-    log.info("✅ Stage 3 PINN training complete.")
+
+    if wandb_run is not None:
+        try:
+            wandb_run.finish()
+        except Exception:
+            pass
+    log.info("Stage 3 PINN training complete.")
 
 
 if __name__ == "__main__":

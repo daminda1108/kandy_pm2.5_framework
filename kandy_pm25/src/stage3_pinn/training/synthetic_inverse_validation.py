@@ -22,7 +22,7 @@ FAIL response:
     the penalty weights α1–α4 are miscalibrated). Increase α_pde, reduce α_data,
     re-try. See RESEARCH_PROJECT_DESIGN.md §3.8 for curriculum schedule.
 
-This test is lightweight: uses a 20×10 synthetic grid, runs ≤ 500 epochs.
+This test is lightweight: uses a 10×20 synthetic grid (ny=10, nx=20), runs ≤ 500 epochs.
 Runtime: ~2 minutes on CPU, ~20 seconds on GPU.
 
 Usage:
@@ -36,8 +36,8 @@ import logging
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parents[4]))
-from config import LOG_FORMAT, LOG_DATEFMT
+sys.path.insert(0, str(Path(__file__).parents[3]))
+from config import LOG_FORMAT, LOG_DATEFMT, V_DEPOSITION
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("synthetic_inverse_validation")
@@ -77,7 +77,7 @@ def make_k_true(kind: str, ny: int, nx: int) -> "np.ndarray":
 def forward_solve_pde(
     K: "np.ndarray",
     u: float = 1.0, v: float = 0.5,
-    S: float = 0.1, lambda_dry: float = 1e-4,
+    S: float = 0.1, lambda_dry: float = V_DEPOSITION / 30.0,  # = 1e-4 s⁻¹ (v_d / H_mix)
     n_steps: int = 1000, dt: float = 0.5,
 ) -> "np.ndarray":
     """
@@ -124,7 +124,7 @@ def run_synthetic_test(k_kind: str = "uniform", epochs: int = 500) -> dict:
     except ImportError:
         raise ImportError("numpy, torch required")
 
-    from stage3_pinn.models.pinn_steady import FourierPINN  # noqa: E402
+    from src.stage3_pinn.models.pinn_steady import FourierPINN  # noqa: E402
 
     ny, nx = 10, 20
     log.info(f"Synthetic inverse test: {nx}x{ny} grid, K_true='{k_kind}', {epochs} epochs")

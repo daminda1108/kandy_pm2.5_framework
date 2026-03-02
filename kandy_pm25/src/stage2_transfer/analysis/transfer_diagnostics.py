@@ -23,7 +23,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).parents[4]))
+sys.path.insert(0, str(Path(__file__).parents[3]))
 from config import LOG_FORMAT, LOG_DATEFMT, MODELS_DIR, TABLES_DIR
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)

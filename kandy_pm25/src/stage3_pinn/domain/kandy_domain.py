@@ -51,7 +51,7 @@ class KandyDomain:
         Initialise the Kandy domain grid.
 
         Args:
-            dem_path : Path to DEM GeoTIFF (250 m resolution)
+            dem_path : Path to DEM GeoTIFF (30 m SRTM)
             osm_path : Path to OSM road network GeoJSON / Shapefile
         """
         self.bbox   = KANDY_PINN_BBOX

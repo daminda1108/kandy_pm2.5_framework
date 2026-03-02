@@ -30,17 +30,17 @@ import logging
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parents[4]))
-from config import LOG_FORMAT, LOG_DATEFMT
+sys.path.insert(0, str(Path(__file__).parents[3]))
+from config import LOG_FORMAT, LOG_DATEFMT, RESULTS_DIR
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("train_era5only_baseline")
 
 # ERA5-only feature columns (no topographic features — RQ4 ablation)
-ERA5_FEATURES = ["T2m", "u10", "v10", "BLH", "TP", "RH", "SSRD"]
+ERA5_FEATURES = ["t2m", "u10", "v10", "blh_min", "tp", "rh", "ssrd"]
 
-TARGET_COL = "pm25_ugm3"
-OUT_DIR    = Path("outputs/stage1")
+TARGET_COL = "pm25_observed"
+OUT_DIR    = RESULTS_DIR / "era5_baseline"
 
 
 def train_era5only(data_path: Path, out_path: Path) -> dict:

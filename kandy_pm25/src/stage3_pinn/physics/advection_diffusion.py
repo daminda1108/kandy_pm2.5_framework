@@ -59,18 +59,28 @@ def pde_residual(
     wind_v: "torch.Tensor",
     lambda_dry: float = _LAMBDA_DRY_DEFAULT,
     precip: Optional["torch.Tensor"] = None,
+    blh:   Optional["torch.Tensor"] = None,
+    elev:  Optional["torch.Tensor"] = None,
+    steady: bool = False,
 ) -> "torch.Tensor":
     """
     Compute the anisotropic advection-diffusion PDE residual via autograd.
 
-    Full transient form:
+    Full transient form (steady=False):
         R = ∂C/∂t + u·∂C/∂x + v·∂C/∂y
               - ∂/∂x(Kx·∂C/∂x) - ∂/∂y(Ky·∂C/∂y)
               - S
               + (λ_dry + Λ·P) · C      ← combined dry + wet removal
 
-    For steady-state, the caller zeros the t-column of xyt before passing in
-    (see steady_state_pde_loss).
+    Quasi-steady-state form (steady=True):
+        R = u·∂C/∂x + v·∂C/∂y
+              - ∂/∂x(Kx·∂C/∂x) - ∂/∂y(Ky·∂C/∂y)
+              - S
+              + (λ_dry + Λ·P) · C      ← ∂C/∂t dropped algebraically
+
+    With steady=True, xyt[:, 2] retains its h/24 value so SourceSubNet
+    sees the correct hour-of-day for each ERA5 snapshot. The time-derivative
+    term is suppressed in the residual formula, not by zeroing the t-column.
 
     Args:
         model      : FourierPINN — forward pass returns (C, (Kx, Ky, S))
@@ -82,6 +92,13 @@ def pde_residual(
                      Do NOT learn — trades off with K (Seinfeld & Pandis §19.4).
         precip     : (N, 1) ERA5 precipitation rate [mm/h] at collocation points.
                      None → wet deposition omitted (dry-season subset or unit tests).
+        blh        : (N, 1) normalised BLH = BLH_m / 2000.0, ∈ [0, 1].
+                     None → model uses its internal default (0.5).
+        elev       : (N, 1) normalised elevation ∈ [0, 1].
+                     None → model uses its internal default (0.5).
+        steady     : If True, drop ∂C/∂t from residual (quasi-steady-state PDE).
+                     Use for Stage 3 Kandy training with 3-hourly ERA5 snapshots.
+                     If False, full transient PDE (Stage 2 Medellín pre-training).
 
     Returns:
         residual   : (N, 1) PDE residual at each collocation point
@@ -92,7 +109,7 @@ def pde_residual(
         raise ImportError("PyTorch required")
 
     xyt = xyt.requires_grad_(True)
-    C, (Kx, Ky, S) = model(xyt)
+    C, (Kx, Ky, S) = model(xyt, blh=blh, elev=elev)
 
     grad_outputs = torch.ones_like(C)
 
@@ -100,7 +117,7 @@ def pde_residual(
     grads_C = torch.autograd.grad(C, xyt, grad_outputs=grad_outputs, create_graph=True)[0]
     dC_dx = grads_C[:, 0:1]
     dC_dy = grads_C[:, 1:2]
-    dC_dt = grads_C[:, 2:3]   # Zero for steady-state (t-column frozen by caller)
+    dC_dt = grads_C[:, 2:3]   # Zero for steady-state (dropped in residual when steady=True)
 
     # Diffusive flux: Kx·∂C/∂x and Ky·∂C/∂y
     flux_x = Kx * dC_dx
@@ -124,8 +141,13 @@ def pde_residual(
     else:
         removal_rate = lambda_dry   # Dry-season or test mode (no wet removal)
 
-    # Full PDE residual: ∂C/∂t + advection − ∇·(K∇C) − S + (λ_dry + Λ·P)·C = 0
-    residual = dC_dt + advection - d_flux_x - d_flux_y - S + removal_rate * C
+    # PDE residual
+    if steady:
+        # Quasi-steady-state: drop ∂C/∂t. SourceSubNet still sees t=h/24.
+        residual = advection - d_flux_x - d_flux_y - S + removal_rate * C
+    else:
+        # Full transient PDE: ∂C/∂t + advection − ∇·(K∇C) − S + removal·C = 0
+        residual = dC_dt + advection - d_flux_x - d_flux_y - S + removal_rate * C
     return residual
 
 
@@ -136,13 +158,19 @@ def pde_loss(
     wind_v: "torch.Tensor",
     lambda_dry: float = _LAMBDA_DRY_DEFAULT,
     precip: Optional["torch.Tensor"] = None,
+    blh:   Optional["torch.Tensor"] = None,
+    elev:  Optional["torch.Tensor"] = None,
 ) -> "torch.Tensor":
     """
-    Mean squared PDE residual — used as L_pde in the training loss.
+    Mean squared PDE residual (full transient) — used as L_pde in Stage 2 training.
 
         L_pde = E[R(x,y,t)²]
 
+    For Stage 3 quasi-steady-state training, use steady_state_pde_loss() instead.
+
     Args:
+        blh    : (N, 1) normalised BLH. None → model default (0.5).
+        elev   : (N, 1) normalised elevation. None → model default (0.5).
         precip : ERA5 precipitation rate [mm/h]. Pass None for dry-season data.
 
     Returns:
@@ -153,7 +181,8 @@ def pde_loss(
     except ImportError:
         raise ImportError("PyTorch required")
 
-    R = pde_residual(model, xyt, wind_u, wind_v, lambda_dry=lambda_dry, precip=precip)
+    R = pde_residual(model, xyt, wind_u, wind_v,
+                     lambda_dry=lambda_dry, precip=precip, blh=blh, elev=elev)
     return torch.mean(R ** 2)
 
 
@@ -163,23 +192,41 @@ def steady_state_pde_loss(
     wind_u: "torch.Tensor",
     wind_v: "torch.Tensor",
     precip: Optional["torch.Tensor"] = None,
+    blh:   Optional["torch.Tensor"] = None,
+    elev:  Optional["torch.Tensor"] = None,
 ) -> "torch.Tensor":
     """
-    Steady-state PDE residual — ignores ∂C/∂t term.
+    Quasi-steady-state PDE loss — drops ∂C/∂t algebraically from the residual.
 
-    Used during curriculum Phase 1 to warm up the model before introducing
-    the time derivative. Wet deposition is included when precip is provided
-    (important for monsoon-season training data).
+    Use for Stage 3 Kandy training where the PDE is solved at discrete ERA5
+    snapshots (h = 0, 3, 6, ..., 21). The t-column in xyt should be h/24 as
+    set by the caller; it is NOT zeroed here, so SourceSubNet sees the correct
+    hour-of-day for each snapshot.
+
+    The steady-state approximation (∂C/∂t ≈ 0) is justified by:
+      - ERA5 forcing varies on 3-h timescale; PINN concentration should
+        track forcing without lag in the quasi-static limit.
+      - Daily-mean observations cannot constrain ∂C/∂t directly.
+      - 6× fewer collocation points vs. full transient formulation.
+
+    Args:
+        model  : FourierPINN
+        xyt    : (N, 3) tensor with t ∈ {0/24, 3/24, …, 21/24} (requires_grad=True)
+        wind_u : (N, 1) ERA5 zonal wind [m/s] for this snapshot
+        wind_v : (N, 1) ERA5 meridional wind [m/s] for this snapshot
+        precip : (N, 1) ERA5 precipitation rate [mm/h]. None → no wet removal.
+        blh    : (N, 1) BLH / 2000.0. None → model default (0.5, BLH–K link inert).
+        elev   : (N, 1) normalised DEM elevation. None → model default (0.5).
+
+    Returns:
+        Scalar mean-squared quasi-steady-state PDE residual
     """
     try:
         import torch
     except ImportError:
         raise ImportError("PyTorch required")
 
-    # Replace the t column with a constant to zero out ∂C/∂t via autograd
-    xyt_steady = xyt.detach().clone()
-    xyt_steady[:, 2] = 0.0
-    xyt_steady = xyt_steady.requires_grad_(True)
-
-    R = pde_residual(model, xyt_steady, wind_u, wind_v, lambda_dry=0.0, precip=precip)
+    R = pde_residual(model, xyt, wind_u, wind_v,
+                     lambda_dry=_LAMBDA_DRY_DEFAULT, precip=precip,
+                     blh=blh, elev=elev, steady=True)
     return torch.mean(R ** 2)
