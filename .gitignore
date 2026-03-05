@@ -1,9 +1,7 @@
 # =============================================================================
 # Kandy PM2.5 — .gitignore
-# Only the following are tracked:
-#   .gitignore, README.md
-#   kandy_pm25/config.py, requirements.txt, run_pipeline.py, SETUP_GUIDE.md
-#   kandy_pm25/src/**  (all pipeline source code)
+# Tracked: source code (kandy_pm25/src/**), config, requirements, README,
+#          run_pipeline.py, SETUP_GUIDE.md, .gitignore
 # =============================================================================
 
 
@@ -22,12 +20,20 @@ __pycache__/
 *.pyd
 
 
-# ── Data (too large / not reproducible in Git) ───────────────────────────────
-data/
+# ── Data (too large for Git) ─────────────────────────────────────────────────
+kandy_pm25/data/
 
 
-# ── Results & model outputs ───────────────────────────────────────────────────
-results/
+# ── Results & model outputs ──────────────────────────────────────────────────
+kandy_pm25/results/
+
+
+# ── Utility scripts (not model code, kept locally) ──────────────────────────
+kandy_pm25/scripts/
+
+
+# ── Report generators (documentation tools, not model code) ─────────────────
+kandy_pm25/reports/
 
 
 # ── Large binary / data file types (belt-and-suspenders) ─────────────────────
@@ -37,6 +43,7 @@ results/
 *.tiff
 *.geotiff
 *.parquet
+*.npz
 *.npy
 *.h5
 *.hdf5
@@ -51,6 +58,11 @@ results/
 *.tar.gz
 *.gz
 *.pdf
+*.docx
+*.doc
+*.xlsx
+*.xls
+*.pptx
 
 
 # ── Jupyter ───────────────────────────────────────────────────────────────────
@@ -75,33 +87,35 @@ nul
 .netrc
 *.env
 secrets/
+API.txt
 
 
 # ── Internal working documents (not public-facing) ───────────────────────────
 CLAUDE.md
 PROJECT_CONTEXT.md
 RESEARCH_PROJECT_DESIGN.md
+STAGE1_ANALYSIS.md
 READ\ Me.txt
 READ\ ME.txt
 
 
-# ── GEE data-collection scripts (phase complete, kept locally) ────────────────
-analyze_failures.py
-check_era5_csv.py
-check_gee_tasks.py
-check_local_data.py
-check_new_data.py
-check_tasks.py
-check_tasks_detail.py
-resubmit_failed.py
-download_from_drive.py
-verify_data_manifest.py
+# ── Kaggle kernel scripts (managed via kaggle CLI, not git) ──────────────────
+*_kaggle.py
+kaggle_kernel/
+kaggle_checkpoint_dataset/
 
 
-# ── Session & reference material (not research code) ─────────────────────────
-artifacts/
+# ── Project-level directories that are NOT source code ───────────────────────
+archive/
+docs/
+references/
 knowledge_base/
+.obsidian/
 .claude/
-API.txt
-kandy_pm25/generate_reports.py
-kandy_pm25/generate_figures.py
+.gemini/
+
+
+# ── Node.js (if any) ─────────────────────────────────────────────────────────
+node_modules/
+package.json
+package-lock.json

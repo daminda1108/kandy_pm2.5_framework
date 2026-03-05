@@ -341,46 +341,70 @@ def load_all_cams_labels() -> pd.DataFrame:
 
 def apply_vd_bias_correction(labels: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply Van Donkelaar V6GL02.04 ratio bias correction to CAMS labels.
+    Apply KOALA-anchored bias correction to CAMS labels.
 
-    CAMS EAC4 is systematically ~2× Van Donkelaar for Kandy (+17.3 µg/m³ bias).
-    Uses a CONSTANT ratio (mean across all VD years) to preserve temporal
-    dynamics while shifting magnitude to match VD ground-truth estimates.
+    WHY VD IS NO LONGER THE ANCHOR:
+    Van Donkelaar V6GL02.04 is a global satellite product calibrated against
+    worldwide stations. It resolves regional PM2.5 but cannot capture Kandy's
+    valley trapping enhancement — it sees the regional AOD background, not the
+    basin floor concentration. The VD-anchored ×0.521 correction moved CAMS
+    AWAY from the only local measurement we have.
 
-    A constant ratio is preferred over per-year ratios because:
-    - Per-year ratios vary 0.35–0.65 (CoV 13%), adding inter-annual noise
-      the model's features cannot predict, reducing R²
-    - A constant ratio preserves all within-year and inter-annual temporal
-      structure from CAMS while uniformly correcting the magnitude
+    NEW ANCHOR — KOALA sensor (Priyankara et al. 2021, IJERPH 18:9617):
+      - 2019 annual mean PM2.5 = 34.48 µg/m³  (KOALA low-cost optical sensor)
+      - KOALA ±15–20% uncertainty in high-humidity conditions (Kandy RH ~73%)
+      - Plausible range: ~27–41 µg/m³; VD gives ~17–19 µg/m³ — below lower bound
+      - CAMS raw (~36–43 µg/m³) brackets the KOALA value closely
 
-    Per-year calibration can be applied post-hoc to predictions if needed.
+    A constant ratio (single KOALA 2019 anchor) is used to preserve all
+    within-year and inter-annual temporal structure from CAMS.
+
+    VD's valid role is UNCHANGED: spatial disaggregation weight (vd_weight
+    feature in the pixel model). Only the label magnitude anchor changes here.
     """
+    # ── Soft VD file check (informational only — no longer the anchor) ──────
     vd_path = VALIDATION_DIR / "van_donkelaar_comparison.csv"
     if not vd_path.exists():
-        log.warning("No VD comparison file — skipping bias correction. "
-                     "Run validate_van_donkelaar.py first.")
+        log.warning("VD comparison file absent — VD is no longer the correction anchor "
+                    "(KOALA 2019 used instead). File is kept for spatial vd_weight only.")
+    else:
+        log.info("VD file present (used for spatial vd_weight only, not as label anchor).")
+
+    # ── KOALA-anchored correction ─────────────────────────────────────────────
+    KOALA_2019_MEAN = 34.48  # µg/m³, Priyankara et al. 2021, IJERPH 18:9617
+
+    # Compute 2019 CAMS raw mean from labels passed in (before any correction)
+    mask_2019 = labels.index.year == 2019
+    if mask_2019.sum() == 0:
+        log.warning("No 2019 data in labels — cannot anchor to KOALA. Returning uncorrected.")
         return labels
 
-    vd = pd.read_csv(vd_path)
-    if vd.empty or "vd_mean" not in vd.columns or "stage1_mean" not in vd.columns:
-        log.warning("VD comparison file empty or malformed — skipping bias correction.")
-        return labels
+    cams_2019_raw = labels.loc[mask_2019, "pm25_observed"].mean()
+    correction_ratio = KOALA_2019_MEAN / cams_2019_raw
 
-    # Constant ratio: mean(VD_annual / Stage1_annual) across all years
-    vd["correction_ratio"] = vd["vd_mean"] / vd["stage1_mean"].clip(lower=1.0)
-    constant_ratio = vd["correction_ratio"].mean()
-
-    log.info(f"VD bias correction: constant ratio = {constant_ratio:.3f} "
-             f"(mean of {len(vd)} years, range "
-             f"{vd['correction_ratio'].min():.3f}–{vd['correction_ratio'].max():.3f})")
+    log.info(
+        f"KOALA-anchored bias correction: ×{correction_ratio:.3f} "
+        f"(KOALA 34.48 µg/m³ / CAMS_2019_raw {cams_2019_raw:.1f} µg/m³) "
+        f"Uncertainty: KOALA carries ±15–20% in humid conditions (Kandy RH ~73%)"
+    )
 
     corrected = labels.copy()
     before_mean = corrected["pm25_observed"].mean()
-    corrected["pm25_observed"] *= constant_ratio
+    corrected["pm25_observed"] *= correction_ratio
     after_mean = corrected["pm25_observed"].mean()
 
-    log.info(f"Bias-corrected labels: mean {before_mean:.1f} → {after_mean:.1f} µg/m³ "
-             f"(×{constant_ratio:.3f})")
+    log.info(
+        f"Bias-corrected labels: mean {before_mean:.1f} → {after_mean:.1f} µg/m³ "
+        f"(×{correction_ratio:.3f})"
+    )
+
+    # ── 2019 verification ─────────────────────────────────────────────────────
+    new_2019_mean = corrected.loc[mask_2019, "pm25_observed"].mean()
+    log.info(
+        f"2019 mean after correction: {new_2019_mean:.1f} µg/m³ "
+        f"(KOALA target: 34.48 µg/m³, diff: {new_2019_mean - KOALA_2019_MEAN:+.2f})"
+    )
+
     return corrected
 
 
@@ -564,8 +588,10 @@ def build_dataset(save: bool = True) -> pd.DataFrame:
     log.info("\n── Loading PM2.5 Labels ──")
     cams_labels = load_all_cams_labels()
     if not cams_labels.empty:
-        gt = build_ensemble_pm25_labels(cams_labels)
-        # Apply VD ratio bias correction (shifts CAMS ~36 → ~19 µg/m³)
+        # MERRA-2 ensemble intentionally bypassed: r(CAMS,MERRA2)=0.177 over Kandy,
+        # mean diff=-23.6 µg/m³ — blending adds noise, not signal (LOMO R² dropped
+        # 0.607→0.498). build_ensemble_pm25_labels() kept for thesis diagnostic use only.
+        gt = cams_labels
         gt = apply_vd_bias_correction(gt)
         log.info(f"Using bias-corrected CAMS labels: {len(gt)} days")
     else:

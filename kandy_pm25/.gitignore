@@ -1,103 +1,23 @@
 # =============================================================================
-# Kandy PM2.5 — .gitignore
-# Only the following are tracked:
-#   .gitignore, README.md
-#   kandy_pm25/config.py, requirements.txt, run_pipeline.py, SETUP_GUIDE.md
-#   kandy_pm25/src/**  (all pipeline source code)
+# kandy_pm25/ — .gitignore (inherits from root .gitignore)
+# Tracked: src/**, config.py, requirements.txt, run_pipeline.py, SETUP_GUIDE.md
 # =============================================================================
 
-
-# ── Python environment ────────────────────────────────────────────────────────
+# ── Covered by root .gitignore but re-stated for clarity ─────────────────────
 .venv/
-venv/
-env/
-.env
-.Python
-
-
-# ── Python cache ──────────────────────────────────────────────────────────────
 __pycache__/
+data/
+results/
+scripts/
+reports/
+node_modules/
 *.pyc
 *.pyo
-*.pyd
-
-
-# ── Data (too large / not reproducible in Git) ───────────────────────────────
-data/
-
-
-# ── Results & model outputs ───────────────────────────────────────────────────
-results/
-
-
-# ── Large binary / data file types (belt-and-suspenders) ─────────────────────
-*.nc
-*.nc4
-*.tif
-*.tiff
-*.geotiff
 *.parquet
-*.npy
-*.h5
-*.hdf5
-*.pkl
-*.joblib
-*.ubj
-*.bin
 *.csv
 *.json
-*.zip
-*.tar
-*.tar.gz
-*.gz
+*.ubj
+*.nc
+*.pkl
 *.pdf
-
-
-# ── Jupyter ───────────────────────────────────────────────────────────────────
-*.ipynb
-.ipynb_checkpoints/
-
-
-# ── IDE ───────────────────────────────────────────────────────────────────────
-.vscode/
-.idea/
-
-
-# ── OS ────────────────────────────────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-desktop.ini
-nul
-
-
-# ── API credentials — never commit ───────────────────────────────────────────
-.cdsapirc
-.netrc
-*.env
-secrets/
-
-
-# ── Internal working documents (not public-facing) ───────────────────────────
-CLAUDE.md
-PROJECT_CONTEXT.md
-RESEARCH_PROJECT_DESIGN.md
-READ\ Me.txt
-READ\ ME.txt
-
-
-# ── GEE data-collection scripts (phase complete, kept locally) ────────────────
-analyze_failures.py
-check_era5_csv.py
-check_gee_tasks.py
-check_local_data.py
-check_new_data.py
-check_tasks.py
-check_tasks_detail.py
-resubmit_failed.py
-download_from_drive.py
-verify_data_manifest.py
-
-# ── Session & reference material (not research code) ─────────────────────────
-artifacts/
-knowledge_base/
-.claude/
+*.docx

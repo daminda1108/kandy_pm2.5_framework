@@ -78,6 +78,7 @@ _RCPARAMS = {
     "lines.linewidth":    1.2,
     "axes.spines.top":    False,
     "axes.spines.right":  False,
+    "text.usetex":        False,   # LaTeX not required; disable after SciencePlots
 }
 
 
