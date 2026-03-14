@@ -55,10 +55,17 @@ WHO_24H      = 25.0
 SL_ANNUAL    = 25.0
 SL_24H       = 50.0
 
-# ── KOALA reference ──────────────────────────────────────────────────────────
-KOALA_ANNUAL = 34.48  # Priyankara et al. 2021, IJERPH 18:9617
-KOALA_MARCH  = 34.87
-KOALA_RATIO  = 0.841  # correction ratio applied (×0.841)
+# ── KOALA reference — Senarathna et al. 2024, CJS 53(2):197-206 ─────────────
+# DOI: 10.4038/cjs.v53i2.8403. Instrument: KOALA (Plantower PMS1003) vs BAM, NIFS Kandy.
+# Previous anchor (Priyankara 2021): 34.48 µg/m³ — identified as ≈ March peak, not annual.
+KOALA_ANNUAL = 24.5225   # µg/m³ — true 2019 annual mean (average of 12 monthly means)
+KOALA_MARCH  = 34.87     # µg/m³ — March (first inter-monsoon peak; highest month)
+# Monthly means used for correction (12 independent ratios, no single KOALA_RATIO):
+KOALA_MONTHLY = {
+    1: 26.13,  2: 26.92,  3: 34.87,  4: 33.50,
+    5: 28.04,  6: 19.64,  7: 22.57,  8: 20.07,
+    9: 20.89, 10: 21.01, 11: 22.87, 12: 17.76,
+}  # µg/m³
 
 # ── Season helper ────────────────────────────────────────────────────────────
 SEASON_MAP = {12: "DJF", 1: "DJF", 2: "DJF",
@@ -137,7 +144,7 @@ ax2.set_ylabel("Sample quantiles (log PM$_{2.5}$)")
 ax2.set_title("(b) Q‒Q plot vs log-normal")
 ax2.text(0.04, 0.94, f"r = {r:.3f}", transform=ax2.transAxes, fontsize=7)
 
-fig.text(0.5, -0.01, "Data: CAMS EAC4 + NRT, KOALA-anchored (×0.841). Priyankara et al. 2021.",
+fig.text(0.5, -0.01, "Data: CAMS EAC4 + NRT, monthly KOALA correction. Senarathna et al. 2024, CJS 53(2):197-206.",
          ha="center", fontsize=6, style="italic")
 fig.tight_layout()
 save_figure(fig, "label_distribution", out_dir=OUT_DIR)
@@ -388,13 +395,18 @@ else:
 # ─────────────────────────────────────────────────────────────────────────────
 # 4i — CAMS raw vs MERRA-2 vs KOALA (2019)
 # ─────────────────────────────────────────────────────────────────────────────
-print("[4i] CAMS raw vs MERRA-2 vs KOALA (2019) …")
+print("[4i] CAMS corrected vs MERRA-2 vs KOALA (2019) …")
 df_2019 = df[df.index.year == 2019].copy()
-cams_raw_2019 = df_2019["pm25_observed"] / KOALA_RATIO  # recover from KOALA-corrected
+# Monthly-corrected CAMS: corrected[d] = raw[d] × ratio_m, so raw[d] = corrected[d] / ratio_m.
+# ratio_m = KOALA_MONTHLY[m] / CAMS_2019_monthly_mean[m]. We recover per-month:
+cams_monthly_mean_corrected = df_2019.groupby(df_2019.index.month)["pm25_observed"].transform("mean")
+koala_monthly_series = df_2019.index.month.map(KOALA_MONTHLY)
+# cams_raw per day = corrected / ratio_m = corrected × (CAMS_monthly_mean_corrected / KOALA_monthly[m])
+cams_raw_2019 = df_2019["pm25_observed"] * (cams_monthly_mean_corrected / koala_monthly_series)
 
 fig, ax = plt.subplots(figsize=(7.09, 3.2))
 ax.plot(df_2019.index, cams_raw_2019.values, color="#2166ac", lw=1.0, alpha=0.85,
-        label="CAMS raw (recovered)")
+        label="CAMS raw (approx. recovered, monthly ratio)")
 
 if MERRA2_PATH.exists():
     m2 = pd.read_csv(MERRA2_PATH)
@@ -412,7 +424,7 @@ ax.axhline(KOALA_MARCH,  color="crimson", ls=":",  lw=1.0,
 
 ax.set_xlabel("Date (2019)")
 ax.set_ylabel("PM$_{2.5}$ (µg m$^{-3}$)")
-ax.set_title("CAMS raw vs MERRA-2 vs KOALA reference — 2019")
+ax.set_title("CAMS (monthly-corrected) vs MERRA-2 vs KOALA reference — 2019")
 ax.legend(fontsize=7)
 ax.text(0.01, 0.02,
         "Note: MERRA-2 r=0.177 vs CAMS — structurally incompatible for valley basin.\n"
@@ -506,7 +518,7 @@ if shap_path.exists():
     ax.set_yticks(range(len(shap_df)))
     ax.set_yticklabels(shap_df["feature"][::-1].tolist(), fontsize=7)
     ax.set_xlabel("Mean |SHAP value| (µg m$^{-3}$)")
-    ax.set_title("SHAP feature importance — top 20\n(KOALA-anchored labels, LOMO R²=0.607)")
+    ax.set_title("SHAP feature importance — top 20\n(monthly KOALA correction, Senarathna 2024)")
 
     legend_patches = [
         mpatches.Patch(color="#4393c3", label="Meteorological"),

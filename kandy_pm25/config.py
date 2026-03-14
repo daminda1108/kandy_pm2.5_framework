@@ -82,10 +82,14 @@ PINN_INPUT_DIR  = PROC_DIR / "pinn_inputs"
 # External reference products (Stage 2 cities)
 EXTERNAL_DIR        = DATA_DIR / "external"
 
-MEDELLIN_DATA_DIR   = EXTERNAL_DIR / "medellin"
-MEDELLIN_PM25_DIR   = MEDELLIN_DATA_DIR / "pm25"
-MEDELLIN_ERA5_DIR   = MEDELLIN_DATA_DIR / "era5"
-MEDELLIN_DEM_DIR    = MEDELLIN_DATA_DIR / "dem"
+MEDELLIN_DATA_DIR      = EXTERNAL_DIR / "medellin"
+MEDELLIN_PM25_DIR      = MEDELLIN_DATA_DIR / "pm25"
+MEDELLIN_ERA5_DIR      = MEDELLIN_DATA_DIR / "era5"
+MEDELLIN_DEM_DIR       = MEDELLIN_DATA_DIR / "dem"
+MEDELLIN_SATELLITE_DIR = MEDELLIN_DATA_DIR / "satellite"
+MEDELLIN_MODIS_DIR     = MEDELLIN_SATELLITE_DIR / "modis"
+MEDELLIN_TROPOMI_DIR   = MEDELLIN_SATELLITE_DIR / "tropomi"
+MEDELLIN_CAMS_DIR      = MEDELLIN_DATA_DIR / "cams"
 
 CHIANGMAI_DATA_DIR  = EXTERNAL_DIR / "chiangmai"
 CHIANGMAI_PM25_DIR  = CHIANGMAI_DATA_DIR / "pm25"
@@ -198,18 +202,23 @@ INVERSION_PRESSURE_LEVEL = 925  # Compare T925 vs surface
 # ─────────────────────────────────────────────
 
 XGBOOST_DEFAULT_PARAMS = {
-    "n_estimators":     500,
-    "learning_rate":    0.05,
-    "max_depth":        6,
-    "subsample":        0.8,
-    "colsample_bytree": 0.8,
-    "min_child_weight": 3,
-    "reg_alpha":        0.1,
-    "reg_lambda":       1.0,
-    "objective":        "reg:squarederror",
-    "eval_metric":      "rmse",
-    "n_jobs":           -1,
-    "random_state":     42,
+    # Tuned via 100-trial Optuna LOMO-CV objective (2026-03-07)
+    # Best mean LOMO RMSE: 4.818 µg/m³ vs 4.925 default (saved: results/models/xgboost_best_params.json)
+    # Key findings: strong L1 (reg_alpha=12.4), non-zero gamma (1.98), shallow trees (depth=5)
+    "n_estimators":      1184,
+    "learning_rate":     0.008216557622222474,
+    "max_depth":         5,
+    "subsample":         0.7671508181415934,
+    "colsample_bytree":  0.9104394470417163,
+    "colsample_bylevel": 0.9744748155917816,
+    "min_child_weight":  3,
+    "gamma":             1.980599561405435,
+    "reg_alpha":         12.447006316112198,
+    "reg_lambda":        2.7135425208026795e-05,
+    "objective":         "reg:squarederror",
+    "eval_metric":       "rmse",
+    "n_jobs":            -1,
+    "random_state":      42,
     "early_stopping_rounds": 50,
 }
 
@@ -258,7 +267,17 @@ TRANSFER_PRETRAIN_CITY   = "medellin"    # Pre-training source city
 TRANSFER_VALIDATE_CITY   = "chiangmai"   # Held-out validation city (never seen during pre-training)
 
 # Bounding boxes for external cities (broad, for ERA5 download)
-MEDELLIN_BBOX  = (-75.65, 6.17, -75.52, 6.31)    # lon_min, lat_min, lon_max, lat_max
+MEDELLIN_BBOX  = (-75.65, 6.17, -75.52, 6.31)    # lon_min, lat_min, lon_max, lat_max (tuple)
+# Dict version for compatibility with spatial_mean_over_bbox (same format as KANDY_BBOX)
+MEDELLIN_BROAD_BBOX = {
+    "lat_min": 6.17, "lat_max": 6.31,
+    "lon_min": -75.65, "lon_max": -75.52,
+}
+# Medellín valley physics (Aburrá valley, N-S oriented)
+MEDELLIN_VALLEY_DEPTH_M   = 800.0   # Valley floor to surrounding ridge (~1500m vs ~700m floor)
+MEDELLIN_VALLEY_AXIS_DEG  = 0.0     # Valley runs N-S (0° = North), vs 45° for Kandy
+MEDELLIN_CENTRE_LAT       = 6.2441
+MEDELLIN_CENTRE_LON       = -75.5812
 CHIANGMAI_BBOX = (98.93,  18.70, 99.07,  18.87)
 
 # Pre-training sub-domains — 15×15km centred on monitoring network centroids

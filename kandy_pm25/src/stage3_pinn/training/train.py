@@ -44,7 +44,7 @@ sys.path.insert(0, str(Path(__file__).parents[3]))
 from config import (
     LOG_FORMAT, LOG_DATEFMT, MODELS_DIR, MERGED_DIR, PINN_GRID_RESOLUTION_M,
     N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, PINN_EPOCHS, PINN_LR,
-    PINN_PRETRAINED_BACKBONE, PINN_BLH_NORM_SCALE,
+    PINN_PRETRAINED_BACKBONE, PINN_BLH_NORM_SCALE, PINN_INPUT_DIR,
 )
 
 logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
@@ -63,6 +63,38 @@ SNAPSHOT_HOURS = [0, 3, 6, 9, 12, 15, 18, 21]
 # Soft prior that penalises K not correlating positively with BLH.
 # λ=0.01 is small — enforces a direction, not a magnitude.
 LAMBDA_KBLH = 0.01
+
+# Default model version for Stage 3 (v3 = FourierPINNV3, v2 = legacy FourierPINN)
+DEFAULT_MODEL_VERSION = "v3"
+
+
+def _get_stage3_v3_weights(epoch: int, n_epochs: int) -> dict:
+    """
+    Stage 3 v3 two-phase curriculum.
+
+    Phase 1 (0–30%): BC dominates — establish correct boundary concentrations.
+      λ_bc=0.50, λ_pde=0.10, λ_data=0.30, λ_kblh=0.05, λ_kb=0.05
+
+    Phase 2 (30–100%): PDE dominates — enforce physics in interior.
+      λ_bc=0.20, λ_pde=0.55, λ_data=0.10, λ_kblh=0.10, λ_kb=0.05
+
+    Rationale: Stage 3 has no inter-station spatial ordering to establish
+    (unlike Stage 2). Spatial structure comes from BCs + PDE + terrain forcing.
+    Phase 1 anchors boundary concentrations first; Phase 2 enforces interior physics.
+
+    No L_div: spatial structure comes from terrain/BCs/road kernel — the road kernel
+    (B4) breaks K–S degeneracy architecturally, so no diversity loss is needed.
+    """
+    phase1_end = int(0.30 * n_epochs)
+    if epoch < phase1_end:
+        return dict(bc=0.50, pde=0.10, data=0.30, kblh=0.05, kb=0.05, phys=0.0)
+    else:
+        t = min(1.0, (epoch - phase1_end) / max(1, n_epochs - phase1_end))
+        bc   = 0.50 + t * (0.20 - 0.50)
+        pde  = 0.10 + t * (0.55 - 0.10)
+        data = 0.30 + t * (0.10 - 0.30)
+        kblh = 0.05 + t * (0.10 - 0.05)
+        return dict(bc=bc, pde=pde, data=data, kblh=kblh, kb=0.05, phys=0.0)
 
 
 def _setup_wandb(run_config: dict):
@@ -107,60 +139,79 @@ def load_init_decision() -> dict:
         return json.load(f)
 
 
-def build_model(init_mode: str, device):
-    """Build FourierPINN with appropriate initialisation.
+def build_model(init_mode: str, device, model_version: str = DEFAULT_MODEL_VERSION):
+    """Build FourierPINN model with appropriate initialisation.
 
-    C2 fix: after loading any pretrained backbone, resets
-    model.source_subnet.t_max_hours to 24.0 so SourceSubNet interprets
-    t_norm as h/24 (hour of day) rather than fraction of the 8760-hour
-    Medellín training period.
+    model_version='v3' (default): FourierPINNV3 — redesigned architecture with
+        separate spatial/temporal embeddings, BLH in trunk, factored K.
+        Warm-start from v8 backbone: only head_C transfers (dim mismatch elsewhere).
+        cold-start: full random Xavier init.
+
+    model_version='v2' (legacy): FourierPINN v2 — preserved for cold-start/warm-start
+        comparison experiments and backward compat with v8 backbone loading.
+        C2 fix applied: model.source_subnet.t_max_hours set to 24.0.
     """
     import torch
-    from src.stage3_pinn.models.fourier_pinn import build_fourier_pinn
 
-    model = build_fourier_pinn()
-    model = model.to(device)
+    road_kernel_path = PINN_INPUT_DIR / "kandy_road_kernel_100m.npz"
 
-    if init_mode in ("use_pretrained_frozen", "use_pretrained_unfrozen"):
-        ckpt_path = Path(PINN_PRETRAINED_BACKBONE) if PINN_PRETRAINED_BACKBONE else None
-        if ckpt_path is None or not ckpt_path.exists():
-            log.warning(f"Pretrained checkpoint not found: {ckpt_path} — falling back to random init")
+    if model_version == "v3":
+        from src.stage3_pinn.models.fourier_pinn_v3 import (
+            FourierPINNV3, load_partial_backbone,
+            reinit_diffusion_subnet_v3, reinit_alpha_net,
+        )
+        model = FourierPINNV3(road_kernel_path=road_kernel_path)
+        model = model.to(device)
+
+        if init_mode in ("use_pretrained_frozen", "use_pretrained_unfrozen", "use_pretrained_v13"):
+            ckpt_path = Path(PINN_PRETRAINED_BACKBONE) if PINN_PRETRAINED_BACKBONE else None
+            if ckpt_path is None or not ckpt_path.exists():
+                log.warning(f"Pretrained backbone not found: {ckpt_path} — cold start")
+            else:
+                ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
+                v2_state = ckpt.get("model_state_dict", ckpt)
+                n_loaded, n_skipped = load_partial_backbone(model, v2_state)
+                log.info(f"v3 warm-start: {n_loaded} keys from v8 backbone; {n_skipped} reinit")
+            # Always reinit city-specific components regardless of backbone availability
+            reinit_diffusion_subnet_v3(model)
+            reinit_alpha_net(model)
         else:
-            ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
-            # B4: strict=False because source_subnet.fc1 changed dimension (6→4 inputs).
-            # source_subnet and diffusion_subnet are reinitialised below (gap A4) so
-            # shape mismatches in those subnets are intentionally discarded.
-            # trunk (net.*) and head_C carry the Medellín physics priors intact.
-            missing, unexpected = model.load_state_dict(
-                ckpt["model_state_dict"], strict=False
-            )
-            if missing:
-                log.info(f"Backbone keys not found in checkpoint (new, reinitialised): {missing}")
-            if unexpected:
-                log.info(f"Checkpoint keys not in model (from old arch, discarded): {unexpected}")
-            n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-            log.info(f"Loaded Medellín backbone from {ckpt_path} — {n_params:,} params, strict=False")
-
-            # A4: reinitialise subnets — Kandy terrain and source patterns differ from Medellín.
-            # The trunk carries valley-physics spatial representations; subnets are city-specific.
-            from src.stage3_pinn.models.fourier_pinn import (
-                reinit_source_subnet, reinit_diffusion_subnet
-            )
-            reinit_source_subnet(model)
-            reinit_diffusion_subnet(model)
-
-            if init_mode == "use_pretrained_frozen":
-                from src.stage2_transfer.pretrain.layer_freezing import freeze_backbone
-                model = freeze_backbone(model, n_frozen_layers=4)
+            log.info("v3 cold-start: full random Xavier initialisation")
 
     else:
-        log.info("Cold-start: using random Xavier initialisation")
+        # v2 legacy path — unchanged for backward compat
+        from src.stage3_pinn.models.fourier_pinn import build_fourier_pinn
+        model = build_fourier_pinn()
+        model = model.to(device)
 
-    # C2: reset SourceSubNet time scale to one day (h/24 semantics for Stage 3).
-    # In Stage 2, t_max_hours = 8760 (one year). In Stage 3, t_norm = h/24
-    # so t_max_hours must equal 24.0 for sin/cos cyclic encoding to be correct.
-    model.source_subnet.t_max_hours = torch.tensor(24.0)
-    log.info("C2: model.source_subnet.t_max_hours set to 24.0 (Stage 3 quasi-steady-state)")
+        if init_mode in ("use_pretrained_frozen", "use_pretrained_unfrozen"):
+            ckpt_path = Path(PINN_PRETRAINED_BACKBONE) if PINN_PRETRAINED_BACKBONE else None
+            if ckpt_path is None or not ckpt_path.exists():
+                log.warning(f"Pretrained checkpoint not found: {ckpt_path} — falling back to random init")
+            else:
+                ckpt = torch.load(str(ckpt_path), map_location=device, weights_only=False)
+                missing, unexpected = model.load_state_dict(
+                    ckpt["model_state_dict"], strict=False
+                )
+                if missing:
+                    log.info(f"Backbone keys not found (reinitialised): {missing[:3]}...")
+                if unexpected:
+                    log.info(f"Checkpoint keys discarded: {unexpected[:3]}...")
+                log.info(f"Loaded v8 backbone (v2 model, strict=False)")
+                from src.stage3_pinn.models.fourier_pinn import (
+                    reinit_source_subnet, reinit_diffusion_subnet
+                )
+                reinit_source_subnet(model)
+                reinit_diffusion_subnet(model)
+                if init_mode == "use_pretrained_frozen":
+                    from src.stage2_transfer.pretrain.layer_freezing import freeze_backbone
+                    model = freeze_backbone(model, n_frozen_layers=4)
+        else:
+            log.info("v2 cold-start: random Xavier initialisation")
+
+        # C2: reset SourceSubNet time scale to 24h for Stage 3
+        model.source_subnet.t_max_hours = torch.tensor(24.0)
+        log.info("C2: model.source_subnet.t_max_hours set to 24.0")
 
     return model, init_mode
 
@@ -241,6 +292,7 @@ def train_pinn(
     rar_start:  int  = 200,
     save_every: int  = 100,
     wandb_run=None,
+    model_version: str = DEFAULT_MODEL_VERSION,
 ) -> list:
     """
     Main PINN training loop — Stage 3 quasi-steady-state (gaps B1–B5+C2).
@@ -282,9 +334,12 @@ def train_pinn(
     )
     from src.stage3_pinn.training.collocation   import sample_uniform, sample_rar
     from src.stage3_pinn.physics.advection_diffusion import steady_state_pde_loss
+    from src.stage3_pinn.physics.pde_residual_v3 import pde_residual_v3
     from src.stage3_pinn.physics.constraints    import compute_all_constraints
     from src.stage3_pinn.domain.boundary_conditions import DirichletBC
     from config import KANDY_PINN_BBOX
+
+    use_v3 = (model_version == "v3")
 
     optimizer     = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
     scheduler_opt = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
@@ -308,7 +363,12 @@ def train_pinn(
 
     for epoch in range(n_epochs):
         model.train()
-        lambdas    = curriculum.step(epoch)
+        # v3: use 2-phase Stage 3 curriculum; v2: use legacy CurriculumScheduler
+        if use_v3:
+            _w     = _get_stage3_v3_weights(epoch, n_epochs)
+            lambdas = type('W', (), _w)()  # simple namespace
+        else:
+            lambdas = curriculum.step(epoch)
         current_lr = scheduler_opt.get_last_lr()[0] if epoch > 0 else lr
 
         # Sample one random date for this epoch
@@ -386,12 +446,24 @@ def train_pinn(
                 )
 
             # B1: quasi-steady-state PDE loss for this snapshot
+            # v3: use pde_residual_v3 with elev=0.5 placeholder (DEM not yet wired, B6 deferred)
+            # v2: use legacy steady_state_pde_loss
             if lambdas.pde > 0:
-                L_pde_h = steady_state_pde_loss(
-                    model, xyt_int, wu_int, wv_int,
-                    precip=precip_tensor,
-                    blh=blh_tensor,
-                )
+                if use_v3:
+                    elev_int = torch.full_like(blh_tensor, 0.5)
+                    R_pde = pde_residual_v3(
+                        model, xyt_int, wu_int, wv_int,
+                        precip=precip_tensor,
+                        blh=blh_tensor,
+                        elev=elev_int,
+                    )
+                    L_pde_h = (R_pde ** 2).mean()
+                else:
+                    L_pde_h = steady_state_pde_loss(
+                        model, xyt_int, wu_int, wv_int,
+                        precip=precip_tensor,
+                        blh=blh_tensor,
+                    )
                 L_pde_day = L_pde_day + L_pde_h
 
             # B3: evaluate C at Stage-1 pixel locations for daily-mean constraint
@@ -465,14 +537,17 @@ def train_pinn(
                 k_means_grad.append((Kx_g.mean() + Ky_g.mean()) / 2.0)
             k_t   = torch.stack(k_means_grad)
             r_kblh = _pearson_corr(blh_t, k_t)
-            L_kblh = LAMBDA_KBLH * (1.0 - r_kblh) ** 2
+            # v3: use curriculum kblh weight; v2: use constant LAMBDA_KBLH
+            lam_kblh = getattr(lambdas, 'kblh', LAMBDA_KBLH)
+            L_kblh = lam_kblh * (1.0 - r_kblh) ** 2
 
         L_total = total_loss(L_pde, L_data, L_bc, L_phys,
                              lambdas.pde, lambdas.data, lambdas.bc, lambdas.phys)
         L_total = L_total + L_kblh
 
         L_total.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        # max_norm=10.0 (v3: prevents explosion; 1.0 was too aggressive for PINN curvature terms)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=10.0)
         optimizer.step()
         scheduler_opt.step()
 
@@ -516,8 +591,11 @@ def train_pinn(
 
 def main():
     parser = argparse.ArgumentParser(description="Stage 3 Kandy PINN training")
-    parser.add_argument("--init",     choices=["A", "B", "C"], default=None,
-                        help="Init strategy: A=frozen, B=unfrozen, C=cold. Auto from transfer_decision.json if omitted")
+    parser.add_argument("--init",     choices=["A", "B", "B3", "C"], default=None,
+                        help="Init strategy: A=frozen, B=warm-start v8, B3=warm-start v13, C=cold. "
+                             "Auto from transfer_decision.json if omitted")
+    parser.add_argument("--model",    choices=["v3", "v2"], default=DEFAULT_MODEL_VERSION,
+                        help="Model version: v3=FourierPINNV3 (default), v2=legacy FourierPINN")
     parser.add_argument("--epochs",   type=int, default=PINN_EPOCHS)
     parser.add_argument("--lr",       type=float, default=PINN_LR)
     parser.add_argument("--no-rar",   action="store_true", help="Disable RAR collocation")
@@ -531,14 +609,19 @@ def main():
 
     # Determine initialisation
     if args.init:
-        init_map = {"A": "use_pretrained_frozen", "B": "use_pretrained_unfrozen", "C": "random_init"}
+        init_map = {
+            "A":  "use_pretrained_frozen",
+            "B":  "use_pretrained_unfrozen",
+            "B3": "use_pretrained_v13",
+            "C":  "random_init",
+        }
         init_mode = init_map[args.init]
     else:
         decision   = load_init_decision()
         init_mode  = decision.get("stage3_init", "random_init")
-    log.info(f"Initialisation mode: {init_mode}")
+    log.info(f"Initialisation mode: {init_mode}, model version: {args.model}")
 
-    model, init_mode = build_model(init_mode, device)
+    model, init_mode = build_model(init_mode, device, model_version=args.model)
 
     stage1_df = load_stage1_data()
 
@@ -550,6 +633,7 @@ def main():
     if use_wandb:
         wandb_run = _setup_wandb({
             "stage":          "stage3_kandy_pinn",
+            "model_version":  args.model,
             "init_mode":      init_mode,
             "n_epochs":       n_epochs,
             "lr":             args.lr,
@@ -564,6 +648,7 @@ def main():
         model, stage1_df, n_epochs, args.lr, device,
         use_rar=not args.no_rar,
         wandb_run=wandb_run,
+        model_version=args.model,
     )
 
     import pandas as pd

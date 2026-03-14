@@ -99,6 +99,21 @@ READ\ Me.txt
 READ\ ME.txt
 
 
+# ── Root-level ad-hoc scripts and output files ───────────────────────────────
+/inspect_data.py
+/parse_xlsx.py
+/inspect_out.txt
+/result.txt
+
+
+# ── Root-level scripts directory (vault tools, map scripts) ──────────────────
+/scripts/
+
+
+# ── Session artifacts (handoff notes, working docs) ──────────────────────────
+artifacts/
+
+
 # ── Kaggle kernel scripts (managed via kaggle CLI, not git) ──────────────────
 *_kaggle.py
 kaggle_kernel/
@@ -119,3 +134,5 @@ knowledge_base/
 node_modules/
 package.json
 package-lock.json
+extract_all_books.bat
+extract_smallest_book.bat

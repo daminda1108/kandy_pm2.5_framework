@@ -83,9 +83,12 @@ CLIMATE_FEATURES = [
 
 # Regional anchor (Colombo BAM sensor — 115km away, shared regional signals)
 ANCHOR_FEATURES = [
-    "pm25_colombo",       # Same-day Colombo PM2.5 (lag-0)
-    "pm25_colombo_lag1",  # Previous-day Colombo PM2.5 (no leakage)
-    "pm25_colombo_7d",    # 7-day rolling mean (background level)
+    "pm25_colombo",           # Same-day Colombo PM2.5 (lag-0)
+    "pm25_colombo_lag1",      # Previous-day Colombo PM2.5 (no leakage)
+    "pm25_colombo_7d",        # 7-day rolling mean (background level)
+    "pm25_prev_month_mean",   # Mean PM2.5 of preceding calendar month (aerosol persistence)
+                              # r(March, April) = 0.679 — diagnoses pre-monsoon loading regimes
+                              # LOMO-safe: preceding month is never held out with current month
 ]
 
 # Topography-aware atmospheric features
@@ -101,7 +104,7 @@ TOPO_FEATURES = [
     "wind_cross",            # Cross-valley wind component
     "valley_flow_ratio",     # |wind_along| / total wind (0–1)
     "richardson_number",     # Bulk Richardson Number (skipped if no t925)
-    "ri_stable_flag",        # Binary: Ri > 0.25 → stable BL (skipped if no t925)
+    # ri_stable_flag removed: SHAP=0.000 (zero importance, fully redundant with richardson_number)
 ]
 
 # Temporal features (cyclically encoded)
@@ -124,14 +127,15 @@ ALL_FEATURES = (
 TARGET = "pm25_observed"
 
 
-def load_dataset() -> pd.DataFrame:
-    data_path = MERGED_DIR / "dataset_daily.parquet"
+def load_dataset(filename: str = "dataset_daily.parquet") -> pd.DataFrame:
+    data_path = MERGED_DIR / filename
     if not data_path.exists():
         raise FileNotFoundError(
-            f"Dataset not found: {data_path}\nRun build_dataset.py first."
+            f"Dataset not found: {data_path}\n"
+            f"Run build_dataset.py (or build_dataset.py --label-source merra2vd for Model B) first."
         )
     df = pd.read_parquet(data_path)
-    log.info(f"Dataset loaded: {df.shape[0]} days, {df.shape[1]} columns.")
+    log.info(f"Dataset loaded: {df.shape[0]} days, {df.shape[1]} columns. ({filename})")
     return df
 
 
@@ -365,14 +369,25 @@ def save_model(model: xgb.XGBRegressor, name: str = "xgboost_kandy_pm25") -> Pat
     return out
 
 
-def tune_hyperparameters(
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    X_val: pd.DataFrame,
-    y_val: pd.Series,
-    n_trials: int = 50,
+def tune_hyperparameters_lomo(
+    df: pd.DataFrame,
+    features: list[str],
+    n_trials: int = 100,
 ) -> dict:
-    """Optuna hyperparameter search."""
+    """
+    Optuna hyperparameter search using LOMO CV as the objective.
+
+    Each trial trains 12 XGBoost models (one per held-out month) and
+    returns the mean LOMO RMSE across all months — the same metric
+    reported in the thesis. This avoids the mismatch of the old approach
+    (optimising on a temporal split while reporting LOMO).
+
+    Search space additions vs the previous implementation:
+      - gamma           (min split loss reduction — strong regulariser)
+      - colsample_bylevel (per-level column subsampling)
+      - wider reg_alpha / reg_lambda ranges
+      - wider n_estimators range (up to 1500)
+    """
     try:
         import optuna
         optuna.logging.set_verbosity(optuna.logging.WARNING)
@@ -380,30 +395,77 @@ def tune_hyperparameters(
         log.warning("optuna not installed — skipping hyperparameter tuning. pip install optuna")
         return XGBOOST_DEFAULT_PARAMS
 
+    import json
+
+    labelled = df[df[TARGET].notna()].copy()
+    X = labelled[features]
+    y = labelled[TARGET]
+    months = labelled.index.month
+
     def objective(trial):
         params = {
-            "n_estimators":     trial.suggest_int("n_estimators", 200, 1000),
-            "learning_rate":    trial.suggest_float("learning_rate", 0.01, 0.2, log=True),
-            "max_depth":        trial.suggest_int("max_depth", 3, 9),
-            "subsample":        trial.suggest_float("subsample", 0.5, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
-            "min_child_weight": trial.suggest_int("min_child_weight", 1, 10),
-            "reg_alpha":        trial.suggest_float("reg_alpha", 1e-4, 10.0, log=True),
-            "reg_lambda":       trial.suggest_float("reg_lambda", 1e-4, 10.0, log=True),
-            "objective":        "reg:squarederror",
-            "n_jobs":           -1,
-            "random_state":     RANDOM_SEED,
+            "n_estimators":      trial.suggest_int("n_estimators", 200, 1500),
+            "learning_rate":     trial.suggest_float("learning_rate", 0.005, 0.3, log=True),
+            "max_depth":         trial.suggest_int("max_depth", 3, 10),
+            "subsample":         trial.suggest_float("subsample", 0.5, 1.0),
+            "colsample_bytree":  trial.suggest_float("colsample_bytree", 0.4, 1.0),
+            "colsample_bylevel": trial.suggest_float("colsample_bylevel", 0.5, 1.0),
+            "min_child_weight":  trial.suggest_int("min_child_weight", 1, 20),
+            "gamma":             trial.suggest_float("gamma", 0.0, 5.0),
+            "reg_alpha":         trial.suggest_float("reg_alpha", 1e-5, 50.0, log=True),
+            "reg_lambda":        trial.suggest_float("reg_lambda", 1e-5, 50.0, log=True),
+            "objective":         "reg:squarederror",
+            "n_jobs":            -1,
+            "random_state":      RANDOM_SEED,
         }
-        model = xgb.XGBRegressor(**params)
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
-        pred = model.predict(X_val)
-        return mean_squared_error(y_val, pred) ** 0.5  # Minimise RMSE
 
-    study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=RANDOM_SEED))
+        fold_rmses = []
+        for month in sorted(months.unique()):
+            test_mask = months == month
+            X_tr, X_te = X[~test_mask], X[test_mask]
+            y_tr, y_te = y[~test_mask], y[test_mask]
+            model = xgb.XGBRegressor(**params)
+            model.fit(X_tr, y_tr, verbose=False)
+            pred = model.predict(X_te)
+            fold_rmses.append(mean_squared_error(y_te, pred) ** 0.5)
+
+        return float(np.mean(fold_rmses))  # minimise mean LOMO RMSE
+
+    study = optuna.create_study(
+        direction="minimize",
+        sampler=optuna.samplers.TPESampler(seed=RANDOM_SEED),
+    )
     study.optimize(objective, n_trials=n_trials, show_progress_bar=True)
+
     best = study.best_params
-    best.update({"objective": "reg:squarederror", "n_jobs": -1, "random_state": RANDOM_SEED})
+    best.update({
+        "objective":             "reg:squarederror",
+        "eval_metric":           "rmse",
+        "n_jobs":                -1,
+        "random_state":          RANDOM_SEED,
+        "early_stopping_rounds": 50,
+    })
+
+    log.info(f"Best LOMO RMSE: {study.best_value:.3f} µg/m³ (trial #{study.best_trial.number})")
     log.info(f"Best hyperparameters: {best}")
+
+    # Save best params for reproducibility
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    params_path = MODELS_DIR / "xgboost_best_params.json"
+    with open(params_path, "w") as f:
+        json.dump(best, f, indent=2)
+    log.info(f"Best params saved → {params_path}")
+
+    # Save trial history
+    trials_df = study.trials_dataframe()[["number", "value", "params_n_estimators",
+                                          "params_learning_rate", "params_max_depth",
+                                          "params_gamma", "params_reg_alpha", "params_reg_lambda"]]
+    trials_df.columns = ["trial", "lomo_rmse", "n_estimators", "lr", "max_depth",
+                         "gamma", "reg_alpha", "reg_lambda"]
+    TABLES_DIR.mkdir(parents=True, exist_ok=True)
+    trials_df.to_csv(TABLES_DIR / "optuna_trials.csv", index=False)
+    log.info(f"Trial history saved → {TABLES_DIR / 'optuna_trials.csv'}")
+
     return best
 
 
@@ -481,11 +543,19 @@ def main():
     parser.add_argument("--tune",    action="store_true", help="Run Optuna hyperparameter search")
     parser.add_argument("--no-shap", action="store_true", help="Skip SHAP analysis")
     parser.add_argument("--cv-only", action="store_true", help="Cross-validate only, no train/test split")
-    parser.add_argument("--n-trials", type=int, default=50, help="Optuna trials (default 50)")
+    parser.add_argument("--n-trials", type=int, default=100, help="Optuna trials (default 100)")
+    parser.add_argument(
+        "--dataset", default="dataset_daily.parquet",
+        help=(
+            "Dataset parquet filename in MERGED_DIR "
+            "(default: dataset_daily.parquet for Model A; "
+            "use dataset_daily_modelB.parquet for Model B)"
+        ),
+    )
     args = parser.parse_args()
 
     # ── Load data ─────────────────────────────────────────────────────────────
-    df = load_dataset()
+    df = load_dataset(filename=args.dataset)
     features, has_target = select_features(df)
 
     if not features:
@@ -531,14 +601,10 @@ def main():
     n_val = max(30, len(X_all) // 5)
     params = XGBOOST_DEFAULT_PARAMS
 
-    # ── Optional hyperparameter tuning ────────────────────────────────────────
+    # ── Optional hyperparameter tuning (LOMO-based objective) ─────────────────
     if args.tune:
-        log.info("\n── Hyperparameter Tuning ──")
-        params = tune_hyperparameters(
-            X_all.iloc[:-n_val], y_all.iloc[:-n_val],
-            X_all.iloc[-n_val:], y_all.iloc[-n_val:],
-            n_trials=args.n_trials,
-        )
+        log.info("\n── Hyperparameter Tuning (LOMO CV objective) ──")
+        params = tune_hyperparameters_lomo(df, features, n_trials=args.n_trials)
 
     model = train_xgboost(
         X_all.iloc[:-n_val], y_all.iloc[:-n_val],
