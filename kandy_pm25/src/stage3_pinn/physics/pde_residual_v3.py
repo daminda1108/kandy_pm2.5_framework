@@ -4,12 +4,22 @@ pde_residual_v3.py — Steady-state PDE residual for FourierPINNV3.
 PDE (quasi-steady-state advection-diffusion with anisotropic K and wet removal):
     R = u·∂C/∂x + v·∂C/∂y
           - ∂(Kx·∂C/∂x)/∂x - ∂(Ky·∂C/∂y)/∂y
-          - S + (v_d + Λ·P)·C
+          - S + (λ_dry + Λ·P)·C
+
+All derivatives are in PHYSICAL coordinates [m].
+xyt is in NORMALISED coordinates x_norm ∈ [-1,1], y_norm ∈ [-1,1].
+Coordinate scaling (I3 fix — [-1,1] convention; domain spans 2 normalised units):
+    x_phys = (x_norm + 1) / 2 × lx_m  →  ∂/∂x_phys = (2/lx_m) × ∂/∂x_norm
+    alpha_x = 2 / lx_m  (applied twice for 2nd-order diffusion divergence)
+
+    Physical advection  : u × dC_dx_norm × alpha_x
+    Physical divergence : d_flux_x_norm × alpha_x²
+    where flux_x = Kx × dC_dx_norm (keeps chain rule intact through autograd)
 
 Physical constants:
-    v_d = 0.003 m/s dry deposition velocity (Seinfeld & Pandis, fixed)
-    H   = 30.0 m  representative mixed-layer depth for removal rate
-    λ_dry = v_d / H = 1.0e-4 s⁻¹
+    v_d = 0.003 m/s  dry deposition velocity (Seinfeld & Pandis, fixed)
+    λ_dry = v_d / max(BLH_m, 30.0)  [s⁻¹]  (Fix F — BLH-dependent)
+      If blh_m not supplied: λ_dry = 1.0e-4 s⁻¹ (fixed H=30m fallback)
 
     Λ   = 4.5e-4 s⁻¹·(mm/h)⁻¹  below-cloud scavenging coefficient
     P   = precipitation [mm/h] (from ERA5 'tp')
@@ -31,6 +41,9 @@ Gradient flow notes:
     included in the xyt gradient graph. This is physically correct: BLH is an
     external ERA5 input, not a PDE variable being solved for.
 
+    blh_m is physical BLH in metres (distinct from blh_norm = BLH_m / 2000.0).
+    blh_m is detached from the autograd graph — used only for λ_dry computation.
+
 Residual magnitude guard:
     If max(|R|) > 1e6, R is rescaled to prevent v12-type gradient explosion
     when PDE weight activates after a period without PDE supervision.
@@ -39,7 +52,6 @@ Residual magnitude guard:
 """
 
 import logging
-import math
 import sys
 from pathlib import Path
 
@@ -50,7 +62,8 @@ logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=logging.INFO)
 log = logging.getLogger("pde_residual_v3")
 
 # Physical constants
-LAMBDA_DRY   = 1.0e-4    # s⁻¹  dry removal rate (v_d=0.003 m/s / H=30m)
+_V_D         = 0.003      # m/s  dry deposition velocity
+LAMBDA_DRY   = 1.0e-4    # s⁻¹  fallback: v_d=0.003 m/s / H=30m (used when blh_m=None)
 LAMBDA_WET   = 4.5e-4    # s⁻¹·(mm/h)⁻¹  below-cloud scavenging
 
 # Explosion guard threshold
@@ -65,9 +78,15 @@ def pde_residual_v3(
     precip:   "torch.Tensor",   # (N, 1) precipitation [mm/h]; None → no wet removal
     blh:      "torch.Tensor",   # (N, 1) normalised BLH = BLH_m / 2000.0
     elev:     "torch.Tensor",   # (N, 1) normalised elevation ∈ [0, 1]; None → 0.5
+    lx_m:     float = 15000.0,  # domain width  [m] — for coordinate scaling (Fix D)
+    ly_m:     float = 15000.0,  # domain height [m] — for coordinate scaling (Fix D)
+    blh_m:    "torch.Tensor | None" = None,  # (N,1) or (1,1) physical BLH [m] (Fix F)
 ) -> "torch.Tensor":
     """
     Compute steady-state PDE residual R(x,y) at collocation points.
+
+    All gradient operations are applied in normalised coordinates, then scaled
+    to physical units via alpha_x = 1/lx_m, alpha_y = 1/ly_m.
 
     Args:
         model   : FourierPINNV3 instance
@@ -75,13 +94,23 @@ def pde_residual_v3(
         wind_u  : (N, 1) u-component wind [m/s]
         wind_v  : (N, 1) v-component wind [m/s]
         precip  : (N, 1) precipitation [mm/h]; pass None or zeros for dry conditions
-        blh     : (N, 1) normalised BLH (BLH_m / 2000.0)
+        blh     : (N, 1) normalised BLH (BLH_m / 2000.0) — enters model for K_base
         elev    : (N, 1) normalised elevation; None → defaults to 0.5 in model.forward
+        lx_m    : domain width in metres (default 15000 m for Medellín/Kandy)
+        ly_m    : domain height in metres (default 15000 m for Medellín/Kandy)
+        blh_m   : physical BLH in metres for BLH-dependent λ_dry (Fix F).
+                  If None: falls back to fixed LAMBDA_DRY = v_d/30m = 1e-4 s⁻¹.
+                  Should be detached from grad graph (external ERA5 input).
 
     Returns:
         R : (N, 1) PDE residual — ideally near zero at solution
     """
     import torch
+
+    # Coordinate scaling factors: ∂C/∂x_phys = dC_dx_norm * alpha_x
+    # I3 fix: [-1,1] convention → domain spans 2 normalised units → alpha = 2/L_m
+    alpha_x = 2.0 / lx_m
+    alpha_y = 2.0 / ly_m
 
     # Ensure xyt is in the autograd graph
     if not xyt.requires_grad:
@@ -96,43 +125,59 @@ def pde_residual_v3(
 
     go = torch.ones_like(C)
 
-    # ── First-order spatial derivatives of C ─────────────────────────────────
+    # ── First-order spatial derivatives of C (in normalised coords) ──────────
     # Intentionally omit the t-column gradient (∂C/∂t ≡ 0 in steady-state).
     grads = torch.autograd.grad(
         C, xyt, grad_outputs=go, create_graph=True
     )[0]                       # (N, 3)
-    dC_dx = grads[:, 0:1]     # (N, 1)
-    dC_dy = grads[:, 1:2]     # (N, 1)
+    dC_dx = grads[:, 0:1]     # ∂C/∂x_norm  (N, 1)
+    dC_dy = grads[:, 1:2]     # ∂C/∂y_norm  (N, 1)
 
-    # ── Diffusive flux divergence ─────────────────────────────────────────────
-    # d/dx(Kx · ∂C/∂x): Kx depends on xyt[:,0:1] via KAnisoNet → product rule
-    # ∂/∂x(Kx · dC_dx) = (∂Kx/∂x)(dC_dx) + Kx(∂²C/∂x²)
-    flux_x = Kx * dC_dx       # (N, 1)
-    flux_y = Ky * dC_dy       # (N, 1)
+    # ── Diffusive flux divergence (physical coordinates) ─────────────────────
+    # flux_x = Kx × dC_dx_norm  (normalised-coord flux — keeps Kx in autograd)
+    # d/dx_phys(Kx × dC_dx_phys) = alpha_x² × ∂/∂x_norm(Kx × dC_dx_norm)
+    # Derivation: dC_dx_phys = dC_dx_norm × alpha_x
+    #   flux_phys = Kx × dC_dx_phys = Kx × dC_dx_norm × alpha_x
+    #   d/dx_phys(flux_phys) = alpha_x × ∂/∂x_norm(Kx × dC_dx_norm × alpha_x)
+    #                        = alpha_x² × ∂(Kx × dC_dx_norm)/∂x_norm
+    flux_x = Kx * dC_dx       # (N, 1) normalised-coord flux
+    flux_y = Ky * dC_dy       # (N, 1) normalised-coord flux
 
-    d_flux_x = torch.autograd.grad(
+    d_flux_x_norm = torch.autograd.grad(
         flux_x, xyt, grad_outputs=go, create_graph=True
-    )[0][:, 0:1]               # ∂(Kx·∂C/∂x)/∂x — (N, 1)
+    )[0][:, 0:1]               # ∂(Kx·dC_dx_norm)/∂x_norm — (N, 1)
 
-    d_flux_y = torch.autograd.grad(
+    d_flux_y_norm = torch.autograd.grad(
         flux_y, xyt, grad_outputs=go, create_graph=True
-    )[0][:, 1:2]               # ∂(Ky·∂C/∂y)/∂y — (N, 1)
+    )[0][:, 1:2]               # ∂(Ky·dC_dy_norm)/∂y_norm — (N, 1)
+
+    # Scale to physical divergence
+    d_flux_x = d_flux_x_norm * (alpha_x ** 2)
+    d_flux_y = d_flux_y_norm * (alpha_y ** 2)
 
     # ── Removal term ──────────────────────────────────────────────────────────
-    # (λ_dry + Λ·P) · C
-    if precip is not None:
-        removal_rate = LAMBDA_DRY + LAMBDA_WET * precip   # (N, 1)
+    # λ_dry = v_d / max(BLH_m, 30.0)  — Fix F: BLH-dependent
+    if blh_m is not None:
+        # blh_m: physical BLH [m]; clamp to avoid division-by-zero near-surface
+        lambda_dry = _V_D / blh_m.clamp(min=30.0)    # (N, 1) or broadcast
     else:
-        removal_rate = LAMBDA_DRY                          # scalar
+        lambda_dry = LAMBDA_DRY                        # scalar fallback
 
-    # ── PDE residual ─────────────────────────────────────────────────────────
-    # R = advection - diffusion divergence - S + removal·C
-    R = (wind_u * dC_dx
-         + wind_v * dC_dy
-         - d_flux_x
-         - d_flux_y
-         - S
-         + removal_rate * C)
+    if precip is not None:
+        removal_rate = lambda_dry + LAMBDA_WET * precip   # (N, 1)
+    else:
+        removal_rate = lambda_dry                          # (N,1) or scalar
+
+    # ── PDE residual (physical coordinates) ──────────────────────────────────
+    # R = u·∂C/∂x_phys + v·∂C/∂y_phys
+    #     - ∂(Kx·∂C/∂x_phys)/∂x_phys - ∂(Ky·∂C/∂y_phys)/∂y_phys
+    #     - S + (λ_dry + Λ·P)·C
+    R = (wind_u * dC_dx * alpha_x        # advection x  [µg/m³/s]
+         + wind_v * dC_dy * alpha_y      # advection y
+         - d_flux_x                      # diffusion x  [µg/m³/s]
+         - d_flux_y                      # diffusion y
+         - S                             # source       [µg/m³/s]
+         + removal_rate * C)             # removal      [µg/m³/s]
 
     # ── Explosion guard ───────────────────────────────────────────────────────
     r_max = R.abs().max()

@@ -38,9 +38,12 @@ Phase 1 (0–25%):  λ_pde=0.00, λ_data=0.75, λ_bc=0.20, λ_kblh=0.05
 
 Phase 2 (25–60%):  linear ramp λ_pde 0→0.38, λ_data 0.75→0.30
 
-Phase 3 (60–100%): λ_pde=0.38, λ_data=0.28, λ_bc=0.15, λ_kblh=0.10, λ_div=0.09
-  Road kernel (B4) breaks K–S degeneracy → no L_div needed.
-  If spatial_R² < 0.3 at epoch 25%, consider adding L_div as fallback.
+Phase 3 (60–100%): λ_pde=0.38, λ_data=0.35, λ_bc=0.15, λ_kblh=0.10
+  L_div intentionally absent: road kernel (B4) breaks K–S degeneracy.
+  Expert recommendation (Antigravity 2026-03-14): λ_data≥0.35 to prevent
+  PDE from undoing station fit as weights shift in Phase 3 (v8 lesson).
+  If spatial_R² < 0.3 at ep 25%: consider L_div = (std_C_sta - σ_obs)²/σ_obs²
+  (data-anchored form, not floor penalty — ties constraint to observations).
 
 SPATIAL VALIDATION (key metric)
 ---------------------------------
@@ -92,6 +95,13 @@ ROAD_KERNEL_NPZ   = PINN_INPUT_DIR  / "medellin_road_kernel_100m.npz"
 ELEV_GRID_NPZ     = PINN_INPUT_DIR  / "medellin_elev_grid_100m.npz"
 V8_BACKBONE_PT    = MODELS_DIR / "stage2_pretrain" / "v8" / "pretrained_physics_backbone.pt"
 CHECKPOINT_DIR    = MODELS_DIR / "stage2_medellin_pinn"
+ERA5_SIATA_NC     = Path(__file__).parents[3] / "data" / "external" / "medellin" / "era5" / "medellin_era5_siata_period.nc"
+
+# Domain dimensions for PDE coordinate scaling (Fix D) — from MEDELLIN_PINN_BBOX
+# L_y = Δlat × 111320 m/° = 0.1351° × 111320 ≈ 15040 m
+# L_x = Δlon × cos(lat_ctr°) × 111320 m/° = 0.1360° × cos(6.23°) × 111320 ≈ 15050 m
+LX_M = 15050.0   # domain width  [m]
+LY_M = 15040.0   # domain height [m]
 
 WANDB_PROJECT = "kandy-pinn"
 
@@ -123,12 +133,12 @@ def get_weights(epoch: int, n_epochs: int) -> dict:
     elif epoch < p2_end:
         t = (epoch - p1_end) / max(1, p2_end - p1_end)
         pde  = t * 0.38
-        data = 0.75 + t * (0.28 - 0.75)
+        data = 0.75 + t * (0.35 - 0.75)   # ramp to 0.35 (expert: ≥0.35 to prevent PDE undoing station fit)
         bc   = 0.20 + t * (0.15 - 0.20)
         kblh = 0.05 + t * (0.10 - 0.05)
         return dict(pde=pde, data=data, bc=bc, kblh=kblh)
     else:
-        return dict(pde=0.38, data=0.28, bc=0.15, kblh=0.10)
+        return dict(pde=0.38, data=0.35, bc=0.15, kblh=0.10)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -191,6 +201,57 @@ def load_siata_daily() -> tuple[pd.DataFrame, pd.DataFrame, float]:
     log.info(f"  PM2.5 variance (normalisation): {pm25_var:.2f} µg²/m⁶")
 
     return daily_sta, city_mean, pm25_var
+
+
+def load_era5_blh_hourly() -> dict:
+    """
+    Load ERA5 hourly BLH for the SIATA training period (Aug 2018–Sep 2019).
+
+    Fix I/A: provides per-snapshot BLH so each of the 8 quasi-steady-state
+    hourly snapshots receives the correct ERA5 boundary layer height instead
+    of sharing one daily-mean value.
+
+    Returns
+    -------
+    blh_hourly : dict { pd.Timestamp (midnight) → { hour_int → blh_m (float) } }
+        Falls back to empty dict if ERA5 file not found — training then uses
+        the daily-mean BLH from the per-station parquet (same as before this fix).
+    """
+    if not ERA5_SIATA_NC.exists():
+        log.warning(
+            f"ERA5 nc not found: {ERA5_SIATA_NC} — "
+            "per-snapshot BLH disabled; falling back to daily-mean BLH."
+        )
+        return {}
+
+    try:
+        import xarray as xr
+    except ImportError:
+        log.warning("xarray not installed — per-snapshot BLH disabled.")
+        return {}
+
+    ds = xr.open_dataset(str(ERA5_SIATA_NC))
+    blh_da = ds["blh"]   # (valid_time, latitude, longitude)
+
+    # Spatial mean over the 2×2 ERA5 coarse grid
+    spatial_dims = [d for d in blh_da.dims if d != "valid_time"]
+    blh_ts = blh_da.mean(dim=spatial_dims).values.ravel()   # (10224,)
+    times   = pd.to_datetime(ds["valid_time"].values).tz_localize(None)
+    ds.close()
+
+    result: dict = {}
+    for t, b in zip(times, blh_ts):
+        date_key = t.normalize()     # midnight timestamp
+        result.setdefault(date_key, {})[t.hour] = float(b)
+
+    n_dates = len(result)
+    all_blh = list(blh_ts)
+    log.info(
+        f"ERA5 hourly BLH loaded: {n_dates} dates, "
+        f"BLH range=[{min(all_blh):.0f}, {max(all_blh):.0f}] m "
+        f"(mean={sum(all_blh)/len(all_blh):.0f} m)"
+    )
+    return result
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -293,9 +354,11 @@ def spatial_validation(model, daily_sta: pd.DataFrame, elev_interp, device) -> d
 
     Evaluates C(x_sta, y_sta, t=0.5) for each station on a random sample
     of 50 training dates (or all if fewer). Returns:
-      spatial_R²    : R² between C_pred_mean and C_obs_mean per station
-      std_C_sta     : inter-station std of time-averaged predicted C
-      r_kblh        : correlation of domain-mean K with BLH across dates
+      spatial_R²       : R² between C_pred_mean and C_obs_mean per station
+      std_C_sta        : inter-station std of time-averaged predicted C
+      r_kblh           : correlation of domain-mean K with BLH across dates
+      per_station_bias : dict station_id → mean residual (pred - obs)
+      per_station_rmse : dict station_id → RMSE
     """
     import torch
     from sklearn.metrics import r2_score
@@ -306,6 +369,7 @@ def spatial_validation(model, daily_sta: pd.DataFrame, elev_interp, device) -> d
 
     sta_pred_means = {}   # station_id → list of daily mean C_pred
     sta_obs_means  = {}
+    sta_residuals  = {}   # station_id → list of (pred - obs)
     k_vals = []
     blh_vals = []
 
@@ -331,37 +395,57 @@ def spatial_validation(model, daily_sta: pd.DataFrame, elev_interp, device) -> d
 
             C, (Kx, Ky, _) = model(xyt, blh=blh_t, elev=elev_t)
             C_np = C.squeeze().cpu().numpy()
+            if C_np.ndim == 0:
+                C_np = C_np[np.newaxis]
 
-            for i, sid in enumerate(day_df["station_id"].values):
-                sta_pred_means.setdefault(sid, []).append(C_np[i])
-                sta_obs_means.setdefault(sid, []).append(day_df.iloc[i]["pm25"])
+            for i, (sid, obs) in enumerate(zip(day_df["station_id"].values, day_df["pm25"].values)):
+                sta_pred_means.setdefault(sid, []).append(float(C_np[i]))
+                sta_obs_means.setdefault(sid, []).append(float(obs))
+                sta_residuals.setdefault(sid, []).append(float(C_np[i]) - float(obs))
 
-            # K–BLH accumulation
+            # K–BLH accumulation (across dates → std > 0, unlike same-day snapshots)
             k_vals.append(float((Kx.mean() + Ky.mean()) / 2.0))
             blh_vals.append(blh_n)
 
     model.train()
 
     # Station-mean aggregation
-    pred_means = np.array([np.mean(v) for v in sta_pred_means.values()])
-    obs_means  = np.array([np.mean(v) for v in  sta_obs_means.values()])
+    station_ids = sorted(sta_pred_means.keys())
+    pred_means  = np.array([np.mean(sta_pred_means[s]) for s in station_ids])
+    obs_means   = np.array([np.mean(sta_obs_means[s])  for s in station_ids])
 
     spatial_r2 = float(r2_score(obs_means, pred_means)) if len(pred_means) >= 3 else float("nan")
     std_C_sta  = float(np.std(pred_means))
 
-    # K–BLH correlation
+    # K–BLH correlation (across dates — each date has a different BLH value)
     if len(k_vals) >= 5 and np.std(blh_vals) > 1e-3:
         r_kblh = float(np.corrcoef(blh_vals, k_vals)[0, 1])
     else:
         r_kblh = float("nan")
 
+    # Per-station residuals (expert recommendation: identify outlier stations)
+    per_station_bias = {s: float(np.mean(sta_residuals[s])) for s in station_ids}
+    per_station_rmse = {s: float(np.sqrt(np.mean(np.array(sta_residuals[s])**2))) for s in station_ids}
+
+    # Log per-station table
+    log.info("  Per-station residuals:")
+    log.info(f"  {'Station':>10}  {'obs_mean':>8}  {'pred_mean':>9}  {'bias':>7}  {'RMSE':>7}")
+    for s in station_ids:
+        log.info(
+            f"  {s:>10}  {np.mean(sta_obs_means[s]):8.1f}  "
+            f"{np.mean(sta_pred_means[s]):9.1f}  "
+            f"{per_station_bias[s]:+7.1f}  {per_station_rmse[s]:7.2f}"
+        )
+
     return {
-        "spatial_R2":  spatial_r2,
-        "std_C_sta":   std_C_sta,
-        "r_kblh":      r_kblh,
-        "n_stations":  len(pred_means),
-        "obs_means":   obs_means.tolist(),
-        "pred_means":  pred_means.tolist(),
+        "spatial_R2":        spatial_r2,
+        "std_C_sta":         std_C_sta,
+        "r_kblh":            r_kblh,
+        "n_stations":        len(pred_means),
+        "obs_means":         obs_means.tolist(),
+        "pred_means":        pred_means.tolist(),
+        "per_station_bias":  per_station_bias,
+        "per_station_rmse":  per_station_rmse,
     }
 
 
@@ -428,13 +512,19 @@ def train(
     import torch.optim as optim
     from src.stage3_pinn.physics.pde_residual_v3 import pde_residual_v3
 
+    # Load per-snapshot BLH from hourly ERA5 (Fix I/A)
+    blh_hourly = load_era5_blh_hourly()
+    log.info(
+        f"Per-snapshot BLH: {'ENABLED (hourly ERA5)' if blh_hourly else 'DISABLED (daily-mean fallback)'}"
+    )
+
     optimizer = optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()), lr=lr
     )
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
 
     rng   = np.random.default_rng(42)
-    dates = sorted(daily_sta["date"].unique())
+    dates = np.array(sorted(daily_sta["date"].unique()))
     n_dates = len(dates)
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
@@ -509,24 +599,31 @@ def train(
         for h in SNAPSHOT_HOURS:
             t_norm = h / 24.0
 
+            # Per-snapshot BLH (Fix I/A): use hourly ERA5 BLH if available;
+            # fall back to daily-mean blh_today when hourly data is absent.
+            blh_h_m = float(blh_hourly.get(date_today, {}).get(h, blh_today))
+            blh_h_n = blh_h_m / PINN_BLH_NORM_SCALE
+
             # Interior collocation tensors
             t_int_np  = np.full((len(xy_int_np), 1), t_norm, dtype=np.float32)
             xyt_int   = torch.tensor(
                 np.hstack([xy_int_np, t_int_np]),
                 dtype=torch.float32, device=device,
             ).requires_grad_(True)
-            blh_int   = torch.full((len(xy_int_np), 1), blh_n, dtype=torch.float32, device=device)
+            blh_int   = torch.full((len(xy_int_np), 1), blh_h_n, dtype=torch.float32, device=device)
+            blh_m_int = torch.full((len(xy_int_np), 1), blh_h_m, dtype=torch.float32, device=device)
             elev_int  = torch.tensor(elev_int_np[:, None], dtype=torch.float32, device=device)
             wu_int    = torch.full((len(xy_int_np), 1), wind_u, dtype=torch.float32, device=device)
             wv_int    = torch.full((len(xy_int_np), 1), wind_v, dtype=torch.float32, device=device)
             prec_int  = torch.full((len(xy_int_np), 1), precip_mmh, dtype=torch.float32, device=device) \
                         if precip_mmh > 0 else None
 
-            # PDE residual
+            # PDE residual — with coordinate scaling (Fix D) + BLH-dependent λ_dry (Fix F)
             if w["pde"] > 0:
                 R = pde_residual_v3(
                     model, xyt_int, wu_int, wv_int,
                     precip=prec_int, blh=blh_int, elev=elev_int,
+                    lx_m=LX_M, ly_m=LY_M, blh_m=blh_m_int,
                 )
                 L_pde_day = L_pde_day + (R ** 2).mean()
 
@@ -537,7 +634,7 @@ def train(
                     np.stack([x_sta_np, y_sta_np, t_sta_np.ravel()], axis=1),
                     dtype=torch.float32, device=device,
                 )
-                blh_sta   = torch.full((len(x_sta_np), 1), blh_n, dtype=torch.float32, device=device)
+                blh_sta   = torch.full((len(x_sta_np), 1), blh_h_n, dtype=torch.float32, device=device)
                 elev_sta  = torch.tensor(e_sta_np[:, None], dtype=torch.float32, device=device)
                 C_h, _    = model(xyt_sta, blh=blh_sta, elev=elev_sta)
                 C_hourly.append(C_h)
@@ -546,7 +643,7 @@ def train(
             with torch.no_grad():
                 _, (Kx_h, Ky_h, _) = model(xyt_int.detach(), blh=blh_int, elev=elev_int)
                 k_means.append(float((Kx_h.mean() + Ky_h.mean()) / 2.0))
-            blh_values.append(blh_n)
+            blh_values.append(blh_h_n)
 
         # ── Loss assembly ─────────────────────────────────────────────────
         L_pde  = (L_pde_day / len(SNAPSHOT_HOURS)) if w["pde"] > 0 else torch.zeros(1, device=device)
@@ -565,21 +662,38 @@ def train(
             L_bc = ((C_domain_mean - city_mean_today) ** 2) / pm25_var_t
 
         # K–BLH correlation regulariser
+        # IMPORTANT: sample MULTIPLE DATES (not same-day snapshots) so that BLH varies.
+        # Same-day snapshots all share one daily-mean BLH → std=0 → correlation undefined.
+        # Using N_KBLH_DATES random dates with different BLH values gives a valid gradient.
         L_kblh = torch.zeros(1, device=device)
-        blh_arr = np.array(blh_values, dtype=np.float32)
-        if blh_arr.std() > 1e-6 and len(k_means) >= 2 and w["kblh"] > 0:
-            blh_t = torch.tensor(blh_arr, dtype=torch.float32, device=device)
-            k_grads = []
-            for hi, h in enumerate(SNAPSHOT_HOURS):
-                t_np = np.full((len(xy_int_np), 1), h / 24.0, dtype=np.float32)
-                xyt_h  = torch.tensor(np.hstack([xy_int_np, t_np]), dtype=torch.float32, device=device)
-                blh_h  = torch.full((len(xy_int_np), 1), blh_arr[hi], dtype=torch.float32, device=device)
-                elev_h = torch.tensor(elev_int_np[:, None], dtype=torch.float32, device=device)
-                _, (Kx_g, Ky_g, _) = model(xyt_h, blh=blh_h, elev=elev_h)
-                k_grads.append((Kx_g.mean() + Ky_g.mean()) / 2.0)
-            k_t    = torch.stack(k_grads)
-            r_kblh = _pearson_corr(blh_t, k_t)
-            L_kblh = w["kblh"] * (1.0 - r_kblh) ** 2
+        if w["kblh"] > 0:
+            N_KBLH_DATES = 8
+            kblh_dates = dates[rng.integers(0, n_dates, size=N_KBLH_DATES)]
+            k_grads_list = []
+            blh_kblh_list = []
+            xy_kblh = rng.uniform(0.0, 1.0, (64, 2)).astype(np.float32)   # 64-point subset
+            t_kblh_np = np.full((64, 1), 0.5, dtype=np.float32)           # noon
+            elev_kblh_np = elev_interp(xy_kblh[:, 0], xy_kblh[:, 1])
+            elev_kblh_t = torch.tensor(elev_kblh_np[:, None], dtype=torch.float32, device=device)
+
+            for kd in kblh_dates:
+                kd_df    = daily_sta[daily_sta["date"] == kd]
+                blh_kd   = float(kd_df["blh"].mean()) if "blh" in kd_df.columns else 1000.0
+                blh_kn   = blh_kd / PINN_BLH_NORM_SCALE
+                xyt_kblh = torch.tensor(
+                    np.hstack([xy_kblh, t_kblh_np]),
+                    dtype=torch.float32, device=device,
+                )
+                blh_kblh_t = torch.full((64, 1), blh_kn, dtype=torch.float32, device=device)
+                _, (Kx_k, Ky_k, _) = model(xyt_kblh, blh=blh_kblh_t, elev=elev_kblh_t)
+                k_grads_list.append((Kx_k.mean() + Ky_k.mean()) / 2.0)
+                blh_kblh_list.append(blh_kn)
+
+            blh_kblh_arr = torch.tensor(blh_kblh_list, dtype=torch.float32, device=device)
+            k_kblh_t     = torch.stack(k_grads_list)
+            if blh_kblh_arr.std() > 1e-6:
+                r_kblh_train = _pearson_corr(blh_kblh_arr, k_kblh_t)
+                L_kblh = w["kblh"] * (1.0 - r_kblh_train) ** 2
 
         L_total = w["pde"] * L_pde + w["data"] * L_data + w["bc"] * L_bc + L_kblh
 
@@ -645,6 +759,132 @@ def train(
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
+def k_field_diagnostic(model, daily_sta: pd.DataFrame, elev_interp, device) -> dict:
+    """
+    K-field validation before Stage 3 (expert pre-Stage-3 checklist, Q3).
+
+    Checks:
+      (a) Diurnal K ratio: K(noon) / K(midnight) > 5 × (Stull 1988 Ch.9)
+          If ratio < 2: DiffusionSubNetV3 hasn't learned BLH conditioning.
+      (b) K–BLH spatial correlation across dates: should be positive.
+          Computed at domain-centroid point (x=0.5, y=0.5).
+      (c) K magnitude range: should span [1, 100] m²/s (physical plausibility).
+          If K clusters at K_MIN=1: floor is doing all the work.
+
+    Prints results as a checklist. Returns dict of diagnostic values.
+    """
+    import torch
+    from src.stage3_pinn.models.fourier_pinn_v3 import K_MAX_V3
+    from config import K_MIN_MS2 as K_MIN_V3
+
+    model.eval()
+    dates = sorted(daily_sta["date"].unique())
+    N_SAMPLE = min(50, len(dates))
+    sample_dates = np.random.default_rng(1).choice(dates, size=N_SAMPLE, replace=False)
+
+    # Use domain centroid and a 5×5 grid for spatial coverage
+    xs = np.linspace(0.1, 0.9, 5, dtype=np.float32)
+    ys = np.linspace(0.1, 0.9, 5, dtype=np.float32)
+    xx, yy = np.meshgrid(xs, ys)
+    xy_grid = np.stack([xx.ravel(), yy.ravel()], axis=1)   # (25, 2)
+    elev_grid_np = elev_interp(xy_grid[:, 0], xy_grid[:, 1])
+    elev_grid_t = torch.tensor(elev_grid_np[:, None], dtype=torch.float32, device=device)
+
+    k_noon_list    = []
+    k_midnight_list = []
+    k_all          = []   # all K values for magnitude range check
+    k_daily_mean   = []   # domain-mean K per date (for K–BLH correlation)
+    blh_daily      = []   # BLH per date
+
+    with torch.no_grad():
+        for date in sample_dates:
+            day_df = daily_sta[daily_sta["date"] == date]
+            blh_d  = float(day_df["blh"].mean()) if "blh" in day_df.columns else 1000.0
+            blh_n  = blh_d / PINN_BLH_NORM_SCALE
+            blh_t  = torch.full((len(xy_grid), 1), blh_n, dtype=torch.float32, device=device)
+
+            # Noon (t=0.5)
+            xyt_noon = torch.tensor(
+                np.hstack([xy_grid, np.full((len(xy_grid), 1), 0.5, dtype=np.float32)]),
+                dtype=torch.float32, device=device,
+            )
+            _, (Kx_n, Ky_n, _) = model(xyt_noon, blh=blh_t, elev=elev_grid_t)
+            k_n = float(((Kx_n + Ky_n) / 2.0).mean())
+            k_noon_list.append(k_n)
+            k_all.extend(((Kx_n + Ky_n) / 2.0).cpu().numpy().ravel().tolist())
+
+            # Midnight (t=0.0)
+            xyt_mid = torch.tensor(
+                np.hstack([xy_grid, np.zeros((len(xy_grid), 1), dtype=np.float32)]),
+                dtype=torch.float32, device=device,
+            )
+            _, (Kx_m, Ky_m, _) = model(xyt_mid, blh=blh_t, elev=elev_grid_t)
+            k_m = float(((Kx_m + Ky_m) / 2.0).mean())
+            k_midnight_list.append(k_m)
+
+            k_daily_mean.append(k_n)   # noon K as representative
+            blh_daily.append(blh_n)
+
+    model.train()
+
+    k_noon_arr     = np.array(k_noon_list)
+    k_midnight_arr = np.array(k_midnight_list)
+    k_all_arr      = np.array(k_all)
+
+    # (a) Diurnal ratio
+    diurnal_ratio = float(np.mean(k_noon_arr) / (np.mean(k_midnight_arr) + 1e-8))
+
+    # (b) K–BLH correlation
+    if np.std(blh_daily) > 1e-3:
+        r_kblh_diag = float(np.corrcoef(blh_daily, k_daily_mean)[0, 1])
+    else:
+        r_kblh_diag = float("nan")
+
+    # (c) Magnitude range
+    k_min_obs = float(k_all_arr.min())
+    k_max_obs = float(k_all_arr.max())
+    k_mean_obs = float(k_all_arr.mean())
+    frac_at_floor = float(np.mean(k_all_arr < K_MIN_V3 + 0.5))  # fraction within 0.5 of floor
+
+    # Print checklist
+    log.info("─── K-field Diagnostic (pre-Stage 3 checklist) ───")
+    diurnal_pass = diurnal_ratio >= 2.0
+    kblh_pass    = (not np.isnan(r_kblh_diag)) and r_kblh_diag > 0.0
+    mag_pass     = k_min_obs >= 0.5 and k_max_obs <= K_MAX_V3 * 1.1 and frac_at_floor < 0.5
+    log.info(
+        f"  (a) Diurnal ratio K(noon)/K(midnight) = {diurnal_ratio:.2f}× "
+        f"(target ≥5×, warn <2×): {'PASS ✓' if diurnal_pass else 'WARN ✗'}"
+    )
+    log.info(
+        f"  (b) K–BLH correlation = {r_kblh_diag:.3f} "
+        f"(target >0): {'PASS ✓' if kblh_pass else 'FAIL ✗'}"
+    )
+    log.info(
+        f"  (c) K magnitude: min={k_min_obs:.1f}, mean={k_mean_obs:.1f}, max={k_max_obs:.1f} m²/s "
+        f"(floor={K_MIN_V3}, ceil={K_MAX_V3})"
+    )
+    log.info(
+        f"       fraction at floor (<K_MIN+0.5): {frac_at_floor:.1%} "
+        f"(warn if >50%): {'OK ✓' if mag_pass else 'WARN — floor dominant'}"
+    )
+    log.info(
+        f"  → DiffusionSubNetV3 status: "
+        f"{'BLH conditioning ACTIVE' if diurnal_pass and kblh_pass else 'BLH conditioning WEAK — check K_aniso + K_base'}"
+    )
+
+    return {
+        "diurnal_ratio":   diurnal_ratio,
+        "r_kblh_diag":     r_kblh_diag,
+        "k_min_obs":       k_min_obs,
+        "k_max_obs":       k_max_obs,
+        "k_mean_obs":      k_mean_obs,
+        "frac_at_floor":   frac_at_floor,
+        "diurnal_pass":    diurnal_pass,
+        "kblh_pass":       kblh_pass,
+        "mag_pass":        mag_pass,
+    }
+
+
 def _setup_wandb(config: dict):
     api_key = os.environ.get("WANDB_API_KEY")
     try:
@@ -673,6 +913,8 @@ def main():
     parser.add_argument("--wandb",       action="store_true")
     parser.add_argument("--check-gates", action="store_true",
                         help="Load latest checkpoint and evaluate gate conditions only")
+    parser.add_argument("--k-diagnostic", action="store_true",
+                        help="Run K-field diagnostic on latest checkpoint (pre-Stage 3 checklist)")
     args = parser.parse_args()
 
     import torch
@@ -683,20 +925,31 @@ def main():
     elev_interp = build_elev_interpolator()
     model = build_model(cold_start=args.cold_start, device=device)
 
-    if args.check_gates:
+    if args.check_gates or args.k_diagnostic:
         # Load most recent checkpoint
         ckpts = sorted(CHECKPOINT_DIR.glob("epoch_*.pt"))
         if not ckpts:
-            log.error(f"No checkpoints found in {CHECKPOINT_DIR}")
-            return
+            # Also check for final model
+            final_path = CHECKPOINT_DIR / "medellin_pinn_final.pt"
+            if final_path.exists():
+                ckpts = [final_path]
+            else:
+                log.error(f"No checkpoints found in {CHECKPOINT_DIR}")
+                return
         ckpt = torch.load(str(ckpts[-1]), map_location=device, weights_only=False)
         model.load_state_dict(ckpt["model_state_dict"])
         log.info(f"Loaded checkpoint: {ckpts[-1].name}")
-        val   = spatial_validation(model, daily_sta, elev_interp, device)
-        gates = check_gates(val)
-        log.info(f"Gate (1) spatial_R² > 0.50: {val['spatial_R2']:.3f} → {'PASS ✓' if gates['spatial_R2_pass'] else 'FAIL ✗'}")
-        log.info(f"Gate (2) K–BLH r > 0.50:   {val['r_kblh']:.3f}    → {'PASS ✓' if gates['r_kblh_pass'] else 'FAIL ✗'}")
-        log.info(f"Gate (3) zero-shot Chiang Mai: run validate_chiangmai.py separately")
+
+        if args.check_gates:
+            val   = spatial_validation(model, daily_sta, elev_interp, device)
+            gates = check_gates(val)
+            log.info(f"Gate (1) spatial_R² > 0.50: {val['spatial_R2']:.3f} → {'PASS ✓' if gates['spatial_R2_pass'] else 'FAIL ✗'}")
+            log.info(f"Gate (2) K–BLH r > 0.50:   {val['r_kblh']:.3f}    → {'PASS ✓' if gates['r_kblh_pass'] else 'FAIL ✗'}")
+            log.info(f"Gate (3) zero-shot Chiang Mai: run validate_chiangmai.py separately")
+
+        if args.k_diagnostic:
+            k_diag = k_field_diagnostic(model, daily_sta, elev_interp, device)
+            log.info("K-field diagnostic complete. See above for checklist.")
         return
 
     run_config = dict(epochs=args.epochs, lr=args.lr, cold_start=args.cold_start)
@@ -718,6 +971,9 @@ def main():
     log.info(f"  (1) spatial_R² > 0.50: {val['spatial_R2']:.3f} → {'PASS ✓' if gates['spatial_R2_pass'] else 'FAIL ✗'}")
     log.info(f"  (2) K–BLH r  > 0.50:  {val['r_kblh']:.3f}    → {'PASS ✓' if gates['r_kblh_pass'] else 'FAIL ✗'}")
 
+    # K-field diagnostic (expert pre-Stage-3 checklist)
+    k_diag = k_field_diagnostic(model, daily_sta, elev_interp, device)
+
     # Save final model
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     final_path = CHECKPOINT_DIR / "medellin_pinn_final.pt"
@@ -728,6 +984,7 @@ def main():
         "spatial_R2":       val["spatial_R2"],
         "r_kblh":           val["r_kblh"],
         "gates":            gates,
+        "k_diag":           k_diag,
         "config":           run_config,
     }, str(final_path))
     log.info(f"Saved: {final_path}")
@@ -744,10 +1001,13 @@ def main():
 
     if wandb_run is not None:
         wandb_run.summary.update({
-            "final_spatial_R2": val["spatial_R2"],
-            "final_r_kblh":     val["r_kblh"],
-            "gate_1_pass":      gates["spatial_R2_pass"],
-            "gate_2_pass":      gates["r_kblh_pass"],
+            "final_spatial_R2":    val["spatial_R2"],
+            "final_r_kblh":        val["r_kblh"],
+            "gate_1_pass":         gates["spatial_R2_pass"],
+            "gate_2_pass":         gates["r_kblh_pass"],
+            "k_diurnal_ratio":     k_diag["diurnal_ratio"],
+            "k_r_kblh_diag":       k_diag["r_kblh_diag"],
+            "k_frac_at_floor":     k_diag["frac_at_floor"],
         })
         wandb_run.finish()
 

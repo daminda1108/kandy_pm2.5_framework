@@ -4,9 +4,9 @@ fourier_pinn_v3.py — FourierPINN v3 — redesigned for Kandy Stage 3.
 Changes from v2:
   1. Separate 2D multi-scale SpatialEmbedding (σ_lo=1.0, σ_hi=3.0) + 1D TemporalEncoding.
      Joint xyt Fourier embedding removed: steady-state PDE has no physical x-t coupling.
-  2. BLH and elevation enter the trunk directly (517-dim input) — C is directly modulated
+  2. BLH and elevation enter the trunk directly (261-dim input) — C is directly modulated
      by BLH and the trunk must see it to predict C without relying on PDE coupling alone.
-  3. Wider trunk first layer (256), standard 2-layer ResBlocks, 256→128 bottleneck.
+  3. Compact trunk: hidden=128, 1 GELU ResBlock, 128→64 bottleneck (~76K params).
   4. Factored DiffusionSubNetV3: K_base(BLH, t) × K_aniso(x, y, elev).
      K_base captures the dominant physical driver (BLH-modulated scale);
      K_aniso captures terrain-induced spatial modulation. Reduces K from ~22,500
@@ -16,12 +16,12 @@ Changes from v2:
      is daily-mean PM2.5 and the 7-day cycle averages out).
   7. Road kernel (B4): already wired in v2; preserved exactly in v3 with same grid_sample logic.
 
-Transfer interface (v8 Stage 2 backbone → v3 Stage 3):
-  - head_C (128→1): CAN transfer (same shape)
-  - trunk layers: INCOMPATIBLE (512→128 in v2 vs 517→256 in v3) — reinitialise
-  - KBaseNet: ATTEMPT mapping from v2 DiffSubNet fc1/fc2 (will likely fail shape check)
-  - KAnisoNet: REINITIALISE (Kandy terrain ≠ Medellín)
-  - AlphaNet: REINITIALISE (new source parameterisation)
+Transfer interface:
+  FourierPINN v2 (stage2_pretrain) is a DIFFERENT architecture — incompatible with v3.
+  0 keys transfer (v2: joint 512-dim xyt embedding, 6×128 trunk, head_C 128→1;
+                   v3: separate 256-dim xy embedding, 1 GELU ResBlock, head_C 64→1).
+  FourierPINNV3 always cold-starts from random Xavier initialisation.
+  For Stage 3 Kandy: warm-start from Medellín PINN v7 checkpoint (same FourierPINNV3 arch).
 
 Stage 3 usage:
     model = FourierPINNV3()
@@ -43,6 +43,13 @@ from typing import Optional, Tuple
 
 import numpy as np
 
+try:
+    import torch
+    import torch.nn as nn
+    _TORCH_AVAILABLE = True
+except ImportError:
+    _TORCH_AVAILABLE = False
+
 sys.path.insert(0, str(Path(__file__).parents[3]))
 from config import (
     LOG_FORMAT, LOG_DATEFMT,
@@ -57,8 +64,8 @@ log = logging.getLogger("fourier_pinn_v3")
 # ── v3-specific constants (not overriding config defaults) ────────────────────
 K_MAX_V3       = 150.0   # m²/s — tighter than v2 (Pe=300 at u=3m/s, L=15km)
 K_RATIO_MAX    = 5.0     # max gx or gy (anisotropy factor, dimensionless)
-_SPATIAL_M_LO  = 128     # Fourier modes, large-scale (σ=1.0, ~km features)
-_SPATIAL_M_HI  = 128     # Fourier modes, fine-scale  (σ=3.0, ~100m features)
+_SPATIAL_M_LO  = 64      # Fourier modes, large-scale (σ=1.0, ~km features)
+_SPATIAL_M_HI  = 64      # Fourier modes, fine-scale  (σ=3.0, ~100m features)
 _SPATIAL_SIGMA_LO = 1.0  # N(0, σ²) for B_lo — 1 cycle per normalised unit = ~km
 _SPATIAL_SIGMA_HI = 3.0  # N(0, σ²) for B_hi — 3 cycles per norm unit = ~100m
 
@@ -67,50 +74,54 @@ _SPATIAL_SIGMA_HI = 3.0  # N(0, σ²) for B_hi — 3 cycles per norm unit = ~100
 # EMBEDDING — separate spatial (multi-scale 2D) + temporal (1D cyclic)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-class SpatialEmbedding:
+_SpatialEmbBase = nn.Module if _TORCH_AVAILABLE else object
+
+
+class SpatialEmbedding(_SpatialEmbBase):
     """
     Multi-scale 2D Fourier embedding for (x, y) coordinates only.
 
     Two frequency banks:
-      B_lo ~ N(0, σ_lo²): 128 modes, large-scale (~km) spatial features
-      B_hi ~ N(0, σ_hi²): 128 modes, fine-scale  (~100m) spatial features
+      B_lo ~ N(0, σ_lo²): 64 modes, large-scale (~km) spatial features
+      B_hi ~ N(0, σ_hi²): 64 modes, fine-scale  (~100m) spatial features
 
     Output: [sin(2π x·B_lo^T), cos(2π x·B_lo^T),
-             sin(2π x·B_hi^T), cos(2π x·B_hi^T)] ∈ ℝ^512
+             sin(2π x·B_hi^T), cos(2π x·B_hi^T)] ∈ ℝ^256
 
     B matrices are fixed (non-trained) and deterministic from seed=42.
-    Multi-scale σ provides adequate frequency coverage from valley-scale
-    gradients (~km) down to road-corridor-scale variability (~100m).
-
-    Physical motivation: separating x,y from t avoids spurious x-t frequency
-    coupling that the steady-state PDE does not contain.
+    S1 fix: register_buffer — B matrices are part of the state_dict and move
+    automatically with model.to(device). No tensor creation per forward pass.
     """
 
     def __init__(self, m_lo: int = _SPATIAL_M_LO, m_hi: int = _SPATIAL_M_HI,
                  sigma_lo: float = _SPATIAL_SIGMA_LO, sigma_hi: float = _SPATIAL_SIGMA_HI,
                  seed: int = 42):
+        super().__init__()
         rng = np.random.default_rng(seed)
-        self.B_lo = rng.normal(0, sigma_lo, size=(m_lo, 2)).astype(np.float32)
-        self.B_hi = rng.normal(0, sigma_hi, size=(m_hi, 2)).astype(np.float32)
-        self.out_dim = 4 * m_lo  # = 4 × 128 = 512 (sin+cos for each bank)
+        B_lo = torch.from_numpy(rng.normal(0, sigma_lo, (m_lo, 2)).astype(np.float32))
+        B_hi = torch.from_numpy(rng.normal(0, sigma_hi, (m_hi, 2)).astype(np.float32))
+        self.register_buffer('B_lo', B_lo)   # S1: buffers → state_dict + auto device transfer
+        self.register_buffer('B_hi', B_hi)
+        self.out_dim = 4 * m_lo  # = 4 × 64 = 256 (sin+cos for each bank)
 
-    def embed(self, xy: "torch.Tensor") -> "torch.Tensor":
+    def forward(self, xy: "torch.Tensor") -> "torch.Tensor":
         """
         Args:
             xy : (N, 2) [x_norm, y_norm] tensor, both ∈ [-1, 1]
         Returns:
-            (N, 512) multi-scale Fourier features
+            (N, 256) multi-scale Fourier features
         """
-        import torch
-        B_lo = torch.tensor(self.B_lo, dtype=xy.dtype, device=xy.device)
-        B_hi = torch.tensor(self.B_hi, dtype=xy.dtype, device=xy.device)
-        pi2  = 2.0 * math.pi
-        proj_lo = pi2 * (xy @ B_lo.T)   # (N, 128)
-        proj_hi = pi2 * (xy @ B_hi.T)   # (N, 128)
+        pi2     = 2.0 * math.pi
+        proj_lo = pi2 * (xy @ self.B_lo.T)   # (N, 64) — B_lo on same device as xy
+        proj_hi = pi2 * (xy @ self.B_hi.T)   # (N, 64)
         return torch.cat([
             torch.sin(proj_lo), torch.cos(proj_lo),
             torch.sin(proj_hi), torch.cos(proj_hi),
-        ], dim=-1)                        # (N, 512)
+        ], dim=-1)                             # (N, 256)
+
+    def embed(self, xy: "torch.Tensor") -> "torch.Tensor":
+        """Backward-compatible alias for forward()."""
+        return self.forward(xy)
 
 
 class TemporalEncoding:
@@ -144,22 +155,22 @@ class TemporalEncoding:
 # TRUNK NETWORK (v3)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _build_trunk_v3(in_dim: int = 517, hidden: int = 256, bottleneck: int = 128):
+def _build_trunk_v3(in_dim: int = 261, hidden: int = 128, bottleneck: int = 64):
     """
-    Build TrunkNetV3: wider first layer + standard 2-layer ResBlocks + bottleneck.
+    Build TrunkNetV3: compact first layer + GELU ResBlock + bottleneck.
 
     Architecture:
-        Linear(in_dim → hidden) → Tanh
-        ResBlock(hidden) × 2
-        Linear(hidden → bottleneck) → Tanh
+        Linear(in_dim → hidden) → GELU
+        ResBlock(hidden) × 1
+        Linear(hidden → bottleneck) → GELU
     Output: bottleneck-dim feature vector
 
-    ResBlock: Linear(h→h) → Tanh → Linear(h→h) + add_input → Tanh
-    (Standard residual: skip connection at block boundary, Tanh after add)
+    ResBlock: Linear(h→h) → GELU → Linear(h→h) + add_input → GELU
+    (Standard residual: skip connection at block boundary, GELU after add)
 
-    Motivation vs v2 asymmetric skip: standard pre-activation residual
-    ensures unobstructed gradient flow through every layer. v2's skip
-    at odd layers only left layers 0, 2, 4 without gradient shortcuts.
+    GELU preferred over Tanh for 2nd-order PDE autograd: GELU has non-zero
+    high-order derivatives everywhere, avoiding gradient vanishing in deep
+    differentiation chains (Fix E per expert review).
     """
     try:
         import torch.nn as nn
@@ -171,7 +182,7 @@ def _build_trunk_v3(in_dim: int = 517, hidden: int = 256, bottleneck: int = 128)
             super().__init__()
             self.fc1 = nn.Linear(dim, dim)
             self.fc2 = nn.Linear(dim, dim)
-            self.act = nn.Tanh()
+            self.act = nn.GELU()
             nn.init.xavier_normal_(self.fc1.weight); nn.init.zeros_(self.fc1.bias)
             nn.init.xavier_normal_(self.fc2.weight); nn.init.zeros_(self.fc2.bias)
 
@@ -182,9 +193,9 @@ def _build_trunk_v3(in_dim: int = 517, hidden: int = 256, bottleneck: int = 128)
         def __init__(self):
             super().__init__()
             self.proj       = nn.Linear(in_dim, hidden)
-            self.blocks     = nn.ModuleList([_ResBlock(hidden), _ResBlock(hidden)])
+            self.blocks     = nn.ModuleList([_ResBlock(hidden)])
             self.bottleneck = nn.Linear(hidden, bottleneck)
-            self.act        = nn.Tanh()
+            self.act        = nn.GELU()
             nn.init.xavier_normal_(self.proj.weight);       nn.init.zeros_(self.proj.bias)
             nn.init.xavier_normal_(self.bottleneck.weight); nn.init.zeros_(self.bottleneck.bias)
 
@@ -303,8 +314,8 @@ def _build_k_aniso_net():
             """
             import torch
             inp = torch.cat([x_n, y_n, elev_n], dim=1)
-            h   = torch.tanh(self.fc1(inp))
-            h   = torch.tanh(self.fc2(h))
+            h   = F.gelu(self.fc1(inp))
+            h   = F.gelu(self.fc2(h))
             out = self.fc3(h)                                 # (N, 2) unconstrained
             # Sigmoid maps to (0,1), scale to [1, K_RATIO_MAX]
             gx = torch.sigmoid(out[:, 0:1]) * (ratio_max - 1.0) + 1.0
@@ -466,7 +477,7 @@ class _FourierPINNV3Module:
             road_kernel_path = PINN_INPUT_DIR / "kandy_road_kernel_100m.npz"
 
         spatial_emb  = SpatialEmbedding()
-        trunk_in_dim = spatial_emb.out_dim + TemporalEncoding.out_dim + 2  # 512+3+1+1=517
+        trunk_in_dim = spatial_emb.out_dim + TemporalEncoding.out_dim + 2  # 256+3+1+1=261
 
         class Module(nn.Module):
             def __init__(self):
@@ -475,8 +486,8 @@ class _FourierPINNV3Module:
                 self.spatial_emb = spatial_emb
 
                 # Trunk network (BLH and elev enter here directly)
-                self.trunk  = _build_trunk_v3(in_dim=trunk_in_dim, hidden=256, bottleneck=128)
-                self.head_C = nn.Linear(128, 1)
+                self.trunk  = _build_trunk_v3(in_dim=trunk_in_dim, hidden=128, bottleneck=64)
+                self.head_C = nn.Linear(64, 1)
                 nn.init.xavier_uniform_(self.head_C.weight)
                 nn.init.zeros_(self.head_C.bias)
 
@@ -547,10 +558,10 @@ class _FourierPINNV3Module:
                 t_n = xyt[:, 2:3]
 
                 # Trunk: separate spatial + temporal encodings + BLH + elev
-                xy_emb   = self.spatial_emb.embed(xyt[:, 0:2])   # (N, 512)
+                xy_emb   = self.spatial_emb.embed(xyt[:, 0:2])   # (N, 256)
                 t_enc    = TemporalEncoding.encode(t_n)           # (N, 3)
-                trunk_in = torch.cat([xy_emb, t_enc, blh, elev], dim=1)  # (N, 517)
-                feat = self.trunk(trunk_in)                               # (N, 128)
+                trunk_in = torch.cat([xy_emb, t_enc, blh, elev], dim=1)  # (N, 261)
+                feat = self.trunk(trunk_in)                               # (N, 64)
                 C    = F.softplus(self.head_C(feat))                      # (N, 1)
 
                 # Factored K: K_base(BLH, t) × K_aniso(x, y, elev)
@@ -598,24 +609,22 @@ class _FourierPINNV3Module:
 
 def load_partial_backbone(model, v2_state_dict: dict) -> Tuple[int, int]:
     """
-    Attempt partial transfer from v8 Stage 2 backbone (v2 architecture) into v3.
+    [DEPRECATED — no-op] FourierPINN v2 backbone is incompatible with FourierPINNV3.
 
-    v2 → v3 compatibility map:
-      head_C.{weight,bias}       : Linear(128→1)    COMPATIBLE — transfer
-      net.input_proj.*           : Linear(512→128)  INCOMPATIBLE (517→256 in v3)
-      net.layers.{0-5}.*        : Linear(128→128)  INCOMPATIBLE (256→256 in v3)
-      diffusion_subnet.fc{1,2,3}: different arch    ATTEMPT (log result)
-      source_subnet.*            : reinitialise      SKIP (always reinit)
+    v2 architecture: joint 512-dim xyt Fourier embedding, 6×128 ResidualMLP, head_C 128→1.
+    v3 architecture: separate 256-dim xy + 3-dim temporal encoding, 1 GELU ResBlock, head_C 64→1.
+    Zero keys transfer — all shapes differ. FourierPINNV3 always cold-starts from Xavier init.
 
-    In practice, only head_C transfers. This provides output scale calibration
-    (~PM2.5 magnitude range) without needing relearning.
+    This function is kept for API compatibility only. It is a no-op that logs the mismatch.
+    For warm-starting from a previous FourierPINNV3 run (same architecture), use
+    model.load_state_dict() directly on the checkpoint's model_state_dict.
 
     Args:
-        model          : FourierPINNV3 instance
-        v2_state_dict  : state dict from v8 Stage 2 checkpoint
+        model          : FourierPINNV3 instance (unchanged)
+        v2_state_dict  : state dict from v2 backbone (ignored — incompatible)
 
     Returns:
-        (n_loaded, n_skipped) : counts of state dict keys loaded vs skipped
+        (0, n_v2_keys) : always 0 loaded
     """
     import torch
     import torch.nn as nn

@@ -70,31 +70,37 @@ DEFAULT_MODEL_VERSION = "v3"
 
 def _get_stage3_v3_weights(epoch: int, n_epochs: int) -> dict:
     """
-    Stage 3 v3 two-phase curriculum.
+    Stage 3 v3 three-phase data-dominant curriculum (I4 fix — validated against v8/v2 explosion lessons).
 
-    Phase 1 (0–30%): BC dominates — establish correct boundary concentrations.
-      λ_bc=0.50, λ_pde=0.10, λ_data=0.30, λ_kblh=0.05, λ_kb=0.05
+    LESSON from Stage 2 v8/v2: λ_pde ramp to majority weight causes PDE explosion regardless
+    of λ_pde absolute value. Data must dominate at ALL epochs. λ_data > λ_pde always.
 
-    Phase 2 (30–100%): PDE dominates — enforce physics in interior.
-      λ_bc=0.20, λ_pde=0.55, λ_data=0.10, λ_kblh=0.10, λ_kb=0.05
+    Phase 1 (0–40%):  PDE inoculation — λ_pde=0.001, λ_data=0.70, λ_bc=0.20, λ_kblh=0.05
+      With EMA-normalised L_pde≈1.0, pde contribution = 0.001×1.0 = 0.001 (negligible vs data).
+      Network learns BLH/data structure before any PDE pressure.
 
-    Rationale: Stage 3 has no inter-station spatial ordering to establish
-    (unlike Stage 2). Spatial structure comes from BCs + PDE + terrain forcing.
-    Phase 1 anchors boundary concentrations first; Phase 2 enforces interior physics.
+    Phase 2 (40–70%): Gentle PDE onset — ramp λ_pde 0.001→0.10, λ_data 0.70→0.55.
+      EMA keeps raw L_pde O(1) at phase transition — no gradient spike.
 
-    No L_div: spatial structure comes from terrain/BCs/road kernel — the road kernel
-    (B4) breaks K–S degeneracy architecturally, so no diversity loss is needed.
+    Phase 3 (70–100%): Data-dominant steady state — λ_pde=0.10, λ_data=0.55.
+      λ_data=0.55 > λ_pde=0.10 at all times. Physics guides structure, data anchors magnitude.
     """
-    phase1_end = int(0.30 * n_epochs)
-    if epoch < phase1_end:
-        return dict(bc=0.50, pde=0.10, data=0.30, kblh=0.05, kb=0.05, phys=0.0)
+    p1_end = int(0.40 * n_epochs)
+    p2_end = int(0.70 * n_epochs)
+    if epoch < p1_end:
+        return dict(bc=0.20, pde=0.001, data=0.70, kblh=0.05, kb=0.05, phys=0.0)
+    elif epoch < p2_end:
+        t = (epoch - p1_end) / max(1, p2_end - p1_end)
+        return dict(
+            bc   = 0.20 + t * (0.15 - 0.20),
+            pde  = 0.001 + t * (0.10 - 0.001),
+            data = 0.70  + t * (0.55 - 0.70),
+            kblh = 0.05  + t * (0.15 - 0.05),
+            kb   = 0.05,
+            phys = 0.0,
+        )
     else:
-        t = min(1.0, (epoch - phase1_end) / max(1, n_epochs - phase1_end))
-        bc   = 0.50 + t * (0.20 - 0.50)
-        pde  = 0.10 + t * (0.55 - 0.10)
-        data = 0.30 + t * (0.10 - 0.30)
-        kblh = 0.05 + t * (0.10 - 0.05)
-        return dict(bc=bc, pde=pde, data=data, kblh=kblh, kb=0.05, phys=0.0)
+        return dict(bc=0.15, pde=0.10, data=0.55, kblh=0.15, kb=0.05, phys=0.0)
 
 
 def _setup_wandb(run_config: dict):
@@ -356,10 +362,40 @@ def train_pinn(
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
+    # S4: Load Kandy elevation grid for real DEM wiring (replaces 0.5 placeholder)
+    from config import PINN_INPUT_DIR
+    from scipy.interpolate import RegularGridInterpolator as _RGI
+    _elev_npz     = np.load(str(PINN_INPUT_DIR / "kandy_elev_grid_100m.npz"))
+    _elev_norm_2d = _elev_npz['elev_norm'].astype(np.float32)  # (150, 150), ∈ [0,1]
+    _lat_vec      = _elev_npz['lat_grid'][:, 0].astype(np.float64)   # (150,) S→N or N→S
+    _lon_vec      = _elev_npz['lon_grid'][0, :].astype(np.float64)   # (150,) W→E
+    # Sort ascending so RegularGridInterpolator axes are monotonically increasing
+    if _lat_vec[0] > _lat_vec[-1]:
+        _lat_vec      = _lat_vec[::-1].copy()
+        _elev_norm_2d = _elev_norm_2d[::-1, :].copy()
+    _elev_interp = _RGI(
+        (_lat_vec, _lon_vec), _elev_norm_2d,
+        method='linear', bounds_error=False, fill_value=0.2,
+    )
+    # Pre-compute domain centroid/half-extents for xy_norm → lat/lon conversion
+    _LAT_CTR  = (KANDY_PINN_BBOX['lat_max'] + KANDY_PINN_BBOX['lat_min']) / 2.0
+    _LAT_HALF = (KANDY_PINN_BBOX['lat_max'] - KANDY_PINN_BBOX['lat_min']) / 2.0
+    _LON_CTR  = (KANDY_PINN_BBOX['lon_max'] + KANDY_PINN_BBOX['lon_min']) / 2.0
+    _LON_HALF = (KANDY_PINN_BBOX['lon_max'] - KANDY_PINN_BBOX['lon_min']) / 2.0
+    log.info("S4: Elevation grid loaded — real DEM wired (kandy_elev_grid_100m.npz)")
+
+    # I1: EMA of raw L_pde — keeps normalised L_pde ≈ O(1) at Phase 2 onset
+    _pde_ema = 1.0
+
     # Initial spatial collocation layout (xy only — t is overridden per snapshot)
     xy_int_np, _, xy_bnd_np, t_bnd_np = sample_uniform(
         N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, KANDY_PINN_BBOX
     )
+
+    # Pre-compute elevation at interior collocation points (static for uniform grid)
+    _lats_int = (xy_int_np[:, 1] * _LAT_HALF + _LAT_CTR).astype(np.float64)
+    _lons_int = (xy_int_np[:, 0] * _LON_HALF + _LON_CTR).astype(np.float64)
+    _elev_int_np = _elev_interp(np.column_stack([_lats_int, _lons_int])).astype(np.float32)
 
     for epoch in range(n_epochs):
         model.train()
@@ -394,6 +430,10 @@ def train_pinn(
                 )
             except Exception as e:
                 log.debug(f"RAR update failed at epoch {epoch}: {e}")
+            # S4: recompute elevation at updated collocation points after RAR
+            _lats_int    = (xy_int_np[:, 1] * _LAT_HALF + _LAT_CTR).astype(np.float64)
+            _lons_int    = (xy_int_np[:, 0] * _LON_HALF + _LON_CTR).astype(np.float64)
+            _elev_int_np = _elev_interp(np.column_stack([_lats_int, _lons_int])).astype(np.float32)
 
         # Pre-build Stage-1 pixel tensors (same x,y for all 8 snapshots)
         x_s1 = torch.tensor(df_today["x_norm"].values[:, None],
@@ -446,11 +486,13 @@ def train_pinn(
                 )
 
             # B1: quasi-steady-state PDE loss for this snapshot
-            # v3: use pde_residual_v3 with elev=0.5 placeholder (DEM not yet wired, B6 deferred)
+            # v3: use pde_residual_v3 with real DEM elevation (S4 fix — was 0.5 placeholder)
             # v2: use legacy steady_state_pde_loss
             if lambdas.pde > 0:
                 if use_v3:
-                    elev_int = torch.full_like(blh_tensor, 0.5)
+                    elev_int = torch.tensor(
+                        _elev_int_np[:, None], dtype=torch.float32, device=device
+                    )
                     R_pde = pde_residual_v3(
                         model, xyt_int, wu_int, wv_int,
                         precip=precip_tensor,
@@ -481,8 +523,14 @@ def train_pinn(
                 k_means.append(((Kx_h.mean() + Ky_h.mean()) / 2.0).item())
             blh_values.append(blh_h)
 
-        # Mean PDE loss over 8 snapshots (B1)
-        L_pde = (L_pde_day / len(SNAPSHOT_HOURS)) if lambdas.pde > 0 else torch.zeros(1, device=device)
+        # Mean PDE loss over 8 snapshots (B1) — I1: EMA normalisation
+        if lambdas.pde > 0:
+            raw_L_pde = L_pde_day / len(SNAPSHOT_HOURS)
+            _pde_ema  = 0.99 * _pde_ema + 0.01 * float(raw_L_pde.detach())
+            L_pde     = raw_L_pde / max(_pde_ema, 1e-6)
+        else:
+            raw_L_pde = L_pde_day / len(SNAPSHOT_HOURS) if L_pde_day is not None else torch.zeros(1, device=device)
+            L_pde     = torch.zeros(1, device=device)
 
         # Daily-mean data loss (B3): compare mean(C_h) to Stage-1 daily mean
         L_data = torch.zeros(1, device=device)
@@ -546,8 +594,8 @@ def train_pinn(
         L_total = L_total + L_kblh
 
         L_total.backward()
-        # max_norm=10.0 (v3: prevents explosion; 1.0 was too aggressive for PINN curvature terms)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=10.0)
+        # max_norm=5.0 (S2 fix: was 10.0 — Kaggle kernels use 5.0; tighter clip for stability)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
         optimizer.step()
         scheduler_opt.step()
 
