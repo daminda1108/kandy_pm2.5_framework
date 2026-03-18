@@ -91,10 +91,13 @@ MEDELLIN_MODIS_DIR     = MEDELLIN_SATELLITE_DIR / "modis"
 MEDELLIN_TROPOMI_DIR   = MEDELLIN_SATELLITE_DIR / "tropomi"
 MEDELLIN_CAMS_DIR      = MEDELLIN_DATA_DIR / "cams"
 
-CHIANGMAI_DATA_DIR  = EXTERNAL_DIR / "chiangmai"
-CHIANGMAI_PM25_DIR  = CHIANGMAI_DATA_DIR / "pm25"
-CHIANGMAI_ERA5_DIR  = CHIANGMAI_DATA_DIR / "era5"
-CHIANGMAI_DEM_DIR   = CHIANGMAI_DATA_DIR / "dem"
+CHIANGMAI_DATA_DIR      = EXTERNAL_DIR / "chiangmai"
+CHIANGMAI_PM25_DIR      = CHIANGMAI_DATA_DIR / "pm25"
+CHIANGMAI_ERA5_DIR      = CHIANGMAI_DATA_DIR / "era5"
+CHIANGMAI_DEM_DIR       = CHIANGMAI_DATA_DIR / "dem"
+CHIANGMAI_SATELLITE_DIR = CHIANGMAI_DATA_DIR / "satellite"
+CHIANGMAI_MODIS_DIR     = CHIANGMAI_SATELLITE_DIR / "modis"
+CHIANGMAI_TROPOMI_DIR   = CHIANGMAI_SATELLITE_DIR / "tropomi"
 
 # ⚠ STAGE 2 WIRING NOTE (2026-02-28):
 # config.py paths above are CORRECT (data/external/{medellin,chiangmai}).
@@ -279,6 +282,14 @@ MEDELLIN_VALLEY_AXIS_DEG  = 0.0     # Valley runs N-S (0° = North), vs 45° for
 MEDELLIN_CENTRE_LAT       = 6.2441
 MEDELLIN_CENTRE_LON       = -75.5812
 CHIANGMAI_BBOX = (98.93,  18.70, 99.07,  18.87)
+CHIANGMAI_BROAD_BBOX = {                             # dict form for spatial_mean_over_bbox
+    "lon_min": 98.93, "lat_min": 18.70,
+    "lon_max": 99.07, "lat_max": 18.87,
+}
+CHIANGMAI_VALLEY_DEPTH_M  = 800.0   # Ping River valley: floor ~300m, ridges ~1000-1100m
+CHIANGMAI_VALLEY_AXIS_DEG = 0.0     # N-S oriented (Ping River axis)
+CHIANGMAI_CENTRE_LAT      = 18.7846
+CHIANGMAI_CENTRE_LON      = 98.9868
 
 # Pre-training sub-domains — 15×15km centred on monitoring network centroids
 # Matches Kandy PINN domain scale (KANDY_PINN_BBOX = 15×15km).

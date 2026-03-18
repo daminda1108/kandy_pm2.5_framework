@@ -14,7 +14,7 @@ Gate conditions (must pass before proceeding to Stage 3 Kandy):
 
 ARCHITECTURE
 ------------
-FourierPINNV3 (430,181 params) initialised from v8 backbone (partial transfer).
+FourierPINNV3 (76,261 params) — same architecture as Stage 3 Kandy train.py.
   - Road kernel: medellin_road_kernel_100m.npz  → S = alpha(t) × R(x,y)
   - Elev grid:   medellin_elev_grid_100m.npz    → K_aniso(x,y,elev)
   - BLH:         ERA5 BLH / 2000.0              → K_base(BLH,t)
@@ -93,7 +93,6 @@ STAGE2_PROC_DIR   = Path(__file__).parents[3] / "data" / "processed" / "stage2"
 PERSTATION_PARQ   = STAGE2_PROC_DIR / "medellin_stage2_perstation.parquet"
 ROAD_KERNEL_NPZ   = PINN_INPUT_DIR  / "medellin_road_kernel_100m.npz"
 ELEV_GRID_NPZ     = PINN_INPUT_DIR  / "medellin_elev_grid_100m.npz"
-V8_BACKBONE_PT    = MODELS_DIR / "stage2_pretrain" / "v8" / "pretrained_physics_backbone.pt"
 CHECKPOINT_DIR    = MODELS_DIR / "stage2_medellin_pinn"
 ERA5_SIATA_NC     = Path(__file__).parents[3] / "data" / "external" / "medellin" / "era5" / "medellin_era5_siata_period.nc"
 
@@ -119,26 +118,35 @@ SPATIAL_EVAL_EVERY = 50
 
 def get_weights(epoch: int, n_epochs: int) -> dict:
     """
-    Three-phase curriculum tuned for Medellín 11-station training.
+    Three-phase curriculum — canonical v7 values (both gates passed).
 
-    Phase 1 (0–25%):  Pure data — establish spatial ordering from SIATA truth.
-    Phase 2 (25–60%): Linear ramp — PDE grows while data stays dominant.
-    Phase 3 (60–100%): Physics-dominant — road kernel + elev anchor spatial structure.
+    Phase 1 (0–30%):  λ_pde=0.00, λ_data=0.75, λ_bc=0.20, λ_kblh=0.05
+      Pure data dominance — establish correct station-to-station ordering.
+      CRITICAL: PDE at Phase 1 pushes C to a flat trivial solution (v4/v5 lesson).
+      Extended from 25%→30% for the v8 run: extra time for spatial ordering.
+
+    Phase 2 (30–60%):  linear ramp λ_pde 0→0.15, λ_data 0.75→0.55
+      Gentle PDE onset. λ_data=0.55 at end keeps data dominant (≥0.50).
+
+    Phase 3 (60–100%): λ_pde=0.15, λ_data=0.55, λ_bc=0.15, λ_kblh=0.10
+      Data dominance maintained: λ_data=0.55 > λ_pde=0.15.
+      Road kernel (B4) breaks K–S degeneracy — L_div not needed.
+      Key v5/v6 lesson: λ_pde > λ_data in Phase 3 → station fit degrades.
     """
-    p1_end = int(0.25 * n_epochs)
+    p1_end = int(0.30 * n_epochs)
     p2_end = int(0.60 * n_epochs)
 
     if epoch < p1_end:
         return dict(pde=0.00, data=0.75, bc=0.20, kblh=0.05)
     elif epoch < p2_end:
         t = (epoch - p1_end) / max(1, p2_end - p1_end)
-        pde  = t * 0.38
-        data = 0.75 + t * (0.35 - 0.75)   # ramp to 0.35 (expert: ≥0.35 to prevent PDE undoing station fit)
+        pde  = t * 0.15
+        data = 0.75 + t * (0.55 - 0.75)
         bc   = 0.20 + t * (0.15 - 0.20)
         kblh = 0.05 + t * (0.10 - 0.05)
         return dict(pde=pde, data=data, bc=bc, kblh=kblh)
     else:
-        return dict(pde=0.38, data=0.35, bc=0.15, kblh=0.10)
+        return dict(pde=0.15, data=0.55, bc=0.15, kblh=0.10)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -306,13 +314,19 @@ def build_elev_interpolator():
 # MODEL
 # ─────────────────────────────────────────────────────────────────────────────
 
-def build_model(cold_start: bool, device):
-    """Build FourierPINNV3 for Medellín, optionally warm-started from v8 backbone."""
+def build_model(device, warm_start_path=None):
+    """
+    Build FourierPINNV3 for Medellín training.
+
+    FourierPINNV3 is a fully redesigned architecture (76K params, separate spatial+temporal
+    embeddings, factored K). The old FourierPINN v2 backbone (stage2_pretrain/v8/) has a
+    different architecture and 0 keys transfer — v2 is obsolete.
+
+    warm_start_path: optional path to a FourierPINNV3 checkpoint (e.g. previous Medellín run)
+                     from which to load model_state_dict. Only use same-architecture checkpoints.
+    """
     import torch
-    from src.stage3_pinn.models.fourier_pinn_v3 import (
-        FourierPINNV3, load_partial_backbone,
-        reinit_diffusion_subnet_v3, reinit_alpha_net,
-    )
+    from src.stage3_pinn.models.fourier_pinn_v3 import FourierPINNV3
 
     if not ROAD_KERNEL_NPZ.exists():
         raise FileNotFoundError(
@@ -323,23 +337,13 @@ def build_model(cold_start: bool, device):
     model = FourierPINNV3(road_kernel_path=ROAD_KERNEL_NPZ).to(device)
     log.info(f"FourierPINNV3: {sum(p.numel() for p in model.parameters()):,} params")
 
-    if cold_start:
-        log.info("Cold start: full random Xavier initialisation")
-        return model
-
-    if not V8_BACKBONE_PT.exists():
-        log.warning(f"v8 backbone not found: {V8_BACKBONE_PT} — cold start")
-        return model
-
-    ckpt    = torch.load(str(V8_BACKBONE_PT), map_location=device, weights_only=False)
-    v2_state = ckpt.get("model_state_dict", ckpt)
-    n_loaded, n_skipped = load_partial_backbone(model, v2_state)
-    log.info(f"v8 warm-start: {n_loaded} keys loaded, {n_skipped} reinitialised")
-
-    # Always reinit city-specific sub-nets for Medellín
-    reinit_diffusion_subnet_v3(model)
-    reinit_alpha_net(model)
-    log.info("Reinitialised DiffusionSubNetV3 + AlphaNet for Medellín domain")
+    if warm_start_path is not None and Path(warm_start_path).exists():
+        ckpt = torch.load(str(warm_start_path), map_location=device, weights_only=False)
+        state = ckpt.get("model_state_dict", ckpt)
+        model.load_state_dict(state)
+        log.info(f"Warm-started from FourierPINNV3 checkpoint: {warm_start_path}")
+    else:
+        log.info("Cold start: full random Xavier initialisation (FourierPINNV3)")
 
     return model
 
@@ -534,19 +538,8 @@ def train(
     # Pre-build collocation layout (refresh every 200 epochs with new random sample)
     xy_int_np, xy_bnd_np = sample_collocation(N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, rng)
 
-    # Pre-compute station elev_norm (static — stations don't move)
     sta_ids     = sorted(daily_sta["station_id"].unique())
-    # Representative row per station for coordinates
-    sta_ref = (
-        daily_sta.groupby("station_id")[["x_norm", "y_norm", "lat", "lon"]]
-        .first()
-        .reindex(sta_ids)
-    )
-    sta_x_np    = sta_ref["x_norm"].values.astype(np.float32)
-    sta_y_np    = sta_ref["y_norm"].values.astype(np.float32)
-    sta_elev_np = elev_interp(sta_x_np, sta_y_np)
     elev_int_np = elev_interp(xy_int_np[:, 0], xy_int_np[:, 1])
-    elev_bnd_np = elev_interp(xy_bnd_np[:, 0], xy_bnd_np[:, 1])
 
     log.info(f"Training: {n_epochs} epochs, {n_dates} SIATA dates, "
              f"{len(sta_ids)} stations, device={device}")
@@ -564,14 +557,12 @@ def train(
                 N_COLLOCATION_INTERIOR, N_COLLOCATION_BOUNDARY, rng
             )
             elev_int_np = elev_interp(xy_int_np[:, 0], xy_int_np[:, 1])
-            elev_bnd_np = elev_interp(xy_bnd_np[:, 0], xy_bnd_np[:, 1])
 
         # ── Sample a random date ───────────────────────────────────────────
         date_today = dates[rng.integers(0, n_dates)]
         day_df     = daily_sta[daily_sta["date"] == date_today]
 
         blh_today  = float(day_df["blh"].mean()) if "blh" in day_df.columns else 1000.0
-        blh_n      = blh_today / PINN_BLH_NORM_SCALE
         wind_u     = float(day_df["u10"].mean()) if "u10" in day_df.columns else 0.5
         wind_v     = float(day_df["v10"].mean()) if "v10" in day_df.columns else 0.5
         precip_raw = float(day_df["tp"].sum()) if "tp" in day_df.columns else 0.0
@@ -893,7 +884,7 @@ def _setup_wandb(config: dict):
             wandb.login(key=api_key, relogin=True)
         run = wandb.init(
             project=WANDB_PROJECT,
-            name=f"medellin-pinn-{'warm' if not config.get('cold_start') else 'cold'}",
+            name=f"medellin-pinn-{'warm' if config.get('warm_start') else 'cold'}",
             config=config,
             tags=["stage2", "medellin", "v3"],
         )
@@ -908,7 +899,8 @@ def main():
     parser = argparse.ArgumentParser(description="Train FourierPINNV3 on Medellín SIATA data")
     parser.add_argument("--epochs",      type=int,   default=DEFAULT_EPOCHS)
     parser.add_argument("--lr",          type=float, default=DEFAULT_LR)
-    parser.add_argument("--cold-start",  action="store_true", help="Random init (no v8 backbone)")
+    parser.add_argument("--warm-start",  type=str, default=None, metavar="CKPT_PATH",
+                        help="Path to FourierPINNV3 checkpoint to warm-start from (same architecture only)")
     parser.add_argument("--save-every",  type=int,   default=SAVE_EVERY)
     parser.add_argument("--wandb",       action="store_true")
     parser.add_argument("--check-gates", action="store_true",
@@ -923,7 +915,7 @@ def main():
 
     daily_sta, city_mean, pm25_var = load_siata_daily()
     elev_interp = build_elev_interpolator()
-    model = build_model(cold_start=args.cold_start, device=device)
+    model = build_model(device=device, warm_start_path=args.warm_start)
 
     if args.check_gates or args.k_diagnostic:
         # Load most recent checkpoint
@@ -952,7 +944,7 @@ def main():
             log.info("K-field diagnostic complete. See above for checklist.")
         return
 
-    run_config = dict(epochs=args.epochs, lr=args.lr, cold_start=args.cold_start)
+    run_config = dict(epochs=args.epochs, lr=args.lr, warm_start=args.warm_start)
     wandb_run  = _setup_wandb(run_config) if args.wandb else None
 
     t0 = time.time()

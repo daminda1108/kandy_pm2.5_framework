@@ -1,7 +1,10 @@
 # =============================================================================
 # Kandy PM2.5 — .gitignore
-# Tracked: source code (kandy_pm25/src/**), config, requirements, README,
-#          run_pipeline.py, SETUP_GUIDE.md, .gitignore
+# POLICY: Only model source code is committed to git.
+#   Tracked: kandy_pm25/src/**, kandy_pm25/config.py, requirements.txt,
+#            README.md, .gitignore, run_pipeline.py, SETUP_GUIDE.md
+#   NOT tracked: data, results, visualisation scripts, report/analysis
+#                scripts, project-management docs, credentials, notebooks.
 # =============================================================================
 
 
@@ -90,8 +93,9 @@ secrets/
 API.txt
 
 
-# ── Internal working documents (not public-facing) ───────────────────────────
+# ── Internal working / project-management documents (not model code) ─────────
 CLAUDE.md
+PROJECT.md
 PROJECT_CONTEXT.md
 RESEARCH_PROJECT_DESIGN.md
 STAGE1_ANALYSIS.md
@@ -118,6 +122,12 @@ artifacts/
 *_kaggle.py
 kaggle_kernel/
 kaggle_checkpoint_dataset/
+
+
+# ── Visualisation and analysis scripts (not model code) ──────────────────────
+# These are run locally to inspect results; they are not part of the model.
+visualise_*.py
+kandy_pm25/src/**/visualise_*.py
 
 
 # ── Project-level directories that are NOT source code ───────────────────────
