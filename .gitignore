@@ -118,6 +118,20 @@ READ\ ME.txt
 artifacts/
 
 
+# ── Root-level reports directory (markdown deliverables, not source) ─────────
+/reports/
+
+
+# ── Obsidian canvas scratch files ────────────────────────────────────────────
+*.canvas
+
+
+# ── Training artifacts / logs / figures (not source) ─────────────────────────
+*.log
+*.png
+catboost_info/
+
+
 # ── Kaggle kernel scripts (managed via kaggle CLI, not git) ──────────────────
 *_kaggle.py
 kaggle_kernel/

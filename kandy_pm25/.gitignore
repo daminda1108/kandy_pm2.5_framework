@@ -7,6 +7,7 @@
 .venv/
 __pycache__/
 data/
+!src/stage3_pinn/data/
 results/
 scripts/
 reports/
