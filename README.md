@@ -1,4 +1,4 @@
-# Kandy PM2.5 — Multi-Target PM2.5 Estimation for Unmonitored Tropical Highland Cities
+# Kandy PM2.5 — Satellite-ML and Cross-City Spatial Estimation
 
 Undergraduate thesis project — Daminda Alahakoon, Department of Environmental Sciences, University of Peradeniya.
 
@@ -6,45 +6,45 @@ Undergraduate thesis project — Daminda Alahakoon, Department of Environmental 
 
 ## Overview
 
-Kandy, Sri Lanka has no continuous PM2.5 monitoring stations. This repository develops a multi-stage framework for spatiotemporally resolved PM2.5 estimation in Kandy and two other unmonitored Sri Lankan highland cities (Nuwara Eliya and Badulla), at the intrinsic resolution of the available driving data — 1 km, hourly — with calibrated per-pixel uncertainty.
+Kandy, Sri Lanka has no continuous PM2.5 monitoring stations. This repository develops a two-stage framework for spatiotemporally resolved PM2.5 estimation over Kandy at the intrinsic resolution of the available driving data — 1 km, hourly — with calibrated per-pixel uncertainty.
 
-The framework cascades a satellite-machine-learning temporal anchor through a cross-continental physics-informed transfer experiment to a Convolutional Neural Process residual learner trained on three station-rich source cities and applied zero-shot to the Sri Lankan highland targets. Each stage is independently testable and is reported with its own held-out skill, uncertainty calibration, and structural-consistency diagnostics.
+Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). Stage B produces a spatial field by training a Convolutional Neural Process on three station-rich source cities and applying it zero-shot at Kandy on top of a reanalysis prior.
 
-What the framework does *not* do: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; it does not chemically apportion sources; it does not forecast. Outputs at the unmonitored targets are hourly 1 km PM2.5 fields with per-pixel σ, anchored to the only published Kandy in-situ campaign (Senarathna et al. 2024). Strict validation requires field deployment, which is identified as a future work item.
+What the framework does *not* do: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; it does not chemically apportion sources; it does not forecast. Outputs are hourly 1 km PM2.5 fields with per-pixel σ. Strict validation requires field deployment at Kandy with hourly-resolution sensors, which is identified as a future work item.
 
 ---
 
 ## Pipeline
 
 ```
-                 ┌─────────────────────────────────────────────┐
-                 │ KOALA 2019 anchor 24.5 µg/m³ (Senarathna     │
-                 │ et al. 2024, CJS 53(2):197–206; 12 monthly   │
-                 │ aggregates)                                  │
-                 └────────────────────┬────────────────────────┘
-                                      │
-        ┌──────────────────┬──────────┴──────────┬──────────────────┐
-        v                  v                     v                  v
-   Stage A           Stage B               Stage C            Stage D
-   Temporal anchor   Reanalysis baseline   Cross-city         Zero-shot
-   (XGBoost +        (GEOS-CF × per-city   residual learner   inference at
-   LGBM+CatBoost     scaling, Kandy ratio  (ConvCNP,          Kandy + Nuwara
-   blend)            0.536 = 24.5 / 45.7)  deepsensor)        Eliya + Badulla
-                                           N = 3 highland-    (1 km hourly +
-   v1 daily LOMO                           valley source      per-pixel σ;
-   R² = 0.631;                             cities; predicts   3 consistency
-   v3 hourly                               pm25 − c_prior     anchors per
-   pooled R² = 0.581                       residual           target)
-                                                    │
-                                                    v
-                                        Stage 2 — Physics transfer
-                                        (FourierPINNV3 TD-PDE,
-                                        Medellín → Chiang Mai)
-                                        Medellín R² = 0.932,
-                                        Chiang Mai R² = 0.765
+                  ┌─────────────────────────────────────────────┐
+                  │ KOALA 2019 anchor 24.5 µg/m³ (Senarathna     │
+                  │ et al. 2024, CJS 53(2):197–206; 12 monthly   │
+                  │ aggregates)                                  │
+                  └────────────────────┬────────────────────────┘
+                                       │
+                  ┌────────────────────┴─────────────────────────┐
+                  v                                              v
+        Stage A                                       Stage B
+        Temporal anchor                               Cross-city spatial
+                                                      residual learner
+        XGBoost daily (2003–2025) +                   ConvCNP, deepsensor,
+        LGBM/CatBoost/XGB hourly                      N = 3 highland-valley
+        blend (2018–2026), residual                   source cities
+        target `pm25 − c_prior`,                      (Medellín, Chiang Mai,
+        per-sensor offsets,                           Kathmandu); residual
+        CV+ Mondrian conformal UQ                     target `pm25 − c_prior_scaled`
+                                                      against per-city scaled
+        → Kandy hourly PM2.5                          GEOS-CF prior; Student-t
+          time series at sensor                       likelihood + per-(city
+          locations, with UQ                          × hour) Mondrian conformal
+                                                      UQ
+                                                      → Kandy 1 km hourly
+                                                        PM2.5 field with
+                                                        per-pixel σ
 ```
 
-Native resolution is 1 km hourly. An optional terrain-guided 1 km → 100 m kernel disaggregation (Stage E) is available as a labelled presentation step; it adds no new physical information.
+Native resolution is 1 km hourly. The 0.25° driving reanalyses (GEOS-CF, ERA5) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
 
 ---
 
@@ -54,18 +54,18 @@ The current architecture is the result of several explicit pivots, each driven b
 
 | Date | Pivot | Reason |
 |---|---|---|
-| 2026-03 | QSS spatial PINN → **TD-PDE temporal PINN** for Stage 2 | QSS lost spatial ordering of stations under physics pressure (λ_pde ≥ 0.38 collapsed the field). TD-PDE with the v7 curriculum (pure-data Phase 1 → ramped λ_pde to 0.15 max) recovered ordering and now anchors Stage 2. |
-| 2026-05-04 | SharedTerrainAnsatz → **ConvCNP residual learner** for Stage C | All six Whiteman-ansatz parameters hit bound constraints across the source-city set; the rigid functional form could not represent valley physics in different regimes. ConvCNP residual learning was adopted; the ansatz failure is retained as a documented diagnostic. |
-| 2026-05-17 | CAMS as label → **CAMS as feature** (Stage 1 v2 reframe) | v1 used KOALA both to calibrate CAMS labels (×0.598) and to validate the result (r = 0.515) — circular by construction. v2 promotes FECT-calibrated PurpleAir to labels and demotes CAMS / GEOS-CF to features; daily LOMO R² moved from 0.631 to 0.689. |
+| 2026-03 | QSS spatial PINN → **TD-PDE temporal PINN** | QSS lost spatial ordering of stations under physics pressure (λ_pde ≥ 0.38 collapsed the field). TD-PDE with the v7 curriculum (pure-data Phase 1 → ramped λ_pde to 0.15 max) recovered ordering. The TD-PDE result was later moved to a supporting experiment, since spatial PINN work was cut entirely and the temporal anchor was solved more reliably by gradient-boosted trees. |
+| 2026-05-04 | SharedTerrainAnsatz → **ConvCNP residual learner** for spatial | All six Whiteman-ansatz parameters hit bound constraints across the source-city set; the rigid functional form could not represent valley physics in different regimes. ConvCNP residual learning was adopted; the ansatz failure is retained as a documented diagnostic. |
+| 2026-05-17 | CAMS as label → **CAMS as feature** (Stage A v2 reframe) | v1 used KOALA both to calibrate CAMS labels (×0.598) and to validate the result (r = 0.515) — circular by construction. v2 promotes FECT-calibrated PurpleAir to labels and demotes CAMS / GEOS-CF to features; daily LOMO R² moved from 0.631 to 0.689. |
 | 2026-05-20 | Daily v2 → **hourly v3** | Hourly residual target with per-sensor offsets enables diurnal-cycle reproduction (against Senarathna 2024, r = +0.865). After a 39-feature Tier-1 rebuild failed to lift pooled R² above 0.581, the R² ≥ 0.60 target was closed as an honest near-miss; sensor expansion was identified as the binding constraint, not architecture. |
-| 2026-05 | N = 5 → **N = 3** source cities + **PVAF v1** | Bogotá and Mexico City were dropped from Stage C cross-validation as different atmospheric regimes (Mexico City GEOS-CF over-predicts by a factor of ~4.6). PVAF v1 was launched to select additional highland-valley analogues by physics-similarity scoring before Kandy production maps are regenerated. |
+| 2026-05 | N = 5 → **N = 3** source cities + **PVAF v1** | Bogotá and Mexico City were dropped from Stage B cross-validation as different atmospheric regimes (Mexico City GEOS-CF over-predicts by a factor of ~4.6). PVAF v1 was launched to select additional highland-valley analogues by physics-similarity scoring before Kandy production maps are regenerated. |
 | 2026-05-22 | Gaussian NLL → **Student-t(df = 5) + split-conformal** for UQ | ConvCNP v13 satisfied point-skill targets but Gaussian likelihood let σ collapse (cov90 fell to 0.54–0.73). v14 switched to Student-t for robust point estimation; per-(city × hour-of-day) Mondrian conformal calibration restored cov90 ∈ [0.85, 0.95] across all source cities without retraining. |
 
 ---
 
 ## Stage A — Satellite-ML Temporal Anchor
 
-Two parallel tracks are maintained: a daily anchor (v1) and an hourly RECAP residual learner (v3). The daily track stays in the repository as a 22-year chronology for Kandy; the hourly track is the operational track for Stage D inference.
+Two parallel tracks are maintained: a daily anchor (v1) and an hourly RECAP residual learner (v3). The daily track stays in the repository as a 22-year chronology for Kandy; the hourly track is the operational temporal product.
 
 **v1 — daily, 2003–2025 (8,279 days, 44 features).**
 
@@ -97,49 +97,13 @@ Against Senarathna 2024 diurnal pattern: r = +0.865 (morning peak 07 LT match, e
 
 ---
 
-## Stage 2 — Cross-Continental PINN Transfer
-
-Time-dependent advection–diffusion PINN, FourierPINNV3 architecture:
-
-```
-∂C/∂t + u·∇C = ∇·(K∇C) − v_d·C + S − Λ·P·C
-```
-
-Trained from raw PyTorch autograd. Quasi-steady-state formulation was tested at Kandy (v8 / v9) and rejected on structural grounds (R² = −0.39 / −0.32 with r(K, BLH) = 0.998 / 0.999, indicating QSS cannot capture temporal dynamics through K(BLH) alone).
-
-**Architecture (FourierPINNV3, 76,261 parameters):**
-
-- SpatialEmbedding: dual-bank multi-scale Fourier features, m_lo = m_hi = 64, σ ∈ {1.0, 3.0}, out_dim = 256
-- TrunkNetV3: Linear(261 → 128) → GELU → 1 × ResBlock(128) → Linear(128 → 64) → GELU
-- DiffusionSubNetV3: factored K_base(BLH, t) × K_aniso(x, y, elev), 1,315 parameters
-- AlphaNet: [sin h, cos h] → α; S(x, y, t) = α(t) × R(x, y), where R is a registered OSM road kernel buffer (breaks K–S identifiability structurally)
-
-**Canonical curriculum (v7, used unchanged for both source cities):**
-
-| Phase | Epochs | λ_pde | λ_data | λ_bc | λ_kblh |
-|---|---|---|---|---|---|
-| 1 — Pure data | 0–25 % | 0.00 | 0.75 | 0.20 | 0.05 |
-| 2 — PDE ramp | 25–60 % | 0 → 0.15 | 0.75 → 0.55 | 0.20 → 0.15 | 0.05 → 0.15 |
-| 3 — Steady | 60–100 % | 0.15 (max) | 0.55 | 0.15 | 0.15 |
-
-Phase 1 must be pure data — the PDE residual is not informative until the network establishes spatial station ordering. λ_pde > 0.15 collapses spatial ordering.
-
-**Transfer results.**
-
-| City | Role | Best checkpoint | R² | r(K, BLH) | Bias |
-|---|---|---|---|---|---|
-| Medellín (SIATA, 11 stations) | Pre-training | TD-PDE v1 ep1400 | 0.932 | 0.998 | — |
-| Chiang Mai (Air4Thai + PA, 8 stations) | Held-out validation | TD-PDE v1 ep2200 | 0.765 | 0.981 | −0.59 µg/m³ |
-
-The pre-training ↔ transfer warm-start was validated through controlled experiments showing pure-data Phase-1 weights transfer, while Phase-3 physics-tuned weights overfit to source-domain physics.
-
----
-
-## Stage C — ConvCNP Residual Learner
+## Stage B — Cross-City Spatial Residual Learner
 
 Spatial estimation of `pm25 − c_prior_scaled` (additive residual against a GEOS-CF reanalysis prior, anchored per city). Framed as exploratory cross-city transfer; the spatial product inherits structure from priors and from cross-city training as much as from the source-city data themselves.
 
-**Source cities (N = 3, locked):** Medellín (11 stations, lowland control), Chiang Mai (8, tropical analogue), Kathmandu (45, dense valley). Bogotá and Mexico City were dropped as different atmospheric regimes. The roster is intended to expand to N ≥ 6 via PVAF v1 (highland-valley analogue finder; currently selecting candidates from Dhaka, Lahore, Jakarta, Kabul, La Paz, Quito).
+**Reanalysis prior (preprocessing step inside Stage B).** GEOS-CF PM25_RH35_GCC at 0.25° hourly is scaled per city by `c_prior_scaled = c_prior × city_ratio`, where `city_ratio = mean(pm25) / mean(c_prior)` is computed on per-row station–timestamp overlap. The Kandy ratio is 0.536 (= 24.5 / 45.7, KOALA / GEE GEOS-CF mean). This corrects the well-documented GEOS-CF over-prediction in tropical Asia and prevents prior-inflation in the residual.
+
+**Source cities (N = 3, locked).** Medellín (11 stations, lowland control), Chiang Mai (8, tropical analogue), Kathmandu (45, dense valley). Bogotá and Mexico City were dropped as different atmospheric regimes. The roster is intended to expand to N ≥ 6 via PVAF v1 (highland-valley analogue finder; currently selecting candidates from Dhaka, Lahore, Jakarta, Kabul, La Paz, Quito).
 
 **Architecture.** deepsensor 0.4.2 ConvNP. UNet (32, 64, 128), 625,989 parameters. Student-t(df = 5) likelihood for robust point estimation; cosine LR 5 × 10⁻⁵ → 1 × 10⁻⁶, gradient clip 1.0. Inputs: station context (lat, lon, pm25) with per-station BLH, c_prior, diurnal and DOY harmonics; gridded auxiliaries c_prior, ERA5(-Land) BLH / u10 / v10 / T2m / dewpoint / precip, SRTM DEM, delta_z, OSM road density, VIIRS NTL.
 
@@ -164,13 +128,7 @@ Spatial estimation of `pm25 − c_prior_scaled` (additive residual against a GEO
 
 UQ pipeline (locked): Student-t(df = 5) NLL during training for a robust median, plus split-conformal scaling at inference for calibrated 90 % intervals (Vovk 2005; Romano et al. 2019). KTM analogue scale factor q̂ = 3.13 (scalar) or q̂ ∈ [2.13, 3.54] (per hour-of-day).
 
----
-
-## Stage D — Zero-Shot Inference at Three Sri Lankan Highland Targets
-
-Kandy (~500 m ASL, valley), Nuwara Eliya (~1,900 m ASL, highland), Badulla (~680 m ASL, valley). Output: 1 km hourly PM2.5 + per-pixel σ over a one-year period.
-
-**Kandy 2024 inference (preliminary, retained but not yet promoted to a primary product).** 2.25 M predictions on a 1 km × hourly grid using checkpoint `convcnp_v13_holdout_medellin_seed3.pt` with conformal scale q̂ = 3.13 (KTM highland-valley analogue).
+**Kandy zero-shot inference (preliminary, retained but not promoted to a primary product).** 2.25 M predictions on a 1 km × hourly grid for 2024 using checkpoint `convcnp_v13_holdout_medellin_seed3.pt` with conformal scale q̂ = 3.13 (KTM highland-valley analogue).
 
 | Anchor | Value | Reference | Result |
 |---|---|---|---|
@@ -186,6 +144,26 @@ Anchors are framed as **structural-consistency checks pending field validation**
 
 ---
 
+## Supporting Experiments
+
+These workstreams are documented in the repository because they were carried out, produced artifacts, and informed the current design. None of them feeds the current Stage A or Stage B deployment pipeline; they are retained for transparency.
+
+### Cross-continental PINN transfer experiment (Medellín → Chiang Mai)
+
+A time-dependent advection–diffusion PINN (FourierPINNV3, 76,261 parameters) was pre-trained on Medellín and validated on Chiang Mai, to test whether a physics-informed network with the right curriculum could transfer cross-continent. The result is positive: Medellín R² = 0.932 (r(K, BLH) = 0.998) and Chiang Mai R² = 0.765 (r(K, BLH) = 0.981, bias = −0.59 µg/m³). The canonical curriculum is a three-phase schedule (pure-data Phase 1 → λ_pde ramp → λ_pde = 0.15 steady); λ_pde > 0.15 collapses spatial ordering.
+
+The experiment establishes a transferable curriculum for cross-continental time-dependent PINN transfer in the absence of target-city ground truth. Spatial PINN work over Kandy was cut after the rigid Whiteman-ansatz identifiability failure (see next experiment), so this checkpoint is not used as a feeder for Stage B. Code: `kandy_pm25/src/stage2_transfer/`. Canonical checkpoints: `results/models/stage2_medellin_pinn/td_pinn_v1/checkpoints/epoch_01400.pt`, `results/models/stage2_chiangmai_pinn/td_pinn_v1/checkpoints/epoch_02200.pt`.
+
+### SharedTerrainAnsatz identifiability diagnostic
+
+A six-parameter rigid Whiteman terrain ansatz (`H_trap`, `α_v`, `w_stab`, `w_wind`, …) was fit jointly across Medellín, Chiang Mai, and Kathmandu. All six parameters hit bound constraints in each fit; LOOCV held-out skill on the held-out city collapsed to noise. The failure mode is identifiability: the ansatz functional form cannot simultaneously represent valley physics in regimes as different as Medellín (lowland), Chiang Mai (broad valley), and Kathmandu (dense bowl). This motivated the move to a data-driven ConvCNP residual learner for Stage B. Code: `kandy_pm25/src/stage3_pinn/models/shared_terrain_ansatz.py`.
+
+### PVAF v1 — Physics-based Valley Analogue Finder
+
+A supporting tool, not a deployed stage. PVAF scores candidate cities against Kandy across four feature families (terrain, climate, emissions, monitoring coverage) to select highland-valley analogues for expanding the Stage B source roster from N = 3 to N ≥ 6 before regenerating Kandy production maps. Tier-1 sanity on the existing N = 4 set ranks Chiang Mai > Kathmandu > Medellín, matching the v14 LOOCV transfer-r rank order (Spearman ρ = 1.0). Code: `kandy_pm25/src/pvaf/`. Plan: `docs/pvaf_v1_plan.md`. Pre-registration: `osf.io/ykdb9` (locked 2026-05-23).
+
+---
+
 ## Repository Structure
 
 ```
@@ -196,29 +174,31 @@ ProjectCD/
 ├── memory/SESLOG.md             Session log (history of decisions and runs)
 ├── docs/
 │   ├── AUDIT_2026-05-08.md      Hostile peer-review audit and fix log
-│   ├── REDESIGN_2026-05-08.md   From-scratch redesign with 16-week schedule
+│   ├── REDESIGN_2026-05-08.md   From-scratch redesign
 │   ├── kaggle_kernel_log.md     Kaggle kernel run history
 │   ├── osf_prereg_*.md          Pre-registrations and amendments
-│   ├── pvaf_v1_plan.md          Physics-based Valley Analogue Finder plan
+│   ├── pvaf_v1_plan.md          PVAF v1 plan and methodology
 │   └── archive/                 Superseded plans and reports (banner-marked)
 ├── kandy_pm25/
 │   ├── config.py                All paths, constants, city ratios — single source of truth
 │   ├── requirements.txt
 │   └── src/
-│       ├── stage1_satml/        Stage A: XGBoost / LightGBM / CatBoost satellite-ML
-│       ├── stage2_transfer/     Stage 2: FourierPINNV3 cross-continental transfer
+│       ├── stage1_satml/        Stage A code: XGBoost / LightGBM / CatBoost satellite-ML
+│       ├── stage2_transfer/     Cross-continental PINN experiment (supporting)
 │       ├── stage3_pinn/
 │       │   ├── data/            CityConfig + multi-city loader
 │       │   ├── models/
-│       │   │   ├── fourier_pinn_v3.py        Active — FourierPINNV3 (76,261 params)
-│       │   │   ├── shared_terrain_ansatz.py  Diagnostic reference (rigid Whiteman ansatz)
-│       │   │   ├── convcnp_terrain.py        ConvCNP residual learner (Stage C)
+│       │   │   ├── fourier_pinn_v3.py        FourierPINNV3 used by supporting PINN experiment
+│       │   │   ├── shared_terrain_ansatz.py  Identifiability diagnostic (supporting)
+│       │   │   ├── convcnp_terrain.py        Stage B ConvCNP residual learner
 │       │   │   └── _archive/                 Pre-pivot v1/v2 PINN models, do not import
-│       │   ├── physics/         pde_residual_v3.py + source_kernel.py (active)
-│       │   └── training/        train.py (Stage 2); train_convcnp.py (Stage C)
-│       └── pvaf/                Physics-based Valley Analogue Finder v1
+│       │   ├── physics/         pde_residual_v3.py + source_kernel.py (PINN experiment)
+│       │   └── training/        train.py (PINN experiment); train_convcnp.py (Stage B)
+│       └── pvaf/                PVAF v1 analogue finder (supporting tool)
 └── scripts/                     Standalone data-acquisition and validation scripts
 ```
+
+The narrative stages (A, B) and the directory workstream numbers (`stage1_satml/`, `stage2_transfer/`, `stage3_pinn/`) are distinct namespaces. Stage A code lives under `src/stage1_satml/`; Stage B code lives under `src/stage3_pinn/` (which also houses the supporting cross-continental PINN code that was historically called "stage 3" before the spatial PINN line was retired). Directory names are preserved to avoid breaking imports, Kaggle kernel paths, and the configuration constants.
 
 ---
 
@@ -245,13 +225,15 @@ See `kandy_pm25/SETUP_GUIDE.md` for detailed setup, including Kaggle access-toke
 ```bash
 # All commands run from kandy_pm25/
 
-# Build merged Stage A daily dataset
+# --- Stage A ---
+
+# Build merged daily dataset
 python src/stage1_satml/features/build_dataset.py
 
-# Train Stage A v1 XGBoost + quantile models
+# Train v1 XGBoost + quantile models
 python src/stage1_satml/models/train_xgboost.py --no-shap
 
-# Build Stage A v3 hourly residual dataset
+# Build v3 hourly residual dataset
 python src/stage1_satml/features/build_dataset_v3_hourly.py
 
 # Train v3 base learners and blend
@@ -261,13 +243,16 @@ python src/stage1_satml/models/train_xgb_v3.py
 python src/stage1_satml/models/blend_v3.py
 python src/stage1_satml/models/conformal_v3.py
 
-# Stage 2 cross-continental PINN training is run on Kaggle (T4 x2 GPU).
-PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
-    kernels push -p data/processed/stage2/kaggle_kernel_kandy_td_pinn_v7/
+# --- Stage B ---
 
-# Stage C ConvCNP LOOCV is also run on Kaggle:
+# ConvCNP cross-city LOOCV (Kaggle, T4 x2 GPU)
 PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
     kernels push -p data/processed/stage2/kaggle_kernel_convcnp_v14/
+
+# --- Supporting cross-continental PINN experiment ---
+
+PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
+    kernels push -p data/processed/stage2/kaggle_kernel_kandy_td_pinn_v7/
 ```
 
 ---
@@ -277,38 +262,35 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 | Dataset | Resolution | Period | Role |
 |---|---|---|---|
 | CAMS EAC4 reanalysis | 0.75° / daily | 2003–2025 | Stage A v1 training labels (KOALA-corrected) |
-| GEOS-CF PM25_RH35_GCC | 0.25° / hourly | 2018–2026 | Stage B reanalysis prior; Stage C c_prior |
+| GEOS-CF PM25_RH35_GCC | 0.25° / hourly | 2018–2026 | Stage B per-city scaled prior |
 | ERA5 single-level | 0.25° / hourly | 2001–2026 | Wind, BLH, T2m, precipitation |
 | ERA5-Land | 0.1° / hourly | 2001–2026 | High-resolution wind, T2m, dewpoint |
 | ERA5 pressure levels | 0.25° / hourly | 2018–2025 | T925 (subsidence inversion proxy) |
-| MODIS MAIAC AOD (MCD19A2) | 1 km / daily | 2001–2025 | Stage A feature; Stage D consistency anchor |
-| TROPOMI NO₂ / CO | ~7 km / daily | 2018–2026 | Stage A and Stage A v3 satellite features |
-| VIIRS Nighttime Lights | 500 m / monthly | 2018–2023 | Stage C anthropogenic feature |
+| MODIS MAIAC AOD (MCD19A2) | 1 km / daily | 2001–2025 | Stage A feature; Stage B consistency anchor |
+| TROPOMI NO₂ / CO | ~7 km / daily | 2018–2026 | Stage A satellite features |
+| VIIRS Nighttime Lights | 500 m / monthly | 2018–2023 | Stage B anthropogenic feature |
 | MERRA-2 aerosol | 0.625° / hourly | 2001–2026 | Diagnostic only — rejected as label |
 | Van Donkelaar V6GL02.04 | 1 km / annual | 1998–2023 | Stage A triangulation |
 | SRTM 30 m DEM | 30 m static | — | Terrain elevation, slope, aspect |
-| OpenStreetMap road network | Vector | 2025 | Stage 2 source kernel; Stage C road density |
-| KOALA Kandy (Senarathna et al. 2024) | Annual + 12 monthly + diurnal | 2019 | Bias correction and Stage D consistency anchor |
+| OpenStreetMap road network | Vector | 2025 | Supporting PINN source kernel; Stage B road density |
+| KOALA Kandy (Senarathna et al. 2024) | Annual + 12 monthly + diurnal | 2019 | Bias correction and consistency anchor |
 | FECT PurpleAir Kandy (Akurana + Hantana) | Point / hourly | 2018–2026 | Stage A v3 labels (per-sensor calibrated) |
 | US Embassy Colombo (AirNow) | Point / hourly | 2019–2026 | Out-of-domain coverage check |
-| SIATA Medellín | Point / hourly | 2018–2025 | Stage 2 pre-training; Stage C source |
-| Air4Thai + PurpleAir Chiang Mai | Point / hourly | 2021–2025 | Stage 2 transfer; Stage C source |
-| AirGradient + GD Labs Kathmandu | Point / hourly | Oct 2025 – May 2026 | Stage C source |
+| SIATA Medellín | Point / hourly | 2018–2025 | Stage B source city |
+| Air4Thai + PurpleAir Chiang Mai | Point / hourly | 2021–2025 | Stage B source city |
+| AirGradient + GD Labs Kathmandu | Point / hourly | Oct 2025 – May 2026 | Stage B source city |
 
 ---
 
 ## Key Methodological Notes
 
-- **No Sri Lankan ground sensors during Stage C / D training.** The Stage C model is trained entirely on Medellín / Chiang Mai / Kathmandu and applied zero-shot to Sri Lankan targets. The two FECT sensors in Kandy are used in Stage A v3 (Akurana, Hantana) and held entirely out of Stage C training to preserve the zero-shot framing.
-- **Pre-Kandy physics transfer.** FourierPINNV3 is pre-trained on Medellín, then validated on Chiang Mai (held-out stations never seen during training) before any Kandy application — the only pre-Kandy physics-validation opportunity available.
-- **Pure-data Phase-1 warm-start rule.** Cross-domain TD-PDE transfer requires initialising from a Phase-1 checkpoint (λ_pde = 0). Inoculated progressive warm-starts and Phase-3 checkpoints lock the K–BLH relationship to source-domain geography and fail to adapt.
-- **Residual learning at the spatial step.** Stage C predicts `pm25 − c_prior_scaled`, not pm25 directly. This makes the reanalysis prior's contribution explicit rather than implicit, and prevents claiming model skill that is in fact reanalysis interpolation.
-- **Native resolution 1 km hourly.** GEOS-CF (0.25°) and ERA5 (0.25°) have no spatial structure below ~25 km; resolving below 1 km from these inputs is fictional. The optional 100 m kernel disaggregation is presentation-only.
-- **Uncertainty quantification.** Quantile regression on Stage A v1; CV+ Mondrian conformal on Stage A v3; Student-t likelihood + per-(city × hour-of-day) Mondrian conformal on Stage C. Coverage and calibration are reported alongside every r / RMSE.
-- **Stage 2 / 3 PINN domain.** 15 × 15 km centred on Kandy (KANDY_PINN_BBOX: 7.2230–7.3582 °N, 80.5660–80.7014 °E), 150 × 150 grid at 100 m for inputs; outputs reported at 1 km native.
-- **Multi-target zero-shot.** The framework is applied at three Sri Lankan highland targets (Kandy, Nuwara Eliya, Badulla) to demonstrate that cross-city training generalises to multiple unmonitored cities, not just the original target.
-- **Quasi-steady-state PDE rejected.** Tested as v8 / v9 in the spatial-attractor era; structural failure (negative R² with high r(K, BLH)). Time-dependent advection–diffusion is the only PDE form used.
-- **Fixed Whiteman terrain ansatz rejected.** SharedTerrainAnsatz combined_v2 demonstrated identifiability collapse across heterogeneous tropical valleys (six learnable parameters all converging to bound constraints). This motivated the data-driven Stage C architecture and is retained as a diagnostic reference.
+- **No Kandy ground sensors during Stage B training.** The Stage B model is trained entirely on Medellín / Chiang Mai / Kathmandu and applied zero-shot at Kandy. The two FECT sensors in Kandy are used in Stage A v3 only and held entirely out of Stage B training to preserve the zero-shot framing.
+- **Residual learning at the spatial step.** Stage B predicts `pm25 − c_prior_scaled`, not pm25 directly. This makes the reanalysis prior's contribution explicit rather than implicit, and prevents claiming model skill that is in fact reanalysis interpolation.
+- **Per-city ratio fix.** `c_prior_scaled = c_prior × city_ratio` uses a row-mean ratio (per station–timestamp pair), not a timestamp-mean ratio. The earlier timestamp-mean weighting drifted with station-count growth (Kathmandu grew 9× over 2018–2025) and inflated c_prior_scaled by ~5 µg/m³.
+- **Native resolution 1 km hourly.** GEOS-CF (0.25°) and ERA5 (0.25°) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
+- **Uncertainty quantification.** Quantile regression on Stage A v1; CV+ Mondrian conformal on Stage A v3; Student-t likelihood + per-(city × hour-of-day) Mondrian conformal on Stage B. Coverage and calibration are reported alongside every r / RMSE.
+- **Anchors are calibration anchors, not validators.** KOALA, Senarathna, and MAIAC are used both to calibrate the framework and to check it; they cannot independently validate. Strict validation requires field deployment at Kandy.
+- **Source-city expansion is the binding constraint.** Stage B v14 architecture, UQ calibration, and feature set are locked. The single remaining lever for spatial-product quality is expanding the source roster from N = 3 to N ≥ 6 highland-valley cities — the purpose of PVAF v1.
 - **Reproducibility.** All Kaggle kernels, dataset versions, and per-version metric tables are logged in `docs/kaggle_kernel_log.md`. Pre-registrations and amendments live in `docs/osf_prereg_*.md`.
 
 ---

@@ -45,8 +45,6 @@ STATION_CITY_MEANS_UG_M3 = {
     "bogota"       : 16.5,
     "mexico_city"  : 21.2,
     "kandy"        : KOALA_ANCHOR_UG_M3,   # KOALA anchor stands in for station mean
-    # "nuwara_eliya": TBD (Month 2 of post-redesign schedule)
-    # "badulla"     : TBD (Month 2 of post-redesign schedule)
 }
 
 GEOS_CITY_MEANS_UG_M3 = {
@@ -56,8 +54,6 @@ GEOS_CITY_MEANS_UG_M3 = {
     "bogota"       : 20.4,
     "mexico_city"  : 97.4,
     "kandy"        : GEOS_CF_KANDY_MEAN_UG_M3,
-    # "nuwara_eliya": TBD (Month 2)
-    # "badulla"     : TBD (Month 2)
 }
 
 CITY_RATIOS = {
