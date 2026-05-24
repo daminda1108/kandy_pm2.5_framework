@@ -1,10 +1,19 @@
 """
-pde_residual_v3.py — Steady-state PDE residual for FourierPINNV3.
+pde_residual_v3.py — PDE residual for FourierPINNV3 (QSS and time-dependent modes).
 
-PDE (quasi-steady-state advection-diffusion with anisotropic K and wet removal):
+PDE (quasi-steady-state, steady=True):
     R = u·∂C/∂x + v·∂C/∂y
           - ∂(Kx·∂C/∂x)/∂x - ∂(Ky·∂C/∂y)/∂y
           - S + (λ_dry + Λ·P)·C
+
+PDE (time-dependent, steady=False):
+    R = ∂C/∂t + u·∂C/∂x + v·∂C/∂y
+          - ∂(Kx·∂C/∂x)/∂x - ∂(Ky·∂C/∂y)/∂y
+          - S + (λ_dry + Λ·P)·C
+
+    ∂C/∂t is computed via autograd on the t-component of xyt (index 2).
+    t_norm = h/24 ∈ [0, 1] → physical time scale = 86400 s/day.
+    dC/dt_phys [µg/m³/s] = dC/dt_norm / 86400.0  (consistent units with advection term).
 
 All derivatives are in PHYSICAL coordinates [m].
 xyt is in NORMALISED coordinates x_norm ∈ [-1,1], y_norm ∈ [-1,1].
@@ -81,12 +90,16 @@ def pde_residual_v3(
     lx_m:     float = 15000.0,  # domain width  [m] — for coordinate scaling (Fix D)
     ly_m:     float = 15000.0,  # domain height [m] — for coordinate scaling (Fix D)
     blh_m:    "torch.Tensor | None" = None,  # (N,1) or (1,1) physical BLH [m] (Fix F)
+    steady:   bool = True,       # True=QSS (no ∂C/∂t); False=TD-PDE (adds ∂C/∂t term)
 ) -> "torch.Tensor":
     """
-    Compute steady-state PDE residual R(x,y) at collocation points.
+    Compute PDE residual R(x,y[,t]) at collocation points.
 
-    All gradient operations are applied in normalised coordinates, then scaled
-    to physical units via alpha_x = 1/lx_m, alpha_y = 1/ly_m.
+    steady=True  (default, backward compatible): quasi-steady-state — no ∂C/∂t.
+    steady=False (TD-PDE): adds ∂C/∂t computed from the t-component of the existing
+                 autograd call. No extra autograd pass needed — grads[:,2:3] already
+                 contains dC/dt_norm. Scaled to physical units: dC/dt_phys = grads[:,2:3]
+                 / 86400.0 (t_norm = h/24, so 1 t_norm unit = 86400 s).
 
     Args:
         model   : FourierPINNV3 instance
@@ -101,6 +114,8 @@ def pde_residual_v3(
         blh_m   : physical BLH in metres for BLH-dependent λ_dry (Fix F).
                   If None: falls back to fixed LAMBDA_DRY = v_d/30m = 1e-4 s⁻¹.
                   Should be detached from grad graph (external ERA5 input).
+        steady  : If True (default), omit ∂C/∂t (quasi-steady-state, backward compat).
+                  If False, include ∂C/∂t for time-dependent PDE.
 
     Returns:
         R : (N, 1) PDE residual — ideally near zero at solution
@@ -125,13 +140,16 @@ def pde_residual_v3(
 
     go = torch.ones_like(C)
 
-    # ── First-order spatial derivatives of C (in normalised coords) ──────────
-    # Intentionally omit the t-column gradient (∂C/∂t ≡ 0 in steady-state).
+    # ── First-order derivatives of C (in normalised coords) ──────────────────
+    # All 3 components (x, y, t) are computed in one autograd call.
+    # steady=True: only x and y are used (∂C/∂t ≡ 0, QSS).
+    # steady=False: t-component is also picked up for the TD-PDE term.
     grads = torch.autograd.grad(
         C, xyt, grad_outputs=go, create_graph=True
     )[0]                       # (N, 3)
     dC_dx = grads[:, 0:1]     # ∂C/∂x_norm  (N, 1)
     dC_dy = grads[:, 1:2]     # ∂C/∂y_norm  (N, 1)
+    # dC/dt_norm picked up below when steady=False (grads[:, 2:3] already computed)
 
     # ── Diffusive flux divergence (physical coordinates) ─────────────────────
     # flux_x = Kx × dC_dx_norm  (normalised-coord flux — keeps Kx in autograd)
@@ -169,15 +187,22 @@ def pde_residual_v3(
         removal_rate = lambda_dry                          # (N,1) or scalar
 
     # ── PDE residual (physical coordinates) ──────────────────────────────────
-    # R = u·∂C/∂x_phys + v·∂C/∂y_phys
-    #     - ∂(Kx·∂C/∂x_phys)/∂x_phys - ∂(Ky·∂C/∂y_phys)/∂y_phys
-    #     - S + (λ_dry + Λ·P)·C
+    # QSS (steady=True):
+    #   R = u·∂C/∂x + v·∂C/∂y - ∇·(K∇C) - S + λ·C
+    # TD-PDE (steady=False):
+    #   R = ∂C/∂t + u·∂C/∂x + v·∂C/∂y - ∇·(K∇C) - S + λ·C
+    #   where ∂C/∂t_phys = grads[:,2:3] / 86400.0  [µg/m³/s]
     R = (wind_u * dC_dx * alpha_x        # advection x  [µg/m³/s]
          + wind_v * dC_dy * alpha_y      # advection y
          - d_flux_x                      # diffusion x  [µg/m³/s]
          - d_flux_y                      # diffusion y
          - S                             # source       [µg/m³/s]
          + removal_rate * C)             # removal      [µg/m³/s]
+
+    if not steady:
+        # t_norm = h/24 → 1 t_norm unit = 86400 s; consistent units with advection
+        dC_dt_phys = grads[:, 2:3] / 86400.0   # [µg/m³/s]
+        R = dC_dt_phys + R
 
     # ── Explosion guard ───────────────────────────────────────────────────────
     r_max = R.abs().max()

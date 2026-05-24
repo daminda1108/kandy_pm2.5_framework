@@ -13,6 +13,71 @@ from pathlib import Path
 GEE_PROJECT = "kandypinn"
 
 # ─────────────────────────────────────────────
+# CANONICAL CONSTANTS — single source of truth (added 2026-05-08 per audit §6.2)
+# These values are referenced by paper drafts, kernel scripts, and validation
+# routines. If a downstream file disagrees with the value here, the downstream
+# file is wrong. Update this block, never restate the values elsewhere.
+# ─────────────────────────────────────────────
+
+# KOALA PM2.5 anchor (Senarathna et al. 2024, CJS 53(2):197–206)
+# 12-month low-cost-sensor campaign, n=12 monthly aggregates, multi-sensor.
+# Reported annual mean ± 17.5% bound → [20.2, 28.8] µg/m³.
+KOALA_ANCHOR_UG_M3 = 24.5225
+
+# CAMS EAC4 over Kandy, 2019 annual mean, raw (uncorrected)
+CAMS_KANDY_2019_MEAN_UG_M3 = 40.98
+
+# Stage A flat-annual bias correction factor (KOALA / CAMS_2019)
+CAMS_BIAS_FACTOR_FLAT = round(KOALA_ANCHOR_UG_M3 / CAMS_KANDY_2019_MEAN_UG_M3, 4)
+# = 0.5984 (used as `apply_koala_monthly_correction()` flat-annual ratio)
+
+# GEOS-CF PM25_RH35_GCC over Kandy, annual mean over the available window
+# (Jan 2018 – Apr 2026). Used as denominator for Kandy zero-shot c_prior scaling.
+GEOS_CF_KANDY_MEAN_UG_M3 = 45.7
+
+# Per-city station means and GEOS-CF means (used for Stage C residual learning).
+# station_mean / geos_mean = city_ratio; c_prior_scaled = c_prior × city_ratio.
+# All values verified against the Kaggle convcnp_loocv_v1 kernel and SESLOG.
+STATION_CITY_MEANS_UG_M3 = {
+    "medellin"     : 21.7,
+    "chiangmai"    : 12.2,
+    "kathmandu"    : 61.2,
+    "bogota"       : 16.5,
+    "mexico_city"  : 21.2,
+    "kandy"        : KOALA_ANCHOR_UG_M3,   # KOALA anchor stands in for station mean
+    # "nuwara_eliya": TBD (Month 2 of post-redesign schedule)
+    # "badulla"     : TBD (Month 2 of post-redesign schedule)
+}
+
+GEOS_CITY_MEANS_UG_M3 = {
+    "medellin"     : 26.5,
+    "chiangmai"    : 23.0,
+    "kathmandu"    : 77.4,
+    "bogota"       : 20.4,
+    "mexico_city"  : 97.4,
+    "kandy"        : GEOS_CF_KANDY_MEAN_UG_M3,
+    # "nuwara_eliya": TBD (Month 2)
+    # "badulla"     : TBD (Month 2)
+}
+
+CITY_RATIOS = {
+    city: round(STATION_CITY_MEANS_UG_M3[city] / GEOS_CITY_MEANS_UG_M3[city], 4)
+    for city in GEOS_CITY_MEANS_UG_M3
+}
+# CITY_RATIOS["kandy"] == 0.5360 (locked; the Kandy zero-shot c_prior scalar)
+
+# Convenience aliases for the most-cited values
+KANDY_GEOS_CF_RATIO = CITY_RATIOS["kandy"]   # = 0.5360 (used in paper §3.2.5)
+
+# Native data resolution at which results are reported.
+# (Optional 100m presentation downscaling is labelled as such; not a model output.)
+NATIVE_RESOLUTION_KM = 1.0
+NATIVE_RESOLUTION_TIMESTEP = "hourly"
+
+# Validation framing (use these labels; do not write "validation" at zero-shot targets)
+ZERO_SHOT_VALIDATION_LABEL = "structural-consistency check pending field validation"
+
+# ─────────────────────────────────────────────
 # STUDY AREA
 # ─────────────────────────────────────────────
 
@@ -291,6 +356,28 @@ CHIANGMAI_VALLEY_AXIS_DEG = 0.0     # N-S oriented (Ping River axis)
 CHIANGMAI_CENTRE_LAT      = 18.7846
 CHIANGMAI_CENTRE_LON      = 98.9868
 
+# Bogotá (RMCAB / OpenAQ source city #4) — high-altitude Andean basin
+BOGOTA_BBOX = (-74.25, 4.45, -73.95, 4.85)
+BOGOTA_BROAD_BBOX = {
+    "lat_min": 4.45, "lat_max": 4.85,
+    "lon_min": -74.25, "lon_max": -73.95,
+}
+BOGOTA_VALLEY_DEPTH_M  = 600.0    # Sabana ~2550m, eastern hills ~3150m
+BOGOTA_VALLEY_AXIS_DEG = 0.0      # Open Sabana, eastern wall N-S
+BOGOTA_CENTRE_LAT      = 4.6486
+BOGOTA_CENTRE_LON      = -74.0833
+
+# Mexico City (SIMAT / OpenAQ source city #5) — high-altitude continental basin
+MEXICO_CITY_BBOX = (-99.32, 19.20, -98.85, 19.60)
+MEXICO_CITY_BROAD_BBOX = {
+    "lat_min": 19.20, "lat_max": 19.60,
+    "lon_min": -99.32, "lon_max": -98.85,
+}
+MEXICO_CITY_VALLEY_DEPTH_M  = 1000.0  # Valley floor ~2240m, surrounding ridges 3000-3500m
+MEXICO_CITY_VALLEY_AXIS_DEG = 0.0     # Roughly N-S basin
+MEXICO_CITY_CENTRE_LAT      = 19.4326
+MEXICO_CITY_CENTRE_LON      = -99.1332
+
 # Pre-training sub-domains — 15×15km centred on monitoring network centroids
 # Matches Kandy PINN domain scale (KANDY_PINN_BBOX = 15×15km).
 # Scale matching is critical: Fourier features tuned for 15km spatial features.
@@ -405,7 +492,8 @@ PINN_HIDDEN_UNITS     = PINN_NETWORK["neurons_per_layer"]  # 128  # ablation win
 
 # Pre-trained Stage 2 backbone for Stage 3 initialisation.
 # Set to None to cold-start. Path is relative to project root via MODELS_DIR.
-PINN_PRETRAINED_BACKBONE = MODELS_DIR / "stage2_pretrain" / "checkpoints" / "epoch_0450.pt"
+# Canonical warm-start: Medellín v8 Phase-1 ep1000 (R²=0.882, r_kblh=0.879, pure-data — DO NOT use v9 ep1000 which is inoculated).
+PINN_PRETRAINED_BACKBONE = MODELS_DIR / "stage2_medellin_pinn" / "v8" / "checkpoints" / "epoch_01000.pt"
 
 # Training hyper-parameters (flat aliases)
 PINN_EPOCHS = PINN_TRAINING["epochs_physics"]   # 12 000
@@ -483,6 +571,10 @@ P0_HPA        = 1013.25       # Standard sea-level pressure (hPa)
 WHO_PM25_ANNUAL_GUIDELINE  = 5.0   # WHO 2021 guideline
 WHO_PM25_24H_GUIDELINE     = 15.0  # WHO 2021 24h guideline
 INDIA_NAAQS_PM25_ANNUAL    = 40.0  # NAAQS (relevant as regional comparison)
+
+# Stage 3 TD-PINN v4 architecture constants
+KOALA_PM25_ANCHOR = 24.5225   # Senarathna et al. 2024 annual mean (Kandy KOALA station)
+PINN_DELTA_MAX    = 15.0      # max deviation from prior: C = C_prior + tanh(head)*DELTA_MAX
 
 # ─────────────────────────────────────────────
 # RANDOM SEED

@@ -1,4 +1,12 @@
 """
+DEPRECATED — pre-FourierPINNV3 PDE residual.
+
+Status (2026-05-08, audit §B.5): superseded by `pde_residual_v3.py`. NOT in the active
+import graph except for the deprecated prototype `models/pinn_transient.py` and a
+diagnostic `analysis/uncertainty_maps.py`. Do not import from new code paths.
+
+────────────────────────────────────────────────────────────────────────────
+
 advection_diffusion.py — PDE residual for the anisotropic advection-diffusion equation
 with wet and dry removal sinks.
 

@@ -1,4 +1,17 @@
 """
+DEPRECATED — pre-FourierPINNV3 transient PINN prototype.
+
+Status (2026-05-08, audit §B.5): NOT in the active import graph except by `synthetic_inverse_validation.py`
+(a one-off validation script). The current TD-PDE PINN is `models/fourier_pinn_v3.py` (76,261 params,
+verified architecture; canonical for paper §3.2). This older prototype predates the v3 architecture
+redesign and uses the deprecated `physics/advection_diffusion.py` PDE residual rather than the active
+`physics/pde_residual_v3.py`.
+
+Do not import from current code paths. Retained only to keep `synthetic_inverse_validation.py` runnable
+for archival purposes.
+
+────────────────────────────────────────────────────────────────────────────
+
 pinn_transient.py — Time-dependent PINN option for Kandy PM2.5 (Option B, §2.10).
 
 Solves the full transient advection-diffusion PDE including ∂C/∂t:

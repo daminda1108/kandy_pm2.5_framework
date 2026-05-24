@@ -1,4 +1,11 @@
 """
+DEPRECATED — pre-FourierPINNV3 source term implementation.
+
+Status (2026-05-08, audit §B.5): superseded by `source_kernel.py` and the AlphaNet
+defined inline in `models/fourier_pinn_v3.py`. Do not import from new code paths.
+
+────────────────────────────────────────────────────────────────────────────
+
 source_term.py — OSM-anchored parameterized emission source term S(x,y,t).
 
 Fixes the K–S co-identification problem in the PINN inverse problem.

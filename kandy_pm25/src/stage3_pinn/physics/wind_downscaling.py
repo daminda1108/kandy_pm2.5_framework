@@ -1,4 +1,13 @@
 """
+DEPRECATED — pre-FourierPINNV3 wind-downscaling utility.
+
+Status (2026-05-08, audit §B.5): only referenced in the deprecated
+`physics/advection_diffusion.py` docstring. Not in the active import graph.
+Active wind handling: `kandy_terrain_wind_100m.npz` loaded directly by training scripts.
+Do not import from new code paths.
+
+────────────────────────────────────────────────────────────────────────────
+
 wind_downscaling.py — Downscale ERA5 wind from 0.25° (~28 km) to PINN grid (100 m).
 
 ERA5 wind cannot drive a 100 m PINN directly: it sees the entire domain as a single

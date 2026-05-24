@@ -64,8 +64,8 @@ SNAPSHOT_HOURS = [0, 3, 6, 9, 12, 15, 18, 21]
 # λ=0.01 is small — enforces a direction, not a magnitude.
 LAMBDA_KBLH = 0.01
 
-# Default model version for Stage 3 (v3 = FourierPINNV3, v2 = legacy FourierPINN)
-DEFAULT_MODEL_VERSION = "v3"
+# Default model version for Stage 3 (v4 = FourierPINNV3 + deviation-from-prior + KOALA anchor)
+DEFAULT_MODEL_VERSION = "v4"
 
 
 def _get_stage3_v3_weights(epoch: int, n_epochs: int) -> dict:
@@ -88,19 +88,49 @@ def _get_stage3_v3_weights(epoch: int, n_epochs: int) -> dict:
     p1_end = int(0.40 * n_epochs)
     p2_end = int(0.70 * n_epochs)
     if epoch < p1_end:
-        return dict(bc=0.20, pde=0.001, data=0.70, kblh=0.05, kb=0.05, phys=0.0)
+        return dict(bc=0.20, pde=0.001, data=0.70, kblh=0.05, kb=0.05, phys=0.0, mean_anchor=0.0)
     elif epoch < p2_end:
         t = (epoch - p1_end) / max(1, p2_end - p1_end)
         return dict(
-            bc   = 0.20 + t * (0.15 - 0.20),
-            pde  = 0.001 + t * (0.10 - 0.001),
-            data = 0.70  + t * (0.55 - 0.70),
-            kblh = 0.05  + t * (0.15 - 0.05),
-            kb   = 0.05,
-            phys = 0.0,
+            bc          = 0.20 + t * (0.15 - 0.20),
+            pde         = 0.001 + t * (0.10 - 0.001),
+            data        = 0.70  + t * (0.55 - 0.70),
+            kblh        = 0.05  + t * (0.15 - 0.05),
+            kb          = 0.05,
+            phys        = 0.0,
+            mean_anchor = 0.0,
         )
     else:
-        return dict(bc=0.15, pde=0.10, data=0.55, kblh=0.15, kb=0.05, phys=0.0)
+        return dict(bc=0.15, pde=0.10, data=0.55, kblh=0.15, kb=0.05, phys=0.0, mean_anchor=0.0)
+
+
+def _get_stage3_v4_weights(epoch: int, n_epochs: int) -> dict:
+    """
+    Stage 3 v4 curriculum — validated on Kaggle T4×2 (ALL 5 GATES PASS, 2026-04-19).
+
+    Key difference from v3: adds L_mean_anchor to pull domain-mean toward KOALA 24.5 µg/m³.
+    Phase 2 ends earlier (50% vs 70%) so anchor reaches full weight sooner.
+
+    Phase 1 (0–20%):  Pure data, no PDE, no anchor. Model inherits Stage-1 structure via
+                       deviation-from-prior (C_prior must be passed to model.forward).
+    Phase 2 (20–50%): Ramp PDE 0→0.40, temp 0→0.20, anchor 0→0.30. Data fixed at 0.15.
+    Phase 3 (50–100%): Full weights. w_anchor=0.30 overrides LR-collapse-induced drift.
+    """
+    p1_end = int(0.20 * n_epochs)
+    p2_end = int(0.50 * n_epochs)
+    if epoch < p1_end:
+        return dict(pde=0.00, data=0.15, temp=0.00, mean_anchor=0.00, bc=0.0, kblh=0.0, kb=0.0, phys=0.0)
+    elif epoch < p2_end:
+        t = (epoch - p1_end) / max(1, p2_end - p1_end)
+        return dict(
+            pde         = t * 0.40,
+            data        = 0.15,
+            temp        = t * 0.20,
+            mean_anchor = t * 0.30,
+            bc=0.0, kblh=0.0, kb=0.0, phys=0.0,
+        )
+    else:
+        return dict(pde=0.40, data=0.10, temp=0.20, mean_anchor=0.30, bc=0.0, kblh=0.0, kb=0.0, phys=0.0)
 
 
 def _setup_wandb(run_config: dict):
@@ -161,7 +191,7 @@ def build_model(init_mode: str, device, model_version: str = DEFAULT_MODEL_VERSI
 
     road_kernel_path = PINN_INPUT_DIR / "kandy_road_kernel_100m.npz"
 
-    if model_version == "v3":
+    if model_version in ("v3", "v4"):  # v4 uses same FourierPINNV3 architecture
         from src.stage3_pinn.models.fourier_pinn_v3 import (
             FourierPINNV3, load_partial_backbone,
             reinit_diffusion_subnet_v3, reinit_alpha_net,
@@ -299,6 +329,7 @@ def train_pinn(
     save_every: int  = 100,
     wandb_run=None,
     model_version: str = DEFAULT_MODEL_VERSION,
+    steady:     bool = False,   # False=TD-PDE (default); True=QSS for baseline comparison
 ) -> list:
     """
     Main PINN training loop — Stage 3 quasi-steady-state (gaps B1–B5+C2).
@@ -346,9 +377,16 @@ def train_pinn(
     from config import KANDY_PINN_BBOX
 
     use_v3 = (model_version == "v3")
+    use_v4 = (model_version == "v4")
 
-    optimizer     = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
-    scheduler_opt = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
+    if use_v4:
+        # v4: warm restarts prevent LR collapse that caused G5 FAIL in v3
+        scheduler_opt = optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer, T_0=2000, T_mult=2, eta_min=1e-5
+        )
+    else:
+        scheduler_opt = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
     curriculum    = CurriculumScheduler(total_epochs=n_epochs)
     bc_handler    = DirichletBC(stage1_df)
     tracker       = LossTracker()
@@ -399,10 +437,13 @@ def train_pinn(
 
     for epoch in range(n_epochs):
         model.train()
-        # v3: use 2-phase Stage 3 curriculum; v2: use legacy CurriculumScheduler
-        if use_v3:
-            _w     = _get_stage3_v3_weights(epoch, n_epochs)
-            lambdas = type('W', (), _w)()  # simple namespace
+        # v4: KOALA-anchored curriculum; v3: data-dominant; v2: legacy
+        if use_v4:
+            _w      = _get_stage3_v4_weights(epoch, n_epochs)
+            lambdas = type('W', (), _w)()
+        elif use_v3:
+            _w      = _get_stage3_v3_weights(epoch, n_epochs)
+            lambdas = type('W', (), _w)()
         else:
             lambdas = curriculum.step(epoch)
         current_lr = scheduler_opt.get_last_lr()[0] if epoch > 0 else lr
@@ -498,6 +539,7 @@ def train_pinn(
                         precip=precip_tensor,
                         blh=blh_tensor,
                         elev=elev_int,
+                        steady=steady,
                     )
                     L_pde_h = (R_pde ** 2).mean()
                 else:
@@ -593,11 +635,23 @@ def train_pinn(
                              lambdas.pde, lambdas.data, lambdas.bc, lambdas.phys)
         L_total = L_total + L_kblh
 
+        # v4: KOALA mean-anchor loss — pulls domain-mean toward 24.5225 µg/m³
+        L_mean_anchor = torch.zeros(1, device=device)
+        w_anchor = getattr(lambdas, 'mean_anchor', 0.0)
+        if use_v4 and w_anchor > 0 and len(C_hourly) > 0:
+            from config import KOALA_PM25_ANCHOR
+            C_daily_mean = torch.stack(C_hourly).mean()
+            L_mean_anchor = ((C_daily_mean - KOALA_PM25_ANCHOR) ** 2) / (KOALA_PM25_ANCHOR ** 2)
+            L_total = L_total + w_anchor * L_mean_anchor
+
         L_total.backward()
         # max_norm=5.0 (S2 fix: was 10.0 — Kaggle kernels use 5.0; tighter clip for stability)
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
         optimizer.step()
-        scheduler_opt.step()
+        if use_v4:
+            scheduler_opt.step(epoch)   # CosineAnnealingWarmRestarts takes epoch as arg
+        else:
+            scheduler_opt.step()
 
         tracker.record(
             epoch,
@@ -608,18 +662,19 @@ def train_pinn(
         # ── W&B per-epoch logging ──────────────────────────────────────────
         if wandb_run is not None:
             wandb_run.log({
-                "train/L_total":  float(L_total),
-                "train/L_pde":    float(L_pde),
-                "train/L_data":   float(L_data),
-                "train/L_bc":     float(L_bc),
-                "train/L_phys":   float(L_phys),
-                "train/L_kblh":   float(L_kblh),
-                "train/blh_m":    blh_m,
-                "train/lr":       current_lr,
-                "train/lambda_pde":  lambdas.pde,
-                "train/lambda_data": lambdas.data,
-                "train/lambda_bc":   lambdas.bc,
-                "epoch":          epoch,
+                "train/L_total":        float(L_total),
+                "train/L_pde":          float(L_pde),
+                "train/L_data":         float(L_data),
+                "train/L_bc":           float(L_bc),
+                "train/L_phys":         float(L_phys),
+                "train/L_kblh":         float(L_kblh),
+                "train/L_mean_anchor":  float(L_mean_anchor),
+                "train/blh_m":          blh_m,
+                "train/lr":             current_lr,
+                "train/lambda_pde":     lambdas.pde,
+                "train/lambda_data":    lambdas.data,
+                "train/lambda_bc":      lambdas.bc,
+                "epoch":                epoch,
             }, step=epoch)
 
         # Checkpoint
@@ -642,14 +697,17 @@ def main():
     parser.add_argument("--init",     choices=["A", "B", "B3", "C"], default=None,
                         help="Init strategy: A=frozen, B=warm-start v8, B3=warm-start v13, C=cold. "
                              "Auto from transfer_decision.json if omitted")
-    parser.add_argument("--model",    choices=["v3", "v2"], default=DEFAULT_MODEL_VERSION,
-                        help="Model version: v3=FourierPINNV3 (default), v2=legacy FourierPINN")
+    parser.add_argument("--model",    choices=["v4", "v3", "v2"], default=DEFAULT_MODEL_VERSION,
+                        help="Model version: v4=FourierPINNV3+deviation-from-prior+KOALA anchor (default), "
+                             "v3=FourierPINNV3 data-dominant, v2=legacy FourierPINN")
     parser.add_argument("--epochs",   type=int, default=PINN_EPOCHS)
     parser.add_argument("--lr",       type=float, default=PINN_LR)
     parser.add_argument("--no-rar",   action="store_true", help="Disable RAR collocation")
     parser.add_argument("--profile",  action="store_true", help="Quick 20-epoch smoke-test")
     parser.add_argument("--wandb",    action="store_true", help="Enable W&B experiment tracking")
     parser.add_argument("--no-wandb", action="store_true", help="Disable W&B even if WANDB_API_KEY is set")
+    parser.add_argument("--steady",   action="store_true",
+                        help="Use quasi-steady-state PDE (no ∂C/∂t). Default: time-dependent TD-PDE.")
     args = parser.parse_args()
 
     device = _get_device()
@@ -697,6 +755,7 @@ def main():
         use_rar=not args.no_rar,
         wandb_run=wandb_run,
         model_version=args.model,
+        steady=args.steady,
     )
 
     import pandas as pd

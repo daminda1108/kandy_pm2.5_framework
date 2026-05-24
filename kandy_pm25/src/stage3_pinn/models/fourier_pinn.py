@@ -1,3 +1,16 @@
+# DEPRECATED — pre-FourierPINNV3 model (FourierPINN v1/v2 era, 171K params).
+#
+# Status (2026-05-08, audit §B.5): superseded by `fourier_pinn_v3.py` (76,261 params).
+# CLAUDE.md gotcha #18: "FourierPINN v2 backbone incompatible with FourierPINNV3:
+# 0 keys transfer. Do not attempt to load."
+#
+# Active imports: `transfer_vs_coldstart.py`, `pretrain/pretrain_medellin.py`, and a
+# legacy `--model v2` branch of `train.py` retained for reproducibility of the
+# Stage 2 backbone v8 pre-training. Do not use for new work.
+#
+# Active model: `fourier_pinn_v3.py` (Stage 2 transfer; canonical for paper §3.2).
+# ────────────────────────────────────────────────────────────────────────────
+#
 # Architecture: ablation winner C_medium selected 2026-03-01
 # fourier_m=256, hidden_units=128
 # See results/ablation/WINNER.txt for full ablation results.

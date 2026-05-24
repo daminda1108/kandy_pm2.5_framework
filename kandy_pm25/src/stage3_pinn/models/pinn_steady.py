@@ -1,4 +1,16 @@
 """
+DEPRECATED — pre-pivot quasi-steady-state PINN model (Option A, §2.10).
+
+Status (2026-05-08, audit §B.5): NOT in the active import graph. The QSS formulation was
+abandoned 2026-04-17 after kandy_qss_v8 (R²=−0.389) and kandy_qss_v9 (R²=−0.318) demonstrated
+that the QSS PDE structurally cannot capture temporal dynamics on the Kandy domain. CLAUDE.md
+HARD RULE: TD-PDE is the only PDE used for Stage 2 transfer; QSS is forbidden ("Never revert").
+
+This file is retained only for paper §3.3 reproducibility (the QSS negative-result documentation).
+Do not import from current code paths. The active PDE residual is `physics/pde_residual_v3.py`.
+
+────────────────────────────────────────────────────────────────────────────
+
 pinn_steady.py — Steady-state PINN option for Kandy PM2.5 (Option A, §2.10).
 
 The steady-state approximation sets ∂C/∂t = 0 and solves:

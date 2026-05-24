@@ -380,6 +380,8 @@ def add_worldcover(kernel: np.ndarray, lat_grid: np.ndarray, lon_grid: np.ndarra
             dst_crs="EPSG:4326",
             resampling=warp.Resampling.average,
         )
+        # rasterio from_bounds fills row-0=north; our lat_grid has row-0=south — flip.
+        buildup_100m = buildup_100m[::-1].copy()
         # WorldCover class 50 = built-up; remap to [0, 1] fraction
         # After average resampling of a binary (50/not-50) raster,
         # values range from 0 (no built-up) to 50 (fully built-up) → normalise

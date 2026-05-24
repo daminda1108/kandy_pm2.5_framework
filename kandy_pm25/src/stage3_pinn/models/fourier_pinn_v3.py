@@ -535,15 +535,23 @@ class _FourierPINNV3Module:
                 return R_interp[0, 0, :, 0].unsqueeze(-1)                         # (N, 1)
 
             def forward(self,
-                        xyt:  "torch.Tensor",
-                        blh:  Optional["torch.Tensor"] = None,
-                        elev: Optional["torch.Tensor"] = None,
+                        xyt:       "torch.Tensor",
+                        blh:       Optional["torch.Tensor"] = None,
+                        elev:      Optional["torch.Tensor"] = None,
+                        C_prior:   Optional["torch.Tensor"] = None,
+                        delta_max: float = 15.0,
                         ) -> Tuple["torch.Tensor", Tuple]:
                 """
                 Args:
-                    xyt  : (N, 3) [x_norm ∈ [-1,1], y_norm ∈ [-1,1], t_norm ∈ [0,1]]
-                    blh  : (N, 1) BLH_m / 2000.0 ∈ [0, 1]; default 0.5
-                    elev : (N, 1) normalised elevation ∈ [0, 1]; default 0.5
+                    xyt      : (N, 3) [x_norm ∈ [-1,1], y_norm ∈ [-1,1], t_norm ∈ [0,1]]
+                    blh      : (N, 1) BLH_m / 2000.0 ∈ [0, 1]; default 0.5
+                    elev     : (N, 1) normalised elevation ∈ [0, 1]; default 0.5
+                    C_prior  : (N, 1) Stage-1 pseudo-label µg/m³ (detached). When provided,
+                               uses v4 deviation-from-prior: C = softplus(C_prior + δC − 1) + 1
+                               where δC = tanh(head_C(feat)) × delta_max.
+                               Collapse is impossible: δC→0 still yields C ≈ C_prior (Stage-1 structure).
+                               When None, falls back to direct: C = softplus(head_C(feat)).
+                    delta_max: max signed deviation from prior µg/m³ (config.PINN_DELTA_MAX = 15.0)
                 Returns:
                     C        : (N, 1) PM2.5 concentration [µg/m³]
                     Kx, Ky   : (N, 1) anisotropic diffusivity [m²/s]
@@ -562,7 +570,12 @@ class _FourierPINNV3Module:
                 t_enc    = TemporalEncoding.encode(t_n)           # (N, 3)
                 trunk_in = torch.cat([xy_emb, t_enc, blh, elev], dim=1)  # (N, 261)
                 feat = self.trunk(trunk_in)                               # (N, 64)
-                C    = F.softplus(self.head_C(feat))                      # (N, 1)
+                # v4 deviation-from-prior: prevents spatial/temporal collapse
+                if C_prior is not None:
+                    delta_C = torch.tanh(self.head_C(feat)) * delta_max   # (N, 1) signed
+                    C = F.softplus(C_prior + delta_C - 1.0) + 1.0
+                else:
+                    C = F.softplus(self.head_C(feat))                     # (N, 1) legacy
 
                 # Factored K: K_base(BLH, t) × K_aniso(x, y, elev)
                 Kx, Ky = self.diffusion_subnet(x_n, y_n, t_n, blh, elev) # (N,1) each
