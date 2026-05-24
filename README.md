@@ -60,6 +60,23 @@ Native data resolution is 1 km hourly. An optional terrain-guided 1 km → 100 m
 
 ---
 
+## Methodological Evolution
+
+The current architecture is the result of several explicit pivots, each driven by a measured failure of the prior approach. They are summarised here so the design choices are legible; the full record lives in `docs/REDESIGN_2026-05-08.md`, `docs/AUDIT_2026-05-08.md`, the OSF pre-registration amendments, and the session log at `memory/SESLOG.md`.
+
+| Date | Pivot | Reason |
+|---|---|---|
+| 2026-03 | QSS spatial PINN → **TD-PDE temporal PINN** for Stage 2 | QSS lost spatial-ordering of stations under physics pressure (λ_pde ≥ 0.38 collapsed the field). TD-PDE with the v7 curriculum (pure-data Phase 1 → ramped λ_pde to 0.15 max) recovered ordering and now anchors Stage 2 (Medellín R²=0.932, ChiangMai R²=0.765). |
+| 2026-05-04 | SharedTerrainAnsatz → **ConvCNP residual learner** for Stage C | All six Whiteman-ansatz parameters hit bound constraints across N=3 source cities; the rigid functional form could not represent valley physics in different regimes. ConvCNP residual learning (`pm25 − c_prior_scaled`) was adopted; the ansatz failure becomes paper §4 as a planned negative-result contribution. |
+| 2026-05-17 | CAMS as label → **CAMS as feature** (Stage 1 v2 reframe) | v1 used KOALA both to calibrate CAMS labels (×0.598) and to validate the result (r=0.515) — circular by construction. v2 promotes FECT-calibrated PurpleAir to labels and demotes CAMS/GEOS-CF to features; LOMO R² moved 0.631 → 0.689 honestly. |
+| 2026-05-20 | Daily v2 → **hourly v3** + pre-reg amendment #9 | Hourly residual target with per-sensor offsets enables diurnal-cycle reproduction (Senarathna r=+0.865). After a 39-feature Tier-1 rebuild failed to lift pooled R² above 0.581, H3 was closed as an honest near-miss; sensor expansion (Bowatte / NBRO / additional FECT) was named as the binding constraint going forward, not architecture. |
+| 2026-05 | N=5 → **N=3** source cities + **PVAF v1** | Bogotá and Mexico City were dropped from Stage C LOOCV as different atmospheric regimes (MexCity GEOS-CF over-predicts by ×4.6). PVAF v1 was launched to select ≥3 highland-valley analogues (Dhaka, Lahore, Kabul, La Paz, Quito candidates) by physics-similarity scoring before Kandy production maps are regenerated. Tier 1 sanity ranking matches LOOCV transfer-r order with Spearman ρ=1.0. |
+| 2026-05-22 | Gaussian NLL → **Student-t(df=5) + split-conformal** for UQ | ConvCNP v13 satisfied point-r gates but Gaussian likelihood let σ collapse (cov90 → 0.54–0.73). v14 switched to Student-t for robust point estimation; per-(city × hour-of-day) Mondrian conformal calibration was layered on top to restore cov90 ∈ [0.85, 0.95] across all source cities without retraining. |
+
+Headline framing for the eventual paper is "**probabilistic reconstruction under data scarcity**" — not "1 km hourly field" — to keep claims commensurate with the underlying N=2 ground-truth sensor base in Kandy.
+
+---
+
 ## Stage A — Satellite-ML Temporal Anchor (COMPLETE)
 
 | Metric | Value |
