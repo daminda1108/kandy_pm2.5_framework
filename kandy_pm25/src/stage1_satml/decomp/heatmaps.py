@@ -29,6 +29,9 @@ FIG = HERE / "results" / "figures" / "kandy_decomp"
 FIG.mkdir(parents=True, exist_ok=True)
 SEASON = {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM",
           6: "JJA", 7: "JJA", 8: "JJA", 9: "SON", 10: "SON", 11: "SON"}
+# Universal PM2.5 colour scale — identical across all panels AND across years so
+# any colour means the same µg/m³ everywhere (clean cross-season/-year reading).
+PM_VMIN, PM_VMAX = 15.0, 40.0
 
 
 def _grid(df, col):
@@ -50,6 +53,8 @@ def _hm(ax, df, col, vmin, vmax, title, cmap=PM25_CMAP):
 
 def main(year: int = 2024):
     apply_style("ieee")
+    fdir = FIG / str(year)
+    fdir.mkdir(parents=True, exist_ok=True)
     df = pd.read_parquet(DECOMP / f"kandy_decomp_predictions_{year}.parquet")
     df["time"] = pd.to_datetime(df["time"], utc=True)
     lt = df["time"].dt.tz_convert("Asia/Colombo")
@@ -59,43 +64,38 @@ def main(year: int = 2024):
     print(f"loaded {len(df):,} rows; annual mean {df.pm25_q50.mean():.2f}, "
           f"PI width {df.pi_width.mean():.2f} µg/m³")
 
-    pm_annual = df.groupby(["lat", "lon"])["pm25_q50"].mean()
-    vmax = float(pm_annual.quantile(0.98)); vmin = float(pm_annual.quantile(0.02))
-
     # Fig 1 — annual mean + PI width
     fig, ax = plt.subplots(1, 2, figsize=(10, 4.2), constrained_layout=True)
-    im0 = _hm(ax[0], df, "pm25_q50", vmin, vmax, f"Annual mean PM₂.₅ {year}")
+    im0 = _hm(ax[0], df, "pm25_q50", PM_VMIN, PM_VMAX, f"Annual mean PM₂.₅ {year}")
     fig.colorbar(im0, ax=ax[0], label="µg m⁻³")
     piw = df.groupby(["lat", "lon"])["pi_width"].mean()
     im1 = _hm(ax[1], df, "pi_width", float(piw.quantile(0.02)), float(piw.quantile(0.98)),
               "90% PI width", cmap="viridis")
     fig.colorbar(im1, ax=ax[1], label="µg m⁻³")
-    fig.savefig(FIG / "annual_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
+    fig.savefig(fdir / "annual_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
 
-    # Fig 2 — seasonal
+    # Fig 2 — seasonal, all panels on the universal scale + one shared colorbar,
+    # so seasons are directly comparable (JJA reads correctly as the cool season).
     fig, ax = plt.subplots(1, 4, figsize=(16, 4.2), constrained_layout=True)
     smean = df.groupby("season")["pm25_q50"].mean().to_dict()
-    vmx_s = float(df.groupby(["season", "lat", "lon"])["pm25_q50"].mean().quantile(0.98))
     for a, s in zip(ax, ["DJF", "MAM", "JJA", "SON"]):
-        im = _hm(a, df[df.season == s], "pm25_q50", vmin, vmx_s,
+        im = _hm(a, df[df.season == s], "pm25_q50", PM_VMIN, PM_VMAX,
                  f"{s}  (mean {smean[s]:.1f})")
     fig.colorbar(im, ax=ax, label="µg m⁻³", shrink=0.7)
     fig.suptitle(f"Kandy {year} seasonal mean PM₂.₅ — decomposition", fontsize=11)
-    fig.savefig(FIG / "seasonal_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
+    fig.savefig(fdir / "seasonal_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
 
     # Fig 3 — night vs day (shows M valley-pooling)
     night = df[df.lt_hour.isin([0, 1, 2, 3, 4, 5, 22, 23])]
     day = df[df.lt_hour.isin([10, 11, 12, 13, 14, 15])]
-    nm = night.groupby(["lat", "lon"])["pm25_q50"].mean()
-    vmx_n = float(nm.quantile(0.98))
     fig, ax = plt.subplots(1, 2, figsize=(10, 4.2), constrained_layout=True)
-    im0 = _hm(ax[0], night, "pm25_q50", vmin, vmx_n,
+    im0 = _hm(ax[0], night, "pm25_q50", PM_VMIN, PM_VMAX,
               f"Nocturnal (22–05 LT)  mean {night.pm25_q50.mean():.1f}")
-    im1 = _hm(ax[1], day, "pm25_q50", vmin, vmx_n,
+    im1 = _hm(ax[1], day, "pm25_q50", PM_VMIN, PM_VMAX,
               f"Midday (10–15 LT)  mean {day.pm25_q50.mean():.1f}")
     fig.colorbar(im1, ax=ax, label="µg m⁻³", shrink=0.7)
     fig.suptitle("Nocturnal valley-pooling vs midday mixing (M modulation)", fontsize=11)
-    fig.savefig(FIG / "night_vs_day.png", dpi=150, bbox_inches="tight"); plt.close(fig)
+    fig.savefig(fdir / "night_vs_day.png", dpi=150, bbox_inches="tight"); plt.close(fig)
 
     # Fig 4 — diurnal trace (city-wide) with PI band
     di = df.groupby("lt_hour").agg(q50=("pm25_q50", "mean"),
@@ -109,10 +109,10 @@ def main(year: int = 2024):
     a.set_ylabel("PM₂.₅ (µg m⁻³)")
     a.set_title(f"Kandy {year} city-wide diurnal cycle (decomposition)", fontsize=9)
     a.legend(fontsize=7); a.grid(axis="y", lw=0.4, alpha=0.5)
-    fig.tight_layout(); fig.savefig(FIG / "diurnal_trace.png", dpi=150, bbox_inches="tight")
+    fig.tight_layout(); fig.savefig(fdir / "diurnal_trace.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"Wrote 4 figures to {FIG}")
+    print(f"Wrote 4 figures to {fdir}")
 
 
 if __name__ == "__main__":
