@@ -42,6 +42,7 @@ sys.path.insert(0, str(HERE))
 
 from config import KOALA_ANCHOR_UG_M3
 from src.stage1_satml.models.train_lgbm_v3 import get_feature_cols, DATASET_PATH
+from src.stage1_satml.features.vandonkelaar import level_for_year
 
 DATA = HERE / "data" / "processed" / "stage1_v3"
 OUT_DIR = DATA / "T_anchor"
@@ -155,11 +156,16 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
     q05_conf = q05 - c_lo
     q95_conf = q95 + c_hi
 
-    # KOALA re-anchor (additive level shift; = choice of reference offset b_ref)
+    # Level re-anchor: target = bias-corrected VanD basin annual mean for `year`
+    # (per-year, observation-grounded; beta pins VanD to KOALA-2019). Additive
+    # shift preserves the model's diurnal/seasonal µg/m³ amplitude.
+    L, linfo = level_for_year(year)
     raw_mean = float(np.nanmean(q50))
-    shift = KOALA_ANCHOR_UG_M3 - raw_mean
-    print(f"KOALA re-anchor: raw annual mean(q50)={raw_mean:.2f} "
-          f"→ shift {shift:+.2f} → {KOALA_ANCHOR_UG_M3:.2f} µg/m³")
+    shift = L - raw_mean
+    print(f"VanD level re-anchor: target L({year})={L:.2f} "
+          f"(proxy_year={linfo['proxy_year']}, proxied={linfo['proxied']}, "
+          f"beta={linfo['beta']:.4f}); raw mean(q50)={raw_mean:.2f} "
+          f"→ shift {shift:+.2f} µg/m³")
 
     out = pd.DataFrame({
         "datetime_utc": g["datetime_utc"].values,
@@ -170,7 +176,7 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
         "T_q50_preanchor": q50,
         "T_q95_preanchor": q95_conf,
         "c_prior_anchored": c,
-        "koala_shift": shift,
+        "level_shift": shift,
     })
     # floor PI lower bound at 0 (physical); keep q50 honest
     out["T_q05"] = out["T_q05"].clip(lower=0.0)
@@ -189,7 +195,9 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
     summ = dict(
         year=year, sensor_ref=sensor_id, n_hours=len(out),
         annual_mean=float(out["T_q50"].mean()),
-        koala_anchor=KOALA_ANCHOR_UG_M3, koala_shift=shift,
+        level_target_L=L, level_proxy_year=linfo["proxy_year"],
+        level_proxied=linfo["proxied"], beta=linfo["beta"],
+        koala_anchor=KOALA_ANCHOR_UG_M3, level_shift=shift,
         pi_width_mean=pi_w,
         neg_q50_frac=float((out["T_q50"] < 0).mean()),
         **{f"season_{s}": float(out.loc[out.season == s, "T_q50"].mean())
