@@ -39,7 +39,14 @@ import pandas as pd
 HERE = Path(__file__).parents[3]
 sys.path.insert(0, str(HERE))
 
-PRED_PATH = HERE / "data" / "processed" / "stage1_v3" / "training" / "predictions_lomo_v3_lgbm.parquet"
+_TRAIN = HERE / "data" / "processed" / "stage1_v3" / "training"
+PRED_PATHS = {
+    "lgbm": _TRAIN / "predictions_lomo_v3_lgbm.parquet",
+    "lgbm_lagfree": _TRAIN / "predictions_lomo_v3_lgbm_lagfree.parquet",
+    "blend": _TRAIN / "predictions_blend_v3.parquet",
+}
+# Column holding the q50 PM2.5-scale point prediction, per source
+PRED_COL = {"lgbm": "pm25_pred_q50", "lgbm_lagfree": "pm25_pred_q50", "blend": "q50_blend"}
 OUT_DIR = HERE / "data" / "processed" / "stage1_v3" / "training"
 FIG_DIR = HERE / "results" / "figures" / "stage1_v3"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -84,14 +91,25 @@ MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun",
                 "Jul","Aug","Sep","Oct","Nov","Dec"]
 
 
-def main():
-    p = pd.read_parquet(PRED_PATH)
+def main(year: int | None = None, source: str = "lgbm"):
+    p = pd.read_parquet(PRED_PATHS[source])
     p["datetime_utc"] = pd.to_datetime(p["datetime_utc"], utc=True)
+    # Unify the q50 PM2.5-scale point prediction column across sources
+    p["pm25_pred_q50"] = p[PRED_COL[source]]
     # Convert UTC → local time (Asia/Colombo = UTC+5:30)
     p["dt_local"] = p["datetime_utc"].dt.tz_convert("Asia/Colombo")
+    # Optional year filter (Senarathna reference is calendar-year 2019)
+    if year is not None:
+        p = p[p["dt_local"].dt.year == year].copy()
+        print(f"Filtered to year {year}: {len(p):,} rows "
+              f"(sensors: {p['sensor_id'].value_counts().to_dict()})")
     p["hour_local"] = p["dt_local"].dt.hour
     p["dow_local"] = p["dt_local"].dt.dayofweek   # Mon=0
     p["month_local"] = p["dt_local"].dt.month
+    tag = f" [{source}{'' if year is None else f', {year}'}]"
+    # Preserve canonical filenames for the original (lgbm, all-years) invocation
+    default_case = (year is None and source == "lgbm")
+    suffix = "" if default_case else (f"_{source}" + ("" if year is None else f"_{year}"))
 
     # ── DIURNAL ────────────────────────────────────────────────────────────
     diurnal = p.groupby("hour_local").agg(
@@ -103,7 +121,7 @@ def main():
     diurnal["senarathna_mean"] = diurnal["hour_local"].map(SENARATHNA_HOURLY)
     diurnal["pred_minus_obs"] = diurnal["pred_mean"] - diurnal["obs_mean"]
     diurnal["obs_minus_senarathna"] = diurnal["obs_mean"] - diurnal["senarathna_mean"]
-    diurnal.to_csv(OUT_DIR / "senarathna_diurnal_comparison.csv", index=False)
+    diurnal.to_csv(OUT_DIR / f"senarathna_diurnal_comparison{suffix}.csv", index=False)
 
     # ── WEEKLY ─────────────────────────────────────────────────────────────
     weekly = p.groupby("dow_local").agg(
@@ -113,7 +131,7 @@ def main():
     ).reset_index()
     weekly["senarathna_mean"] = weekly["dow_local"].map(SENARATHNA_WEEKLY)
     weekly["day"] = weekly["dow_local"].map(dict(enumerate(DAY_LABELS)))
-    weekly.to_csv(OUT_DIR / "senarathna_weekly_comparison.csv", index=False)
+    weekly.to_csv(OUT_DIR / f"senarathna_weekly_comparison{suffix}.csv", index=False)
 
     # ── MONTHLY ────────────────────────────────────────────────────────────
     monthly = p.groupby("month_local").agg(
@@ -123,7 +141,7 @@ def main():
     ).reset_index()
     monthly["senarathna_mean"] = monthly["month_local"].map(SENARATHNA_MONTHLY)
     monthly["month"] = monthly["month_local"].map(dict(enumerate(MONTH_LABELS, 1)))
-    monthly.to_csv(OUT_DIR / "senarathna_monthly_comparison.csv", index=False)
+    monthly.to_csv(OUT_DIR / f"senarathna_monthly_comparison{suffix}.csv", index=False)
 
     # ── Shape correlation ──────────────────────────────────────────────────
     def _pearson_r(a, b):
@@ -136,7 +154,7 @@ def main():
     r_monthly_obs = _pearson_r(monthly["obs_mean"], monthly["senarathna_mean"])
     r_monthly_pred = _pearson_r(monthly["pred_mean"], monthly["senarathna_mean"])
 
-    print("\n══ SHAPE CORRELATION vs Senarathna 2024 ══")
+    print(f"\n══ SHAPE CORRELATION vs Senarathna 2024{tag} ══")
     print(f"{'Pattern':<15}{'FECT obs':>12}{'v3 pred':>12}")
     print("-" * 45)
     print(f"{'Diurnal (24h)':<15}{r_diurnal_obs:>12.3f}{r_diurnal_pred:>12.3f}")
@@ -182,7 +200,7 @@ def main():
     ax.grid(axis="y", lw=0.4, alpha=0.5)
     fig.tight_layout()
     for ext in ("png", "pdf"):
-        fig.savefig(FIG_DIR / f"diurnal_v3_vs_senarathna.{ext}",
+        fig.savefig(FIG_DIR / f"diurnal_v3_vs_senarathna{suffix}.{ext}",
                     bbox_inches="tight", dpi=300)
     plt.close(fig)
 
@@ -204,7 +222,7 @@ def main():
     ax.grid(axis="y", lw=0.4, alpha=0.5)
     fig.tight_layout()
     for ext in ("png", "pdf"):
-        fig.savefig(FIG_DIR / f"weekly_v3_vs_senarathna.{ext}",
+        fig.savefig(FIG_DIR / f"weekly_v3_vs_senarathna{suffix}.{ext}",
                     bbox_inches="tight", dpi=300)
     plt.close(fig)
 
@@ -228,7 +246,7 @@ def main():
     ax.grid(axis="y", lw=0.4, alpha=0.5)
     fig.tight_layout()
     for ext in ("png", "pdf"):
-        fig.savefig(FIG_DIR / f"monthly_v3_vs_senarathna.{ext}",
+        fig.savefig(FIG_DIR / f"monthly_v3_vs_senarathna{suffix}.{ext}",
                     bbox_inches="tight", dpi=300)
     plt.close(fig)
 
@@ -237,4 +255,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser(description="Compare Stage-1 v3 predictions vs Senarathna 2024 (KOALA 2019).")
+    ap.add_argument("--year", type=int, default=None,
+                    help="Filter predictions to a single calendar year (local time), e.g. 2019.")
+    ap.add_argument("--source", choices=["lgbm", "lgbm_lagfree", "blend"], default="lgbm",
+                    help="Prediction source: 'lgbm', 'lgbm_lagfree' (no pm25 lags), or 'blend' (production v3 blend).")
+    args = ap.parse_args()
+    main(year=args.year, source=args.source)

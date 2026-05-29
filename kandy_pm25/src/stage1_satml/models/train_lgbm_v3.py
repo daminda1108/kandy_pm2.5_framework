@@ -55,8 +55,15 @@ DROP_COLS = {
 }
 
 
-def get_feature_cols(df: pd.DataFrame) -> List[str]:
-    keep = [c for c in df.columns if c not in DROP_COLS]
+# Autoregressive pm25 lags — dropped in lag-free mode (production T(t) must be
+# evaluable at every hour of 2024, but FECT coverage is only 30.5% / Akurana-only,
+# so observed lags are unavailable for 70% of target hours).
+LAG_COLS = {"lag_1h", "lag_3h", "lag_24h", "lag_168h"}
+
+
+def get_feature_cols(df: pd.DataFrame, lag_free: bool = False) -> List[str]:
+    drop = DROP_COLS | (LAG_COLS if lag_free else set())
+    keep = [c for c in df.columns if c not in drop]
     # sensor_id stays as a categorical proxy (LightGBM handles it natively)
     return keep
 
@@ -104,10 +111,11 @@ def fold_metrics(y, q05, q50, q95, c_prior_anchored):
 
 
 # ── training ───────────────────────────────────────────────────────────────
-def train_lomo():
+def train_lomo(lag_free: bool = False):
     import lightgbm as lgb
 
-    print("Loading dataset...")
+    suffix = "_lagfree" if lag_free else ""
+    print(f"Loading dataset... (lag_free={lag_free})")
     df = pd.read_parquet(DATASET_PATH)
     df = df.dropna(subset=["residual_target"]).reset_index(drop=True)
     df["fold_year"] = df["datetime_utc"].dt.year
@@ -121,7 +129,7 @@ def train_lomo():
     )
     print(f"  rows: {len(df):,}  folds: {df['fold'].nunique()}")
 
-    feat_cols = get_feature_cols(df)
+    feat_cols = get_feature_cols(df, lag_free=lag_free)
     feat_cols = [c for c in feat_cols if c != "fold"
                   and not c.startswith("fold_")]
     print(f"  features ({len(feat_cols)}): {feat_cols}")
@@ -221,9 +229,10 @@ def train_lomo():
     }
 
     # ── persist ────────────────────────────────────────────────────────────
-    preds.to_parquet(OUT / "predictions_lomo_v3_lgbm.parquet", index=False)
-    fold_df.to_csv(OUT / "metrics_per_fold_v3_lgbm.csv", index=False)
-    pd.DataFrame([pooled]).to_csv(OUT / "summary_v3_lgbm.csv", index=False)
+    pooled["lag_free"] = lag_free
+    preds.to_parquet(OUT / f"predictions_lomo_v3_lgbm{suffix}.parquet", index=False)
+    fold_df.to_csv(OUT / f"metrics_per_fold_v3_lgbm{suffix}.csv", index=False)
+    pd.DataFrame([pooled]).to_csv(OUT / f"summary_v3_lgbm{suffix}.csv", index=False)
 
     print("\n── POOLED METRICS ──")
     for k, v in pooled.items():
@@ -232,4 +241,9 @@ def train_lomo():
 
 
 if __name__ == "__main__":
-    train_lomo()
+    import argparse
+    ap = argparse.ArgumentParser(description="Stage-1 v3 LightGBM-quantile RECAP (LOMO CV).")
+    ap.add_argument("--lag-free", action="store_true",
+                    help="Drop autoregressive pm25 lags (lag_{1,3,24,168}h) — for deployable T(t).")
+    args = ap.parse_args()
+    train_lomo(lag_free=args.lag_free)

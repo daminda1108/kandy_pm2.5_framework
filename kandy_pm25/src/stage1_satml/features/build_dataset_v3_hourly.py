@@ -120,6 +120,37 @@ def load_fect_hourly_labels() -> pd.DataFrame:
     return df
 
 
+def build_inference_base(year: int, sensor_id: int) -> pd.DataFrame:
+    """Synthetic base frame for deployable T(t): a *gapless* hourly grid for one
+    calendar year at one reference sensor location, with pm25_observed = NaN.
+
+    All downstream feature stages merge exogenous (location-invariant) series
+    onto datetime_utc, so this produces the full-year inference stack with no
+    dependence on FECT observation availability. Lag features are intentionally
+    excluded by the caller (lag-free T(t) — see plan 2026-05-29 §3.1).
+    """
+    meta = load_fect_hourly_labels()
+    sub = meta[meta["sensor_id"] == sensor_id]
+    if sub.empty:
+        raise ValueError(f"Reference sensor {sensor_id} not found in FECT labels "
+                         f"(available: {meta['sensor_id'].unique().tolist()})")
+    row = sub.iloc[0]
+    idx = pd.date_range(f"{year}-01-01", f"{year + 1}-01-01",
+                        freq="1h", tz="UTC", inclusive="left")
+    base = pd.DataFrame({"datetime_utc": idx})
+    base["sensor_id"] = int(sensor_id)
+    base["sensor_name"] = row["sensor_name"]
+    base["lat"] = float(row["lat"])
+    base["lon"] = float(row["lon"])
+    base["elevation_m"] = float(row["elevation_m"])
+    base["pm25_observed"] = np.nan        # no labels at inference
+    base["qc_flag"] = 0
+    log.info(f"Inference base: year {year}, sensor {sensor_id} "
+             f"({row['sensor_name']}, lat={row['lat']:.4f}, lon={row['lon']:.4f}), "
+             f"{len(base):,} gapless hours")
+    return base
+
+
 # ════════════════════════════════════════════════════════════════════════════
 # 2. c_prior — GEOS-CF hourly scaled by KANDY_GEOS_CF_RATIO
 # ════════════════════════════════════════════════════════════════════════════
@@ -525,17 +556,24 @@ STAGE_LIST = [
 ]
 
 
-def build(stages: Optional[list[str]] = None, dry_run: bool = False
-          ) -> Optional[pd.DataFrame]:
+def build(stages: Optional[list[str]] = None, dry_run: bool = False,
+          inference_grid: Optional[dict] = None) -> Optional[pd.DataFrame]:
     stages = stages or STAGE_LIST
+    # Inference mode = deployable T(t): gapless hourly grid, lag-free, no labels.
+    if inference_grid is not None:
+        stages = [s for s in stages if s != "lags"]   # lag-free T(t)
     log.info(f"Build stages requested: {stages}")
-    log.info(f"Dry-run mode: {dry_run}")
+    log.info(f"Dry-run mode: {dry_run}  Inference grid: {inference_grid}")
 
-    # 1. labels
-    if "labels" not in stages:
-        log.error("'labels' is mandatory; aborting.")
-        return None
-    labels = load_fect_hourly_labels()
+    # 1. labels (or synthetic inference base)
+    if inference_grid is not None:
+        labels = build_inference_base(inference_grid["year"],
+                                      inference_grid["sensor_id"])
+    else:
+        if "labels" not in stages:
+            log.error("'labels' is mandatory; aborting.")
+            return None
+        labels = load_fect_hourly_labels()
 
     # 2. c_prior
     geos = load_geos_cf_hourly() if "c_prior" in stages else None
@@ -650,8 +688,13 @@ def build(stages: Optional[list[str]] = None, dry_run: bool = False
         log.info("[dry-run] not writing parquet")
         return df
 
-    df.to_parquet(OUT_PATH, index=False)
-    log.info(f"Wrote {OUT_PATH} ({df.shape[0]:,} rows × {df.shape[1]} cols)")
+    out_path = OUT_PATH
+    if inference_grid is not None:
+        out_path = (DATA_PROC /
+                    f"inference_grid_{inference_grid['year']}"
+                    f"_s{inference_grid['sensor_id']}.parquet")
+    df.to_parquet(out_path, index=False)
+    log.info(f"Wrote {out_path} ({df.shape[0]:,} rows × {df.shape[1]} cols)")
 
     return df
 
@@ -665,9 +708,16 @@ def main():
                    help="Inventory inputs, do not write parquet")
     p.add_argument("--stages", default="",
                    help=f"Comma-separated subset of: {','.join(STAGE_LIST)}")
+    p.add_argument("--inference-grid", action="store_true",
+                   help="Build a gapless lag-free hourly grid for deployable T(t) "
+                        "(no FECT labels; uses --year and --sensor).")
+    p.add_argument("--year", type=int, default=2024,
+                   help="Calendar year for --inference-grid.")
+    p.add_argument("--sensor", type=int, default=12451,
+                   help="Reference sensor_id for --inference-grid (12451=Akurana).")
     args = p.parse_args()
 
-    if not (args.build or args.dry_run):
+    if not (args.build or args.dry_run or args.inference_grid):
         p.print_help(); return
 
     stages = args.stages.split(",") if args.stages else None
@@ -676,7 +726,10 @@ def main():
         if bad:
             log.error(f"Unknown stages: {bad}; valid = {STAGE_LIST}")
             return
-    build(stages=stages, dry_run=args.dry_run and not args.build)
+    inf = ({"year": args.year, "sensor_id": args.sensor}
+           if args.inference_grid else None)
+    build(stages=stages, dry_run=args.dry_run and not (args.build or args.inference_grid),
+          inference_grid=inf)
 
 
 if __name__ == "__main__":
