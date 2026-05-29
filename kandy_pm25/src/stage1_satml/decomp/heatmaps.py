@@ -74,15 +74,23 @@ def main(year: int = 2024):
     fig.colorbar(im1, ax=ax[1], label="µg m⁻³")
     fig.savefig(fdir / "annual_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
 
-    # Fig 2 — seasonal, all panels on the universal scale + one shared colorbar,
-    # so seasons are directly comparable (JJA reads correctly as the cool season).
-    fig, ax = plt.subplots(1, 4, figsize=(16, 4.2), constrained_layout=True)
+    # Fig 2 — seasonal, TWO rows so we get both readings at once:
+    #   top    = universal scale (PM_VMIN..PM_VMAX) → compare magnitude ACROSS seasons
+    #   bottom = each season on its OWN min..max     → reveal WITHIN-season structure
+    fig, ax = plt.subplots(2, 4, figsize=(16, 8), constrained_layout=True)
     smean = df.groupby("season")["pm25_q50"].mean().to_dict()
-    for a, s in zip(ax, ["DJF", "MAM", "JJA", "SON"]):
-        im = _hm(a, df[df.season == s], "pm25_q50", PM_VMIN, PM_VMAX,
-                 f"{s}  (mean {smean[s]:.1f})")
-    fig.colorbar(im, ax=ax, label="µg m⁻³", shrink=0.7)
-    fig.suptitle(f"Kandy {year} seasonal mean PM₂.₅ — decomposition", fontsize=11)
+    for j, s in enumerate(["DJF", "MAM", "JJA", "SON"]):
+        sub = df[df.season == s]
+        sm = sub.groupby(["lat", "lon"])["pm25_q50"].mean()
+        imu = _hm(ax[0, j], sub, "pm25_q50", PM_VMIN, PM_VMAX,
+                  f"{s}  (mean {smean[s]:.1f})")
+        imp = _hm(ax[1, j], sub, "pm25_q50", float(sm.min()), float(sm.max()),
+                  f"{s}  range {sm.min():.1f}–{sm.max():.1f}")
+        fig.colorbar(imp, ax=ax[1, j], shrink=0.8)
+    fig.colorbar(imu, ax=ax[0, :], label="µg m⁻³ (universal)", shrink=0.5)
+    ax[0, 0].set_ylabel("UNIVERSAL scale\nlat")
+    ax[1, 0].set_ylabel("PER-SEASON scale\nlat")
+    fig.suptitle(f"Kandy {year} seasonal mean PM₂.₅ — decomposition", fontsize=12)
     fig.savefig(fdir / "seasonal_mean.png", dpi=150, bbox_inches="tight"); plt.close(fig)
 
     # Fig 3 — night vs day (shows M valley-pooling)
