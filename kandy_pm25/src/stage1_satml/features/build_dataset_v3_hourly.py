@@ -113,7 +113,19 @@ def load_fect_hourly_labels() -> pd.DataFrame:
               inplace=True)
     df = df.dropna(subset=["pm25_observed"])
     df = df[df["qc_flag"] == 0]
-    df["elevation_m"] = df["sensor_id"].map({12451: 1538.0, 33495: 1698.0})
+    # Audit E1–E3 (2026-05-29): raw FECT metadata was mis-registered. SRTM-verified
+    # truth — Akurana 7.366/80.618/460 m (genuinely ~6 km N of Kandy, OUTSIDE the
+    # PINN bbox); Hantana 7.265/80.625/738 m (raw coord 7.356/80.631/507 m was wrong).
+    # Both are valley/suburban (NOT highland; the old 1538/1698 m were errors).
+    # NOTE: the currently-trained Stage A v3 / T(t) used the old constants; impact is
+    # negligible (per-sensor constant feature, self-consistent — see audit §2). A
+    # rebuild adopts these corrected values.
+    _FECT_CORRECT = {12451: (7.366, 80.618, 460.0), 33495: (7.265, 80.625, 738.0)}
+    for _sid, (_la, _lo, _el) in _FECT_CORRECT.items():
+        _m = df["sensor_id"] == _sid
+        df.loc[_m, "lat"] = _la
+        df.loc[_m, "lon"] = _lo
+    df["elevation_m"] = df["sensor_id"].map({k: v[2] for k, v in _FECT_CORRECT.items()})
     log.info(f"FECT hourly labels: {len(df):,} rows × "
              f"{df['sensor_id'].nunique()} sensors, "
              f"range {df['datetime_utc'].min()} → {df['datetime_utc'].max()}")

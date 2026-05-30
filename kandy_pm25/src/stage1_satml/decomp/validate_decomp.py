@@ -6,9 +6,10 @@ validate_decomp.py — validation battery for the decomposition map (plan §4, g
   U6  spatial sign battery: urban core > basin, highland < basin (construction
       check on S_emit — labelled non-independent).
   FECT pointwise (sanity): decomp at the Akurana/Hantana FECT pixels vs the
-      calibrated FECT observations. NOTE: FECT are HIGHLAND sites; the map is
-      basin-anchored, so a positive bias here diagnoses VanD's too-weak
-      highland↔valley contrast, not a temporal error.
+      calibrated FECT observations. NOTE: both FECT are valley/suburban sites
+      (~460–738 m, audit E1–E3 — NOT highland). Akurana is out-of-bbox (north,
+      edge-clamped). The map is basin-anchored, so the positive bias diagnoses a
+      too-weak urban/suburban spatial contrast, not a temporal error.
 
 Writes results/figures/kandy_decomp/validation_report.csv (+ prints).
 """
@@ -27,7 +28,12 @@ DATA = HERE / "data" / "processed"
 DECOMP = DATA / "decomp"
 OUT = HERE / "results" / "figures" / "kandy_decomp"
 OUT.mkdir(parents=True, exist_ok=True)
-FECT = {12451: (7.366, 80.618), 33495: (7.356, 80.631)}
+# CORRECTED coords (audit E1–E3, 2026-05-29): both FECT are valley/suburban
+# (~460–738 m, NOT highland). Hantana raw coord 7.356/80.631 was mis-registered;
+# true Hantana ≈ 7.265/80.625 (738 m). Akurana 7.366 is OUTSIDE the bbox (north).
+FECT = {12451: (7.366, 80.618), 33495: (7.265, 80.625)}
+FECT_NAME = {12451: "Akurana (OUT-OF-BBOX, north)", 33495: "Hantana (7.265, 738m)"}
+BBOX = (7.2230, 7.3582, 80.5660, 80.7014)  # lat_min, lat_max, lon_min, lon_max
 
 
 def _annual_grid(year):
@@ -73,10 +79,10 @@ def u6_signs(year=2024):
     def at(la, lo):
         return float(Z[np.argmin(np.abs(lats - la)), np.argmin(np.abs(lons - lo))])
     city = at(7.2906, 80.6337)
+    # Akurana is out-of-bbox (north) → excluded. Hantana (7.265) is in-domain.
     checks = {
         "urban_core>basin": (city, basin, city > basin),
-        "akurana_highland<basin": (at(*FECT[12451]), basin, at(*FECT[12451]) < basin),
-        "hantana_highland<basin": (at(*FECT[33495]), basin, at(*FECT[33495]) < basin),
+        "hantana_suburban<basin": (at(*FECT[33495]), basin, at(*FECT[33495]) < basin),
     }
     return checks, basin
 
@@ -95,6 +101,7 @@ def fect_pointwise(year):
         o = obs[obs.sensor_id == sid]
         if len(o) < 50:
             continue
+        in_bbox = BBOX[0] <= la <= BBOX[1] and BBOX[2] <= lo <= BBOX[3]
         gla = lats[np.argmin(np.abs(lats - la))]; glo = lons[np.argmin(np.abs(lons - lo))]
         px = pred[(pred.lat == gla) & (pred.lon == glo)][
             ["time", "pm25_q05", "pm25_q50", "pm25_q95"]]
@@ -103,7 +110,7 @@ def fect_pointwise(year):
             continue
         err = m.pm25_q50 - m.pm25_observed
         rows.append(dict(
-            sensor=sid, year=year, n=len(m),
+            sensor=sid, name=FECT_NAME[sid], year=year, n=len(m), in_bbox=in_bbox,
             obs_mean=float(m.pm25_observed.mean()), pred_mean=float(m.pm25_q50.mean()),
             rmse=float(np.sqrt((err**2).mean())), bias=float(err.mean()),
             cov90=float(((m.pm25_observed >= m.pm25_q05) &
@@ -123,14 +130,15 @@ def main():
     for k, (v, b, ok) in checks.items():
         print(f"  {k:<26} {v:.2f} vs {b:.2f}  {'PASS' if ok else 'FAIL'}")
 
-    print("\n══ FECT pointwise (highland sanity — bias diagnoses VanD flatness) ══")
+    print("\n══ FECT pointwise (valley/suburban sites — bias diagnoses spatial flatness) ══")
     allrows = []
     for yr in (2019, 2024):
         for row in fect_pointwise(yr):
             allrows.append(row)
-            print(f"  s{row['sensor']} {yr}: n={row['n']:<5} obs={row['obs_mean']:.1f} "
+            flag = "" if row['in_bbox'] else "  [OUT-OF-BBOX, edge-clamped]"
+            print(f"  {row['name']:<28} {yr}: n={row['n']:<5} obs={row['obs_mean']:.1f} "
                   f"pred={row['pred_mean']:.1f} rmse={row['rmse']:.1f} "
-                  f"bias={row['bias']:+.1f} cov90={row['cov90']:.2f}")
+                  f"bias={row['bias']:+.1f} cov90={row['cov90']:.2f}{flag}")
     pd.DataFrame(allrows).to_csv(OUT / "validation_fect_pointwise.csv", index=False)
     print(f"\nWrote {OUT / 'validation_fect_pointwise.csv'}")
 
