@@ -45,7 +45,11 @@ LANDMARKS = {                          # (lat, lon, label, marker)
     "NIFS/KOALA": (7.2675, 80.5985, "^"),
     "Hantana FECT": (7.265, 80.625, "s"),
 }
-YEARS = list(range(2019, 2025))
+# 2019–2023 only: each year has its OWN real Van Donkelaar level (observation-
+# grounded, no proxy). 2024 has no VanD and the inter-annual level is not
+# defensibly groundable from a substitute product (MAIAC-AOD↔VanD r=0.19), so it
+# is excluded from the magnitude-calibrated product until VanD-2024 releases.
+YEARS = list(range(2019, 2024))
 
 
 def _annual_pm(year):
@@ -119,8 +123,11 @@ def annual_map(year=2024, cmap="YlOrRd"):
 
 def multiyear_grid(cmap="YlOrRd"):
     fig, axes = plt.subplots(2, 3, figsize=(13, 8.4), constrained_layout=True)
+    flat = axes.ravel()
+    for ax in flat[len(YEARS):]:        # hide unused panels (5 years in a 2×3)
+        ax.axis("off")
     im = None
-    for ax, year in zip(axes.ravel(), YEARS):
+    for ax, year in zip(flat, YEARS):
         Z, lats, lons = _annual_pm(year)
         im = _draw(ax, Z, lats, lons, cmap, show_marks=False)
         ax.plot(80.6337, 7.2906, "o", mfc="white", mec="k", mew=0.8, ms=4)
@@ -136,8 +143,9 @@ def multiyear_grid(cmap="YlOrRd"):
                       ticks=[VMIN, 15, 25, 35, VMAX], shrink=0.6)
     cb.ax.set_yticklabels(["12", "15  WHO IT-3", "25  IT-2", "35  IT-1", "40"],
                           fontsize=8)
-    fig.suptitle("Kandy annual-mean PM₂.₅ 2019–2024 — decomposition "
-                 "(all of Kandy exceeds WHO AQG of 5 µg m⁻³)", fontsize=12)
+    fig.suptitle("Kandy annual-mean PM₂.₅ 2019–2023 — decomposition "
+                 "(per-year Van Donkelaar level; all of Kandy exceeds WHO AQG 5 µg m⁻³)",
+                 fontsize=12)
     fig.savefig(OUT / f"multiyear_{cmap}.png", dpi=220, bbox_inches="tight")
     plt.close(fig)
     print(f"Wrote {OUT / f'multiyear_{cmap}.png'} + annual maps")
