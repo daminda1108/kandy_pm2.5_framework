@@ -44,6 +44,18 @@ def _annual_grid(year):
     return Z, lats, lons
 
 
+def _bootstrap_r(a, b, n_boot=2000, seed=0):
+    """Percentile bootstrap 95% CI for Pearson r (resample paired samples)."""
+    from scipy.stats import pearsonr
+    rng = np.random.default_rng(seed)
+    n = len(a)
+    rs = np.empty(n_boot)
+    for i in range(n_boot):
+        idx = rng.integers(0, n, n)
+        rs[i] = pearsonr(a[idx], b[idx])[0]
+    return float(np.percentile(rs, 2.5)), float(np.percentile(rs, 97.5))
+
+
 def u5_independent(year=2024):
     from scipy.interpolate import RegularGridInterpolator
     from scipy.stats import pearsonr, spearmanr
@@ -68,7 +80,8 @@ def u5_independent(year=2024):
     out = {}
     for name, field in [("VIIRS_NTL_log", ntl_g.ravel()), ("delta_z", dz.ravel())]:
         r, p = pearsonr(z, field); rho, _ = spearmanr(z, field)
-        out[name] = (r, rho, p)
+        lo, hi = _bootstrap_r(z, field)
+        out[name] = (r, rho, p, lo, hi)
     return out
 
 
@@ -119,10 +132,11 @@ def fect_pointwise(year):
 
 
 def main():
-    print("══ U5 — independent spatial correlation (annual 2024 map) ══")
-    for name, (r, rho, p) in u5_independent(2024).items():
+    print("══ U5 — independent spatial correlation (annual 2024 map; bootstrap 95% CI) ══")
+    for name, (r, rho, p, lo, hi) in u5_independent(2024).items():
         exp = "+" if name == "VIIRS_NTL_log" else "−"
-        print(f"  vs {name:<14} Pearson r={r:+.3f}  Spearman ρ={rho:+.3f}  (expect {exp})")
+        print(f"  vs {name:<14} Pearson r={r:+.3f} [{lo:+.3f}, {hi:+.3f}]  "
+              f"Spearman ρ={rho:+.3f}  (expect {exp})")
 
     print("\n══ U6 — spatial sign battery (construction check) ══")
     checks, basin = u6_signs(2024)

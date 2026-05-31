@@ -68,16 +68,28 @@ def main(year: int = 2019):
     mo = p.groupby("month").agg(q50=("pm25_q50", "mean")).reset_index()
     mo["sen"] = mo["month"].map(SENARATHNA_MONTHLY)
 
+    def _boot_r(a, b, n=2000, seed=0):
+        a, b = np.asarray(a), np.asarray(b)
+        rng = np.random.default_rng(seed)
+        rs = [np.corrcoef(a[i], b[i])[0, 1]
+              for i in (rng.integers(0, len(a), len(a)) for _ in range(n))]
+        return float(np.percentile(rs, 2.5)), float(np.percentile(rs, 97.5))
+
     r_di = float(np.corrcoef(di.q50, di.sen)[0, 1])
     r_mo = float(np.corrcoef(mo.q50, mo.sen)[0, 1])
+    ci_di = _boot_r(di.q50, di.sen)   # n=24 hours → wide CI (small-n, honest)
+    ci_mo = _boot_r(mo.q50, mo.sen)   # n=12 months → very wide CI
     peak_d = int(di.loc[di[di.hour.between(4, 11)].q50.idxmax(), "hour"])
     peak_e = int(di.loc[di[di.hour.between(15, 22)].q50.idxmax(), "hour"])
     peak_mo = MONTH_LABELS[int(mo.loc[mo.q50.idxmax(), "month"]) - 1]
-    print(f"  diurnal r={r_di:+.3f}  monthly r={r_mo:+.3f}  "
+    print(f"  diurnal r={r_di:+.3f} [{ci_di[0]:+.2f},{ci_di[1]:+.2f}]  "
+          f"monthly r={r_mo:+.3f} [{ci_mo[0]:+.2f},{ci_mo[1]:+.2f}]  "
           f"morning peak {peak_d} LT (Sen 07)  evening peak {peak_e} LT (Sen 18)  "
           f"month peak {peak_mo} (Sen Mar)")
     pd.DataFrame([dict(year=year, nifs_annual=float(p.pm25_q50.mean()),
-                       diurnal_r=r_di, monthly_r=r_mo, morning_peak_lt=peak_d,
+                       diurnal_r=r_di, diurnal_r_lo=ci_di[0], diurnal_r_hi=ci_di[1],
+                       monthly_r=r_mo, monthly_r_lo=ci_mo[0], monthly_r_hi=ci_mo[1],
+                       morning_peak_lt=peak_d,
                        evening_peak_lt=peak_e, month_peak=peak_mo)]).to_csv(
         FIG / "vs_senarathna_metrics.csv", index=False)
 
