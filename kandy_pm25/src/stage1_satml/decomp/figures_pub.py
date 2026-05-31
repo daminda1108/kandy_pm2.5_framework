@@ -85,11 +85,11 @@ def _north_arrow(ax, lats, lons):
 
 
 def _draw(ax, Z, lats, lons, cmap, show_terrain=True, show_marks=True,
-          smooth=8):
+          smooth=8, vmin=VMIN, vmax=VMAX):
     Zs = zoom(Z, smooth, order=3)      # cubic upsample → smooth 1 km field
     ext = [lons.min(), lons.max(), lats.min(), lats.max()]
-    im = ax.imshow(Zs, origin="lower", extent=ext, cmap=cmap, vmin=VMIN,
-                   vmax=VMAX, aspect="auto", interpolation="bilinear")
+    im = ax.imshow(Zs, origin="lower", extent=ext, cmap=cmap, vmin=vmin,
+                   vmax=vmax, aspect="auto", interpolation="bilinear")
     if show_terrain:
         elev, ela, elo = _elev()
         ax.contour(elo, ela, elev, levels=range(500, 1300, 150),
