@@ -10,6 +10,10 @@ validate_decomp.py — validation battery for the decomposition map (plan §4, g
       (~460–738 m, audit E1–E3 — NOT highland). Akurana is out-of-bbox (north,
       edge-clamped). The map is basin-anchored, so the positive bias diagnoses a
       too-weak urban/suburban spatial contrast, not a temporal error.
+  U7  INDEPENDENT-product cross-check vs GHAP (GlobalHighPM2.5; Wei et al.) — the
+      first genuinely independent 1 km reference (different team/method, NOT VanD).
+      Agreement = corroboration not validation; disagreement diagnostic. Adjudicates
+      level/season/broad spatial sign, not the fine urban-core hotspot.
 
 Writes results/figures/kandy_decomp/validation_report.csv (+ prints).
 """
@@ -131,6 +135,61 @@ def fect_pointwise(year):
     return rows
 
 
+def u7_ghap(years=range(2019, 2023)):
+    """U7 — INDEPENDENT-product cross-check vs GHAP (GlobalHighPM2.5, Wei et al.).
+
+    GHAP is methodologically independent of Van Donkelaar (geophysical+GWR), which is
+    inside S_emit → this is the first genuinely independent spatial cross-check. GHAP
+    has no Sri Lankan stations either, so agreement = corroboration, NOT validation;
+    disagreement is diagnostic. At 15 km it adjudicates level/season/broad spatial sign,
+    not the fine urban-core hotspot. Built by scripts/gee_export_ghap_kandy.py.
+    """
+    from scipy.spatial import cKDTree
+    from scipy.stats import pearsonr
+    BETA = 1.2472  # VanD→KOALA satellite-low correction
+    gp = DECOMP / "ghap_kandy_monthly_2019_2022.parquet"
+    if not gp.exists():
+        return None
+    ghap = pd.read_parquet(gp)
+    dec = []
+    for yr in years:
+        d = pd.read_parquet(DECOMP / f"kandy_decomp_predictions_{yr}.parquet",
+                            columns=["time", "lat", "lon", "pm25_q50"])
+        d["year"] = yr; d["month"] = pd.to_datetime(d["time"]).dt.month
+        dec.append(d)
+    dec = pd.concat(dec, ignore_index=True)
+
+    # level (basin annual mean) + inter-annual r
+    lv = []
+    for yr in years:
+        lv.append((yr, dec.loc[dec.year == yr, "pm25_q50"].mean(),
+                   ghap.loc[ghap.year == yr, "ghap_pm25"].mean()))
+    lv = pd.DataFrame(lv, columns=["year", "decomp", "ghap"])
+    lv["ghap_beta"] = lv.ghap * BETA
+    r_ia = pearsonr(lv.decomp, lv.ghap)[0]
+    # seasonal climatology r (+ bootstrap CI on the 12 monthly pairs)
+    dc = dec.groupby("month")["pm25_q50"].mean(); gc = ghap.groupby("month")["ghap_pm25"].mean()
+    r_se = pearsonr(dc.values, gc.values)[0]
+    se_lo, se_hi = _bootstrap_r(dc.values, gc.values, n_boot=2000)
+    # spatial per-pixel pattern (2019-2022 mean) via nearest-neighbour align
+    dpx = dec.groupby(["lat", "lon"])["pm25_q50"].mean().reset_index()
+    gpx = ghap.groupby(["lat", "lon"])["ghap_pm25"].mean().reset_index()
+    _, idx = cKDTree(gpx[["lat", "lon"]].values).query(dpx[["lat", "lon"]].values)
+    dpx["ghap"] = gpx["ghap_pm25"].values[idx]
+    r_sp = pearsonr(dpx.pm25_q50, dpx.ghap)[0]
+    sp_lo, sp_hi = _bootstrap_r(dpx.pm25_q50.values, dpx.ghap.values, n_boot=2000)
+    cen = (7.2906, 80.6337)
+    dist = np.hypot(dpx.lat - cen[0], dpx.lon - cen[1])
+    core = dist <= np.percentile(dist, 25); edge = dist >= np.percentile(dist, 75)
+    dec_c = dpx.loc[core, "pm25_q50"].mean() / dpx.loc[edge, "pm25_q50"].mean()
+    gh_c = dpx.loc[core, "ghap"].mean() / dpx.loc[edge, "ghap"].mean()
+    return dict(level=lv, r_interannual=r_ia, r_seasonal=r_se, se_ci=(se_lo, se_hi),
+                r_spatial=r_sp, sp_ci=(sp_lo, sp_hi),
+                seas_peak=(int(dc.idxmax()), int(gc.idxmax())),
+                seas_min=(int(dc.idxmin()), int(gc.idxmin())),
+                core_edge=(dec_c, gh_c))
+
+
 def main():
     print("══ U5 — independent spatial correlation (annual 2024 map; bootstrap 95% CI) ══")
     for name, (r, rho, p, lo, hi) in u5_independent(2024).items():
@@ -155,6 +214,30 @@ def main():
                   f"bias={row['bias']:+.1f} cov90={row['cov90']:.2f}{flag}")
     pd.DataFrame(allrows).to_csv(OUT / "validation_fect_pointwise.csv", index=False)
     print(f"\nWrote {OUT / 'validation_fect_pointwise.csv'}")
+
+    print("\n══ U7 — INDEPENDENT product cross-check vs GHAP (quasi-independent 1 km, 2019–2022) ══")
+    g = u7_ghap()
+    if g is None:
+        print("  [GHAP parquet missing — run scripts/gee_export_ghap_kandy.py]")
+    else:
+        print("  LEVEL (basin annual µg/m³):")
+        for _, r in g["level"].iterrows():
+            print(f"    {int(r.year)}: decomp {r.decomp:.2f} | GHAP {r.ghap:.2f} | "
+                  f"GHAP×β {r.ghap_beta:.2f}  (KOALA 24.5)")
+        print(f"    inter-annual r(decomp,GHAP) = {g['r_interannual']:+.3f}  "
+              f"→ {'corroborated' if abs(g['r_interannual'])>0.5 else 'NOT corroborated (low-confidence trend)'}")
+        print(f"  SEASONAL r = {g['r_seasonal']:+.3f} [{g['se_ci'][0]:+.2f},{g['se_ci'][1]:+.2f}]  "
+              f"peak m{g['seas_peak'][0]}/{g['seas_peak'][1]} min m{g['seas_min'][0]}/{g['seas_min'][1]}  "
+              f"→ {'STRONG corroboration' if g['r_seasonal']>0.8 else 'partial'}")
+        print(f"  SPATIAL r = {g['r_spatial']:+.3f} [{g['sp_ci'][0]:+.2f},{g['sp_ci'][1]:+.2f}]  "
+              f"core/edge decomp {g['core_edge'][0]:.3f}× vs GHAP {g['core_edge'][1]:.3f}×  "
+              f"({'city>rural sign agrees' if g['core_edge'][0]>1 and g['core_edge'][1]>1 else 'sign mismatch'})")
+        pd.concat([g["level"]]).to_csv(OUT / "validation_u7_ghap_level.csv", index=False)
+        pd.DataFrame([dict(r_interannual=g["r_interannual"], r_seasonal=g["r_seasonal"],
+                           r_spatial=g["r_spatial"],
+                           decomp_core_edge=g["core_edge"][0], ghap_core_edge=g["core_edge"][1])
+                      ]).to_csv(OUT / "validation_u7_ghap_summary.csv", index=False)
+        print(f"  Wrote {OUT / 'validation_u7_ghap_summary.csv'}")
 
 
 if __name__ == "__main__":
