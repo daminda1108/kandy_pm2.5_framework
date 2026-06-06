@@ -59,13 +59,13 @@ def main():
     v = pd.read_csv(PROC / "vandonkelaar_kandy_annual.csv")
     v = v[v.year.between(2019, 2023)]
     xb = np.arange(len(v))
-    ax[1].bar(xb - 0.2, v.basin_mean, 0.4, color="#9CA3AF", label="VanD raw (basin)")
-    ax[1].bar(xb + 0.2, v.L_corrected, 0.4, color=TEAL, label="× β = 1.247 (bias-corr.)")
-    ax[1].axhline(24.52, color=CORAL, ls="--", lw=1.2, label="KOALA 2019 = 24.5")
+    ax[1].bar(xb, v.basin_mean, 0.5, color=TEAL, label="VanD basin = AREA level (β≡1)")
+    ax[1].axhline(24.52, color=CORAL, ls="--", lw=1.2, label="KOALA = valley FLOOR (24.5)")
+    ax[1].axhline(10.5, color=SLATE, ls=":", lw=1.2, label="FECT-Hantana = RIDGE (10.5)")
     ax[1].set_xticks(xb); ax[1].set_xticklabels(v.year.astype(int))
-    ax[1].set_ylabel("PM₂.₅ (µg m⁻³)"); ax[1].legend(fontsize=7.5)
-    ax[1].set_title("(b) Van Donkelaar reads ~25% low over Kandy\n→ β pins it to "
-                    "the KOALA ground anchor", fontsize=9)
+    ax[1].set_ylabel("PM₂.₅ (µg m⁻³)"); ax[1].legend(fontsize=7)
+    ax[1].set_title("(b) Area-vs-floor: basin AREA mean ~17–21 sits BELOW the\n"
+                    "KOALA floor (24.5) and ABOVE the Hantana ridge (10.5)", fontsize=9)
 
     # (c) inter-annual product disagreement
     rows = {}

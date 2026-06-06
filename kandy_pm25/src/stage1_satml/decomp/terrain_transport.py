@@ -44,6 +44,16 @@ BLOCK = 1.0                # up-slope blocking strength (channeling)
 DRAIN = 8.14               # katabatic gain (m/s per unit slope; was 8.0)
 SLOPE_K = 0.062            # slope scale for diffusivity suppression (was 0.06)
 SLOPE_REF = 0.05           # slope scale for channeling saturation
+# Vertical decoupling (2026-06-03): pixels whose height above the valley floor
+# (delta_z) exceeds the inversion/BLH top decouple to the free troposphere and
+# ventilate — the cold-air-pool physics that makes elevated sites (Hantana ridge)
+# read low while the enclosed floor (core) accumulates (Chemel & Burns 2015;
+# Largeron & Staquet 2016). Implemented as a smooth sigmoid loss inside the PDE so
+# the floor-ridge contrast stays continuous. Amplitude bracketed; magnitude awaits
+# across-elevation sensor calibration (the FECT NIFS/Hantana pair suggests strong).
+VENT_FT = 0.018            # free-troposphere ventilation rate above the inversion (1/s)
+VENT_H = 110.0             # sigmoid transition width for decoupling (m)
+FLOOR_PCTL = 5.0           # valley-floor reference = this percentile of elevation
 
 
 def _grid_fields():
@@ -55,21 +65,27 @@ def _grid_fields():
         elat, Z = elat[::-1], Z[::-1, :]
     if elon[0] > elon[-1]:
         elon, Z = elon[::-1], Z[:, ::-1]
-    nt = np.load(PINN / "kandy_viirs_ntl_stations.npz")
-    nlat, nlon = nt["lat_grid"][:, 0], nt["lon_grid"][0, :]
-    NL = nt["NTL"].astype(float)
-    if nlat[0] > nlat[-1]:
-        nlat, NL = nlat[::-1], NL[::-1, :]
-    if nlon[0] > nlon[-1]:
-        nlon, NL = nlon[::-1], NL[:, ::-1]
+    # SOURCE (2026-06-04): congestion-weighted traffic EMISSION surface — a bottom-up
+    # road allocation, centrality-AADT (betweenness pass-by + closeness O-D; Lowry
+    # 2014, Kazerani & Winter 2009) × COPERT/HBEFA speed/congestion emission factor
+    # (Borge 2017), built by build_traffic_emission.py. Replaces the hand-placed
+    # congestion Gaussians + raw road kernel with the literature-backed flow
+    # allocation: the hotspot now follows real through-traffic + trip-end congestion
+    # (lake round, clock tower, Katugastota/Peradeniya arterials, bus stands).
+    # Magnitude is a literature-bounded prior (no Kandy traffic counts; TomTom flow
+    # verified UNAVAILABLE for Sri Lanka) — carried in the model UQ.
+    tr = np.load(HERE / "data" / "processed" / "decomp" / "S_traffic_kandy.npz")
+    Ef = tr["E_fine"].astype(float)                 # fine 160×160 emission field
+    flat, flon = tr["fine_lat"], tr["fine_lon"]
 
     lats = np.linspace(BB["lat_min"], BB["lat_max"], N)
     lons = np.linspace(BB["lon_min"], BB["lon_max"], N)
     LA, LO = np.meshgrid(lats, lons, indexing="ij")
     pts = np.stack([LA.ravel(), LO.ravel()], 1)
     z = RegularGridInterpolator((elat, elon), Z, bounds_error=False, fill_value=None)(pts).reshape(N, N)
-    S = RegularGridInterpolator((nlat, nlon), NL, bounds_error=False, fill_value=0.0)(pts).reshape(N, N)
-    S = np.clip(S, 0, None); S /= (S.max() + 1e-9)
+    S = RegularGridInterpolator((flat, flon), Ef, bounds_error=False, fill_value=0.0)(pts).reshape(N, N)
+    S = np.log1p(4.0 * np.clip(S, 0, None))         # same tempering as the saved surface
+    S = S / (S.max() + 1e-9)
     dx = (BB["lat_max"] - BB["lat_min"]) * 111000.0 / (N - 1)
     return lats, lons, z, S, dx
 
@@ -82,7 +98,48 @@ def load_grids():
 # Tunable parameters (defaults = the hand-set Kandy values). Calibrated across
 # monitored valley analogues by scripts/calibrate_terrain_solver.py.
 DEFAULT_PARAMS = dict(K0=K0, BLH_REF=BLH_REF, LAM=LAM, BLOCK=BLOCK,
-                      DRAIN=DRAIN, SLOPE_K=SLOPE_K, SLOPE_REF=SLOPE_REF)
+                      DRAIN=DRAIN, SLOPE_K=SLOPE_K, SLOPE_REF=SLOPE_REF,
+                      VENT_FT=VENT_FT, VENT_H=VENT_H, FLOOR_PCTL=FLOOR_PCTL)
+
+# ── WindNinja diagnostic-wind library (2026-06-05) ──────────────────────────
+# Replaces the hand-rolled channelling+drainage (the analytical block below) with
+# physically-derived mass-consistent terrain winds precomputed by WindNinja
+# (scripts/build_windninja_library.py). Falls back to the analytical wind when the
+# library is absent or the grid size differs.
+USE_WINDNINJA = True
+_WN_LIB_PATH = PINN / "windninja_library.npz"
+_WN_LIB = None
+
+
+def _load_wn_lib():
+    global _WN_LIB
+    if _WN_LIB is None and _WN_LIB_PATH.exists():
+        d = np.load(_WN_LIB_PATH, allow_pickle=True)
+        _WN_LIB = dict(u=d["u"], v=d["v"], dirs=d["dirs"], speeds=d["speeds"])
+    return _WN_LIB
+
+
+def windninja_wind(u_syn, v_syn, blh):
+    """Terrain wind (U, V on the library grid) from the WindNinja library, blended
+    by direction (circular), speed (2 anchors, linear) and stability (night drainage
+    ↔ day mixing via BLH). Returns None if the library is unavailable."""
+    lib = _load_wn_lib()
+    if lib is None:
+        return None
+    dirs, speeds, u4, v4 = lib["dirs"], lib["speeds"], lib["u"], lib["v"]
+    spd = float(np.clip(np.hypot(u_syn, v_syn), 0.2, 8.0))
+    dfrom = float(np.degrees(np.arctan2(-u_syn, -v_syn)) % 360.0)
+    nd = len(dirs); step = 360.0 / nd
+    i0 = int(np.floor(dfrom / step)) % nd; i1 = (i0 + 1) % nd
+    wd1 = ((dfrom - dirs[i0]) % 360.0) / step; wd0 = 1.0 - wd1
+    s0, s1 = float(speeds[0]), float(speeds[1])
+    cs1 = (spd - s0) / (s1 - s0); cs0 = 1.0 - cs1            # linear over the 2 anchors
+    wn = float(np.clip((600.0 - blh) / 600.0, 0, 1)); wday = 1.0 - wn
+    def pick(arr):
+        return sum(wdv * csv * (wn * arr[di, si, 0] + wday * arr[di, si, 1])
+                   for di, wdv in ((i0, wd0), (i1, wd1))
+                   for si, csv in ((0, cs0), (1, cs1)))
+    return pick(u4), pick(v4)
 
 
 def solve_terrain(u_syn, v_syn, blh, lats=None, lons=None, z=None, S=None, dx=None, P=None):
@@ -96,21 +153,30 @@ def solve_terrain(u_syn, v_syn, blh, lats=None, lons=None, z=None, S=None, dx=No
     dzdy, dzdx = np.gradient(z, dx)            # rise per metre
     slope = np.hypot(dzdx, dzdy) + 1e-9
     nx, ny = dzdx / slope, dzdy / slope        # unit up-slope
-    # 1) channeled wind: remove the up-slope component (blocked by hillside)
-    block = p["BLOCK"] * np.clip(slope / p["SLOPE_REF"], 0, 1)
-    into = u_syn * nx + v_syn * ny             # synoptic component into the slope
-    u_ch = u_syn - block * into * nx
-    v_ch = v_syn - block * into * ny
-    # 2) nocturnal drainage (katabatic) downslope, strong under shallow BLH
-    stab = np.clip((600.0 - blh) / 600.0, 0, 1)   # 1 shallow/stable → 0 deep/mixed
-    u_dr = -p["DRAIN"] * stab * dzdx
-    v_dr = -p["DRAIN"] * stab * dzdy
-    U, V = u_ch + u_dr, v_ch + v_dr
+    # TERRAIN WIND. Preferred: WindNinja mass-consistent diagnostic field (channelling,
+    # blocking, day anabatic / night katabatic drainage — all physically derived).
+    wn = windninja_wind(u_syn, v_syn, blh) if USE_WINDNINJA else None
+    if wn is not None and wn[0].shape == z.shape:
+        U, V = wn
+    else:
+        # analytical fallback (hand-rolled channelling + drainage)
+        block = p["BLOCK"] * np.clip(slope / p["SLOPE_REF"], 0, 1)
+        into = u_syn * nx + v_syn * ny             # synoptic component into the slope
+        u_ch = u_syn - block * into * nx
+        v_ch = v_syn - block * into * ny
+        stab = np.clip((600.0 - blh) / 600.0, 0, 1)   # 1 shallow/stable → 0 deep/mixed
+        U = u_ch - p["DRAIN"] * stab * dzdx
+        V = v_ch - p["DRAIN"] * stab * dzdy
     # 3) diffusivity scales with BLH (deep convective BLH → strong turbulent mixing
     #    → smooth field; shallow stable BLH → weak mixing → concentrated), and is
     #    suppressed across steep terrain (ridges are mixing barriers)
     Kf = p["K0"] * np.clip(blh / p["BLH_REF"], 0.3, 6.0) * np.exp(-slope / p["SLOPE_K"])
-    lam = p["LAM"]
+    # vertical decoupling: height above the valley floor vs the inversion (BLH).
+    # Pixels above the pool top (delta_z > blh) ventilate to the free troposphere
+    # via a smooth sigmoid loss → ridges suppressed, enclosed floor accumulates.
+    dz_floor = z - np.percentile(z, p["FLOOR_PCTL"])
+    vent = p["VENT_FT"] / (1.0 + np.exp(-(dz_floor - blh) / p["VENT_H"]))
+    lam_field = p["LAM"] + vent
 
     A = sp.lil_matrix((n * n, n * n))
     b = S.flatten().astype(float).copy()
@@ -124,7 +190,7 @@ def solve_terrain(u_syn, v_syn, blh, lats=None, lons=None, z=None, S=None, dx=No
             kW = 0.5 * (Kf[i, j] + Kf[i, j - 1]) / dx ** 2
             kN = 0.5 * (Kf[i, j] + Kf[i + 1, j]) / dx ** 2
             kS = 0.5 * (Kf[i, j] + Kf[i - 1, j]) / dx ** 2
-            diag = kE + kW + kN + kS + lam
+            diag = kE + kW + kN + kS + lam_field[i, j]
             A[k, k + 1] += -kE; A[k, k - 1] += -kW
             A[k, k + n] += -kN; A[k, k - n] += -kS
             # advection upwind

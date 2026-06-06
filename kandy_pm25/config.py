@@ -22,6 +22,12 @@ GEE_PROJECT = "kandypinn"
 # KOALA PM2.5 anchor (Senarathna et al. 2024, CJS 53(2):197–206)
 # 12-month low-cost-sensor campaign, n=12 monthly aggregates, multi-sensor.
 # Reported annual mean ± 17.5% bound → [20.2, 28.8] µg/m³.
+# NOTE (2026-06-04 area-vs-floor correction): this is a valley-FLOOR / near-core
+# level — the KOALA/NIFS monitor (7.2839 N, 80.6322 E) sits ~27 m above the local
+# valley floor, ~0.7 km S of Kandy lake. It is NOT the basin AREA mean (that is the
+# VanD basin reading ~19.7, corroborated by GHAP ~17). The decomposition level
+# anchor uses VanD's area mean directly (β≡1); KOALA is reproduced at the NIFS pixel
+# by the confinement field, not forced. See features/vandonkelaar.py + gotcha #51.
 KOALA_ANCHOR_UG_M3 = 24.5225
 
 # CAMS EAC4 over Kandy, 2019 annual mean, raw (uncorrected)

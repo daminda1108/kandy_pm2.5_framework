@@ -98,8 +98,8 @@ def t4_spec():
              "surface (2019–23 mean), mean-normalised", Role="emission/observed pattern"),
         dict(Component="M(x,y,t) modulation", Source="ERA5 BLH × SRTM terrain confinement",
              Role="nocturnal valley-pooling"),
-        dict(Component="Level anchor", Source="per-year VanD basin × β (β=KOALA_2019/"
-             "VanD_2019=1.247)", Role="observation-grounded magnitude"),
+        dict(Component="Level anchor", Source="per-year VanD basin AREA mean (β≡1; "
+             "KOALA 24.5 = floor diagnostic, not target)", Role="observation-grounded area magnitude"),
         dict(Component="Uncertainty", Source="split-conformal (per hour-of-day × month)",
              Role="calibrated 90% PI"),
     ])

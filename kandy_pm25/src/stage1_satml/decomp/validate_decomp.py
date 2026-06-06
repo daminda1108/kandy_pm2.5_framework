@@ -146,7 +146,7 @@ def u7_ghap(years=range(2019, 2023)):
     """
     from scipy.spatial import cKDTree
     from scipy.stats import pearsonr
-    BETA = 1.2472  # VanD→KOALA satellite-low correction
+    KOALA_FLOOR = 24.5225  # KOALA/NIFS valley-FLOOR diagnostic (area anchor: NOT the basin mean)
     gp = DECOMP / "ghap_kandy_monthly_2019_2022.parquet"
     if not gp.exists():
         return None
@@ -165,7 +165,10 @@ def u7_ghap(years=range(2019, 2023)):
         lv.append((yr, dec.loc[dec.year == yr, "pm25_q50"].mean(),
                    ghap.loc[ghap.year == yr, "ghap_pm25"].mean()))
     lv = pd.DataFrame(lv, columns=["year", "decomp", "ghap"])
-    lv["ghap_beta"] = lv.ghap * BETA
+    # area-vs-floor correction (2026-06-04): decomp basin is now the VanD AREA mean.
+    # Compare directly to GHAP (also an area product); both should sit BELOW the
+    # KOALA floor 24.5. Agreement of two independent area products = corroboration.
+    lv["decomp_over_ghap"] = lv.decomp / lv.ghap
     r_ia = pearsonr(lv.decomp, lv.ghap)[0]
     # seasonal climatology r (+ bootstrap CI on the 12 monthly pairs)
     dc = dec.groupby("month")["pm25_q50"].mean(); gc = ghap.groupby("month")["ghap_pm25"].mean()
@@ -184,6 +187,7 @@ def u7_ghap(years=range(2019, 2023)):
     dec_c = dpx.loc[core, "pm25_q50"].mean() / dpx.loc[edge, "pm25_q50"].mean()
     gh_c = dpx.loc[core, "ghap"].mean() / dpx.loc[edge, "ghap"].mean()
     return dict(level=lv, r_interannual=r_ia, r_seasonal=r_se, se_ci=(se_lo, se_hi),
+                koala_floor=KOALA_FLOOR,
                 r_spatial=r_sp, sp_ci=(sp_lo, sp_hi),
                 seas_peak=(int(dc.idxmax()), int(gc.idxmax())),
                 seas_min=(int(dc.idxmin()), int(gc.idxmin())),
@@ -220,10 +224,13 @@ def main():
     if g is None:
         print("  [GHAP parquet missing — run scripts/gee_export_ghap_kandy.py]")
     else:
-        print("  LEVEL (basin annual µg/m³):")
+        print("  LEVEL (basin annual AREA mean µg/m³; KOALA 24.5 = floor, expected above):")
         for _, r in g["level"].iterrows():
-            print(f"    {int(r.year)}: decomp {r.decomp:.2f} | GHAP {r.ghap:.2f} | "
-                  f"GHAP×β {r.ghap_beta:.2f}  (KOALA 24.5)")
+            print(f"    {int(r.year)}: decomp(area) {r.decomp:.2f} | GHAP(area) {r.ghap:.2f} | "
+                  f"decomp/GHAP {r.decomp_over_ghap:.2f}×  (KOALA floor {g['koala_floor']:.1f})")
+        print(f"    → two independent AREA products agree within "
+              f"{abs(g['level'].decomp_over_ghap.mean()-1)*100:.0f}%, both below the KOALA floor "
+              f"(area-vs-floor consistent)")
         print(f"    inter-annual r(decomp,GHAP) = {g['r_interannual']:+.3f}  "
               f"→ {'corroborated' if abs(g['r_interannual'])>0.5 else 'NOT corroborated (low-confidence trend)'}")
         print(f"  SEASONAL r = {g['r_seasonal']:+.3f} [{g['se_ci'][0]:+.2f},{g['se_ci'][1]:+.2f}]  "

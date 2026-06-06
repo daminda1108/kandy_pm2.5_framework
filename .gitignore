@@ -114,6 +114,13 @@ READ\ ME.txt
 /scripts/
 
 
+# ── Local tooling installs + their outputs (WindNinja diagnostic-wind model) ──
+# WindNinja portable install, the downloaded installer, and its run outputs live
+# under tools/ — large binaries, never tracked. The model integration that uses
+# them lives in kandy_pm25/src/ (terrain_transport.py) and IS tracked.
+/tools/
+
+
 # ── Session artifacts (handoff notes, working docs) ──────────────────────────
 artifacts/
 

@@ -1,13 +1,26 @@
 """
 vandonkelaar.py — Van Donkelaar ACAG V6.GL02.04 annual PM2.5 surface utilities.
 
-Two roles in the production decomposition (plan 2026-05-29):
-  1. LEVEL anchor for T(t): per-year, bias-corrected basin annual mean
-     L(year) = beta · VanD_basin(year), where beta pins VanD to the one
-     valley-floor ground truth we have (KOALA 2019 = 24.5225 µg/m³ at NIFS Kandy,
-     Senarathna 2024). VanD reads ~25% low over Kandy, so the raw surface is NOT
-     used unbias-corrected. This replaces the old "force annual mean = KOALA"
-     re-anchor — the level is now per-year and observation-grounded.
+Two roles in the production decomposition (plan 2026-05-29; level re-anchored
+2026-06-04):
+  1. LEVEL anchor for T(t): per-year basin annual *area* mean
+     L(year) = VanD_basin(year)  (no multiplicative bias factor; beta ≡ 1).
+
+     Rationale (the 2026-06-04 area-vs-floor correction). The earlier design set
+     L = beta · VanD_basin with beta = KOALA_2019 / VanD_basin_2019 = 1.2472,
+     i.e. it FORCED the basin *area* mean to equal a single ground point. But that
+     ground point — the KOALA/Senarathna monitor at NIFS Kandy (7.2839 N,
+     80.6322 E, ~27 m above the local valley floor, ~0.7 km S of Kandy lake) — is
+     a *valley-floor / near-core* site, not an area average. Two independent area
+     products agree well below it (VanD basin ≈ 19.7, GHAP ≈ 17.0 in 2019, vs
+     KOALA 24.5), and the one elevated ground sensor (FECT-Hantana, 196 m above
+     floor) reads 10.5. The three points form a vertical gradient
+     (floor 24.5 > area ~17–20 > ridge 10.5), so KOALA is the FLOOR/CORE level,
+     not the basin mean. We therefore take VanD's basin mean as the area level and
+     treat KOALA as a floor diagnostic that the confinement field M reproduces at
+     the NIFS pixel (it lands ~22 there via the confinement bump, within ~10% —
+     no longer forced). The area mean is itself bracketed [GHAP ~17, VanD ~20];
+     VanD is used as the primary, GHAP corroborates within ~15%.
   2. (Phase 1) spatial backbone for S_emit(x, y): the normalised VanD surface.
 
 Data: data/raw/van_donkelaar/V6GL02.04.CNNPM25.AS.{YYYY}01-{YYYY}12.nc
@@ -35,7 +48,7 @@ OUT_JSON = HERE / "data" / "processed" / "stage1_v3" / "vandonkelaar_level_meta.
 
 # Diagnostic point locations (lat, lon)
 POINTS = {
-    "nifs": (7.2675, 80.5985),       # NIFS Kandy (KOALA / Senarathna station)
+    "nifs": (7.2839, 80.6322),       # NIFS Kandy (KOALA/Senarathna), verified 2026-06-04
     "city": (7.2906, 80.6337),       # Kandy city centre
     "akurana_fect": (7.366, 80.618),
     "hantana_fect": (7.265, 80.625),
@@ -108,34 +121,42 @@ def spatial_multiplier_grid(lats: np.ndarray, lons: np.ndarray,
 
 def bias_factor(levels: pd.DataFrame, ref_year: int = 2019,
                 koala: float = KOALA_ANCHOR_UG_M3) -> float:
-    """Multiplicative bias correction pinning VanD basin-mean to KOALA at ref_year.
+    """Area-level multiplicative factor for VanD basin mean.
 
-    KOALA (NIFS valley floor, Senarathna 2024) is the only valley-floor ground
-    truth; we assume it represents the basin annual level and that VanD's
-    low-bias over Kandy is uniform-multiplicative.
+    Returns 1.0: VanD's basin mean is taken as the annual *area* level directly
+    (the 2026-06-04 area-vs-floor correction). The old behaviour pinned the area
+    mean to the KOALA *floor* point (factor 1.2472), which double-counted the
+    floor enhancement; see module docstring §1. KOALA is now a floor diagnostic,
+    reproduced by the confinement field M at the NIFS pixel, not the anchor.
+
+    `ref_year`/`koala` are retained for signature compatibility and to compute the
+    implied floor multiple (koala / VanD_basin_ref) recorded in the meta JSON.
     """
-    v = levels.loc[levels["year"] == ref_year, "basin_mean"]
-    if v.empty:
-        raise ValueError(f"No VanD basin_mean for ref_year {ref_year}")
-    return float(koala / v.iloc[0])
+    return 1.0
 
 
 def build_levels_table() -> pd.DataFrame:
     """Compute, persist, and return the per-year bias-corrected level table."""
     levels = annual_kandy_levels()
-    beta = bias_factor(levels)
+    beta = bias_factor(levels)                      # ≡ 1.0 (area anchor)
     levels["beta"] = beta
-    levels["L_corrected"] = beta * levels["basin_mean"]
+    levels["L_corrected"] = beta * levels["basin_mean"]   # = VanD area mean
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     levels.to_csv(OUT_CSV, index=False)
     latest = int(levels["year"].max())
+    vand_2019 = float(levels.loc[levels.year == 2019, "basin_mean"].iloc[0])
     json.dump({
         "beta": beta,
         "ref_year": 2019,
-        "koala_anchor": KOALA_ANCHOR_UG_M3,
-        "vand_basin_2019": float(levels.loc[levels.year == 2019, "basin_mean"].iloc[0]),
+        "koala_floor_diagnostic": KOALA_ANCHOR_UG_M3,
+        "vand_basin_2019": vand_2019,
+        "implied_floor_multiple_koala_over_vand": round(KOALA_ANCHOR_UG_M3 / vand_2019, 4),
         "latest_year_available": latest,
-        "method": "L(year) = beta * VanD_basin(year); beta = KOALA_2019 / VanD_basin_2019",
+        "method": ("L(year) = VanD_basin(year)  [area anchor, beta=1]; "
+                   "KOALA 24.5225 is a valley-floor diagnostic reproduced by M at "
+                   "the NIFS pixel, NOT the basin-mean target (2026-06-04 "
+                   "area-vs-floor correction)"),
+        "area_mean_bracket": "GHAP ~17.0 (low) .. VanD ~19.7 (primary) for 2019",
         "source": "ACAG V6.GL02.04 CNN PM2.5 annual, 0.01deg, Asia tile",
     }, open(OUT_JSON, "w"), indent=2)
     return levels

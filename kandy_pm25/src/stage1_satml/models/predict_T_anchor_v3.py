@@ -18,9 +18,11 @@ Pipeline:
   3. Inference — predict residual q05/q50/q95 on the gapless inference grid,
      reconstruct pm25 = c_prior_anchored + residual, enforce monotonicity,
      apply the conformal correction.
-  4. KOALA re-anchor — additive level shift so annual-mean q50 = KOALA anchor
-     (24.5225 µg/m³). Equivalent to choosing the reference-location offset b_ref
-     (plan §3.1); the decomposition's mean(S)=1 then lands the map mean on KOALA.
+  4. Area-level re-anchor — additive level shift so annual-mean q50 equals the
+     per-year VanD basin *area* mean L(year) (area anchor, beta=1; 2026-06-04
+     area-vs-floor correction). KOALA 24.5225 is a valley-floor diagnostic the
+     confinement field M reproduces at the NIFS pixel, NOT the basin-mean target.
+     mean(S·M)=1, so the map mean lands on the area level L(year).
 
 Output:
   data/processed/stage1_v3/T_anchor/T_kandy_hourly_{year}.parquet
@@ -156,9 +158,9 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
     q05_conf = q05 - c_lo
     q95_conf = q95 + c_hi
 
-    # Level re-anchor: target = bias-corrected VanD basin annual mean for `year`
-    # (per-year, observation-grounded; beta pins VanD to KOALA-2019). Additive
-    # shift preserves the model's diurnal/seasonal µg/m³ amplitude.
+    # Level re-anchor: target = VanD basin *area* mean for `year` (area anchor,
+    # beta=1; KOALA is a floor diagnostic, not the target — 2026-06-04 correction).
+    # Additive shift preserves the model's diurnal/seasonal µg/m³ amplitude.
     L, linfo = level_for_year(year)
     raw_mean = float(np.nanmean(q50))
     shift = L - raw_mean

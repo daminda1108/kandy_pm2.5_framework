@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
 HERE = Path(__file__).parents[3]
-OUT = HERE / "results" / "figures" / "kandy_decomp" / "pub"
+import sys as _sys; _sys.path.insert(0, str(HERE))
+from src.stage1_satml.decomp.pubfig import PUB_OUT as OUT  # publication style + folder
 OUT.mkdir(parents=True, exist_ok=True)
 
 TEAL = "#2A9D8F"; CORAL = "#E76F51"; GREEN = "#5B8C5A"
@@ -65,7 +66,7 @@ def main():
     ax.text(0.715, 0.515, "⊗", ha="center", va="center", fontsize=26, color=DARK)
     box(ax, 0.74, 0.36, 0.24, 0.30,
         "PM(x, y, t) = T·S·M",
-        "1 km × hourly field\n+ calibrated 90% PI\nper-year VanD level\n(β = KOALA/VanD = 1.247)\n2019–2023", "#F4F7F6", DARK)
+        "1 km × hourly field\n+ calibrated 90% PI\nper-year VanD AREA level\n(β≡1; KOALA=floor diag.)\n2019–2023", "#F4F7F6", DARK)
 
     # input → layer arrows
     arrow(ax, 0.24, 0.77, 0.37, 0.77, GREY)               # sat → T
@@ -84,8 +85,8 @@ def main():
             ha="center", fontsize=8.2, style="italic", color="#374151")
     fig.tight_layout()
     for ext in ("png", "pdf"):
-        fig.savefig(OUT / f"architecture.{ext}", dpi=200, bbox_inches="tight")
-    print("Wrote", OUT / "architecture.png")
+        fig.savefig(OUT / f"fig31_architecture.{ext}", dpi=300, bbox_inches="tight")
+    print("Wrote", OUT / "fig31_architecture.png")
 
 
 if __name__ == "__main__":

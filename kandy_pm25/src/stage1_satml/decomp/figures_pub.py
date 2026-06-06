@@ -42,7 +42,7 @@ VMIN, VMAX = 12, 40                    # shared scale spanning WHO IT-3..>IT-1
 WHO_TICKS = [15, 25, 35]               # IT-3, IT-2, IT-1 (AQG=5 noted separately)
 LANDMARKS = {                          # (lat, lon, label, marker)
     "Kandy city": (7.2906, 80.6337, "o"),
-    "NIFS/KOALA": (7.2675, 80.5985, "^"),
+    "NIFS/KOALA": (7.2839, 80.6322, "^"),   # verified 2026-06-04 (was 7.2675/80.5985)
     "Hantana FECT": (7.265, 80.625, "s"),
 }
 # 2019–2023 only: each year has its OWN real Van Donkelaar level (observation-
@@ -85,19 +85,20 @@ def _north_arrow(ax, lats, lons):
 
 
 def _draw(ax, Z, lats, lons, cmap, show_terrain=True, show_marks=True,
-          smooth=8, vmin=VMIN, vmax=VMAX):
+          smooth=8, vmin=VMIN, vmax=VMAX, norm=None):
     Zs = zoom(Z, smooth, order=3)      # cubic upsample → smooth 1 km field
     ext = [lons.min(), lons.max(), lats.min(), lats.max()]
-    im = ax.imshow(Zs, origin="lower", extent=ext, cmap=cmap, vmin=vmin,
-                   vmax=vmax, aspect="auto", interpolation="bilinear")
+    kw = dict(norm=norm) if norm is not None else dict(vmin=vmin, vmax=vmax)
+    im = ax.imshow(Zs, origin="lower", extent=ext, cmap=cmap,
+                   aspect="auto", interpolation="bilinear", **kw)
     if show_terrain:
         elev, ela, elo = _elev()
         ax.contour(elo, ela, elev, levels=range(500, 1300, 150),
                    colors="k", linewidths=0.35, alpha=0.30)
-    if show_marks:
-        for name, (la, lo, mk) in LANDMARKS.items():
-            ax.plot(lo, la, mk, mfc="white", mec="k", mew=0.8, ms=5, zorder=5)
+    # CANONICAL 2026-06-06 (user): heatmaps carry NO location pins at all (clean fields);
+    # markers/labels live only on the F1 reference map. show_marks kept for signature compat.
     ax.set_xlim(lons.min(), lons.max()); ax.set_ylim(lats.min(), lats.max())
+    ax.set_box_aspect(1)            # CANONICAL 2026-06-06: every PM heatmap renders square
     return im
 
 

@@ -8,9 +8,9 @@ Undergraduate thesis project — Daminda Alahakoon, Department of Environmental 
 
 Kandy, Sri Lanka has no continuous PM2.5 monitoring stations. This repository develops a two-stage framework for spatiotemporally resolved PM2.5 estimation over Kandy at the intrinsic resolution of the available driving data — 1 km, hourly — with calibrated per-pixel uncertainty.
 
-Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). Stage B produces a spatial field by training a Convolutional Neural Process on three station-rich source cities and applying it zero-shot at Kandy on top of a reanalysis prior.
+Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). The **deployable spatial product** is a physically-structured *additive background-plus-increment decomposition* that places the Stage A temporal anchor into a 1 km hourly field using measured satellite emission patterns, terrain confinement, and diagnostic terrain winds, separating the regional and transboundary background (≈ 75 % of exposure) from the locally-generated, locally-actionable increment (≈ 25 %). An earlier exploratory route — a Convolutional Neural Process trained zero-shot across three source cities (Stage B) — is retained as the cross-city experiment that motivated the decomposition.
 
-What the framework does *not* do: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; it does not chemically apportion sources; it does not forecast. Outputs are hourly 1 km PM2.5 fields with per-pixel σ. Strict validation requires field deployment at Kandy with hourly-resolution sensors, which is identified as a future work item.
+What the framework does *not* do, in its current form: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; it does not chemically apportion sources; and it reconstructs rather than forecasts (forecasting is a documented future expansion, contingent on local ground data). Outputs are hourly 1 km PM2.5 fields with calibrated uncertainty and a population-exposure / health-burden layer. Strict spatial validation requires field deployment at Kandy with elevation-spanning hourly sensors, identified as the binding next step.
 
 ---
 
@@ -60,6 +60,7 @@ The current architecture is the result of several explicit pivots, each driven b
 | 2026-05-20 | Daily v2 → **hourly v3** | Hourly residual target with per-sensor offsets enables diurnal-cycle reproduction (against Senarathna 2024, r = +0.865). After a 39-feature Tier-1 rebuild failed to lift pooled R² above 0.581, the R² ≥ 0.60 target was closed as an honest near-miss; sensor expansion was identified as the binding constraint, not architecture. |
 | 2026-05 | N = 5 → **N = 3** source cities + **PVAF v1** | Bogotá and Mexico City were dropped from Stage B cross-validation as different atmospheric regimes (Mexico City GEOS-CF over-predicts by a factor of ~4.6). PVAF v1 was launched to select additional highland-valley analogues by physics-similarity scoring before Kandy production maps are regenerated. |
 | 2026-05-22 | Gaussian NLL → **Student-t(df = 5) + split-conformal** for UQ | ConvCNP v13 satisfied point-skill targets but Gaussian likelihood let σ collapse (cov90 fell to 0.54–0.73). v14 switched to Student-t for robust point estimation; per-(city × hour-of-day) Mondrian conformal calibration restored cov90 ∈ [0.85, 0.95] across all source cities without retraining. |
+| 2026-05–06 | ConvCNP zero-shot map → **additive decomposition production model** | The N = 3 zero-shot spatial map was technically defensible but spatially over-smoothed (only Kathmandu is a true highland-valley analogue), and a Sim2Real fine-tune on the two FECT sensors memorised sensor coordinates rather than basin physics. The deployable spatial product was rebuilt as a physically-structured additive decomposition (Van Donkelaar-anchored emission pattern + congestion-weighted traffic source + terrain confinement + WindNinja diagnostic winds); the ConvCNP work is retained as the exploratory predecessor. |
 
 ---
 
@@ -95,11 +96,39 @@ Production model is a linear blend of LightGBM + CatBoost + XGBoost-quantile wra
 
 Against Senarathna 2024 diurnal pattern: r = +0.865 (morning peak 07 LT match, evening peak 18–19 LT with 1 h drift). Embassy Colombo out-of-domain coverage (2019–2025): cov90 = 0.861, RMSE = 9.51, R² = 0.452 — point skill degrades out-of-domain but the predictive interval transfers honestly.
 
+For the production decomposition the Stage A anchor is regenerated as a **lag-free** gradient-boosted series (LightGBM-only) on exogenous drivers, re-anchored per year to the bias-corrected Van Donkelaar level and amplitude-sharpened to the observed FECT diurnal and seasonal swing. Lag-free is used because 2024 FECT coverage is too sparse for reliable autoregression.
+
+---
+
+## Production Spatial Model — Additive Background + Increment Decomposition
+
+The deployable Kandy spatial product. It replaces the held ConvCNP zero-shot map and is the model carried into the supervisor-facing reporting and the health-burden layer. The concentration at position $(x,y)$ and hour $t$ is written as a regional background plus a locally shaped increment (Lenschow apportionment):
+
+```
+PM(x, y, t) = B(t) + [ T(t) − B(t) ] · P_local(x, y, t)
+```
+
+- **B(t)** — regional and transboundary background, horizontally uniform per hour. Built as a rural Van Donkelaar floor (10th percentile of a ±0.45° box) scaled by the GEOS-CF daily seasonal shape; diurnally flat. The local fraction is fixed at ≈ 0.25 (basin exposure ≈ 75 % regional / 25 % local), bracketed [15 %, < 50 %] from source-apportionment literature (World Bank 2022; Seneviratne 2017) — **not** satellite-tuned, so the independent GHAP urban/rural ratio (1.18×) corroborates rather than sets it.
+- **T(t)** — the Stage A v3 lag-free temporal anchor, conformal-wrapped and amplitude-sharpened (above).
+- **P_local** — unit-mean local pattern, the normalised product of emission structure (Van Donkelaar surface + a bottom-up congestion-weighted traffic source: network betweenness/closeness × COPERT emission factors), boundary-layer-scaled terrain confinement $M = 1 + \kappa\,w(\mathrm{BLH})\,c(x,y)$, and a transport overlay $A_\text{transport}$ on **WindNinja** mass-consistent diagnostic winds (channelling + day-anabatic / night-katabatic drainage) with a bimodal diurnal emission-timing profile. Because $P_\text{local}$ has unit basin mean, the basin-average concentration is preserved exactly at $T(t)$ and only the spatial *arrangement* of the local quarter is structured. $A_\text{transport}$ is shipped as a physically-motivated **scenario**, not a validated layer.
+
+**Level anchor (area-not-floor).** The basin level is set directly to the per-year Van Donkelaar area mean ($\beta \equiv 1$); KOALA 24.5 µg/m³ is a 2019 valley-**floor / populated-core** point, not the basin-area mean, and is no longer used to scale the level. Two independent satellite area products agree below it (VanD ≈ 19.7, GHAP ≈ 17.0 for 2019), and the confinement field reproduces KOALA at the NIFS pixel unforced.
+
+**Results (2019–2023).** Basin annual mean ≈ 21 µg/m³ (per year 19.7 / 19.0 / 17.0 / 18.7 / 20.9; 2021 COVID/fuel-crisis low). Seasonal MAM > DJF > SON ≈ JJA (monsoon washout); diurnal bimodal with morning and evening traffic peaks and a genuine deep-night low. Senarathna 2019 diurnal r = 0.75, monthly r = 0.83 (preserved through the additive re-anchor). Every cell and hour carries a calibrated 90 % prediction interval plus a per-pixel spatial-uncertainty layer.
+
+**Independent corroboration (not validation).** GHAP (Wei et al., 1 km, methodologically distinct from Van Donkelaar): seasonal r = +0.909; basin level within ≈ 6 %; fine-spatial r = +0.13 (both products smooth at that scale); inter-annual ≈ 0 (trend low-confidence). TROPOMI NO₂ corroborates emission placement (core > edge). The model independently reconstructs documented Kandy haze episodes (Nov 2019, Dec 2022) at the right level by the right mechanism.
+
+**Exposure and health.** Population clusters in the higher-loading core, so area mean understates exposure: area ≈ 21 → population-weighted ≈ 23 → populated-core ≈ 24 ≈ the 2019 KOALA point. A GEMM concentration–response layer gives an attributable-mortality estimate on the order of ~400 deaths/yr for the most recent year (wide interval), a substantial share of it tied to the locally-actionable increment.
+
+**Known limitations.** The fine-scale spatial *magnitude* of the core enhancement is imposed from physics and not independently measured — no public monitoring network anywhere samples the valley-floor-to-ridge gradient (a several-hundred-valley screen confirmed floor-clustering is universal). The confinement strength $\kappa$, the local fraction, the traffic emission scaling, and the transport amplitude are literature priors, not Kandy-calibrated. These are exactly the quantities that elevation-spanning local ground data would resolve.
+
+Code: `kandy_pm25/src/stage1_satml/decomp/` (build + figure suite) and `src/stage1_satml/models/predict_T_anchor_v3.py`. Canonical figure suite: `decomp/paper_figures.py` (F1–F13). Plans: `docs/additive_background_increment_plan_2026-06-04.md`, `docs/kandy_production_plan_2026-05-29.md`.
+
 ---
 
 ## Stage B — Cross-City Spatial Residual Learner
 
-Spatial estimation of `pm25 − c_prior_scaled` (additive residual against a GEOS-CF reanalysis prior, anchored per city). Framed as exploratory cross-city transfer; the spatial product inherits structure from priors and from cross-city training as much as from the source-city data themselves.
+**Superseded as the production spatial map by the additive decomposition above; retained as the exploratory cross-city experiment that motivated it.** Spatial estimation of `pm25 − c_prior_scaled` (additive residual against a GEOS-CF reanalysis prior, anchored per city). Framed as exploratory cross-city transfer; the spatial product inherits structure from priors and from cross-city training as much as from the source-city data themselves.
 
 **Reanalysis prior (preprocessing step inside Stage B).** GEOS-CF PM25_RH35_GCC at 0.25° hourly is scaled per city by `c_prior_scaled = c_prior × city_ratio`, where `city_ratio = mean(pm25) / mean(c_prior)` is computed on per-row station–timestamp overlap. The Kandy ratio is 0.536 (= 24.5 / 45.7, KOALA / GEE GEOS-CF mean). This corrects the well-documented GEOS-CF over-prediction in tropical Asia and prevents prior-inflation in the residual.
 
