@@ -17,34 +17,31 @@ What the framework does *not* do, in its current form: it does not replace physi
 ## Pipeline
 
 ```
-                  ┌─────────────────────────────────────────────┐
-                  │ KOALA 2019 anchor 24.5 µg/m³ (Senarathna     │
-                  │ et al. 2024, CJS 53(2):197–206; 12 monthly   │
-                  │ aggregates)                                  │
-                  └────────────────────┬────────────────────────┘
-                                       │
-                  ┌────────────────────┴─────────────────────────┐
-                  v                                              v
-        Stage A                                       Stage B
-        Temporal anchor                               Cross-city spatial
-                                                      residual learner
-        XGBoost daily (2003–2025) +                   ConvCNP, deepsensor,
-        LGBM/CatBoost/XGB hourly                      N = 3 highland-valley
-        blend (2018–2026), residual                   source cities
-        target `pm25 − c_prior`,                      (Medellín, Chiang Mai,
-        per-sensor offsets,                           Kathmandu); residual
-        CV+ Mondrian conformal UQ                     target `pm25 − c_prior_scaled`
-                                                      against per-city scaled
-        → Kandy hourly PM2.5                          GEOS-CF prior; Student-t
-          time series at sensor                       likelihood + per-(city
-          locations, with UQ                          × hour) Mondrian conformal
-                                                      UQ
-                                                      → Kandy 1 km hourly
-                                                        PM2.5 field with
-                                                        per-pixel σ
+   Satellite reanalysis + ML        Van Donkelaar 1 km        ERA5 winds / BLH, SRTM
+   (GEOS-CF, CAMS, ERA5, MAIAC)      annual PM2.5 surface      terrain, OSM road network
+              │                             │                          │
+              v                             v                          v
+   ┌──────────────────────┐     ┌──────────────────────┐   ┌───────────────────────────┐
+   │ Stage A anchor  T(t) │     │ B(t)  regional /     │   │ P_local(x,y,t)  unit-mean │
+   │ lag-free GBM +       │     │ transboundary        │   │ S_emit · M · A_transport  │
+   │ conformal UQ +       │     │ background (rural    │   │ (traffic source, terrain  │
+   │ diurnal sharpening   │     │ floor × seasonal)    │   │ confinement, WindNinja)   │
+   └──────────┬───────────┘     └──────────┬───────────┘   └─────────────┬─────────────┘
+              └─────────────────┬──────────┴─────────────────────────────┘
+                                v
+              ┌──────────────────────────────────────────────────────┐
+              │  Additive decomposition  (PRODUCTION spatial product) │
+              │  PM(x,y,t) = B(t) + [ T(t) − B(t) ] · P_local(x,y,t)  │
+              │  → Kandy 1 km hourly PM2.5 field + 90% PI + per-pixel │
+              │    σ  →  population-weighted exposure + health burden │
+              └──────────────────────────────────────────────────────┘
+
+   Exploratory predecessor (Stage B): a cross-city ConvCNP residual learner trained on
+   N = 3 source cities and applied zero-shot at Kandy. Technically defensible but
+   spatially over-smoothed; retained as the experiment that motivated the decomposition.
 ```
 
-Native resolution is 1 km hourly. The 0.25° driving reanalyses (GEOS-CF, ERA5) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
+Native resolution is 1 km hourly. The 0.25° driving reanalyses (GEOS-CF, ERA5) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported. The level is anchored to the per-year Van Donkelaar **area** mean (β ≡ 1); the KOALA 24.5 µg/m³ figure is a 2019 valley-floor / populated-core point, not the basin-area mean, and no longer scales the level.
 
 ---
 
@@ -212,7 +209,11 @@ ProjectCD/
 │   ├── config.py                All paths, constants, city ratios — single source of truth
 │   ├── requirements.txt
 │   └── src/
-│       ├── stage1_satml/        Stage A code: XGBoost / LightGBM / CatBoost satellite-ML
+│       ├── stage1_satml/        Stage A satellite-ML + production decomposition
+│       │   ├── decomp/          Additive decomposition: build_*, paper_figures.py (F1–F13),
+│       │   │                    health_burden.py, exposure_weighting.py, terrain_transport.py
+│       │   ├── features/        vandonkelaar.py (level anchor), dataset builders
+│       │   └── models/          predict_T_anchor_v3.py (T(t)); XGBoost / LGBM / CatBoost
 │       ├── stage2_transfer/     Cross-continental PINN experiment (supporting)
 │       ├── stage3_pinn/
 │       │   ├── data/            CityConfig + multi-city loader
@@ -291,18 +292,20 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 | Dataset | Resolution | Period | Role |
 |---|---|---|---|
 | CAMS EAC4 reanalysis | 0.75° / daily | 2003–2025 | Stage A v1 training labels (KOALA-corrected) |
-| GEOS-CF PM25_RH35_GCC | 0.25° / hourly | 2018–2026 | Stage B per-city scaled prior |
+| GEOS-CF PM25_RH35_GCC | 0.25° / hourly | 2018–2026 | Decomposition background seasonal shape; Stage A driver; Stage B per-city scaled prior |
 | ERA5 single-level | 0.25° / hourly | 2001–2026 | Wind, BLH, T2m, precipitation |
 | ERA5-Land | 0.1° / hourly | 2001–2026 | High-resolution wind, T2m, dewpoint |
 | ERA5 pressure levels | 0.25° / hourly | 2018–2025 | T925 (subsidence inversion proxy) |
 | MODIS MAIAC AOD (MCD19A2) | 1 km / daily | 2001–2025 | Stage A feature; Stage B consistency anchor |
-| TROPOMI NO₂ / CO | ~7 km / daily | 2018–2026 | Stage A satellite features |
-| VIIRS Nighttime Lights | 500 m / monthly | 2018–2023 | Stage B anthropogenic feature |
+| TROPOMI NO₂ / CO | ~7 km / daily | 2018–2026 | Stage A features; NO₂ emission-placement cross-check |
+| VIIRS Nighttime Lights | 500 m / monthly | 2018–2023 | Emission pattern; population-weighted exposure; Stage B feature |
 | MERRA-2 aerosol | 0.625° / hourly | 2001–2026 | Diagnostic only — rejected as label |
-| Van Donkelaar V6GL02.04 | 1 km / annual | 1998–2023 | Stage A triangulation |
-| SRTM 30 m DEM | 30 m static | — | Terrain elevation, slope, aspect |
-| OpenStreetMap road network | Vector | 2025 | Supporting PINN source kernel; Stage B road density |
-| KOALA Kandy (Senarathna et al. 2024) | Annual + 12 monthly + diurnal | 2019 | Bias correction and consistency anchor |
+| Van Donkelaar V6.GL02.04 | 1 km / annual | 1998–2023 | **Production level anchor (area mean) + S_emit emission pattern** |
+| GHAP / GlobalHighPM2.5 (Wei et al.) | 1 km / monthly | 2017–2022 | Independent corroboration (seasonal r = 0.91); not a model input |
+| SRTM 30 m DEM | 30 m static | — | Terrain confinement; WindNinja diagnostic winds |
+| OpenStreetMap road network | Vector | 2025 | Congestion-weighted traffic emission source; Stage B road density |
+| WorldPop population | ~100 m | 2020 | Population-weighted exposure and health burden |
+| KOALA Kandy (Senarathna et al. 2024) | Annual + 12 monthly + diurnal | 2019 | 2019 floor/core consistency anchor; diurnal/monthly reference |
 | FECT PurpleAir Kandy (Akurana + Hantana) | Point / hourly | 2018–2026 | Stage A v3 labels (per-sensor calibrated) |
 | US Embassy Colombo (AirNow) | Point / hourly | 2019–2026 | Out-of-domain coverage check |
 | SIATA Medellín | Point / hourly | 2018–2025 | Stage B source city |
@@ -313,14 +316,14 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 
 ## Key Methodological Notes
 
-- **No Kandy ground sensors during Stage B training.** The Stage B model is trained entirely on Medellín / Chiang Mai / Kathmandu and applied zero-shot at Kandy. The two FECT sensors in Kandy are used in Stage A v3 only and held entirely out of Stage B training to preserve the zero-shot framing.
-- **Residual learning at the spatial step.** Stage B predicts `pm25 − c_prior_scaled`, not pm25 directly. This makes the reanalysis prior's contribution explicit rather than implicit, and prevents claiming model skill that is in fact reanalysis interpolation.
-- **Per-city ratio fix.** `c_prior_scaled = c_prior × city_ratio` uses a row-mean ratio (per station–timestamp pair), not a timestamp-mean ratio. The earlier timestamp-mean weighting drifted with station-count growth (Kathmandu grew 9× over 2018–2025) and inflated c_prior_scaled by ~5 µg/m³.
+- **Physics-structured, not black-box, at the spatial step.** The production field imposes its spatial structure from independently defensible physics (measured Van Donkelaar emission pattern, congestion-weighted traffic source, terrain confinement, WindNinja diagnostic winds) and learns only the temporal level from data. This is what avoided the cross-city ConvCNP failure mode, where the spatial pattern was inherited from the training cities rather than from Kandy.
+- **Basin mean is preserved exactly.** `P_local` is normalised to unit basin mean, so the basin-average concentration equals the temporal anchor `T(t)` and only the spatial *arrangement* of the local quarter is structured. The level itself is the per-year Van Donkelaar **area** mean (β ≡ 1).
+- **Additive, not multiplicative.** `PM = B + [T − B]·P_local` adds the regional background uniformly and structures only the locally generated increment; the earlier multiplicative `T·S·M` incorrectly modulated the transboundary background by the local pattern. The ≈ 25 % local fraction is bracketed from source-apportionment literature, not satellite-tuned — so the independent GHAP urban/rural ratio corroborates rather than sets it.
 - **Native resolution 1 km hourly.** GEOS-CF (0.25°) and ERA5 (0.25°) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
-- **Uncertainty quantification.** Quantile regression on Stage A v1; CV+ Mondrian conformal on Stage A v3; Student-t likelihood + per-(city × hour-of-day) Mondrian conformal on Stage B. Coverage and calibration are reported alongside every r / RMSE.
-- **Anchors are calibration anchors, not validators.** KOALA, Senarathna, and MAIAC are used both to calibrate the framework and to check it; they cannot independently validate. Strict validation requires field deployment at Kandy.
-- **Source-city expansion is the binding constraint.** Stage B v14 architecture, UQ calibration, and feature set are locked. The single remaining lever for spatial-product quality is expanding the source roster from N = 3 to N ≥ 6 highland-valley cities — the purpose of PVAF v1.
-- **Reproducibility.** All Kaggle kernels, dataset versions, and per-version metric tables are logged in `docs/kaggle_kernel_log.md`. Pre-registrations and amendments live in `docs/osf_prereg_*.md`.
+- **Uncertainty quantification.** CV+ Mondrian conformal on the Stage A anchor; calibrated 90 % prediction interval plus a per-pixel spatial-uncertainty layer on the production field. Coverage and calibration are reported alongside every r / RMSE.
+- **Anchors are calibration anchors, not validators.** KOALA, Senarathna, GHAP, and the FECT sensors double as upstream calibration anchors and downstream consistency checks; they cannot independently validate. Agreement is reported as *corroboration*, never validation.
+- **Fine-scale magnitude is the open item, and local ground data is the binding constraint.** The within-basin floor-to-ridge magnitude is imposed from physics and unmeasured — no public network anywhere samples that gradient (a several-hundred-valley screen confirmed floor-clustering is universal). Confinement strength, local fraction, traffic scaling, and transport amplitude are literature priors. Elevation-spanning local ground observation is the decisive next input; the transport overlay `A_transport` is shipped as a scenario, not a validated layer.
+- **Reproducibility.** Regeneration chain and gotchas are documented in `CLAUDE.md`; Kaggle kernels and per-version metric tables in `docs/kaggle_kernel_log.md`; pre-registrations and amendments in `docs/osf_prereg_*.md`.
 
 ---
 
