@@ -121,6 +121,12 @@ READ\ ME.txt
 /tools/
 
 
+# ── Standalone model release (its own git repo: daminda1108/kandy_pm25_model) ──
+# kandy_pm25_release/ is an isolated copy of the production decomposition model
+# with its own git history and remote. The parent repo must NOT track it.
+/kandy_pm25_release/
+
+
 # ── Session artifacts (handoff notes, working docs) ──────────────────────────
 artifacts/
 
