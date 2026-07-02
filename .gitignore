@@ -31,8 +31,11 @@ kandy_pm25/data/
 kandy_pm25/results/
 
 
-# ── Utility scripts (not model code, kept locally) ──────────────────────────
-kandy_pm25/scripts/
+# ── Utility scripts: ignore contents by default; the transfer-validation
+#    evidence pipeline is re-included in kandy_pm25/.gitignore (2026-07-02,
+#    versioned for preprint reproducibility). Trailing /* (not /) so the
+#    nested .gitignore can negate specific files. ──────────────────────────
+kandy_pm25/scripts/*
 
 
 # ── Report generators (documentation tools, not model code) ─────────────────

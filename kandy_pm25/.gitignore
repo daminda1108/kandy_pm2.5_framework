@@ -1,6 +1,9 @@
 # =============================================================================
 # kandy_pm25/ — .gitignore (inherits from root .gitignore)
-# Tracked: src/**, config.py, requirements.txt, run_pipeline.py, SETUP_GUIDE.md
+# Tracked: src/**, config.py, requirements.txt, run_pipeline.py, SETUP_GUIDE.md,
+#          + the transfer-validation EVIDENCE PIPELINE under scripts/ (2026-07-02;
+#            versioned for reproducibility of the preprint results). One-off/
+#            exploratory scripts remain ignored — only the named chain + tests.
 # =============================================================================
 
 # ── Covered by root .gitignore but re-stated for clarity ─────────────────────
@@ -9,8 +12,26 @@ __pycache__/
 data/
 !src/stage3_pinn/data/
 results/
-scripts/
 reports/
+
+# ── scripts/: ignore everything EXCEPT the evidence pipeline + its tests ──────
+scripts/*
+!scripts/tests/
+!scripts/city_config.py
+!scripts/xichang_prod.py
+!scripts/xichang_twin_figures.py
+!scripts/xichang_paper_figures.py
+!scripts/city_validation_scorecard.py
+!scripts/build_station_terrain.py
+!scripts/build_xichang_core_terrain.py
+!scripts/build_xichang_traffic_emission.py
+!scripts/build_xichang_windninja.py
+!scripts/regenerate_city.py
+!scripts/sensitivity_analysis.py
+!scripts/ablation_scorecard.py
+!scripts/independent_visibility.py
+!scripts/spatial_skill_law.py
+!scripts/w2_transboundary_figure.py
 node_modules/
 *.pyc
 *.pyo
