@@ -72,13 +72,25 @@ def assemble_year(year: int):
     # additive field: PM_add = B + (T - B)*P_local, P_local = q50/T50 (spatial mean 1).
     # T's PI propagates through the increment -> PI width = P_local*(T95-T05), i.e. B
     # shifts the CENTRE, not the width (correct UQ; the median-only form shrank it).
+    # increment-SPLIT form (2026-07-10 core-vs-periphery fix): the local pattern
+    # structures only accumulation above background; ventilation below background (deep
+    # midday mixing, ~38% of hours where hourly T < daily-resolution B) is spatially
+    # UNIFORM. The plain form B+(T-B)*P inverts the spatial pattern when the increment
+    # goes negative (a core-high P>1 times a negative number makes the core the most-
+    # subtracted pixel -> core cleaner than the rural edge, physically wrong). The split
+    # keeps the basin mean exact and renders a flat field when well-ventilated instead of
+    # inverting; identical to the old form whenever T >= B.
     P = m["pm25_q50"] / m["T50"]
     out = m[["time", "lat", "lon"]].copy()
-    out["pm25_q50"] = m["B"] + (m["T50"] - m["B"]) * P
-    out["pm25_q05"] = (m["B"] + (m["T05"] - m["B"]) * P).clip(lower=0.0)
-    out["pm25_q95"] = m["B"] + (m["T95"] - m["B"]) * P
-    out["pm25_blo"] = m["B_hi"] + (m["T50"] - m["B_hi"]) * P   # background-uncertainty band
-    out["pm25_bhi"] = m["B_lo"] + (m["T50"] - m["B_lo"]) * P
+
+    def split(Tq, Bq):
+        inc = Tq - Bq
+        return Bq + np.maximum(inc, 0.0) * P + np.minimum(inc, 0.0)
+    out["pm25_q50"] = split(m["T50"], m["B"])
+    out["pm25_q05"] = split(m["T05"], m["B"]).clip(lower=0.0)
+    out["pm25_q95"] = split(m["T95"], m["B"])
+    out["pm25_blo"] = split(m["T50"], m["B_hi"])   # background-uncertainty band
+    out["pm25_bhi"] = split(m["T50"], m["B_lo"])
     out.to_parquet(DEC / f"kandy_decomp_predictions_{year}_additive.parquet", index=False)
 
     # --- small aggregates for Phase 2 (avoid holding 5 yrs of hourly in RAM) ---
