@@ -23,6 +23,7 @@ dynamic exposure (the concentration people actually breathe).
 Out: data/processed/decomp/exposure_weighting.csv + final_model_suite/figX2_exposure_inequality.png
 """
 from __future__ import annotations
+import os
 import sys
 from pathlib import Path
 
@@ -77,7 +78,10 @@ def _field_path(year, suffix):
     raise FileNotFoundError(year)
 
 
-def _annual(year, col="pm25_q50", suffix="_additive"):
+_ADD = "_additive" if os.environ.get("PAPERFIG_VARIANT", "v2") == "v1" else "_additive_v2"
+
+
+def _annual(year, col="pm25_q50", suffix=_ADD):
     d = pd.read_parquet(_field_path(year, suffix), columns=["lat", "lon", col])
     lats = np.sort(d.lat.unique()); lons = np.sort(d.lon.unique())
     Z = d.groupby(["lat", "lon"])[col].mean().unstack("lon").reindex(index=lats, columns=lons).values

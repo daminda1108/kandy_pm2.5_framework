@@ -8,6 +8,7 @@ diagnostics (ventilation index, flux convergence); a realistic 3D terrain inset;
 and a png(400dpi)+pdf saver. Importing applies the `pubfig` publication style.
 """
 from __future__ import annotations
+import os
 import sys
 from pathlib import Path
 
@@ -27,7 +28,19 @@ from config import KANDY_PINN_BBOX as BB
 DEC = REPO / "data" / "processed" / "decomp"
 STG = REPO / "data" / "processed" / "stage1_v3"
 PIN = REPO / "data" / "processed" / "pinn_inputs"
-PAPER_OUT = REPO / "results" / "figures" / "paper_figures"
+
+# ── model variant ───────────────────────────────────────────────────────────
+# v2 = wide-domain (Knuckles/central-highlands) WindNinja winds + origin-conditioned
+# B(t) — ADOPTED AS THE OFFICIAL MODEL 2026-06-15 (W1 swap gates + BV1 + G-c all pass;
+# docs/v2_consolidated_implementation_2026-06-15.md). DEFAULT is now v2 →
+# `_additive_v2` fields → results/figures/paper_figures_v2/.
+# Set PAPERFIG_VARIANT=v1 to regenerate the ARCHIVED v1 set (narrow winds, flat B)
+# → `_additive` fields → results/figures/paper_figures/.
+# ADD is the additive-field suffix every figure read must use (hardcoded + field()).
+VARIANT = os.environ.get("PAPERFIG_VARIANT", "v2").strip().lower()
+ADD = "_additive" if VARIANT == "v1" else "_additive_v2"
+PAPER_OUT = REPO / "results" / "figures" / ("paper_figures" if VARIANT == "v1"
+                                            else "paper_figures_v2")
 PAPER_OUT.mkdir(parents=True, exist_ok=True)
 
 # ── universal PM scale — YlOrRd, raised vmax + nonlinear (PowerNorm) ─────────
@@ -86,7 +99,8 @@ def save(fig, name, pdf=False, square=True):
 def field(year, kind="additive", col="pm25_q50", hours=None):
     """annual (or hour-subset) mean grid for a prediction field.
     kind: 'additive' (headline turbo), '4factor' (scenario), '' (smooth)."""
-    suf = {"additive": "_additive", "4factor": "_4factor", "smooth": ""}[kind]
+    suf = {"additive": ADD, "additive_v2": "_additive_v2",
+           "4factor": "_4factor", "smooth": ""}[kind]
     cols = ["time", "lat", "lon", col]
     d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{year}{suf}.parquet", columns=cols)
     if hours is not None:

@@ -190,7 +190,7 @@ def f3_decomposition():
     # partition per year
     part = []
     for y in range(2019, 2024):
-        a = pd.read_parquet(DEC / f"kandy_decomp_predictions_{y}_additive.parquet", columns=["pm25_q50"])
+        a = pd.read_parquet(DEC / f"kandy_decomp_predictions_{y}{pf.ADD}.parquet", columns=["pm25_q50"])
         bb = pd.read_parquet(DEC / f"B_background_hourly_{y}.parquet")["B"].mean()
         basin = float(a.pm25_q50.mean()); part.append((y, float(bb), basin - float(bb), basin))
     pdf = pd.DataFrame(part, columns=["year", "B", "I", "basin"]); pdf["loc%"] = pdf.I / pdf.basin * 100
@@ -284,7 +284,7 @@ def f5_emission():
 
 # ════════════════════════ F6 — annual + seasonal ═══════════════════════════
 def f6_seasonal():
-    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}_additive.parquet", columns=["time", "lat", "lon", "pm25_q50"])
+    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}{pf.ADD}.parquet", columns=["time", "lat", "lon", "pm25_q50"])
     d["loct"] = pd.to_datetime(d.time, utc=True).dt.tz_convert("Asia/Colombo"); d["s"] = d.loct.dt.month % 12 // 3
     lats = np.sort(d.lat.unique()); lons = np.sort(d.lon.unique()); names = {0: "DJF", 1: "MAM", 2: "JJA", 3: "SON"}
     def grid(x): return x.groupby(["lat", "lon"]).pm25_q50.mean().unstack("lon").reindex(index=lats, columns=lons).values
@@ -318,7 +318,7 @@ def f6_seasonal():
 # ════════════════════════ F7 — diurnal evolution ⭐ ═════════════════════════
 def f7_diurnal():
     HRS = [3, 7, 10, 14, 18, 22]                 # deep-night · morning peak · late-am · midday trough · evening peak · late-evening
-    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}_additive.parquet", columns=["time", "lat", "lon", "pm25_q50"])
+    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}{pf.ADD}.parquet", columns=["time", "lat", "lon", "pm25_q50"])
     d["loct"] = pd.to_datetime(d.time, utc=True).dt.tz_convert("Asia/Colombo"); d["h"] = d.loct.dt.hour
     lats = np.sort(d.lat.unique()); lons = np.sort(d.lon.unique())
     def grid(x): return x.groupby(["lat", "lon"]).pm25_q50.mean().unstack("lon").reindex(index=lats, columns=lons).values
@@ -349,7 +349,7 @@ def f7_diurnal():
 
 # ════════════════════════ F8 — different circumstances ⭐ ═══════════════════
 def f8_regimes():
-    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}_additive.parquet", columns=["time", "lat", "lon", "pm25_q50"])
+    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}{pf.ADD}.parquet", columns=["time", "lat", "lon", "pm25_q50"])
     d["loct"] = pd.to_datetime(d.time, utc=True).dt.tz_convert("Asia/Colombo")
     d["h"] = d.loct.dt.hour; d["s"] = d.loct.dt.month % 12 // 3
     lats = np.sort(d.lat.unique()); lons = np.sort(d.lon.unique())
@@ -375,7 +375,7 @@ def f8_regimes():
 def f9_scales():
     frames = []
     for y in range(2019, 2024):
-        a = pd.read_parquet(DEC / f"kandy_decomp_predictions_{y}_additive.parquet", columns=["time", "pm25_q05", "pm25_q50", "pm25_q95"])
+        a = pd.read_parquet(DEC / f"kandy_decomp_predictions_{y}{pf.ADD}.parquet", columns=["time", "pm25_q05", "pm25_q50", "pm25_q95"])
         frames.append(a.groupby("time")[["pm25_q05", "pm25_q50", "pm25_q95"]].mean())
     bm = pd.concat(frames); bm.index = pd.to_datetime(bm.index, utc=True).tz_convert("Asia/Colombo")
     bm["y"] = bm.index.year; bm["m"] = bm.index.month; bm["dow"] = bm.index.dayofweek; bm["h"] = bm.index.hour
@@ -475,7 +475,7 @@ def f11_burden():
 
 # ════════════════════════ F12 — uncertainty ════════════════════════════════
 def f12_uq():
-    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}_additive.parquet",
+    d = pd.read_parquet(DEC / f"kandy_decomp_predictions_{YEAR}{pf.ADD}.parquet",
                         columns=["lat", "lon", "pm25_q05", "pm25_q95", "pm25_blo", "pm25_bhi"])
     d["piw"] = (d.pm25_q95 - d.pm25_q05) + (d.pm25_bhi - d.pm25_blo)
     lats = np.sort(d.lat.unique()); lons = np.sort(d.lon.unique())
