@@ -97,6 +97,7 @@ CITIES = {
         years=list(range(2019, 2024)), f=0.80, kappa=0.06,
         regime="tropical Andean valley (traffic-dominated)",
         emix=dict(vehic=0.85, heat=0.0, burn=0.15),   # equatorial: traffic + some industry, no heating
+        wn_temps=(17.0, 27.0),  # WindNinja diurnal-regime air temps (night, day C) — "eternal spring"
         labels=[("R. Medellín", 6.24, -75.57, "lake")],
         inset=(-79, -72, 2, 9, "COLOMBIA")),
 }

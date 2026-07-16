@@ -32,7 +32,7 @@ BB = dict(lat_min=27.770, lat_max=27.950, lon_min=102.160, lon_max=102.360)
 
 def _setup(city):
     """Point all module globals at `city` (from city_config)."""
-    global CITY, SRTM, DEM, WORK, OUT, UTM, TZ, BB
+    global CITY, SRTM, DEM, WORK, OUT, UTM, TZ, BB, REGIMES
     sys.path.insert(0, str(REPO / "scripts"))
     from city_config import cfg
     c = cfg(city); b = c["box"]
@@ -43,6 +43,9 @@ def _setup(city):
     OUT = REPO / "data" / "processed" / "pinn_inputs" / f"{city}_windninja_library.npz"
     UTM = c["utm"]; TZ = c["tz"]
     BB = dict(lat_min=b[0], lat_max=b[1], lon_min=b[2], lon_max=b[3])
+    # per-city diurnal-regime air temps (default = the Chinese-winter-valley pair)
+    tn, td = c.get("wn_temps", (2.0, 12.0))
+    REGIMES = [("night", 3, tn), ("day", 13, td)]
 N = 64
 DIRS = np.arange(0, 360, 22.5)
 SPEEDS = [1.0, 4.0]

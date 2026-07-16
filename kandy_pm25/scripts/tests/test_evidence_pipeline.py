@@ -34,6 +34,39 @@ def test_basin_mean_invariant_tlock():
             assert field.mean() == pytest.approx(T, rel=1e-12)
 
 
+def _split_field(T, B, P):
+    """Increment-SPLIT additive form (2026-07-09 core<periphery fix):
+    PM = B + max(T-B,0)·P + min(T-B,0). The local pattern structures only
+    accumulation above background; ventilation below is spatially uniform."""
+    inc = T - B
+    return B + max(inc, 0.0) * P + min(inc, 0.0)
+
+
+def test_split_form_preserves_tlock():
+    """The increment split keeps the T-lock exact on BOTH branches (T>B and T<B)."""
+    rng = np.random.default_rng(7)
+    P = _unit_mean(rng.gamma(2.0, 1.0, size=(64, 64)))
+    for T, B in ((21.0, 14.8), (10.0, 14.8), (66.0, 20.0), (5.0, 20.0)):
+        assert _split_field(T, B, P).mean() == pytest.approx(T, rel=1e-12)
+
+
+def test_split_form_removes_core_periphery_inversion():
+    """When hourly T dips below daily B (38.5% of Kandy hours), the plain additive
+    form INVERTS the pattern (core cleaner than edge); the split renders a flat field."""
+    rng = np.random.default_rng(8)
+    P = _unit_mean(rng.gamma(2.0, 1.0, size=1000))
+    core, edge = P > 1.1, P < 0.9
+    T, B = 12.0, 18.0                                   # ventilated hour: T < B
+    plain = B + (T - B) * P
+    assert plain[core].mean() < plain[edge].mean()      # the inversion defect
+    split = _split_field(T, B, P)
+    assert np.allclose(split, T)                        # flat when ventilated — no inversion
+    T2 = 25.0                                            # accumulation hour: T > B
+    acc = _split_field(T2, B, P)
+    assert np.allclose(acc, B + (T2 - B) * P)            # identical to plain form
+    assert acc[core].mean() > acc[edge].mean()           # core high, physically right
+
+
 def test_area_mean_invariant_to_f():
     """Area mean is exactly invariant to the local fraction f (sensitivity S1)."""
     rng = np.random.default_rng(1)

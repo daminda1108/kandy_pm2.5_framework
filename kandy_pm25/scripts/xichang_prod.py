@@ -326,6 +326,17 @@ def build_field():
         T["tn"] = pd.to_datetime(T.datetime_utc).dt.tz_localize(None)
         B["tn"] = pd.to_datetime(B.datetime_utc).dt.tz_localize(None)
         T = T.sort_values("tn")
+        # VanD-anchored T (zero-local-sensor tier, Act 0 of the ground-data ladder):
+        # same clock, level from the satellite product only. Written as a parallel
+        # additive_v2_vand parquet when the _vand T exists.
+        vand_path = OUT / f"T_{CITY}_hourly_{y}_vand.parquet"
+        HAS_VAND = vand_path.exists() and not ABL
+        if HAS_VAND:
+            Tv = pd.read_parquet(vand_path).rename(columns={
+                "T_q05": "Tv_q05", "T_q50": "Tv_q50", "T_q95": "Tv_q95"})
+            Tv["tn"] = pd.to_datetime(Tv.datetime_utc).dt.tz_localize(None)
+            T = pd.merge_asof(T, Tv.sort_values("tn")[["tn", "Tv_q05", "Tv_q50", "Tv_q95"]],
+                              on="tn", direction="nearest")
         T = pd.merge_asof(T, wnd.sort_values("tn"), on="tn", direction="nearest")
         T = pd.merge_asof(T, blhd.sort_values("tn"), on="tn", direction="nearest")
         T = pd.merge_asof(T, B.sort_values("tn")[["tn", "B"]], on="tn", direction="nearest")
@@ -338,6 +349,7 @@ def build_field():
         T["bb"] = np.digitize(T.blh_m, BLH_EDGES)
         T["w"] = np.clip((h_ridge - T.blh_m) / h_ridge, 0, 1)
         f4 = np.empty((len(T) * px, 3), "f4"); ad = np.empty((len(T) * px, 5), "f4")
+        av = np.empty((len(T) * px, 3), "f4") if HAS_VAND else None
         times = np.empty(len(T) * px, dtype="datetime64[ns]")
         tvals = pd.to_datetime(T.datetime_utc).dt.tz_localize(None).values
         Se_p = np.ones_like(Se) if ABL == "no_emission" else Se
@@ -356,10 +368,20 @@ def build_field():
             P4 = np.ones(px) if ABL == "no_pattern" else (P4 / P4.mean()).ravel()
             Bv = r.B; sl = slice(i * px, (i + 1) * px)
             f4[sl, 0] = r.T_q05 * P4; f4[sl, 1] = r.T_q50 * P4; f4[sl, 2] = r.T_q95 * P4
-            ad[sl, 0] = np.clip(Bv + (r.T_q05 - Bv) * Psm, 0, None)
-            ad[sl, 1] = Bv + (r.T_q50 - Bv) * Psm; ad[sl, 2] = Bv + (r.T_q95 - Bv) * Psm
-            ad[sl, 3] = Bv * 1.25 + (r.T_q50 - Bv * 1.25) * Psm
-            ad[sl, 4] = Bv * 0.70 + (r.T_q50 - Bv * 0.70) * Psm
+            # increment-SPLIT additive form (2026-07-10 core-vs-periphery fix, same as
+            # the Kandy builder): the local pattern structures only accumulation above
+            # background; ventilation below background is spatially uniform.
+            #   PM = B + max(T-B,0)*P + min(T-B,0)
+            def _split(t, b):
+                inc = t - b
+                return b + max(inc, 0.0) * Psm + min(inc, 0.0)
+            ad[sl, 0] = np.clip(_split(r.T_q05, Bv), 0, None)
+            ad[sl, 1] = _split(r.T_q50, Bv); ad[sl, 2] = _split(r.T_q95, Bv)
+            ad[sl, 3] = _split(r.T_q50, Bv * 1.25)
+            ad[sl, 4] = _split(r.T_q50, Bv * 0.70)
+            if HAS_VAND:
+                av[sl, 0] = np.clip(_split(r.Tv_q05, Bv), 0, None)
+                av[sl, 1] = _split(r.Tv_q50, Bv); av[sl, 2] = _split(r.Tv_q95, Bv)
             times[sl] = tvals[i]
         latcol = np.tile(LA.ravel(), len(T)); loncol = np.tile(LO.ravel(), len(T))
         if not ABL_ADD_ONLY:      # 4factor only meaningful when winds/timing are live
@@ -370,8 +392,13 @@ def build_field():
                       "pm25_q05": ad[:, 0], "pm25_q50": ad[:, 1], "pm25_q95": ad[:, 2],
                       "pm25_blo": ad[:, 3], "pm25_bhi": ad[:, 4]}
                      ).to_parquet(OUT / f"{CITY}_decomp_predictions_{y}_additive_v2{SUF}.parquet", index=False)
-        print(f"  {y}: additive_v2 basin {ad[:,1].mean():.2f}  ({len(T):,} hr × {STORE}² px, "
-              f"{len(shape_cache)} cached solves)")
+        if HAS_VAND:
+            pd.DataFrame({"time": times, "lat": latcol, "lon": loncol,
+                          "pm25_q05": av[:, 0], "pm25_q50": av[:, 1], "pm25_q95": av[:, 2]}
+                         ).to_parquet(OUT / f"{CITY}_decomp_predictions_{y}_additive_v2_vand.parquet", index=False)
+        print(f"  {y}: additive_v2 basin {ad[:,1].mean():.2f}"
+              + (f" | vand basin {av[:,1].mean():.2f}" if HAS_VAND else "")
+              + f"  ({len(T):,} hr × {STORE}² px, {len(shape_cache)} cached solves)")
 
 
 def main():
