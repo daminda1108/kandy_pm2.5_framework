@@ -176,3 +176,10 @@ package.json
 package-lock.json
 extract_all_books.bat
 extract_smallest_book.bat
+
+# standalone webapps (own repos)
+kandy_webapp/
+medellin_webapp/
+
+# PhD supervisor-finder tool (personal, not research)
+saf/
