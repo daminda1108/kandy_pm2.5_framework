@@ -40,6 +40,9 @@ DEC = REPO / "data" / "processed" / "decomp"
 TANCHOR = REPO / "data" / "processed" / "stage1_v3" / "T_anchor"
 GHAP = DEC / "ghap_kandy_monthly_2019_2022.parquet"
 YEARS = list(range(2019, 2024))
+# ventilated-hour pattern floor (additive_v3); 0.0 = locked tier byte-for-byte,
+# shipped explorer uses the Kandy method-transfer value 2.573 (see assemble_year)
+EPS_FLOOR = 0.0
 KOALA_FLOOR = 24.5225
 RIDGE_OBS = 10.5
 NIFS = (7.2839, 80.6322)          # KOALA floor/core point
@@ -83,9 +86,20 @@ def assemble_year(year: int):
     P = m["pm25_q50"] / m["T50"]
     out = m[["time", "lat", "lon"]].copy()
 
+    # Ventilated-hour pattern FLOOR (additive_v3, 2026-07-21): keep a muted, mean-zero
+    # local pattern on well-ventilated hours instead of a perfectly flat field (Medellin
+    # ground truth shows real spatial spread there). Mean-zero -> T-lock exact; eps0>=0
+    # with accumulation-side P -> no core<periphery inversion; structured hours identical.
+    #     PM = B + max(max(inc,0),eps0)*P + min(inc,0) - max(0, eps0-max(inc,0)).
+    # eps0=0 reproduces the locked tier; shipped explorer uses Kandy eps0=2.573 (Medellin
+    # method-transfer, gated flat_hour_residual_fit.py). See model reference IV + ledger F.
+    eps0 = float(EPS_FLOOR)
+
     def split(Tq, Bq):
         inc = Tq - Bq
-        return Bq + np.maximum(inc, 0.0) * P + np.minimum(inc, 0.0)
+        a = np.maximum(inc, 0.0)
+        return Bq + np.maximum(a, eps0) * P + np.minimum(inc, 0.0) \
+            - np.maximum(eps0 - a, 0.0)
     out["pm25_q50"] = split(m["T50"], m["B"])
     out["pm25_q05"] = split(m["T05"], m["B"]).clip(lower=0.0)
     out["pm25_q95"] = split(m["T95"], m["B"])
