@@ -32,6 +32,10 @@ scripts/*
 !scripts/independent_visibility.py
 !scripts/spatial_skill_law.py
 !scripts/w2_transboundary_figure.py
+# additive_v3 ventilated-hour floor (2026-07-21): the builder + the Medellín fit/gate
+!scripts/build_additive_field_v3.py
+!scripts/flat_hour_residual_fit.py
+!scripts/imerg_rain_arbitration.py
 node_modules/
 *.pyc
 *.pyo
