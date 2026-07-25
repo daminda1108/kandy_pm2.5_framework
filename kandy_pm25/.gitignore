@@ -18,6 +18,8 @@ reports/
 scripts/*
 !scripts/tests/
 !scripts/city_config.py
+!scripts/add_cprior_to_perstation.py
+!scripts/panel_donor_solartime.py
 !scripts/xichang_prod.py
 !scripts/xichang_twin_figures.py
 !scripts/xichang_paper_figures.py

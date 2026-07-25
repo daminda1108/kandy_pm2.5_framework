@@ -94,11 +94,46 @@ CITIES = {
     "medellin": dict(
         name="Medellín (Aburrá Valley, Colombia)", cen=(6.244, -75.581), tz="America/Bogota",
         utm="EPSG:32618", box=(6.150, 6.390, -75.680, -75.460), dem="medellin_dem.tif",
-        years=list(range(2019, 2024)), f=0.80, kappa=0.06,
+        years=list(range(2018, 2025)), f=0.80, kappa=0.06,   # deliverable full span (v16)
         regime="tropical Andean valley (traffic-dominated)",
         emix=dict(vehic=0.85, heat=0.0, burn=0.15),   # equatorial: traffic + some industry, no heating
         wn_temps=(17.0, 27.0),  # WindNinja diurnal-regime air temps (night, day C) — "eternal spring"
         labels=[("R. Medellín", 6.24, -75.57, "lake")],
+        inset=(-79, -72, 2, 9, "COLOMBIA")),
+    # 10th analogue (2026-07-25). Chosen over the alternatives because: (a) a DENSE
+    # public network already on disk (22 stations, 2016-2025, 156k station-hours);
+    # (b) NOT in the CNEMC panel, so it stays a clean test set for any panel-trained
+    # model (see the leakage finding in sensorless_product_scope_2026-07-25.md);
+    # (c) a REGIME the panel lacks - a high-altitude (~2600 m) tropical plateau where
+    # the city sits on flat savanna (dz at the core is 11 m) with relief only on its
+    # eastern flank.
+    # PREDICTION MADE BEFORE SCORING, AND WRONG: I expected it to behave like
+    # Chandigarh (flat -> little fine-spatial handle). It scored spatial rho = 0.67,
+    # THIRD-BEST of the ten. The reason matters: fine-spatial rank is carried by the
+    # EMISSION surface, not by relief - Bogota's traffic surface has a core/edge ratio
+    # of 30x. That independently reproduces the Medellin finding (which refuted the old
+    # gotcha #23) on a city where relief demonstrably cannot be doing the work, so it
+    # is a stronger confirmation than a valley city could give.
+    "bogota": dict(
+        name="Bogotá (Sabana de Bogotá, Colombia)", cen=(4.655, -74.106),
+        tz="America/Bogota", utm="EPSG:32618",
+        box=(4.50, 4.80, -74.25, -74.02), dem="bogota_srtm_dem.tif",
+        # 2021-2022 ONLY. The archive spans 2016-2025, but the NETWORK does not: by
+        # station-year, only 2021 (19 stations with >=1000 obs) and 2022 (8) are dense;
+        # every other year has 1-3 reporting stations. Scoring a wider window would
+        # silently reduce the "held-out network" to a single station in most years
+        # (it showed up as vault n=3 on the first build). A 2-year window is enough for
+        # the diurnal and spatial axes, which is where a dense network actually pays;
+        # the level/inter-annual claims for this city are correspondingly weaker and
+        # are reported as such.
+        years=[2021, 2022],
+        f=0.78,          # large, traffic/industry-dominated; slightly below Medellín's
+                         # 0.80 because Bogotá also receives seasonal regional smoke
+        kappa=0.05,      # flat plateau -> weak confinement (cf. Medellín 0.06)
+        regime="high-altitude tropical plateau (traffic-dominated, low relief)",
+        emix=dict(vehic=0.80, heat=0.0, burn=0.20),   # no domestic heating; seasonal burn
+        wn_temps=(9.0, 19.0),   # cool highland diurnal range (unused under NO_WINDNINJA)
+        labels=[("Cerros Orientales", 4.65, -74.04, "mtn")],
         inset=(-79, -72, 2, 9, "COLOMBIA")),
 }
 

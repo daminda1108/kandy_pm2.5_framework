@@ -45,12 +45,24 @@ def _sel_box(da, lat0, lat1, lon0, lon1):
     sub = da.sel(lat=slice(lat0, lat1), lon=slice(lon0, lon1))
     if sub.sizes.get("lat", 0) == 0:
         sub = da.sel(lat=slice(lat1, lat0), lon=slice(lon0, lon1))
+    # Fail LOUDLY on a region mismatch. Without this, a wrong regional tile returns an
+    # empty selection that propagates as NaNs / a size-0 array and only dies much later
+    # inside scipy ("cannot reshape array of size 0"), which says nothing about the
+    # cause. Bogotá hit exactly this in 2026-07-25 (Asia tile for an American city:
+    # the latitudes overlap, so only the longitude selection was empty).
+    if sub.sizes.get("lat", 0) == 0 or sub.sizes.get("lon", 0) == 0:
+        raise ValueError(
+            f"VanD tile does not cover the requested box — wrong regional tile? "
+            f"tile lat {float(da.lat.min()):.2f}..{float(da.lat.max()):.2f}, "
+            f"lon {float(da.lon.min()):.2f}..{float(da.lon.max()):.2f}; "
+            f"requested lat {lat0:.2f}..{lat1:.2f}, lon {lon0:.2f}..{lon1:.2f}")
     return sub
 
 
 def _tile_years(years) -> list[int]:
-    """Map requested years onto held tiles (2024/25 → 2023 proxy), deduped."""
-    return sorted({min(int(y), 2023) for y in years})
+    """Map requested years onto held tiles (2019–2023 span: 2018 → 2019 proxy,
+    2024/25 → 2023 proxy — nearest-tile convention both directions), deduped."""
+    return sorted({min(max(int(y), 2019), 2023) for y in years})
 
 
 def annual_levels(cp, years=None):
@@ -115,7 +127,9 @@ def level_for_year(cp, year: int) -> tuple[float, int]:
     the same convention Kandy production uses for its 2024 maps.
     Returns (level, tile_year_used).
     """
-    tile_year = min(year, 2023)
+    # held tile span is 2019–2023: clamp BOTH ends (2018 → 2019 tile, 2024+ → 2023
+    # tile) — the same documented nearest-tile proxy convention in either direction.
+    tile_year = min(max(year, 2019), 2023)
     lev = annual_levels(cp, [tile_year])
     return float(lev.basin_mean.iloc[0]), tile_year
 

@@ -43,8 +43,11 @@ VAND_ASIA = VAND / "V6GL02.04.CNNPM25.AS.{year}01-{year}12.nc"
 VAND_SA = VAND / "V6GL03.CNNPM25.SA.{year}01-{year}12.nc"
 
 # Per-station parquet version preference (newest schema first).
-_PARQUET_VARIANTS = ("_perstation_v15", "_perstation_v13", "_perstation_v14",
-                     "_stage3_perstation", "_combined_perstation")
+# v16 (2026-07-16) = Medellín deliverable dataset: v13 ∪ SIATA EntregaData gap-fill
+# (build_medellin_v16.py). Frozen-protocol scripts pin v13 explicitly and are
+# unaffected by this resolution order.
+_PARQUET_VARIANTS = ("_perstation_v16", "_perstation_v15", "_perstation_v13",
+                     "_perstation_v14", "_stage3_perstation", "_combined_perstation")
 
 
 @dataclass
@@ -92,8 +95,18 @@ class CityPack:
         return PIN / f"{self.slug}_viirs_ntl_stations.npz"
 
     def vand_tile(self, year: int) -> Optional[Path]:
-        """VanD annual tile for the year, or None if not held."""
-        tmpl = VAND_SA if self.slug == "medellin" else VAND_ASIA
+        """VanD annual tile for the year, or None if not held.
+
+        The region is chosen from the city's own LONGITUDE, not from its name. This
+        was previously `VAND_SA if self.slug == "medellin" else VAND_ASIA`, which
+        silently handed every other American city the ASIA tile. The failure mode was
+        nasty: the Asia tile spans lat -10..60 N, so a tropical American city's
+        LATITUDE selection succeeds and only the LONGITUDE selection comes back empty,
+        which surfaced several layers down as a bare scipy "cannot reshape array of
+        size 0" (hit when Bogotá was added, 2026-07-25).
+        Held tiles: SA lon -85..-34, AS lon 65..145.
+        """
+        tmpl = VAND_SA if self.bbox()["lon_min"] < -30 else VAND_ASIA
         p = Path(str(tmpl).format(year=year))
         return p if p.exists() else None
 
