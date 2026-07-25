@@ -36,6 +36,11 @@ scripts/*
 !scripts/build_additive_field_v3.py
 !scripts/flat_hour_residual_fit.py
 !scripts/score_additive_v3.py
+# sensorless-diurnal experiment chain (Options A/B/C, 2026-07-25)
+!scripts/sensorless_diurnal_test.py
+!scripts/sensorless_diurnal_learned.py
+!scripts/diurnal_transferability_test.py
+!scripts/panel_mean_diurnal_transfer.py
 !scripts/alphaearth_spatial_test.py
 # extension-tier builders (2024-2026 shipped tier)
 !scripts/kandy_driver_tier_build.py
