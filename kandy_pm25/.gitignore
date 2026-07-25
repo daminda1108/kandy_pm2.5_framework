@@ -42,6 +42,7 @@ scripts/*
 !scripts/diurnal_transferability_test.py
 !scripts/panel_mean_diurnal_transfer.py
 !scripts/alphaearth_spatial_test.py
+!scripts/panel_donor_solartime.py
 # extension-tier builders (2024-2026 shipped tier)
 !scripts/kandy_driver_tier_build.py
 !scripts/kandy_extension_fields.py
