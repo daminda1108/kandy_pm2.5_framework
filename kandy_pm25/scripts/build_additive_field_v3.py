@@ -37,8 +37,42 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 DEC = REPO / "data" / "processed" / "decomp"
+DECM = REPO / "data" / "processed" / "decomp_medellin"
 EPS_REL = 0.398          # cross-city-validated relative floor (flat_hour_residual_fit.py)
 EXT_YEARS = [2024, 2025, 2026]
+
+# Per-city wiring. eps_mode:
+#   "fitted"   -> use the city's OWN Medellin-style flat-hour fit (absolute ug/m3).
+#                 Correct wherever a withheld network exists to fit against.
+#   "relative" -> transfer the cross-city relative form (EPS_REL x mean accumulation
+#                 amplitude). The only option for a city with no network (Kandy).
+CITIES = {
+    "kandy": dict(
+        dec=DEC, tz="Asia/Colombo",
+        years=list(range(2019, 2024)) + EXT_YEARS,
+        field=lambda y: DEC / f"kandy_decomp_predictions_{y}_additive_v2"
+                              f"{'_drv' if y in EXT_YEARS else ''}.parquet",
+        bfile=lambda y: DEC / f"B_background_hourly_{y}_v2"
+                              f"{'_drv' if y in EXT_YEARS else ''}.parquet",
+        out=lambda y: DEC / f"kandy_decomp_predictions_{y}_additive_v3"
+                            f"{'_drv' if y in EXT_YEARS else ''}.parquet",
+        companion=None,                      # single tier
+        eps_mode="relative", eps_fitted=None,
+    ),
+    "medellin": dict(
+        dec=DECM, tz="America/Bogota",
+        years=list(range(2018, 2025)),
+        field=lambda y: DECM / f"medellin_decomp_predictions_{y}_additive_v2.parquet",
+        bfile=lambda y: DECM / f"B_background_hourly_{y}_medellin.parquet",
+        out=lambda y: DECM / f"medellin_decomp_predictions_{y}_additive_v3.parquet",
+        # the zero-ground-data (VanD) tier shares P_local by construction, so it is
+        # rebuilt with the SAME recovered P and only its own T anchors
+        companion=dict(
+            field=lambda y: DECM / f"medellin_decomp_predictions_{y}_additive_v2_vand.parquet",
+            out=lambda y: DECM / f"medellin_decomp_predictions_{y}_additive_v3_vand.parquet"),
+        eps_mode="fitted", eps_fitted=5.65,   # flat_hour_residual_fit.py slope (its OWN fit)
+    ),
+}
 
 
 def _mean_accum(field_paths):
@@ -57,13 +91,8 @@ def _mean_accum(field_paths):
     return float(np.nanmean(np.concatenate(accs)))
 
 
-def apply_floor(out_col_field, eps0):
-    """Given a per-hour-and-pixel frame with columns T50,T05,T95,B,B_lo,B_hi and the
-    per-pixel P (=field/T50), rewrite the split with the eps0 floor. Returns the new
-    pm25_* columns as a dict. Mean-preserving by construction."""
-
-
-def build_v3_from_v2(v2_path, b_path, eps0, out_path):
+def build_v3_from_v2(v2_path, b_path, eps0, out_path, tz="Asia/Colombo",
+                     companion=None):
     """Recompute the split with the floor, reading the SAME sources as v2:
     the v2 field carries the final PM; recover P from it and B, apply floor."""
     v2 = pd.read_parquet(v2_path)
@@ -96,7 +125,7 @@ def build_v3_from_v2(v2_path, b_path, eps0, out_path):
     P = np.where(np.isfinite(P), P, 1.0)
     Pm = P.reshape(len(times), npx)
     hm = healthy.reshape(len(times), npx)[:, 0]           # per-hour (increment is scalar)
-    mo = times.month; hod = times.tz_convert("Asia/Colombo").hour
+    mo = times.month; hod = times.tz_convert(tz).hour
     key = mo * 100 + hod
     clim = {}
     for k in np.unique(key):
@@ -146,6 +175,28 @@ def build_v3_from_v2(v2_path, b_path, eps0, out_path):
     out["pm25_blo"] = split_floor(T50, Bhi)
     out["pm25_bhi"] = split_floor(T50, Blo)
     out.to_parquet(out_path, index=False)
+
+    # Companion tier (Medellín's zero-ground-data / VanD tier): it shares P_local with
+    # the sensor tier BY CONSTRUCTION, so rebuild it with the SAME recovered P and only
+    # its own T anchors. Using one shared P matters: the exporter recovers P from
+    # whichever tier has the larger accumulation increment, so if the two tiers carried
+    # different patterns the reconstruction would disagree with one of them.
+    if companion is not None:
+        cv = pd.read_parquet(companion["src"])
+        cv["time"] = pd.to_datetime(cv.time, utc=True)
+        cv = cv.sort_values(["time", "lat", "lon"]).reset_index(drop=True)
+        cg = cv.groupby("time")
+        cT50 = cg["pm25_q50"].transform("mean").to_numpy()
+        cT05 = cg["pm25_q05"].transform("mean").to_numpy()
+        cT95 = cg["pm25_q95"].transform("mean").to_numpy()
+        cout = cv[["time", "lat", "lon"]].copy()
+        cout["pm25_q50"] = split_floor(cT50, B)
+        cout["pm25_q05"] = split_floor(cT05, B)
+        cout["pm25_q95"] = split_floor(cT95, B)
+        cout["pm25_blo"] = split_floor(cT50, Bhi)
+        cout["pm25_bhi"] = split_floor(cT50, Blo)
+        cout.to_parquet(companion["out"], index=False)
+
     # invariants: ANNUAL basin (published quantity) must match the anchor exactly;
     # per-hour drift is the physical-0-floor effect (reported, informational).
     ann = abs(float(out.pm25_q50.mean()) - float(np.clip(T50, 0, None).mean()))
@@ -156,37 +207,56 @@ def build_v3_from_v2(v2_path, b_path, eps0, out_path):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--city", default="kandy", choices=sorted(CITIES))
+    a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    # locked years (read v2 + its B); extension years (read _drv v2 + its _drv B)
-    locked = [(y, DEC / f"kandy_decomp_predictions_{y}_additive_v2.parquet",
-               DEC / f"B_background_hourly_{y}_v2.parquet") for y in range(2019, 2024)]
-    ext = [(y, DEC / f"kandy_decomp_predictions_{y}_additive_v2_drv.parquet",
-            DEC / f"B_background_hourly_{y}_v2_drv.parquet") for y in EXT_YEARS]
-    # eps0 from the LOCKED years' accumulation amplitude (the validated tier)
-    mean_acc = _mean_accum([(f, b) for _, f, b in locked])
-    eps0 = round(EPS_REL * mean_acc, 3)
-    print(f"Kandy mean accumulation amplitude {mean_acc:.3f} ug/m3 "
-          f"-> eps0 = {EPS_REL} x {mean_acc:.2f} = {eps0} ug/m3")
-    (DEC / "additive_v3_eps.json").write_text(json.dumps(
-        {"eps0_kandy": eps0, "eps_rel": EPS_REL, "mean_accum": round(mean_acc, 3),
-         "provenance": "flat_hour_residual_fit.py PASS; Medellin fit, cross-city "
-                       "no-degrade; relative form transferred (no Kandy network)"}, indent=1))
-    print("\n=== additive_v3 (v2 + ventilated-hour floor; v2 untouched) ===")
+    C = CITIES[a.city]
+    pairs = [(y, C["field"](y), C["bfile"](y)) for y in C["years"]]
+    have = [(y, f, b) for y, f, b in pairs if f.exists() and b.exists()]
+
+    # eps0: a city with a withheld network uses its OWN fit; a city without one
+    # (Kandy) transfers the cross-city relative form.
+    if C["eps_mode"] == "fitted":
+        eps0 = float(C["eps_fitted"])
+        prov = ("own flat-hour fit (flat_hour_residual_fit.py: through-origin slope of "
+                "withheld-station anomalies on (P-1)); locally fitted, not transferred")
+        print(f"{a.city}: eps0 = {eps0} ug/m3 (OWN fit)")
+    else:
+        mean_acc = _mean_accum([(f, b) for _, f, b in have
+                                if "_drv" not in f.name])     # locked years only
+        eps0 = round(EPS_REL * mean_acc, 3)
+        prov = (f"relative form transferred (no local network): {EPS_REL} x mean "
+                f"accumulation amplitude {mean_acc:.3f}; Medellin-fitted + cross-city gated")
+        print(f"{a.city}: mean accumulation amplitude {mean_acc:.3f} -> "
+              f"eps0 = {EPS_REL} x {mean_acc:.2f} = {eps0} ug/m3 (TRANSFERRED)")
+    (C["dec"] / "additive_v3_eps.json").write_text(json.dumps(
+        {f"eps0_{a.city}": eps0, "eps0": eps0, "eps_mode": C["eps_mode"],
+         "eps_rel": EPS_REL, "provenance": prov}, indent=1))
+
+    print(f"\n=== additive_v3 ({a.city}: v2 + ventilated-hour floor; v2 untouched) ===")
     worst_ann, worst_hr = 0.0, 0.0
-    for y, fp, bp in locked + ext:
-        suffix = "_drv" if y in EXT_YEARS else ""
-        if not fp.exists():
-            print(f"  {y}: v2 source missing ({fp.name}) — skipped")
+    for y, fp, bp in pairs:
+        if not (fp.exists() and bp.exists()):
+            print(f"  {y}: source missing ({fp.name}) — skipped")
             continue
-        outp = DEC / f"kandy_decomp_predictions_{y}_additive_v3{suffix}.parquet"
-        out, ann, hourly = build_v3_from_v2(fp, bp, eps0, outp)
+        comp = None
+        if C["companion"] is not None:
+            csrc = C["companion"]["field"](y)
+            if csrc.exists():
+                comp = {"src": csrc, "out": C["companion"]["out"](y)}
+        out, ann, hourly = build_v3_from_v2(fp, bp, eps0, C["out"](y),
+                                            tz=C["tz"], companion=comp)
         worst_ann = max(worst_ann, ann); worst_hr = max(worst_hr, hourly)
-        print(f"  {y}{suffix}: basin {out.groupby('time').pm25_q50.mean().mean():6.3f} "
-              f"| annual T-lock {ann:.6f} | per-hour max {hourly:.3f} | -> {outp.name}")
+        print(f"  {y}: basin {out.groupby('time').pm25_q50.mean().mean():6.3f} "
+              f"| annual T-lock {ann:.6f} | per-hour max {hourly:.3f}"
+              f"{' | +vand tier' if comp else ''} -> {C['out'](y).name}")
     print(f"\nannual T-lock (published quantity): worst {worst_ann:.6f} "
           f"({'PASS' if worst_ann < 0.01 else 'FAIL'})")
     print(f"per-hour max drift (physical 0-floor, informational): {worst_hr:.3f} ug/m3")
-    print("next: point webapp exporter at additive_v3 + mirror the floor in store.js")
+    print(f"next: score v3 vs v2 vs the withheld network, then point the exporter "
+          f"({a.city}) at additive_v3")
 
 
 if __name__ == "__main__":

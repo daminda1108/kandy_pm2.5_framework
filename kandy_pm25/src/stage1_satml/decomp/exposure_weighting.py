@@ -78,7 +78,11 @@ def _field_path(year, suffix):
     raise FileNotFoundError(year)
 
 
-_ADD = "_additive" if os.environ.get("PAPERFIG_VARIANT", "v2") == "v1" else "_additive_v2"
+# tier selector: v1 archive | v2 (paper/scorecard) | v3 (shipped: + ventilated-hour
+# floor). Default follows the SHIPPED product so health numbers cannot silently
+# describe a different field from the one the explorer draws (2026-07-25 audit).
+_VAR = os.environ.get("PAPERFIG_VARIANT", "v3")
+_ADD = {"v1": "_additive", "v2": "_additive_v2"}.get(_VAR, "_additive_v3")
 
 
 def _annual(year, col="pm25_q50", suffix=_ADD):

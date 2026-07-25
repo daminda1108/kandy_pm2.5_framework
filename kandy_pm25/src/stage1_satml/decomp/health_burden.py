@@ -60,9 +60,17 @@ def af(pm):
     return (rr - 1.0) / rr
 
 
-def _field_path(year, suffix="_additive"):
-    """headline = additive (Lenschow) field; fall back to 4-factor then smooth."""
-    for suf in [suffix, "_additive", "_4factor", ""]:
+def _field_path(year, suffix="_additive_v3"):
+    """headline = the SHIPPED additive field, newest tier first, then fall back.
+
+    Default follows the shipped product (v3 = increment split + ventilated-hour
+    floor) so the burden cannot silently describe a different field from the one the
+    explorer draws. Audited 2026-07-25: the choice is immaterial to the number —
+    2023 population-weighted exposure is 21.43 (v1) / 21.49 (v2) / 21.53 (v3), a
+    0.5% spread that moves the burden by ~2 deaths against a [229, 625] interval.
+    That insensitivity is itself the robustness claim of the sensitivity analysis.
+    """
+    for suf in [suffix, "_additive_v2", "_additive", "_4factor", ""]:
         p = DEC / f"kandy_decomp_predictions_{year}{suf}.parquet"
         if p.exists():
             return p
