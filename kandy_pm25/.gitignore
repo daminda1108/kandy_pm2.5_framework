@@ -29,6 +29,8 @@ scripts/*
 !scripts/panel_expansion_census.py
 !scripts/panel_expansion_select.py
 !scripts/panel_expansion_ingest.py
+# forecast arc evidence (paper 2 candidate)
+!scripts/forecast_backtest_m2.py
 !scripts/build_station_terrain.py
 !scripts/build_xichang_core_terrain.py
 !scripts/build_xichang_traffic_emission.py
