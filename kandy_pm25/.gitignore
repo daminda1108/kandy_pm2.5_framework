@@ -24,6 +24,11 @@ scripts/*
 !scripts/xichang_twin_figures.py
 !scripts/xichang_paper_figures.py
 !scripts/city_validation_scorecard.py
+# panel expansion evidence chain (paper 2; criteria pre-registered in
+# docs/panel_expansion_eligibility_2026-07-26.md)
+!scripts/panel_expansion_census.py
+!scripts/panel_expansion_select.py
+!scripts/panel_expansion_ingest.py
 !scripts/build_station_terrain.py
 !scripts/build_xichang_core_terrain.py
 !scripts/build_xichang_traffic_emission.py

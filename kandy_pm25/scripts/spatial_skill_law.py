@@ -38,7 +38,8 @@ SCORE = REPO / "results" / "figures" / "multicity" / "validation_scorecard.csv"
 SLUG = {"Xichang": "xichang", "Chiang Mai": "chiangmai", "Bazhong (Sichuan)": "bazhou",
         "Chandigarh": "chandigarh", "Kathmandu Valley": "kathmandu",
         "Tai'an (foot of Mt Tai, Shandong)": "taian", "Baoji (Wei R. valley, Shaanxi)": "baoji",
-        "Yichang (Yangtze valley, Hubei)": "yichang", "Medellín (Aburrá Valley, Colombia)": "medellin"}
+        "Yichang (Yangtze valley, Hubei)": "yichang", "Medellín (Aburrá Valley, Colombia)": "medellin",
+        "Bogotá (Sabana de Bogotá, Colombia)": "bogota"}
 
 
 def relief(npz_path, key="delta_z"):
