@@ -31,6 +31,15 @@ scripts/*
 !scripts/panel_expansion_ingest.py
 # forecast arc evidence (paper 2 candidate)
 !scripts/forecast_backtest_m2.py
+# forecast tier (webapp demonstration, 2026-07-27)
+!scripts/kandy_forecast_ood_widening.py
+!scripts/kandy_forecast_pack_update.py
+!scripts/kandy_era5land_refresh.py
+!scripts/kandy_background_relevel.py
+!scripts/kandy_background_cap.py
+!scripts/kandy_background_nbro_check.py
+!scripts/kandy_background_v3.py
+!scripts/kandy_anomaly_target_test.py
 !scripts/build_station_terrain.py
 !scripts/build_xichang_core_terrain.py
 !scripts/build_xichang_traffic_emission.py
@@ -42,6 +51,7 @@ scripts/*
 !scripts/spatial_skill_law.py
 !scripts/w2_transboundary_figure.py
 # additive_v3 ventilated-hour floor (2026-07-21): the builder + the Medellín fit/gate
+!scripts/build_additive_field_v2.py
 !scripts/build_additive_field_v3.py
 !scripts/flat_hour_residual_fit.py
 !scripts/score_additive_v3.py

@@ -52,6 +52,9 @@ LGBM = dict(learning_rate=0.05, num_leaves=63, n_estimators=400,
             min_child_samples=20, subsample=0.8, colsample_bytree=0.8,
             verbose=-1, n_jobs=-1)
 F_LOCAL = 0.24          # Kandy official local fraction (SBI band [0.10, 0.27])
+# Years that carry a GEOS-CF chemistry prior — the reference for the day-of-year
+# background shape used by ERA5-only years (see _prior_reference).
+ANCHOR_PRIOR_YEARS = [2024, 2025]
 TZ = "Asia/Colombo"
 
 
@@ -82,6 +85,21 @@ def _drivers_from_inference_grid(year):
           .reset_index())
     d["wspd"] = np.hypot(d.u10, d.v10)
     return calendar(d)
+
+
+def _prior_reference(drv):
+    """Rows carrying a chemistry prior, for the day-of-year background shape.
+
+    Deliberately independent of the --years selection: it starts from whatever the
+    caller loaded, and if that is too thin it loads the years that DO carry
+    GEOS-CF. Otherwise the background's daily structure silently depends on which
+    years the invocation happened to include (found 2026-07-27).
+    """
+    ref = drv[drv.c_prior.notna()].copy()
+    if len(ref) >= 1000:
+        return ref
+    extra = load_drivers([y for y in ANCHOR_PRIOR_YEARS], quiet=True)
+    return extra[extra.c_prior.notna()].copy()
 
 
 def load_drivers(years, quiet=False):
@@ -355,9 +373,20 @@ def main():
             # ERA5-only year: no chemistry prior to shape the background. Use the
             # day-of-year climatology of the normalised daily prior from the years
             # that do have it, so the seasonal background structure is preserved.
-            ref = drv[drv.c_prior.notna()].copy()
+            # The reference must NOT depend on which years this invocation happens to
+            # build. Building 2026 alone leaves `drv` holding only 2026, whose 36
+            # GEOS-CF rows trip the guard below and silently flatten the daily shape:
+            # B then becomes a smooth deterministic multiple of T, the increment never
+            # goes negative (measured: 100% accumulation hours in every month of 2026,
+            # against 37-100% when built with the full set) and the low-season spatial
+            # contrast drops another ~10%. A build flag must not change the physics.
+            ref = _prior_reference(drv)
             if len(ref) < 1000:
-                shape = np.ones(len(gd))
+                raise SystemExit(
+                    f"{y}: ERA5-only year needs a chemistry-prior reference for the "
+                    f"daily background shape, found {len(ref)} rows. Build the years "
+                    f"that carry GEOS-CF alongside it (e.g. --years 2024 2025 {y}) "
+                    f"rather than shipping a flat daily background.")
             else:
                 rd = ref.groupby(ref.valid.dt.floor("D")).agg(
                     c=("c_prior", "mean"), doy=("valid", lambda s: s.iloc[0].dayofyear))
