@@ -40,6 +40,7 @@ scripts/*
 !scripts/kandy_background_nbro_check.py
 !scripts/kandy_background_v3.py
 !scripts/kandy_background_v4.py
+!scripts/kandy_background_v5.py
 !scripts/kandy_f_reconciliation.py
 !scripts/kandy_anomaly_target_test.py
 !scripts/build_station_terrain.py
