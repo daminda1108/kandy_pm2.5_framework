@@ -45,6 +45,7 @@ scripts/*
 !scripts/kandy_f_hierarchical.py
 !scripts/kandy_holiday_experiment.py
 !scripts/anchor_choice_sensitivity.py
+!scripts/kandy_interval_coverage.py
 !scripts/panel_city_graph_donor.py
 !scripts/kandy_anomaly_target_test.py
 !scripts/build_station_terrain.py
