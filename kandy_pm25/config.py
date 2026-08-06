@@ -28,6 +28,14 @@ GEE_PROJECT = "kandypinn"
 # VanD basin reading ~19.7, corroborated by GHAP ~17). The decomposition level
 # anchor uses VanD's area mean directly (β≡1); KOALA is reproduced at the NIFS pixel
 # by the confinement field, not forced. See features/vandonkelaar.py + gotcha #51.
+# PROVENANCE (corrected 2026-08-06): Senarathna et al. 2024 does NOT print an annual
+# mean. This value was derived in-project from that paper's monthly means; recomputing
+# from the published monthlies gives ~24.46, so the four significant figures here are
+# not supported by the source and the constant should be quoted as "about 24.5".
+# It is retained unchanged because Section 6.1 established that R^2 is invariant to the
+# anchor across 20 to 29 ug/m3 -- the number is a reference point, not a fitted
+# quantity, and changing it would churn artifacts for no effect. Do not cite it as a
+# figure the paper reports.
 KOALA_ANCHOR_UG_M3 = 24.5225
 
 # CAMS EAC4 over Kandy, 2019 annual mean, raw (uncorrected)
@@ -575,7 +583,9 @@ WHO_PM25_24H_GUIDELINE     = 15.0  # WHO 2021 24h guideline
 INDIA_NAAQS_PM25_ANNUAL    = 40.0  # NAAQS (relevant as regional comparison)
 
 # Stage 3 TD-PINN v4 architecture constants
-KOALA_PM25_ANCHOR = 24.5225   # Senarathna et al. 2024 annual mean (Kandy KOALA station)
+KOALA_PM25_ANCHOR = 24.5225   # in-project value derived from Senarathna et al. 2024's
+                              # MONTHLY means; the paper prints no annual mean (see the
+                              # provenance note on KOALA_ANCHOR_UG_M3 above)
 PINN_DELTA_MAX    = 15.0      # max deviation from prior: C = C_prior + tanh(head)*DELTA_MAX
 
 # ─────────────────────────────────────────────
