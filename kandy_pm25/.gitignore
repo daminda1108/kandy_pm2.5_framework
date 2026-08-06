@@ -42,6 +42,8 @@ scripts/*
 !scripts/kandy_background_v4.py
 !scripts/kandy_background_v5.py
 !scripts/kandy_f_reconciliation.py
+!scripts/kandy_f_hierarchical.py
+!scripts/panel_city_graph_donor.py
 !scripts/kandy_anomaly_target_test.py
 !scripts/build_station_terrain.py
 !scripts/build_xichang_core_terrain.py
