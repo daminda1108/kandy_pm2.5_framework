@@ -22,12 +22,54 @@ E_DOMESTIC = np.array([0.10, 0.10, 0.10, 0.10, 0.10, 0.30, 0.80, 1.80, 1.40, 0.7
                        0.40, 0.40, 0.50, 0.40, 0.40, 0.50, 0.80, 1.40, 2.00, 1.80,
                        1.20, 0.60, 0.30, 0.20])
 
-VEHICULAR_SHARE = 0.90        # Kandy ~90% vehicular (tunable prior)
+VEHICULAR_SHARE = 0.90        # Kandy ~90% vehicular
+# ── STATUS (2026-08-06, W10): the vehicular share is a prior with LOCAL OBSERVATIONAL
+# SUPPORT, and the evening lobe below is a LOCAL CORRECTION, not literature.
+# `scripts/kandy_holiday_experiment.py` uses Sri Lankan public holidays as a natural
+# experiment: they remove local activity and leave transboundary transport untouched, so
+# the holiday-minus-working-day difference at hour h estimates the local emission clock.
+# It confirmed the ~90% vehicular assumption (the effect is 3.67x stronger at rush hours,
+# and zero at midnight -- the vehicle signature) and rejected one feature of the profile.
+# `scripts/kandy_emission_clock_fit.py` quantifies it on 971 treated sensor-hours:
+#
+#     quantity                 EDGAR prior     measured (bootstrap 90% CI)
+#     morning peak hour        08:00           08:00              <- prior CONFIRMED
+#     evening peak hour        17:00           19:00 [17, 21]
+#     evening/morning ratio    0.97            2.14 [1.17, 4.35]  <- prior REJECTED
+#
+# The CI on the ratio excludes the prior value, so the prior is not merely uncertain
+# there. The correction below shifts the evening lobe +1 h and raises it by x1.479,
+# SHRUNK toward the prior in proportion to the width of the bootstrap interval (w=0.40)
+# because ~40 treated hours per bin is thin. Morning lobe, night floor and overall shape
+# remain the EDGAR prior -- the instrument identifies the evening lobe and nothing more.
+# Agreement with the measured clock rises from r=0.49 to r=0.79.
+# Set EVENING_FIT = False to recover the pre-2026-08-06 literature-only profile exactly.
+EVENING_FIT = True
+_EVE = np.arange(14, 24)      # hours the correction touches
+_EVE_SHIFT = 1                # hours later, from the measured peak
+_EVE_GAIN = 1.479             # amplitude above the night floor, shrunk toward the prior
 
 
-def emission_profile(vehicular_share: float = VEHICULAR_SHARE) -> np.ndarray:
+def _correct_evening(prof: np.ndarray) -> np.ndarray:
+    """Shift and scale the evening lobe above the night floor. Mean-preserving."""
+    p = np.asarray(prof, float).copy()
+    floor = p[[2, 3]].mean()
+    lobe = np.clip(p[_EVE] - floor, 0.0, None) * _EVE_GAIN
+    # shift LATER with edge clamping. np.roll would wrap the tail of the lobe back onto
+    # the first hour of the window and punch a hole at 14:00 -- the shift is in time,
+    # not a rotation.
+    idx = np.clip(np.arange(len(lobe)) - _EVE_SHIFT, 0, len(lobe) - 1)
+    p[_EVE] = floor + lobe[idx]
+    return p
+
+
+def emission_profile(vehicular_share: float = VEHICULAR_SHARE,
+                     evening_fit: bool = None) -> np.ndarray:
     """Normalised (mean 1) diurnal emission weight, length 24 (local hour)."""
-    e = vehicular_share * E_TRAFFIC + (1.0 - vehicular_share) * E_DOMESTIC
+    if evening_fit is None:
+        evening_fit = EVENING_FIT
+    traffic = _correct_evening(E_TRAFFIC) if evening_fit else E_TRAFFIC
+    e = vehicular_share * traffic + (1.0 - vehicular_share) * E_DOMESTIC
     return e / e.mean()
 
 

@@ -55,6 +55,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # Kept, defaulted OFF, because the diagnosis and the machinery are both worth having:
 # the real fix is an hourly background (Consolidation v3), not a bound on a daily one.
 RELEVEL = False
+F_MIN = 0.02      # minimum local share at every hour (coherence cap; see build_B_v2).
+# Chosen as the SMALLEST value that removes the zero-local-share defect (0.08% of hours
+# residual, against 2.57% at F_MIN=0), not tuned to a target f. The resulting annual f is
+# almost independent of it -- 0.477 at F_MIN=0.00 through 0.502 at 0.08 -- so f is set by
+# the coherence constraint itself, not by this parameter.
 
 
 def relevel_background(B: pd.DataFrame, year: int) -> pd.DataFrame:
@@ -134,6 +139,36 @@ def build_B_v2(year, b_annual) -> pd.DataFrame:
     day["Bd"] *= b_annual / day.Bd.mean()                 # exact annual mean
     bmap = dict(zip(day.date, day.Bd))
     B = t.date.map(bmap).to_numpy()
+
+    # ── COHERENCE CAP (2026-08-09) ────────────────────────────────────────────
+    # Physical constraint, raised by an external reviewer and correct: local sources
+    # (traffic, cooking, waste burning) emit continuously, so at an emitting location the
+    # local increment is strictly positive at EVERY hour -- rain changes removal, not
+    # emission. Therefore B <= T always, and a background at or above the total is not a
+    # physical state: it means B is over-estimated for that hour.
+    #
+    # Uncapped this was violated in ~25% of hours (63% in October), rendering the field
+    # exactly flat and reporting a zero local share at the traffic core. The cap is the
+    # coherence bound already derived in ledger F.17: a background held FLAT WITHIN A DAY
+    # cannot exceed that day's MINIMUM total, so cap each day's B at (1-F_MIN) x min_hour(T)
+    # for that day. That keeps B daily-flat (its defining structure), guarantees a local
+    # share of at least F_MIN at every hour, and is a DERIVED constraint rather than a new
+    # free parameter.
+    #
+    # NOTE this necessarily raises the annual local fraction -- that is the point. The
+    # shipped f of 0.244 sat BELOW its own coherence floor in nine months of twelve, and
+    # three independent lines (floor >= 0.41, hierarchical 0.392, network 0.446) place it
+    # near 0.4. The T-lock means basin means, exposure and burden are unchanged.
+    Tq = pd.read_parquet(TANCHOR / f"T_kandy_hourly_{year}.parquet",
+                         columns=["datetime_utc", "T_q50"])
+    Tq["date"] = pd.to_datetime(Tq["datetime_utc"]).dt.tz_localize(None).dt.floor("D")
+    tmin = Tq.groupby("date").T_q50.min()
+    cap = (1.0 - F_MIN) * t.date.map(tmin).to_numpy()
+    n_capped = int(np.sum(B > cap))
+    B = np.minimum(B, cap)
+    if n_capped:
+        print(f"    coherence cap: {n_capped:,} of {len(B):,} hours "
+              f"({100 * n_capped / len(B):.1f}%) had B > (1-{F_MIN}) x daily-min T")
     return pd.DataFrame({"datetime_utc": t.datetime_utc, "B": B,
                          "B_lo": 0.70 * B, "B_hi": 1.25 * B})  # proportional bg band
 

@@ -2,15 +2,19 @@
 
 Undergraduate thesis project — Daminda Alahakoon, Department of Environmental Sciences, University of Peradeniya.
 
+**Last updated: 2026-08-10.** Canonical state is [`CLAUDE.md`](CLAUDE.md); this README mirrors it. Build detail is in [`PROJECT_ARCHITECTURE.md`](PROJECT_ARCHITECTURE.md).
+
 ---
 
 ## Overview
 
 Kandy, Sri Lanka has no continuous PM2.5 monitoring stations. This repository develops a two-stage framework for spatiotemporally resolved PM2.5 estimation over Kandy at the intrinsic resolution of the available driving data — 1 km, hourly — with calibrated per-pixel uncertainty.
 
-Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). The **deployable spatial product** is a physically-structured *additive background-plus-increment decomposition* that places the Stage A temporal anchor into a 1 km hourly field using measured satellite emission patterns, terrain confinement, and diagnostic terrain winds, separating the regional and transboundary background (≈ 75 % of exposure) from the locally-generated, locally-actionable increment (≈ 25 %). An earlier exploratory route — a Convolutional Neural Process trained zero-shot across three source cities (Stage B) — is retained as the cross-city experiment that motivated the decomposition.
+Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). The **deployable spatial product** is a physically-structured *additive background-plus-increment decomposition* that places the Stage A temporal anchor into a 1 km hourly field using measured satellite emission patterns, terrain confinement, and diagnostic terrain winds, separating a regional and transboundary background from the locally-generated, locally-actionable increment. An earlier exploratory route — a Convolutional Neural Process trained zero-shot across three source cities (Stage B) — is retained as the cross-city experiment that motivated the decomposition.
 
-What the framework does *not* do, in its current form: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; it does not chemically apportion sources; and it reconstructs rather than forecasts (forecasting is a documented future expansion, contingent on local ground data). Outputs are hourly 1 km PM2.5 fields with calibrated uncertainty and a population-exposure / health-burden layer. Strict spatial validation requires field deployment at Kandy with elevation-spanning hourly sensors, identified as the binding next step.
+The **local fraction `f`** governing that separation is now set by a physical constraint rather than a literature prior. Local sources emit continuously, so the local increment at an emitting location is strictly positive at every hour — rain changes removal, not emission — and therefore the background can never equal or exceed the total. Imposing that (capping each day's background at the day's minimum total) gives **`f ≈ 0.48`**: roughly half the annual mean is locally generated. The value is set by the constraint, not by a tuning parameter — sweeping the one free parameter across a fourfold range moves `f` only from 0.477 to 0.502 — and it agrees with three independent lines of evidence (a coherence floor of ≥0.41 from the anchor alone, a hierarchical fit with Kandy held out at 0.392, and a national-network instrument at 0.446). The conventional source-apportionment prior of ~0.25, used in earlier versions of this work, sat below its own coherence floor in nine months of twelve and is retired. The field is *T-locked*, so the level, exposure and health burden are arithmetically unchanged by this; what changes is the attribution.
+
+What the framework does *not* do, in its current form: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; and it does not chemically apportion sources. Outputs are hourly 1 km PM2.5 fields with calibrated uncertainty and a population-exposure / health-burden layer, plus a separately-labelled forecast tier shipped as a **demonstration**. Strict spatial validation requires field deployment at Kandy with elevation-spanning hourly sensors, identified as the binding next step.
 
 ---
 
@@ -105,7 +109,7 @@ The deployable Kandy spatial product. It replaces the held ConvCNP zero-shot map
 PM(x, y, t) = B(t) + [ T(t) − B(t) ] · P_local(x, y, t)
 ```
 
-- **B(t)** — regional and transboundary background, horizontally uniform per hour. Built as a rural Van Donkelaar floor (10th percentile of a ±0.45° box) scaled by the GEOS-CF daily seasonal shape; diurnally flat. The local fraction is fixed at ≈ 0.25 (basin exposure ≈ 75 % regional / 25 % local), bracketed [15 %, < 50 %] from source-apportionment literature (World Bank 2022; Seneviratne 2017) — **not** satellite-tuned, so the independent GHAP urban/rural ratio (1.18×) corroborates rather than sets it.
+- **B(t)** — regional and transboundary background, horizontally uniform per hour. Built as a rural Van Donkelaar floor (10th percentile of a ±0.45° box) scaled by the GEOS-CF daily seasonal shape; **daily resolution, diurnally flat** — a known limitation, see below. It is levelled by a local fraction `f` set per year in the range 0.20–0.28, originally bracketed [15 %, < 50 %] from source-apportionment literature (World Bank 2022; Seneviratne 2017) and **not** satellite-tuned. That prior is now superseded as an estimate — see [Local/regional partition](#localregional-partition--an-open-quantity).
 - **T(t)** — the Stage A v3 lag-free temporal anchor, conformal-wrapped and amplitude-sharpened (above).
 - **P_local** — unit-mean local pattern, the normalised product of emission structure (Van Donkelaar surface + a bottom-up congestion-weighted traffic source: network betweenness/closeness × COPERT emission factors), boundary-layer-scaled terrain confinement $M = 1 + \kappa\,w(\mathrm{BLH})\,c(x,y)$, and a transport overlay $A_\text{transport}$ on **WindNinja** mass-consistent diagnostic winds (channelling + day-anabatic / night-katabatic drainage) with a bimodal diurnal emission-timing profile. Because $P_\text{local}$ has unit basin mean, the basin-average concentration is preserved exactly at $T(t)$ and only the spatial *arrangement* of the local quarter is structured. $A_\text{transport}$ is shipped as a physically-motivated **scenario**, not a validated layer.
 
@@ -115,11 +119,69 @@ PM(x, y, t) = B(t) + [ T(t) − B(t) ] · P_local(x, y, t)
 
 **Independent corroboration (not validation).** GHAP (Wei et al., 1 km, methodologically distinct from Van Donkelaar): seasonal r = +0.909; basin level within ≈ 6 %; fine-spatial r = +0.13 (both products smooth at that scale); inter-annual ≈ 0 (trend low-confidence). TROPOMI NO₂ corroborates emission placement (core > edge). The model independently reconstructs documented Kandy haze episodes (Nov 2019, Dec 2022) at the right level by the right mechanism.
 
-**Exposure and health.** Population clusters in the higher-loading core, so area mean understates exposure: area ≈ 21 → population-weighted ≈ 23 → populated-core ≈ 24 ≈ the 2019 KOALA point. A GEMM concentration–response layer gives an attributable-mortality estimate on the order of ~400 deaths/yr for the most recent year (wide interval), a substantial share of it tied to the locally-actionable increment.
+**Exposure and health (2023, shipped tier).** Population clusters in the higher-loading core, so the area mean understates exposure: area 21.0 → residential 21.5 → **dynamic population-weighted 22.6** → populated-core 22.0. Health statements use the dynamic population-weighted figure. A GEMM concentration–response layer gives **427 attributable deaths/yr [235–625]**, attributable fraction 18.0 %, of which 295 are avoidable against the WHO guideline. All four exposure tiers sit *below* the 2019 KOALA point (24.5 µg/m³), which is a valley-floor measurement, not an area mean.
 
-**Known limitations.** The fine-scale spatial *magnitude* of the core enhancement is imposed from physics and not independently measured — no public monitoring network anywhere samples the valley-floor-to-ridge gradient (a several-hundred-valley screen confirmed floor-clustering is universal). The confinement strength $\kappa$, the local fraction, the traffic emission scaling, and the transport amplitude are literature priors, not Kandy-calibrated. These are exactly the quantities that elevation-spanning local ground data would resolve.
+**Known limitations.** The fine-scale spatial *magnitude* of the core enhancement is imposed from physics and not independently measured — no public monitoring network anywhere samples the valley-floor-to-ridge gradient (a several-hundred-valley screen confirmed floor-clustering is universal), and **five independent tests** now establish that it cannot be learned from public covariates either (learned-pattern null; dynamic-transport null; two emission-proxy nulls; and an AlphaEarth Earth-representation-embedding null replicated in three valleys). The ceiling is information-limited, not model-limited. The confinement strength $\kappa$, the local fraction, the traffic emission scaling, and the transport amplitude are literature priors, not Kandy-calibrated. These are exactly the quantities that elevation-spanning local ground data would resolve.
+
+**Interval centring.** The shipped 90 % interval covers 72.4 % of observed hours at the two sensor pixels. This is a *centring* offset, not a width error: the failure is one-sided (observations below the lower bound in 25.7 % of hours, above the upper in 1.9 %) with a median offset of +5.85 µg/m³ — the expected area-vs-point geometry, since the field is a 1 km area mean and the sensors are points. Removing each sensor's own median offset restores 91.5 % coverage. **Standing prediction:** a naive comparison against any future point measurement at Kandy will show the model ≈ 40 % high; that offset of +5 to +6 µg/m³ is expected and must be removed before any bias or coverage statement. An offset far outside that range indicates a genuine level error.
+
+**Field tiers.** Three variants exist and are not interchangeable. `additive_v2` is the **locked** tier the paper and the multi-city scorecard are scored on (2019–2023). `additive_v3` adds a bounded, mean-zero *pattern floor* on ventilated hours — without it the increment split renders well-mixed hours perfectly flat, which held-out Medellín stations show the real atmosphere never is; it is T-lock-exact by construction, leaves structured hours byte-identical, and is what the web application serves. A separate **driver-anchored extension tier** covers 2024–2026, where the satellite level anchor no longer reaches, and is labelled as such everywhere it appears.
 
 Code: `kandy_pm25/src/stage1_satml/decomp/` (build + figure suite) and `src/stage1_satml/models/predict_T_anchor_v3.py`. Canonical figure suite: `decomp/paper_figures.py` (F1–F13). Plans: `docs/additive_background_increment_plan_2026-06-04.md`, `docs/kandy_production_plan_2026-05-29.md`.
+
+---
+
+## Local/regional partition — an open quantity
+
+The split between the regional background `B(t)` and the local increment is the least-settled number in the model, and the 2026-08 assessment is recorded here rather than in the shipped value.
+
+**The shipped prior is refuted.** Five independent lines converge well above it:
+
+| Line | Estimate of `f` | Independent of the model? |
+|---|---|---|
+| Hierarchical Bayesian pooling over 4 cities, Kandy held out | **0.392** [0.258, 0.525] | fitted on other cities only |
+| Coherence floor (a within-day-flat `B` cannot exceed the day's minimum total) | **≥ 0.410** | uses the shipped anchor alone |
+| NBRO island-network background instrument | **0.446** | yes — external measurement |
+| Holiday natural experiments (Sunday / Poya / fixed holidays) | 0.24 – 0.52 | yes — external event structure |
+| Source-apportionment literature bracket | [0.15, 0.50] | yes |
+| **Shipped value** | **0.244** | — |
+
+The hierarchical fit also recovers a **multiplicative attenuation `ρ = 0.426 ± 0.066`** in the project's own simulation-based inference: that inference systematically recovers only ~43 % of the true fraction, which explains why it read low at every locally-dominated city.
+
+**Why the shipped value was not simply raised.** An independent background, pointwise coherence, `f` inside the literature bracket, and the observed wet/dry seasonal ratio are **four constraints on three degrees of freedom**. Five separate background reconstructions were built and gated; each satisfies three constraints and breaks the fourth, and which one breaks depends only on which was left unconstrained. The best candidate reached `f = 0.438` — matching the external instrument — and improved coherence from 28.5 % to 7.4 %, but drove the seasonal ratio to 0.349 against an observed 0.53, so it was rejected on the same gate that rejected the earlier attempts.
+
+**What ships instead.** No model quantity was changed. Hours where the split cannot be made coherently now say *"Local contribution not resolvable this hour"* with the reason, rather than printing a spurious 0 % local share. The binding gap is specific and cheap to close: **1.8 % of hours put the total below the measured regional floor**, and that floor is an island-wide percentile pooling coastal stations while Kandy is inland and elevated. One in-basin or upwind monitor determines which side is wrong and collapses the over-determination. This is a measurement, not a reformulation.
+
+---
+
+## Transfer validation — the multi-city scorecard
+
+Kandy has no held-out network, so the model is validated where analogous cities *do* have one: the production pipeline is run end-to-end at each city under **the same two-sensor information budget Kandy has**, and scored against that city's withheld monitors. This is the "borrowed ground truth" design.
+
+**Panel: N = 10 cities, 5 countries, 2 continents** (Xichang, Chiang Mai, Bazhong, Chandigarh, Kathmandu, Baoji, Tai'an, Yichang, Medellín, Bogotá).
+
+| Axis | Result | Gate tally |
+|---|---|---|
+| Seasonal correlation | 0.97 – 1.00 | 10/10 met |
+| Diurnal correlation | 0.60 – 0.97 | 8/10 met |
+| Level bias | −4 % to +30 % | 8/10 met |
+| Fine within-city spatial rank | ρ 0.07 – 0.78 | **4 of 9 estimable** met |
+
+The honest reading: **temporal structure and level transfer robustly across regimes; fine within-city spatial rank does not.** The spatial gate's failure pattern is itself the evidence for the information ceiling. Two results are worth stating because they were predicted wrongly beforehand — Medellín and Bogotá, the two cities where relief is weakest or absent, rank *highest* on fine spatial skill, which locates the spatial signal in the **emission surface rather than in terrain relief**. Chandigarh's spatial rank is **not estimable** (fewer than four co-located held-out stations) and is reported as such, never as a measured null.
+
+---
+
+## Deliverables
+
+| Artefact | Status |
+|---|---|
+| **Kandy PM2.5 Explorer** — public web application, client-side field reconstruction | live, 2019–2026 + demonstration forecast tier |
+| **Medellín showcase app** — the same engine where a city *does* have ground truth | live, 2018–2024 |
+| **Preprint** (`kandy_pm25/docs/reports/preprint_kandy.pdf`) | 30 pp, claim-audited, submission-ready pending supervisor review |
+| **Standalone model release** — `daminda1108/kandy_pm25_model`, MIT | v1.0.0 |
+| **Technical reference** — 20-part model reference + epistemic ledger | current |
+
+The forecast tier is labelled a **demonstration** in the interface and in every string: it is driven by an archived forecast-driver backtest at Medellín showing a skill improvement of **+0.120** over 24-hour persistence on a clean temporal split. An earlier figure of +0.223 was inflated by training-window leakage and must not be quoted.
 
 ---
 
@@ -129,7 +191,7 @@ Code: `kandy_pm25/src/stage1_satml/decomp/` (build + figure suite) and `src/stag
 
 **Reanalysis prior (preprocessing step inside Stage B).** GEOS-CF PM25_RH35_GCC at 0.25° hourly is scaled per city by `c_prior_scaled = c_prior × city_ratio`, where `city_ratio = mean(pm25) / mean(c_prior)` is computed on per-row station–timestamp overlap. The Kandy ratio is 0.536 (= 24.5 / 45.7, KOALA / GEE GEOS-CF mean). This corrects the well-documented GEOS-CF over-prediction in tropical Asia and prevents prior-inflation in the residual.
 
-**Source cities (N = 3, locked).** Medellín (11 stations, lowland control), Chiang Mai (8, tropical analogue), Kathmandu (45, dense valley). Bogotá and Mexico City were dropped as different atmospheric regimes. The roster is intended to expand to N ≥ 6 via PVAF v1 (highland-valley analogue finder; currently selecting candidates from Dhaka, Lahore, Jakarta, Kabul, La Paz, Quito).
+**Source cities (N = 3, locked).** Medellín (11 stations, lowland control), Chiang Mai (8, tropical analogue), Kathmandu (45, dense valley). Bogotá and Mexico City were dropped as different atmospheric regimes. *(Historical: the roster was intended to expand via PVAF. That expansion happened, but into the **decomposition** transfer panel described above, not into ConvCNP training — the ConvCNP line was retired before the expanded source set could be used.)*
 
 **Architecture.** deepsensor 0.4.2 ConvNP. UNet (32, 64, 128), 625,989 parameters. Student-t(df = 5) likelihood for robust point estimation; cosine LR 5 × 10⁻⁵ → 1 × 10⁻⁶, gradient clip 1.0. Inputs: station context (lat, lon, pm25) with per-station BLH, c_prior, diurnal and DOY harmonics; gridded auxiliaries c_prior, ERA5(-Land) BLH / u10 / v10 / T2m / dewpoint / precip, SRTM DEM, delta_z, OSM road density, VIIRS NTL.
 
@@ -186,7 +248,7 @@ A six-parameter rigid Whiteman terrain ansatz (`H_trap`, `α_v`, `w_stab`, `w_wi
 
 ### PVAF v1 — Physics-based Valley Analogue Finder
 
-A supporting tool, not a deployed stage. PVAF scores candidate cities against Kandy across four feature families (terrain, climate, emissions, monitoring coverage) to select highland-valley analogues for expanding the Stage B source roster from N = 3 to N ≥ 6 before regenerating Kandy production maps. Tier-1 sanity on the existing N = 4 set ranks Chiang Mai > Kathmandu > Medellín, matching the v14 LOOCV transfer-r rank order (Spearman ρ = 1.0). Code: `kandy_pm25/src/pvaf/`. Plan: `docs/pvaf_v1_plan.md`. Pre-registration: `osf.io/ykdb9` (locked 2026-05-23).
+A supporting tool, not a deployed stage. PVAF scores candidate cities against Kandy across four feature families (terrain, climate, emissions, monitoring coverage) to select highland-valley analogues. Tier-1 sanity on the N = 4 set ranks Chiang Mai > Kathmandu > Medellín, matching the v14 LOOCV transfer-r rank order (Spearman ρ = 1.0). Its lasting role is as the city-similarity component that seeded the decomposition transfer panel; a v2 rescoring added pollution magnitude and seasonal pattern as first-class axes after v1's magnitude-blindness selected industrial basins 3–4× dirtier than Kandy. Code: `kandy_pm25/src/pvaf/`. Plan: `docs/pvaf_v1_plan.md`. Pre-registration: `osf.io/ykdb9` (locked 2026-05-23).
 
 ---
 
@@ -194,9 +256,10 @@ A supporting tool, not a deployed stage. PVAF scores candidate cities against Ka
 
 ```
 ProjectCD/
-├── README.md                    This file
+├── README.md                    This file — public overview
+├── PROJECT_ARCHITECTURE.md      How the model is built (maths, module map, flow, tests)
 ├── CLAUDE.md                    Active session instructions (single source of truth for current state)
-├── PROJECT.md                   Detailed stage results, architecture, data inventory
+├── PROJECT.md                   Stage results, data inventory, epistemic status
 ├── memory/SESLOG.md             Session log (history of decisions and runs)
 ├── docs/
 │   ├── AUDIT_2026-05-08.md      Hostile peer-review audit and fix log
@@ -205,6 +268,10 @@ ProjectCD/
 │   ├── osf_prereg_*.md          Pre-registrations and amendments
 │   ├── pvaf_v1_plan.md          PVAF v1 plan and methodology
 │   └── archive/                 Superseded plans and reports (banner-marked)
+├── kandy_pm25/docs/             Current production working set + model reference + preprint
+├── kandy_webapp/                Kandy PM2.5 Explorer (separate public repo)
+├── medellin_webapp/             Medellín showcase app (separate public repo)
+├── kandy_pm25_release/          Standalone model release (separate public repo, MIT)
 ├── kandy_pm25/
 │   ├── config.py                All paths, constants, city ratios — single source of truth
 │   ├── requirements.txt
@@ -318,7 +385,8 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 
 - **Physics-structured, not black-box, at the spatial step.** The production field imposes its spatial structure from independently defensible physics (measured Van Donkelaar emission pattern, congestion-weighted traffic source, terrain confinement, WindNinja diagnostic winds) and learns only the temporal level from data. This is what avoided the cross-city ConvCNP failure mode, where the spatial pattern was inherited from the training cities rather than from Kandy.
 - **Basin mean is preserved exactly.** `P_local` is normalised to unit basin mean, so the basin-average concentration equals the temporal anchor `T(t)` and only the spatial *arrangement* of the local quarter is structured. The level itself is the per-year Van Donkelaar **area** mean (β ≡ 1).
-- **Additive, not multiplicative.** `PM = B + [T − B]·P_local` adds the regional background uniformly and structures only the locally generated increment; the earlier multiplicative `T·S·M` incorrectly modulated the transboundary background by the local pattern. The ≈ 25 % local fraction is bracketed from source-apportionment literature, not satellite-tuned — so the independent GHAP urban/rural ratio corroborates rather than sets it.
+- **Additive, not multiplicative.** `PM = B + [T − B]·P_local` adds the regional background uniformly and structures only the locally generated increment; the earlier multiplicative `T·S·M` incorrectly modulated the transboundary background by the local pattern. A held-out ablation quantifies the difference: multiplicative inflates the held-out level by +26 % where monitors cluster on the valley floor, additive by −0 %.
+- **The local fraction is a disclosed prior under active revision.** It is set per year in the range 0.20–0.28 and was never fitted; five independent lines now place it at 0.35–0.45. Because the field is T-locked the level and burden are insensitive to this — the attribution claim is not. See [Local/regional partition](#localregional-partition--an-open-quantity).
 - **Native resolution 1 km hourly.** GEOS-CF (0.25°) and ERA5 (0.25°) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
 - **Uncertainty quantification.** CV+ Mondrian conformal on the Stage A anchor; calibrated 90 % prediction interval plus a per-pixel spatial-uncertainty layer on the production field. Coverage and calibration are reported alongside every r / RMSE.
 - **Anchors are calibration anchors, not validators.** KOALA, Senarathna, GHAP, and the FECT sensors double as upstream calibration anchors and downstream consistency checks; they cannot independently validate. Agreement is reported as *corroboration*, never validation.

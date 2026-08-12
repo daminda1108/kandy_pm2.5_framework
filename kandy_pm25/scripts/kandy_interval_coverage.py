@@ -96,7 +96,17 @@ def main() -> None:
             # display clamps, so the interval is compared as displayed
             lo_, hi_ = j.pm25_q05.clip(lower=0), j.pm25_q95.clip(lower=0)
             inside = ((j.pm25_observed >= lo_) & (j.pm25_observed <= hi_))
-            rows.append({"year": int(y), "sensor": str(sid),
+            # CENTRING vs WIDTH (gotcha #75). A coverage shortfall can mean the interval
+            # is too narrow OR that it is the right width around the wrong centre. The
+            # field is a 1 km AREA mean and the sensor is a POINT (the area-vs-floor
+            # geometry of gotcha #51), so a one-sided miss with a stable offset is the
+            # expected signature of the second. Test it by removing each sensor's own
+            # median offset and re-measuring coverage of the SAME interval width.
+            off = float((j.pm25_q50 - j.pm25_observed).median())
+            inside_c = ((j.pm25_observed >= lo_ - off) & (j.pm25_observed <= hi_ - off))
+            rows.append({"median_offset": off,
+                         "coverage_offset_removed": float(inside_c.mean()),
+                         "year": int(y), "sensor": str(sid),
                          "name": str(g.sensor_name.iloc[0])[:18],
                          "pixel_offset_km": round(float(km), 2),
                          "n": int(len(j)), "coverage": float(inside.mean()),
@@ -137,14 +147,40 @@ def main() -> None:
     if seas:
         print("  by season: " + "  ".join(f"{k} {100 * v:.1f}%" for k, v in seas.items()))
 
-    verdict = ("BELOW NOMINAL even in-sample -- the shipped intervals are too narrow and "
-               "this is unambiguous" if pooled < NOMINAL - 0.02 else
-               "at or above nominal WHERE IT WAS FITTED; this bounds nothing about an "
-               "unmonitored pixel and must not be quoted as validated coverage")
+    below = float((R.below * R.n).sum() / tot_n)
+    above = float((R.above * R.n).sum() / tot_n)
+    off = float((R.median_offset * R.n).sum() / tot_n)
+    cov_c = float((R.coverage_offset_removed * R.n).sum() / tot_n)
+    print(f"\n  CENTRING vs WIDTH")
+    print(f"    misses below the lower bound : {100 * below:5.1f}%")
+    print(f"    misses above the upper bound : {100 * above:5.1f}%")
+    print(f"    median model-minus-obs offset: {off:+.2f} ug/m3")
+    print(f"    SAME width, offset removed   : {100 * cov_c:5.1f}%")
+
+    one_sided = below > 3 * above if above > 0 else below > 0.05
+    if pooled >= NOMINAL - 0.02:
+        verdict = ("at or above nominal WHERE IT WAS FITTED; this bounds nothing about an "
+                   "unmonitored pixel and must not be quoted as validated coverage")
+    elif one_sided and cov_c >= NOMINAL - 0.02:
+        verdict = (f"CENTRING, NOT WIDTH. Coverage is {100 * pooled:.1f}% against a 90% "
+                   f"nominal, but the failure is one-sided ({100 * below:.1f}% below vs "
+                   f"{100 * above:.1f}% above) with a median offset of {off:+.2f} ug/m3, "
+                   f"and removing each sensor's own offset restores {100 * cov_c:.1f}% at "
+                   f"the SAME width. This is the expected area-vs-point geometry (gotcha "
+                   f"#51), not a calibration failure. Report the offset, and predict it: a "
+                   f"naive comparison against a future point measurement will look like a "
+                   f"large high bias and will not be one.")
+    else:
+        verdict = ("BELOW NOMINAL even in-sample, and NOT explained by centring -- the "
+                   "shipped intervals are genuinely too narrow and this is unambiguous")
     print(f"\n  VERDICT: {verdict}")
 
     res = {"nominal": NOMINAL, "pooled_coverage": round(pooled, 4),
            "n_hours": int(tot_n),
+           "centring": {"miss_below": round(below, 4), "miss_above": round(above, 4),
+                        "median_offset_ug": round(off, 3),
+                        "coverage_offset_removed": round(cov_c, 4)},
+           "expected_point_comparison_offset_ug": [5.0, 6.0],
            "by_tier": {t: round(float((R[R.tier == t].coverage * R[R.tier == t].n).sum()
                                       / R[R.tier == t].n.sum()), 4)
                        for t in R.tier.unique()},

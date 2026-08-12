@@ -401,6 +401,22 @@ def main():
         sh = pd.Series(shape, index=gd.valid.to_numpy())
         sh = sh / sh.groupby(pd.DatetimeIndex(sh.index).month).transform("mean")
         B = base * sh.to_numpy()
+        # COHERENCE CAP (2026-08-10) — the same physical constraint the locked chain now
+        # carries (build_additive_field_v2.build_B_v2, ledger F.43): local sources emit
+        # continuously, so B <= T must hold at EVERY hour and a background at or above the
+        # total means B is over-estimated, not that emissions stopped. B is daily-flat, so
+        # cap each day at (1 - F_MIN) x that day's MINIMUM total. Without this the extension
+        # tier still reported a zero local share on 18-28% of hours after the locked years
+        # had been fixed — the two tiers build B by different routes and BOTH need it.
+        F_MIN_EXT = 0.02
+        _d = pd.DataFrame({"t": gy.datetime_utc.to_numpy(), "T": gy.T_q50.to_numpy()})
+        _d["day"] = pd.DatetimeIndex(_d.t).tz_convert(TZ).floor("D")
+        _cap = (1.0 - F_MIN_EXT) * _d.day.map(_d.groupby("day")["T"].min()).to_numpy()
+        _n = int(np.sum(B > _cap))
+        B = np.minimum(B, _cap)
+        if _n:
+            print(f"    {y}: coherence cap applied to {_n:,} of {len(B):,} hours "
+                  f"({100 * _n / len(B):.1f}%)")
         b_ann = float(np.nanmean(B))
         pd.DataFrame({"datetime_utc": gy.datetime_utc.to_numpy(),
                       "B": B, "B_lo": B * 0.70, "B_hi": B * 1.25}

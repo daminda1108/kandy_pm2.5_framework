@@ -85,3 +85,17 @@ node_modules/
 *.pkl
 *.pdf
 *.docx
+
+# reviewer-response evidence (2026-08-06): statistics the manuscript reports
+!scripts/spatial_rho_bootstrap.py
+!scripts/visibility_partial_correlation.py
+!scripts/reviewer_response_stats.py
+!scripts/kandy_emission_clock_fit.py
+!scripts/eps_floor_hierarchical.py
+!scripts/spatial_resolution_tests.py
+!scripts/spatial_pairing_diagnostic.py
+!scripts/spatial_common_hours_test.py
+!scripts/spatial_significance_test.py
+!scripts/zone_contrast_corrected.py
+!scripts/kandy_activity_shocks.py
+!scripts/panel_reference_partition.py
