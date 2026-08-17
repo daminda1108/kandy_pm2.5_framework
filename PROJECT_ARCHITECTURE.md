@@ -247,3 +247,37 @@ proxy) + the build chain in §3.
 - **Coverage decomposes** (gotcha #75): before concluding an interval is too narrow, separate
   centring from width. The shipped 72.4% is a one-sided +5.85 µg/m³ area-vs-point offset;
   removing each sensor's own median restores 91.5%.
+
+
+---
+
+## Manuscript build (2026-08-14)
+
+The paper in `kandy_pm25/docs/paper/` is assembled from parts, never edited as a whole.
+
+```
+python scripts/paper2026_table1.py                 # Table 1 from artifacts
+python docs/paper/assemble_manuscript.py           # sections -> manuscript_kandy.md
+node docs/paper/build_report.js --src manuscript_kandy.md --style _preprint_style.tex
+```
+
+**`manuscript_kandy.md` is a build product. Edit `draft_s*.md`, `abstract.md` and
+`references.bib`.** The assembler strips drafting notes, prepends the front matter and abstract,
+splices Table 1, resolves citations and figures, and appends the bibliography div.
+
+Three invariants it enforces, each closing a trap this project has hit:
+
+- **Figures are numbered by order of first appearance** from `{{fig:tag}}` tokens, so inserting
+  or dropping a figure can never leave a stale "Figure 9" in the prose. This retires gotcha #58.
+- **Citations are checked in both directions** every run: keys found, bibliography size, unknown
+  keys, uncited entries. Drift fails loudly.
+- **Unicode is substituted for TeX** at assembly. Latin Modern has no superscript-minus glyph,
+  so `µg m⁻³` builds silently as `g m` with the exponent dropped; the drafts stay readable and
+  the substitution happens in the build.
+
+Every figure and Table 1 regenerate from artifacts listed in `docs/paper/NUMBERS_LEDGER.md`, so
+no number in the paper is typed by hand.
+
+Two build gotchas worth keeping: `plt.colorbar(ax=ax)` reflows the host axes and silently breaks
+hardcoded coordinates on a schematic; and pandoc renders markdown tables as `longtable`, which
+has no float placement and splits across a page break, so Table 1 is emitted as a LaTeX float.
