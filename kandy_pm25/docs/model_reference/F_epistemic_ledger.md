@@ -3576,3 +3576,78 @@ tracer-for-mass error F.71 warned about. **W6 stays as F.71 left it — narrowed
   scrutiny. ⚠ Gases, not PM, and 2001 — a flag, not a measurement.
 - Exceedance rates over the study: **NO₂ 14%, SO₂ 41%, O₃ 28%** of occasions above the Sri Lankan
   ambient standard; SO₂ 43% on the monthly averages.
+
+## F.73 — 🟢 The budget ladder is NOT contaminated by change-of-support, and the bias runs the safe way (2026-08-22)
+
+The claims audit raised that the panel's **spatial** arm compares a 1 km areal field with point
+monitors. The obvious follow-up — *does the same defect contaminate the budget ladder, which is
+the paper's second contribution?* — was asserted to be safe rather than tested. It has now been
+tested. `/tmp/support_test2.py`.
+
+### 1. The ladder's target is an aggregate, not a point
+
+`modular_validation_all.py:119` — the scored quantity is
+`s.groupby("date").pm25.mean()`, the **city-daily network mean over the withheld stations**, and
+the tier inputs at line 177 are means over the selected stations. A network mean over *n*
+stations approximates the areal mean far better than any single monitor, with a
+representativeness error falling roughly as `1/sqrt(n)`. The mismatch is therefore **structurally
+smaller than in the spatial arm**, where a single station is compared with a single pixel.
+
+### 2. The residual bias is CONSERVATIVE — it understates our own claim
+
+A support error enters as a common floor `s` added in quadrature to every tier's RMSE. Because
+the ladder reports a **fractional** reduction, that floor **compresses** the measured gain:
+
+| true gain | s=0 | s=2 | s=4 | s=6 |
+|---|---:|---:|---:|---:|
+| 30% | 30.0 | 28.6 | 25.1 | **20.9** |
+| 50% | 50.0 | 47.2 | 40.5 | **33.0** |
+
+**The reported step gains are a lower bound on the true value of information.** A reviewer
+raising change-of-support against the ladder is arguing that our numbers are too *small*.
+
+### 3. Empirically, rungs 1 and 2 show no dependence on target quality
+
+If support error mattered, cities whose target is better estimated (more withheld stations)
+should show systematically different gains.
+
+| step | ρ vs `n_held` | p | many (n≥4) | few | Δ |
+|---|---:|---:|---:|---:|---:|
+| `Bud0→Bud1` | −0.207 | 0.162 | 22.3% | 22.8% | −0.5 pp |
+| `Bud1→Bud2` | −0.136 | 0.363 | 0.0% | 0.0% | 0.0 pp |
+| **`Bud2→Bud3`** | **+0.344** | **0.019** | **43.1%** | **28.1%** | **+15.0 pp** |
+
+⚠ **The background rung does depend on network size**, significantly. But the natural explanation
+is **not** support: `Bud3`'s background is an **outer-ring proxy drawn from the same network**, so
+a city with more stations can build a genuinely better background — an effect already on record
+as the standing caveat on that rung. Support and proxy-quality are confounded here and this test
+cannot separate them. **State the caveat; do not claim the rung is clean.** Rungs 1 and 2 are
+clean.
+
+### 4. Consequence for the paper
+
+§4 (the value of information) stands, with one added sentence stating that the reported gains are
+a lower bound. **The change-of-support reframe is confined to the spatial arm**, exactly as the
+claims audit assumed — but it is now measured rather than assumed.
+
+## F.74 — 🔴 "Four guaranteed properties" is wrong: two guarantees, one mechanism, one unrun (2026-08-22)
+
+`MODEL_SPECIFICATION.md` §132–137 and §179–185 were read against what has actually been run,
+because a reviewer will go straight here.
+
+| | claim | reality | how it must be stated |
+|---|---|---|---|
+| **P1** conservation | "C1 holds at every budget and every parameter value" | analytic, plus `T1` across the parameter box. ⚠ But the built field runs **+0.39 to +0.56% above the anchor** | **a guarantee of the formulation**, realised in the build "to within 0.6 per cent" |
+| **P2** monotonicity | "skill does not decrease as budget increases" | **not a theorem** — it is *enforced* by CV-selected shrinkage and then *demonstrated*: **46/47 cities (97.9%)**, and **47/47 (100%)** if the `Bud3` rung is excluded. The single violation is city 3147 | **a design mechanism with measured support**, never "guaranteed" |
+| **P3** exact nesting | bit-exact reduction of `Bud_i` to `Bud_{i-1}` | **genuinely proven and tested** — parameterised byte-comparison over every adjacent tier pair | **the strongest claim in the set**; lead with it |
+| **P4** declared identifiability | profile-likelihood interval per parameter per budget | **machinery ready, NOT RUN** | **a commitment, not a property.** Either run it before submission or demote it explicitly |
+
+🔴 **"Four guaranteed properties" must not appear in the paper.** The defensible statement is
+**two guarantees (P1, P3), one enforced-and-measured mechanism (P2, 97.9%), and one commitment
+not yet discharged (P4)**. P4 is the exposed one: presenting an unrun analysis alongside a
+bit-exact test in a list headed "guaranteed" is the kind of thing that costs a reviewer's trust
+across the whole paper.
+
+**Recommended action before submission:** run P4. The machinery exists (`src/modular/`), and a
+profile-likelihood sweep per budget is cheap next to what has already been spent. If it is not
+run, P4 must be reworded as a declared design intent and dropped from any list of properties.
