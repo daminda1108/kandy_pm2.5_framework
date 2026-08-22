@@ -65,7 +65,7 @@ Package: `kandy_pm25/src/modular/` (68 tests). Spec: `kandy_pm25/docs/MODEL_SPEC
 | Spatial CV **R² = 0.911** | label-construction artefact | never report as a spatial result |
 | Chandigarh spatial **−0.80** | N=4/N=5-era; current value is **NaN**, not a measured null | report "—" |
 | pilot **2.9%** step gain | its `Bud0` had lat/lon and could identify the city | the 47-city ladder |
-| Colombo as a background donor | **r 0.60** vs a 0.92 benchmark (F.63) | NBRO / Torrington Park |
+| Colombo as a background donor | **r 0.60** vs a 0.92 benchmark (F.63) | NBRO regional network |
 
 ---
 
@@ -77,12 +77,18 @@ Package: `kandy_pm25/src/modular/` (68 tests). Spec: `kandy_pm25/docs/MODEL_SPEC
 | **sub-daily shape** | **regime-limited** | transfers in the **deep tropics** (+25.8% vs flat, r 0.63, ~1 h phase error) — Kandy's regime — and **nowhere else**; pooled it is 5.5% *worse* than assuming no cycle (F.55) |
 | **spatial pattern** | **ceiling measured** | ρ ≈ 0.2–0.28, unmoved by four attempts **plus a full LUR predictor set** (636 stations, roads at 5 radii): pooled ρ **+0.273 → +0.275** (F.61) |
 
-**Why the spatial ceiling is real, six ways:** tiny within-city signal (±10% at Kandy) ·
+**Why the spatial ceiling is real, six ways:** tiny within-city signal at 1 km (±10% at Kandy) ·
 emission ≠ concentration vs ground truth · Track-S learned-pattern null · dynamic-transport null
 (monitors are floor-sited) · AlphaEarth EO-embedding null · the LUR predictor set.
-Published LUR reaches R² 0.43–0.83 because those campaigns **site monitors across land-use
-contrast**; regulatory and low-cost networks are sited for compliance. **Ours is a convenience
-sample with coordinates, not a LUR design — and no predictor fixes that.**
+
+🟢 **And the CAUSE is now measured in Kandy itself (F.68).** A 25-site PM10 transect
+(Elangasinghe & Shanthini 2008) records **110 → 4 µg/m³ over 300 m** inside one botanical
+garden, and **R² = 0.82** against traffic intensity. Kandy's within-city signal is *enormous*,
+but its decay length is **tens to hundreds of metres** — a 1 km cell integrates over exactly
+that decay. **The pattern is not absent from the city; it is sub-grid by construction.** That is
+a change-of-support statement, not a data-quality complaint, and it is the strongest form of
+the ceiling claim. ⚠ It does **not** resolve W6: 82% of roadside PM10 *spatial variance* and
+7.6% of ambient PM2.5 *mass* are different quantities.
 
 🔴 **`Bud4` is an unsupported design assumption**, not a validated rung. A spatial network does
 NOT make `P` estimable: interpolation between a city's own stations is worse than assuming the
@@ -124,9 +130,9 @@ Three papers produced the **first external checks on the Kandy field** in the pr
 
 | route | state |
 |---|---|
-| 🟢 **Torrington Park BAM-1020, Kandy** | **FIRST CALL.** Reference-grade, in-city, inside the user's own Peradeniya/NIFS–Duke network; data "on request". Settles W11 **and** W6. |
+| 🔴 **CEA Kandy AQMS** | **FIRST AND ONLY route to a Kandy reference monitor.** Granted in principle 2026-08-12: hourly 2019→2026-05, PM2.5/PM10/gases plus full met incl. rain gauge and wind. Needs a letter on university letterhead to the DG + a signed R&D agreement. Gap 2021-07→2022-10. |
 | 🔴 **NBRO regional background** | The background rung is the largest measured gain in the programme, and it has **no free substitute**. NBRO already supplied the F.65 series, so the channel works. |
-| **CEA Kandy AQMS** | Granted in principle 2026-08-12. Hourly 2019→2026-05, PM/gases/full met incl. rain + wind. Needs a letter to the DG + an R&D agreement. Gap 2021-07→2022-10. |
+| ⚫ **Torrington Park BAM-1020, Kandy** | **DEFUNCT (user, 2026-08-22).** The instrument that anchored the RF-CNN calibration and Dhammapala's correction is **no longer operating**. It is provenance for the published records, not a data route. |
 | **PDN Uni's own islandwide sensor network** | Unexploited, and it is the user's own institution. Chase internally. |
 | ⚠ **CEA passive NO₂** | **DEMOTED** — will *not* fix `P_local` (the ceiling is information-limited). Its value is the `f` partition and activity tracing only. |
 | **Mobile campaign** | 4–8 drive days per segment, and it still needs one fixed reference to anchor to. |

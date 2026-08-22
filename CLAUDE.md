@@ -106,9 +106,10 @@ acquisition lead.
 | 🟢 **W5 CORROBORATED** — FECT Akurana full-record mean **17.8** against a BAM-anchored published study's **~18–19** | F.64 |
 | 🟢 **NBRO Kandy (KAN), 24-h, N=360/yr**: obs **19.6** (2021) / **22.7** (2022) vs model at that pixel **19.74 / 22.11** — **+0.7% / −2.6%** | F.65 |
 | ⚠ **A BAM-calibrated LCS at Kandy** (7.2731, 80.6117) reads **19.49** where the model says **25.01** — **+28% high** | F.65 |
-| 🟢 **A reference-grade BAM-1020 exists at Torrington Park, KANDY** — operated inside the Peradeniya/NIFS–Duke collaboration; data "on request" | F.65 |
+| ⚫ **A reference-grade BAM-1020 stood at Torrington Park, KANDY** — **but it is DEFUNCT (user, 2026-08-22)**. Provenance for the published records; **not** a data route. **CEA is the only route to a Kandy reference monitor.** | F.65 |
 | 🔴 **W6 REOPENED** — Kandy PMF: **traffic 7.6%**, **biomass burning 14.1%** of PM2.5 mass | F.66 |
 | ⚠ Nirmani's meteorology is **Open-Meteo/ERA5 reanalysis**, not station data — their Kandy CBPF source attribution is weak evidence | F.67 |
+| 🟢 **A 25-site Kandy PM10 transect measures the spatial ceiling's CAUSE** — **110 → 4 µg/m³ over 300 m**, R² **0.82** vs traffic. The signal is huge but **sub-grid**: decay length tens–hundreds of metres against a 1 km cell | F.68 |
 
 ### 🔴 The level discrepancy this opens
 Of four independent Kandy point records, **three sit below the model** and **one matches it**.
@@ -221,6 +222,16 @@ have now been tested on the widened frame, and two have measured ceilings.
 | **sub-daily shape** | transfers in the **deep tropics** (+25.8% vs flat, r 0.63, ~1 h phase error) and **nowhere else**; pooled it is 5.5% WORSE than assuming no cycle (F.55) | **regime-limited** |
 | **spatial pattern** | **rho ~ 0.2–0.28 ceiling**, unmoved by four successive attempts (F.56/F.58/F.59/F.61) | **ceiling measured** |
 
+🟢 **2026-08-22 — the ceiling's CAUSE is now measured in Kandy itself (F.68).** A 25-site
+PM10 transect with per-site traffic counts (Elangasinghe & Shanthini 2008, 2004–06) records
+**110 → 4 µg/m³ over 300 m** inside one botanical garden, and **R² = 0.82** against traffic
+intensity. Kandy's within-city signal is *enormous*; its **decay length is tens to hundreds of
+metres**, and a 1 km cell integrates over exactly that decay. **The pattern is sub-grid by
+construction, not missing from the data.** This upgrades the ceiling from "our networks are
+inadequate" to a **change-of-support** statement, and retrospectively justifies `Bud4`'s
+demotion. ⚠ It does NOT resolve W6 — roadside PM10 *spatial variance explained* and ambient
+PM2.5 *mass share* are different quantities.
+
 🔴 **The spatial ceiling survived proper instrumentation.** A full LUR predictor set — road
 length by class at 50/100/300/500/1000 m, distance-to-road, NDVI, tree cover, water, land-cover
 fractions, built volume, population, night lights at 4 radii, 636 stations, 47 cities — moved
@@ -246,9 +257,10 @@ civil-vs-solar-time sub-hypothesis is **refuted by construction**: true offsets 
 passive NO₂ network as a fix for `P_local`; its value is the `f` partition and local activity
 tracing (F.45). **NBRO (regional background) is the acquisition that pays** — the background rung
 is the largest measured gain in the programme and 75% of it survives an independent network.
-**⚠ 2026-08-22: the Torrington Park BAM (F.65) is now a competing first call** — closer, inside
-the user's own institutional network, and it would settle the level discrepancy AND the W6
-source-mix question at once.
+**⚫ 2026-08-22 correction: the Torrington Park BAM is DEFUNCT** (user). It anchored the
+published RF-CNN calibration and Dhammapala's correction, but it is not a data route. **CEA is
+the only route to a Kandy reference monitor**, and it alone would settle the level discrepancy
+(W11) and the W6 source-mix question.
 
 🔴 **AND THERE IS NO FREE SUBSTITUTE (F.63).** Sri Lanka has three OpenAQ locations, all inside
 the admissible 30–300 km donor window — Colombo at **93 km, reference-grade, already on disk**.
@@ -627,7 +639,7 @@ This section is the FORWARD list only.
 
 ### 0. 🔴 IMMEDIATE (2026-08-22)
 1. **Re-export the webapp payload and commit** — already QA-passed at 0.0014 µg/m³ (tolerance 0.25), wind parity 0.0005 m/s, **not yet deployed**. `kandy_webapp/` is a separate repo. ⚠ Bump the `?v=<ts>` cache-bust; ⚠ verify the push with `git -C <path> rev-list --count origin/main..HEAD` (gotcha #77).
-2. **Chase the Torrington Park BAM-1020 (F.65)** — a reference-grade monitor **in Kandy**, inside the user's own Peradeniya/NIFS–Duke network. Cheapest, closest, and it settles both the level discrepancy and W6.
+2. **Send the CEA letter** — with the Torrington Park BAM defunct, CEA is the **only** route to a Kandy reference monitor, and it is the one acquisition that settles both W11 and W6. University letterhead → Director General, copy DDG (Environmental Protection), then the R&D agreement.
 3. **Decide what to do about `emix`** — `vehic = 0.85` is now known to misstate the mass split (F.66). Either wire `src/modular/emission.py` with a burning sector, or declare the weight as a *timing* prior in the docs. **Do not claim a skill gain from it.**
 
 ### 1. Preprint / manuscript — critical path, ENTIRELY USER ACTION ★★★★★
@@ -666,7 +678,7 @@ Also standing, by design not oversight: `A_transport` entirely unscored · panel
 
 ### 3. 🎯 THE ONE THING THAT UNBLOCKS EVERYTHING — a local measurement
 Routes, **re-ordered 2026-08-22 by measured value**:
-- **🟢 Torrington Park BAM-1020, Kandy (F.65)** — reference-grade, in-city, inside the user's own institutional network, "data on request". **Now the first call.**
+- **⚫ Torrington Park BAM-1020, Kandy (F.65) — DEFUNCT (user, 2026-08-22).** It anchored two published Kandy records but no longer operates. **Do not re-propose it.**
 - **🔴 NBRO regional background** — the background rung is the largest measured gain in the programme (F.51/F.54) and **has no free substitute** (F.63 ruled out Colombo at r 0.60 vs a 0.92 benchmark). NBRO also supplied the Kandy series in F.65, so the channel demonstrably works.
 - **CEA Kandy AQMS** — granted in principle 2026-08-12, hourly 2019→2026-05 incl. full met; blocked on a letter + R&D agreement. Gap 2021-07→2022-10.
 - **⚠ CEA passive NO₂ — DEMOTED.** It will **not** fix `P_local`: the spatial ceiling is measured and information-limited (F.56/F.61). Its value is the `f` partition and local activity tracing only.

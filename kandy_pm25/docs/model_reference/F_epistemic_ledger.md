@@ -3046,7 +3046,7 @@ is **not** resolvable from the literature, and it is a **level** question — th
 programme calls strong. It should be stated as an open discrepancy, not resolved by choosing the
 record that agrees.
 
-### 🟢 ACQUISITION LEAD — a reference-grade BAM exists *in Kandy*
+### ⚫ ACQUISITION LEAD — WITHDRAWN THE SAME DAY: the Kandy BAM is defunct
 
 Attanayake *et al.* calibrate their network against **BAM-1020 monitors at the American Club,
 Colombo and at Torrington Park, Kandy**. A regulatory-grade instrument in Kandy city appears in
@@ -3054,6 +3054,14 @@ no previous data survey in this project. It is operated within the Peradeniya/NI
 collaboration (Bowatte, Senarathna, Bhave, Bergin, Carlson) — **the user's own university**.
 Data availability is "on request". This is a **cheaper and closer route than CEA**, and unlike
 NBRO it would supply an instrument-documented series at a known Kandy location.
+
+**⚫ CORRECTION, same day (user):** the Torrington Park instrument is **no longer operating**.
+The lead is withdrawn. It remains valuable as **provenance** — it is why the RF-CNN Kandy series
+and Dhammapala's PurpleAir correction are traceable to a reference standard at all — but it is
+not a data route. **CEA is the only route to a Kandy reference monitor**, which promotes the CEA
+letter from one option among several to the single acquisition that can close **W11** (the level
+discrepancy this entry opened) and **W6** (F.66) together. Recorded so the lead is not
+re-proposed from this entry later.
 
 ## F.66 — 🔴 W6 REOPENED: traffic is 7.6% of Kandy's PM2.5 mass, and biomass burning is 14.1% (2026-08-22)
 
@@ -3154,3 +3162,83 @@ It is **reanalysis, not observations**. Two consequences:
    as weak evidence.
 
 This does not affect F.65: Table 1's PM2.5 statistics come from NBRO, not from this dataset.
+
+## F.68 — 🟢 A 25-site Kandy transect measured the spatial ceiling's CAUSE: the traffic signal is real and it is SUB-GRID (2026-08-22)
+
+`references/papers/162-1-1080-1-10-20090108.pdf` — Elangasinghe & Shanthini (2008),
+*J. Natl. Sci. Found. Sri Lanka* **36**(3):245–249. High-volume sampler (Envirotech APM 460,
+cyclone attachment), PM10 on glass microfibre, **25 sites in and around Kandy**, 3-hour samples
+**11:00–14:00**, dry days, **Jan 2004 – Jun 2006**, inlet at 1.5 m breathing height, with a
+**traffic count taken at every site**.
+
+This is the **densest spatial sampling of Kandy that exists**, and the project had never seen it.
+
+### The measurement
+
+| site | context | traffic (veh/h) | PM10 (µg/m³) |
+|---|---|---:|---:|
+| 4.2 Katugastota junction | A9, congested | **2640** | **340** |
+| 3.1 Gatambe temple | Kandy–Peradeniya road | 1785 | 230 |
+| 4.1 Kadugannawa bend | A1, climbing, uncongested | 1260 | 220 |
+| 3.2 Botanical Gardens **entrance** | on the road | — | **110** |
+| 2.1–2.3 in-city, inside school grounds | off-road, urban | — | **25–40** |
+| 5.1–5.3 rural schools | <1 veh/min | — | **10–20** |
+| 5.5 Botanical Gardens, **300 m from the road** | off-road, same garden | — | **4** |
+
+**PM10 vs traffic intensity: R² = 0.82.** Seven of 25 sites exceed the 150 µg/m³ USEPA daily
+standard on a 3-hour midday sample.
+
+### 🟢 Why this matters more than any other Kandy record found this year
+
+**110 → 4 µg/m³ over 300 metres, inside one botanical garden.** That is a ~27× decay across less
+than a third of one model grid cell.
+
+The programme has established a spatial ceiling of **ρ ≈ 0.2–0.28** six independent ways
+(F.56/F.58/F.59/F.61) and explained it as *"regulatory and low-cost networks are convenience
+samples, not a LUR design"*. That explanation was inferred from a 47-city panel. **This is the
+first direct, local, quantitative measurement of the actual cause**, and it is a stronger and
+more defensible statement:
+
+> Kandy's within-city PM signal is **enormous** — a factor of tens — but its decay length is
+> **tens to hundreds of metres**. A 1 km grid cell integrates over exactly that decay. The
+> spatial pattern the model cannot recover is not absent from the city; it is **sub-grid by
+> construction**, and no predictor at 1 km can recover it.
+
+This converts the ceiling from *"our data are inadequate"* to *"the quantity is not defined at
+the resolution we model"* — a change-of-support statement, which is precisely what the
+observation operator in `MODEL_SPECIFICATION.md` §10.1 exists to express. It also retrospectively
+justifies `Bud4`'s demotion (F.60/F.61): a spatial network of roadside monitors cannot make a
+1 km `P` estimable, because the monitors and the grid cell are not measuring the same thing.
+
+### ⚠ This does NOT resolve W6 — and must not be used to
+
+Traffic explains **82% of the roadside PM10 spatial variance** here; Seneviratne 2017 puts
+traffic at **7.6% of ambient PM2.5 mass** at a fixed suburban site (F.66). These are **not in
+conflict and not the same quantity**: different pollutant (PM10 carries a large coarse road-dust
+fraction that PM2.5 does not), different geometry (kerbside at 1.5 m vs ambient), and different
+measurand (**variance explained across sites** vs **share of mass at one site**). Anyone tempted
+to close W6 by citing R² = 0.82 is comparing a spatial-variance statistic with a mass fraction.
+
+### A second, weaker use: an ambient bracket
+
+The authors nominate their off-road urban sites as background: **25–40 PM10** in-city, **10–20**
+rural. At a typical Sri Lankan urban PM2.5/PM10 of ~0.5–0.6 that implies roughly **13–24 µg/m³
+PM2.5 in-city** and **5–12 rural** — which brackets the model's 17–21 basin mean. ⚠ Treat as
+indicative only: the ratio is assumed rather than measured here, and the record is 2004–2006,
+roughly fifteen years before the modelled period.
+
+### Caveats, stated so they are not lost
+
+PM10, not PM2.5 · **3-hour midday samples only** — and 11:00–14:00 spans the model's measured
+diurnal **trough** (F.38), so these roadside values are high despite being drawn from the
+cleanest hours of the day · dry days only · 2004–2006 · single 3-h sample per site, so no
+temporal statistics and no formal uncertainty · site coordinates are given as descriptions, not
+lat/lon, so a pixel-level comparison would require geocoding 25 place names.
+
+### One agreement worth recording without overclaiming
+
+The paper's **maximum is Katugastota**. The WindNinja drainage solver independently places the
+model's **nocturnal** maximum down-valley at Katugastota (~28 vs core ~26). The agreement is
+real but the mechanisms are different — a midday roadside traffic peak against a nocturnal
+drainage sink — so this is a coincidence of location, **not** a validation of the transport
+overlay, which remains unscored.
