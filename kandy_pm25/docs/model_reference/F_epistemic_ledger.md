@@ -3242,3 +3242,80 @@ model's **nocturnal** maximum down-valley at Katugastota (~28 vs core ~26). The 
 real but the mechanisms are different — a midday roadside traffic peak against a nocturnal
 drainage sink — so this is a coincidence of location, **not** a validation of the transport
 overlay, which remains unscored.
+
+## F.69 — 🔴 THE SPATIAL AXIS TESTED AT KANDY FOR THE FIRST TIME: the model's whole dynamic range is 1.23×, the city's is 85× (2026-08-22)
+
+F.68 recovered a 25-site PM10 transect of Kandy. This entry **geocodes it and scores the model
+against it** — the first time the model's spatial pattern has been tested against a
+within-Kandy observation set at all. `/tmp/elan_test.py`, result in `/tmp/elan_result.csv`.
+
+**Geocoding** used OSM Overpass (the database, not Nominatim's search index, which mis-resolved
+Kandy's Girls' High School to *Trincomalee*). 12 of the 25 sites carry a stated value or a stated
+cluster range and fall inside the model bbox; Kadugannawa (obs 220) is 5 km west of the domain
+and was dropped. Model = `additive_v3` q50, **2019–2023, hours 11–13 LT** to match the paper's
+11:00–14:00 sampling window. Grid is **16×16 at 998 × 999 m**.
+
+| id | site | obs PM10 | model PM2.5 | pixel |
+|---|---|---:|---:|---|
+| 4.2 | Katugastota junction | **340** | 25.06 | 7.3219, 80.6295 |
+| 3.1 | Gatambe temple | 230 | 24.51 | 7.2680, 80.6023 |
+| 1.1/1.2/1.4/1.7 | city roadside | **>150** | 23.6–25.4 | — |
+| 3.2 | **Botanical Gardens ENTRANCE** | **110** | **23.90** | 7.2680, 80.5932 |
+| 2.1/2.2/2.3 | city, inside school grounds | 25–40 | 24.0–25.4 | — |
+| 5.1 | Gannoruwa school (rural) | 15 | **20.72** | 7.2859, 80.5932 |
+| 5.5 | **Botanical Gardens, 300 m INSIDE** | **4** | **23.90** | 7.2680, 80.5932 |
+
+### The paired-site test — this is the result
+
+Two of the paper's sites are, by its own design, the **same place sampled at two microsites**.
+
+| pair | separation | same pixel? | **observed ratio** | **model ratio** |
+|---|---:|:---:|---:|---:|
+| Bot. Gardens entrance vs 300 m inside | **303 m** | **yes** | **27.50×** | **1.000×** |
+| Girls' High School junction vs inside grounds | 0 m | **yes** | **4.62×** | **1.000×** |
+
+The model returns **identical values by construction**. The geocoding independently corroborates
+the paper: the A1 passes **298 m** from the garden centroid against the paper's stated "about
+300 m".
+
+### 🔴 The headline number
+
+| | spread across the 12 sites |
+|---|---|
+| **observed** | 4 → 340 µg/m³ = **85×** |
+| **model** | 20.72 → 25.43 µg/m³ = **1.23×** |
+
+**The model's entire dynamic range across Kandy is smaller than the difference between two points
+300 metres apart inside one botanical garden.**
+
+Rank correlation is **ρ = +0.44** (n=12, p=0.16) and **+0.58** on the 8 uncensored sites
+(p=0.13) — **neither significant**, and consistent with the ρ ≈ 0.2–0.28 ceiling measured on the
+47-city panel (F.56/F.61). What the model *does* get right is the coarse ordering: the rural
+Gannoruwa site is its minimum (20.72) and Katugastota its near-maximum (25.06). **The ordering is
+not wrong; the amplitude is compressed by a factor of ~70.**
+
+### What this establishes, and what it does not
+
+**Establishes.** The spatial ceiling is a **change-of-support limit, not a data-quality
+complaint**. Kandy's within-city signal is enormous and its decay length is ~10²  m; the model
+integrates over 1 km. No predictor, no network, and no learner operating on a 1 km grid can
+recover a contrast that is averaged away inside a single cell. This is the strongest available
+support for the F.60/F.61 demotion of `Bud4`, and it should be the way the limitation is stated
+in the manuscript — a *definition* problem, not a *skill* problem.
+
+**Does not establish.** That the model is wrong. Every site here is a **3-hour kerbside or
+grounds sample at 1.5 m**; the model reports a **1 km areal mean**. Those are different
+measurands, and the observation operator (`MODEL_SPECIFICATION.md` §10.1) exists precisely to
+say so. A 1 km mean *should* sit near the middle of a distribution running 4 → 340, and it does.
+
+### ⚠ Caveats, stated so they are not lost
+
+**PM10, not PM2.5** — the 85× spread is inflated by coarse road dust that PM2.5 carries far less
+of, so it is an **upper bound** on the PM2.5 contrast. ⚠ The paired ratios are within-pollutant
+and unaffected. · 3-hour single samples, dry days, midday only, **2004–2006**, ~15 years before
+the modelled record. · Four sites enter as **censored at ">150"**, which compresses the observed
+rank at the top and biases ρ; the uncensored subset is n=8. · Cluster values 25–40 and 10–20 are
+entered at their midpoints. · Site coordinates are geocoded from place descriptions, not
+surveyed; the paired test is robust to this (both members move together) but the rank test is
+not. · **n = 12 of 25** — the remaining 13 sites have no stated value, so a fuller test would
+need the underlying Figure 1 data from the authors.

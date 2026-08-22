@@ -110,6 +110,7 @@ acquisition lead.
 | 🔴 **W6 REOPENED** — Kandy PMF: **traffic 7.6%**, **biomass burning 14.1%** of PM2.5 mass | F.66 |
 | ⚠ Nirmani's meteorology is **Open-Meteo/ERA5 reanalysis**, not station data — their Kandy CBPF source attribution is weak evidence | F.67 |
 | 🟢 **A 25-site Kandy PM10 transect measures the spatial ceiling's CAUSE** — **110 → 4 µg/m³ over 300 m**, R² **0.82** vs traffic. The signal is huge but **sub-grid**: decay length tens–hundreds of metres against a 1 km cell | F.68 |
+| 🔴 **Scored: observed spread across Kandy 85×, model spread 1.23×.** Paired microsites 300 m apart: **27.5× observed vs 1.000× modelled** (same pixel). Rank ρ +0.44, n.s. **First within-Kandy spatial test ever run** | F.69 |
 
 ### 🔴 The level discrepancy this opens
 Of four independent Kandy point records, **three sit below the model** and **one matches it**.

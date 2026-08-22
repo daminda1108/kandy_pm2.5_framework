@@ -90,6 +90,23 @@ a change-of-support statement, not a data-quality complaint, and it is the stron
 the ceiling claim. ⚠ It does **not** resolve W6: 82% of roadside PM10 *spatial variance* and
 7.6% of ambient PM2.5 *mass* are different quantities.
 
+🔴 **Scored against the model (F.69) — the first within-Kandy spatial test ever run.**
+12 sites geocoded via OSM Overpass, model hours 11–13 LT to match the sampling window:
+
+| | spread across the 12 sites |
+|---|---|
+| **observed** | 4 → 340 µg/m³ = **85×** |
+| **model** | 20.72 → 25.43 µg/m³ = **1.23×** |
+
+Two sites are the *same place at two microsites*: the garden entrance vs 300 m inside is
+**27.5× observed, 1.000× modelled** (same pixel, 998 m); the school junction vs its grounds is
+**4.6× observed, 1.000× modelled**. Rank ρ = +0.44 (n=12, p=0.16), **not significant**.
+**The model's whole dynamic range across Kandy is smaller than the gap between two points
+300 m apart in one garden.** The coarse ordering is right (rural = minimum, Katugastota =
+near-maximum); the **amplitude is compressed ~70×**. State the limitation as a *definition*
+problem, not a *skill* problem — and note the model is **not thereby wrong**: a 1 km areal mean
+*should* sit mid-distribution against kerbside 3-h samples.
+
 🔴 **`Bud4` is an unsupported design assumption**, not a validated rung. A spatial network does
 NOT make `P` estimable: interpolation between a city's own stations is worse than assuming the
 city is uniform (F.60), and a transferred LUR barely beats a population raster (F.61).
