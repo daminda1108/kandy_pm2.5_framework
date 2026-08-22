@@ -3319,3 +3319,64 @@ entered at their midpoints. · Site coordinates are geocoded from place descript
 surveyed; the paired test is robust to this (both members move together) but the rank test is
 not. · **n = 12 of 25** — the remaining 13 sites have no stated value, so a fuller test would
 need the underlying Figure 1 data from the authors.
+
+## F.70 — 🟢 A SECOND within-Kandy survey (NBRO, 30 sites) and the support-scaling ladder (2026-08-22)
+
+Mining the reference lists of the Kandy papers (the Dhammapala method) produced a **second
+spatial survey of Kandy**, retrievable free.
+
+**Premasiri, Samarasinghe & Lakmali (2010)**, *Population exposure risk assessment to air
+pollution in Kandy city area*, **National Building Research Organisation**, symposium volume.
+⚠ **The NBRO domain has moved: `nbro.gov.lk` now 301-redirects to `nbri.gov.lk`.** Every NBRO
+URL in this project's notes and letters should be updated.
+
+**What it contains.** Active sampling of **PM10, NO₂ and SO₂ at 5 locations** (1 h / 8 h / 24 h),
+plus **passive NO₂ and SO₂ at 28 locations in 2010 and 15 in 2011** (weekly, two weeks), across
+the Kandy Municipal Council area (26 km², 120,000 residents plus ~100,000 daily visitors),
+GIS-interpolated to a spatial AQI surface.
+
+| site | PM10, 24 h (µg/m³) |
+|---|---:|
+| **Good Shed** (bus stand) | **89** |
+| Trinity College | 65 |
+| Tennis Court | 56 |
+| Dalada Maligawa | 42 |
+| **Wells Park** | **30** |
+
+Their spatial conclusion: **AQI > 50 over less than 1% of the KMC land area** — "the core of
+Kandy town covering two bus stands and its immediate surroundings" — with **99% of the
+population** in AQI < 50. They attribute the pattern to vehicular emission and note evening
+levels above morning, consistent with F.38 and with the accumulation mechanism.
+
+### 🟢 The support-scaling ladder — this is the useful result
+
+Three independent Kandy datasets now measure the *same city's* spatial contrast at three
+different averaging supports:
+
+| measurement | support | observed spread |
+|---|---|---:|
+| Elangasinghe 2008, 25 sites | **3 h, kerbside, 1.5 m** | **85×** |
+| Premasiri 2010, 5 sites | **24 h, fixed sites** | **3.0×** |
+| this model | **1 km, hourly→annual** | **1.23×** |
+
+**The contrast collapses monotonically as the averaging support grows** — 85× → 3.0× → 1.23×.
+That is exactly the behaviour a change-of-support argument predicts, and it converts F.69 from a
+single striking comparison into a **quantitative scaling relationship measured in one city**.
+It also reframes the model's 1.23× as *approaching the right answer for its own support* rather
+than as a failure: at 24-h fixed-site support the true contrast is already down to 3×, and a
+1 km areal mean must sit below that again.
+
+⚠ **This does not make the model's 1.23× correct** — 3.0× at 24 h against 1.23× at 1 km is still
+a gap, and these five sites all sit within roughly 1.5 km of one another in the core, so they
+likely span only one or two model pixels. **Pending:** geocode the five sites and score the model
+against them, as F.69 did for Elangasinghe. Overpass was unavailable when this entry was written;
+the test is small and should be run.
+
+### Caveats
+
+2010; PM10 not PM2.5; **n = 5** for PM10 (the 28-site network measured NO₂ and SO₂ only, not
+particulates); a symposium paper rather than a journal article, with no stated instrument model
+or detection limits; and the AQI surface is GIS interpolation between sparse points, which F.60
+established is a weak estimator. The **28-site passive NO₂ network is nonetheless the densest
+Kandy air-quality sampling on record** and would be the natural target if the passive-sampler
+route is ever revisited — noting F.45's demotion of passive NO₂ for `P_local`.

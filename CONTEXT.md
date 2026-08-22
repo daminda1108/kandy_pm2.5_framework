@@ -124,6 +124,21 @@ city is uniform (F.60), and a transferred LUR barely beats a population raster (
 
 **Do not resolve W11 by picking the record that agrees.** State it as an open discrepancy.
 
+### 🟢 The support-scaling ladder (F.70) — quote this, it is the cleanest result of the arc
+
+Three independent Kandy datasets measure the same city's spatial contrast at three supports:
+
+| measurement | support | observed spread |
+|---|---|---:|
+| Elangasinghe 2008, 25 sites | 3 h, kerbside, 1.5 m | **85×** |
+| Premasiri 2010 (NBRO), 5 sites | 24 h, fixed sites | **3.0×** |
+| this model | 1 km, hourly→annual | **1.23×** |
+
+The contrast **collapses monotonically as the averaging support grows**. That is what a
+change-of-support argument predicts, and it reframes the model's 1.23× as approaching the right
+answer *for its own support* rather than as a failure. ⚠ It does not make 1.23× correct — 3.0×
+at 24 h against 1.23× at 1 km is still a gap.
+
 ---
 
 ## 6. The independent Kandy checks (2026-08-22, F.64–F.67)
@@ -150,6 +165,7 @@ Three papers produced the **first external checks on the Kandy field** in the pr
 | 🔴 **CEA Kandy AQMS** | **FIRST AND ONLY route to a Kandy reference monitor.** Granted in principle 2026-08-12: hourly 2019→2026-05, PM2.5/PM10/gases plus full met incl. rain gauge and wind. Needs a letter on university letterhead to the DG + a signed R&D agreement. Gap 2021-07→2022-10. |
 | 🔴 **NBRO regional background** | The background rung is the largest measured gain in the programme, and it has **no free substitute**. NBRO already supplied the F.65 series, so the channel works. |
 | ⚫ **Torrington Park BAM-1020, Kandy** | **DEFUNCT (user, 2026-08-22).** The instrument that anchored the RF-CNN calibration and Dhammapala's correction is **no longer operating**. It is provenance for the published records, not a data route. |
+| ⚠ **NBRO domain moved** | `nbro.gov.lk` → **`nbri.gov.lk`** (301). Update every NBRO URL in notes and letters. |
 | **PDN Uni's own islandwide sensor network** | Unexploited, and it is the user's own institution. Chase internally. |
 | ⚠ **CEA passive NO₂** | **DEMOTED** — will *not* fix `P_local` (the ceiling is information-limited). Its value is the `f` partition and activity tracing only. |
 | **Mobile campaign** | 4–8 drive days per segment, and it still needs one fixed reference to anchor to. |
