@@ -183,3 +183,18 @@ medellin_webapp/
 
 # PhD supervisor-finder tool (personal, not research)
 saf/
+
+# ── TRACKED CONTEXT FILES (user directive 2026-08-22, gotcha #81) ────────────
+# CLAUDE.md was destroyed by a bad in-place write and was untracked, so there
+# was nothing to `git checkout`. These are now versioned. Data, results,
+# figures and checkpoints still stay out of git.
+# NOTE: git cannot re-include a file whose PARENT directory is excluded, so
+# each directory on the path is un-ignored and then re-excluded with `dir/*`
+# before whitelisting the one file (this is the 1 GB-index trap from 2026-08-12).
+!CLAUDE.md
+!PROJECT.md
+!kandy_pm25/docs/
+kandy_pm25/docs/*
+!kandy_pm25/docs/model_reference/
+kandy_pm25/docs/model_reference/*
+!kandy_pm25/docs/model_reference/F_epistemic_ledger.md

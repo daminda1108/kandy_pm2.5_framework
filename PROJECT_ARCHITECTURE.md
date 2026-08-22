@@ -5,6 +5,16 @@ This document is how the model and the evidence pipeline are built: the componen
 module map, the execution/data flow, and the testing/reproducibility setup. All paths are
 relative to `d:/ProjectCD/kandy_pm25/` unless noted.
 
+**As built vs as formulated (2026-08-18).** This file is the truth about **the code as it
+stands**. The *target* formulation — a hierarchical latent-process model with an explicit
+observation operator and declared information budgets — is specified in
+[`kandy_pm25/docs/MODEL_SPECIFICATION.md`](kandy_pm25/docs/MODEL_SPECIFICATION.md), with the
+reasoning in `model_formulation_2026-08-18.md` and the ML placement in
+`model_formulation_ml_map_2026-08-18.md`. Where the two disagree, **this file is the truth about
+the code and the specification is the truth about the intent.** The largest gap is that the
+model currently has **no observation model**, so point sensors are compared to an areal field by
+naive co-location (the origin of the 72.4%-coverage result, gotcha #75).
+
 **Scope boundary.** This file owns *how it is built* (maths, modules, flow, tests, invariants).
 `PROJECT.md` owns *what came out* (stage results, metrics, data inventory, epistemic status).
 Where a number appears in both, `PROJECT.md` is authoritative.
@@ -160,6 +170,25 @@ whichever field it is given, so a partial rebuild desyncs them and fails the QA 
 hook in `xichang_prod.build_field`, non-destructive suffixed output), `independent_visibility.py`
 (S3), `spatial_skill_law.py` (S4), `w2_transboundary_figure.py`. One-command per-city rebuild:
 `regenerate_city.py`.
+
+## 3b. The modular grey-box package (`src/modular/`, 2026-08-19)
+
+The machinery the specification calls for, built alongside the production chain rather than
+replacing it. **68 tests** (`scripts/tests/test_modular*.py`).
+
+| module | what it does |
+|---|---|
+| `budgets.py` | information budgets + tier contract; nesting asserted at import; `require()` raises on an inadmissible stream. `nested=False` marks a **sibling** (`BudExt`, `Budf`) that trades a stream rather than adding one — P2/P3 do not apply to those. |
+| `observation.py` | `H_k` (point / area / time-integrated), instrument bias `b_k`, representativeness `sigma_rep` |
+| `constraints.py` | C1–C4 as callable assertions with measured margins |
+| `shrinkage.py` | CV-selected weight, day-grouped folds — the P2 mechanism |
+| `tiers.py` | binds budgets to component providers; admissibility asserted at build **and** at call; `degrade_to()` makes P3 testable |
+| `production.py` | every shipped builder declares its budget; an undeclared builder raises |
+| `emission.py` | sector-weighted `S_emit`; `vehic=1.0` reproduces the traffic surface bit-exactly |
+| `scripts/diff_decomp.py` | differentiable field equation; reproduces both shipped tiers bit-exactly |
+
+**Locked chain runs at `Bud1`** — `build_additive_field_v2.py` declares it and prints it, which
+makes gotcha #68's in-sample circularity structural rather than a note.
 
 ## 4. Code organisation
 
