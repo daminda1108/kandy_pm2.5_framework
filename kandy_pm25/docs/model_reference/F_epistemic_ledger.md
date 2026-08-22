@@ -3794,3 +3794,77 @@ it is.
 ⚠ The spatial half of the support effect — what happens when a point is averaged over 1 km —
 **cannot be measured from point networks at all**. That is why the Kandy literature, which samples
 at 300 m separations, is needed for it, and why F.69 remains the load-bearing evidence.
+
+## F.77 — 🟢 THE AMPLITUDE QUESTION CLOSES: the shipped field is already right for its support, and `s_exp` must not be changed (2026-08-22)
+
+F.75 found `s_exp` identifiable but never fitted, and flagged it as "the first evidence-backed
+route to the amplitude problem". Fitting it settles the amplitude problem in the opposite
+direction to the one expected. `scripts/fit_s_exp.py`.
+
+### 1. `s_exp` cannot be fitted at Kandy, by construction
+
+**Akurana (7.366 N) is outside the 15 × 15 km domain** (gotcha #49). Only Hantana is in-domain,
+so Kandy has **one** usable sensor and a spatial-contrast parameter is unfittable there. It must
+be fitted on the panel and transferred — the eps0 situation exactly (W7/F.30).
+
+### 2. Fitted on the panel, it does not transfer — and it points the wrong way
+
+Matching the model's across-station contrast to the observed, at matched support:
+
+| city | stations | observed p90/p10 | model at `s_exp=1` | fitted `s_exp` |
+|---|---:|---:|---:|---:|
+| Medellín | 20 | 1.469 | **2.059** | **0.45** |
+| Chiang Mai | 10 | 1.349 | **3.844** | **0.25** (saturated) |
+
+Kathmandu had only 6 in-domain stations and was skipped. Fitted values span **0.25–0.45, a
+ratio of 1.8×** — **does not transfer**, the same verdict as eps0.
+
+And the sign is the opposite of the expectation: I predicted `s_exp > 1` to *raise* amplitude.
+The data say **< 1** — the traffic surface needs damping, not sharpening.
+
+### 3. 🔴 The reason: the two candidate surfaces bracket observation by orders of magnitude
+
+| surface | p90/p10 | max/min |
+|---|---:|---:|
+| **`S_emit`** (VanD satellite — the **headline** `P_local`) | **1.11** | 1.18 |
+| *observed annual network contrast* | *1.26 – 1.47* | — |
+| **`S_traffic`** (centrality × EF — used in `A_transport`) | **22.7** | **2,168,202** |
+
+The satellite surface is far too flat; the traffic-centrality surface is far too sharp. ⚠ That
+max/min of 2.2 million is a near-zero minimum at unroaded pixels — a numerical property of
+log-tempered centrality worth knowing about, and a reason the surface is only ever used
+multiplicatively inside a normalised, capped amplitude term.
+
+**The panel fit was measuring `S_traffic`, not the headline surface.** That is why it demanded
+damping.
+
+### 4. 🟢 And the shipped field is already close to right, like for like
+
+| | annual p90/p10 |
+|---|---:|
+| **Kandy, shipped field** | **1.232** (max/min 1.392) |
+| Kathmandu observed | ~1.26 |
+| Chiang Mai observed | 1.35 |
+| Medellín observed | 1.47 |
+
+Statistic, support and averaging period all matched. **The shipped field sits just below the
+observed range, not outside it.**
+
+⚠ This also corrects a statistic mismatch in **F.76**, which compared the model's *max/min*
+(1.23, from F.69's 12 site pixels) against observed *p90/p10*. The like-for-like model value is
+**p90/p10 = 1.232** — numerically almost identical by coincidence, so F.76's conclusion is
+unaffected, but the comparison there was not strictly like for like and this entry supersedes it.
+
+### 5. Verdict
+
+**There is no amplitude crisis, and `s_exp` stays at 1.0.**
+
+The apparent catastrophe of F.69 — 1.23× modelled against 85× observed — was a change-of-support
+and siting artefact. F.76 removed most of it; this removes the rest. The model's spatial
+**amplitude** is approximately correct for the support it reports at. What it cannot do is place
+that contrast correctly, which is the measured ρ ≈ 0.2–0.28 ceiling and a separate, genuine,
+already-documented limitation.
+
+**Do not change `s_exp` in production.** Report it as *identifiable, fitted on the panel, found
+non-transferable (0.25–0.45), and therefore held at its prior of 1.0* — which is a complete and
+honest P4 disclosure, and the same treatment eps0 already receives.

@@ -145,10 +145,17 @@ only **1.2–1.7×**, not 69×. **Most of the ladder is siting contrast, not ave
 
 🟢 **What survives is stronger.** (a) The **paired-site test** is unconfounded: two microsites
 **300 m apart, both 3-h samples, one 998 m pixel** — **27.5× observed, 1.000× modelled**. Support
-fixed, only location varies. (b) **At MATCHED support the model is close to right**: annual
-network contrast is **1.50** (Medellín), **1.26–1.49** (Kathmandu, Chiang Mai) against the model's
-**1.23**. The model is at the low end — plausibly still slightly under-contrasted — **but not out
-by a factor of 70**, and the paper must not imply it is.
+fixed, only location varies. (b) **At MATCHED support and matched statistic the model is close to
+right** (F.77): annual p90/p10 is **1.232** for the shipped field against **1.26 (Kathmandu),
+1.35 (Chiang Mai), 1.47 (Medellín)** observed. Just below the observed range, not outside it.
+
+🟢 **THE AMPLITUDE QUESTION IS CLOSED (F.77).** `s_exp` — the only parameter P4 says the data
+can constrain — was fitted on the panel: it does **not transfer** (0.25–0.45, ratio 1.8×, same
+verdict as eps0) and it points the *opposite* way to expectation, because the panel fit measures
+`S_traffic` rather than the headline surface. The two candidate surfaces **bracket observation**:
+`S_emit` (VanD, headline) p90/p10 **1.11**, observed **1.26–1.47**, `S_traffic` **22.7**.
+**`s_exp` stays at 1.0.** There is no amplitude crisis — what the model cannot do is *place* the
+contrast (the ρ ≈ 0.2–0.28 ceiling), which is a separate and already-documented limit.
 
 ---
 
