@@ -3651,3 +3651,65 @@ across the whole paper.
 **Recommended action before submission:** run P4. The machinery exists (`src/modular/`), and a
 profile-likelihood sweep per budget is cheap next to what has already been spent. If it is not
 run, P4 must be reworded as a declared design intent and dropped from any list of properties.
+
+## F.75 — 🟢 P4 RUN AT LAST: identifiability per parameter per budget, and the one identifiable parameter was never fitted (2026-08-22)
+
+F.74 found P4's machinery "ready, not run" and recommended running it before submission. Done:
+`scripts/p4_identifiability.py`, three fitting cities (Medellín, Kathmandu, Chiang Mai), real
+emission surfaces, real terrain, real station coordinates, real observation noise. Profile
+likelihood per parameter per budget; 95% interval from `Δ(−2 log L) ≤ 3.84`; a parameter whose
+interval spans its whole prior box is UNIDENTIFIED. Output
+`data/processed/modular/p4_identifiability.csv` (45 rows).
+
+**Median fraction of the prior box covered by the 95% interval (1.00 = wholly unidentified):**
+
+| parameter | `Bud1` (2 stn) | `Bud2` (8 stn) | `Bud3` (+background) |
+|---|---:|---:|---:|
+| **`s_exp`** emission-surface exponent | **0.00** | **0.00** | **0.00** |
+| `a_cap` transport amplitude cap | 0.33 | 0.00 | 0.00 |
+| `kappa` terrain confinement | **1.00** | 0.33 | 0.67 |
+| `eps0` ventilated-hour floor | **1.00** | 0.50 | 0.50 |
+| `w_evening` e(t) evening lobe | **1.00** | 0.67 | **1.00** |
+
+**12 of 45 fits saturate a bound** — reported here rather than hidden, as the specification
+requires.
+
+### Three standing project claims independently corroborated
+
+This analysis shares no method, no data and no code path with the results it reproduces.
+
+- **`kappa` is unidentifiable at a two-sensor budget.** The U7 cross-check reached the same
+  conclusion by a completely different route (δz-confinement is collinear with NTL-source on the
+  valley floor) and κ was kept as a prior at 0.15. **P4 confirms it, and quantifies the budget at
+  which it changes: 8 stations.**
+- **`eps0` is not determined.** W7/F.30 closed as "inside a pooled bracket, not contradicted but
+  not determined". P4 says the same: wholly unidentified at `Bud1`, still only half-constrained
+  at `Bud2`.
+- **`w_evening` is weak everywhere.** F.29 set it by shrinkage at 0.40 rather than fitting it.
+  P4 says it could not have been fitted at any budget tested.
+
+### 🔴 The finding that is new, and awkward
+
+**`s_exp` is identified at *every* budget including Kandy's own — and it has never been
+estimated.** `diff_decomp.py` documents it as "implicitly 1.0, never tested", and production
+carries it at 1.0 by default.
+
+So the single parameter the data can actually constrain is the one the project never fitted,
+while three of the four that were argued over at length are the ones the data cannot constrain.
+That is exactly the inversion a declared-identifiability analysis exists to catch, and it is an
+argument for P4 belonging in the paper rather than in an appendix.
+
+**Action:** fit `s_exp` at Kandy's `Bud1` and report it with its profile interval. ⚠ Expect the
+spatial *rank* to be unmoved — `s_exp` is a monotone transform of `S_emit`, so it cannot change
+Spearman ρ (a trap already recorded once). What it can change is the **contrast amplitude**,
+which is precisely the quantity F.69/F.71 showed is too compressed (1.23× against a fair target
+of ~2.0×). **This is the first concrete, evidence-backed route to the amplitude problem.**
+
+### Caveats
+
+Simulation-based recovery on real geometry, not a fit to real observations — which is the correct
+design for a question about the *budget* rather than about one fit, but it assumes the model is
+correctly specified and so gives an **optimistic** bound: a parameter unidentifiable here is
+unidentifiable in practice, while one identified here may still fail against real data.
+`H = 96` hours, grid of 7, 150 Adam steps per profile point; `a_trans`, `w_blh`, `e_prior` and
+`e_fit` are drawn as realistic surrogates rather than loaded per city.
