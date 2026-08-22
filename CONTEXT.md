@@ -137,9 +137,18 @@ Three independent Kandy datasets measure the same city's spatial contrast at thr
 
 The contrast **collapses monotonically as the averaging support grows**. That is what a
 change-of-support argument predicts, and it reframes the model's 1.23× as approaching the right
-answer *for its own support* rather than as a failure. The **stratum means (2.0×)** are the fairest target: an areal average over a land-use type is
-what a 1 km cell represents. ⚠ It does not make 1.23× correct — the model still sits a factor
-of **1.6** below that, though not a factor of 70.
+answer *for its own support* rather than as a failure. 🔴 **2026-08-22 — this ladder is CONFOUNDED and must not be quoted as a scaling law (F.76).**
+Across its rungs, *support* and *siting design* move together: Elangasinghe deliberately sampled
+bus-terminus-to-botanical-garden extremes, the later rungs progressively did not. A direct test on
+three dense networks (same instrument, same era) finds temporal averaging collapses contrast by
+only **1.2–1.7×**, not 69×. **Most of the ladder is siting contrast, not averaging.**
+
+🟢 **What survives is stronger.** (a) The **paired-site test** is unconfounded: two microsites
+**300 m apart, both 3-h samples, one 998 m pixel** — **27.5× observed, 1.000× modelled**. Support
+fixed, only location varies. (b) **At MATCHED support the model is close to right**: annual
+network contrast is **1.50** (Medellín), **1.26–1.49** (Kathmandu, Chiang Mai) against the model's
+**1.23**. The model is at the low end — plausibly still slightly under-contrasted — **but not out
+by a factor of 70**, and the paper must not imply it is.
 
 ---
 

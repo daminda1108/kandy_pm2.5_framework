@@ -3713,3 +3713,84 @@ correctly specified and so gives an **optimistic** bound: a parameter unidentifi
 unidentifiable in practice, while one identified here may still fail against real data.
 `H = 96` hours, grid of 7, 150 Adam steps per profile point; `a_trans`, `w_blh`, `e_prior` and
 `e_fit` are drawn as realistic surrogates rather than loaded per city.
+
+## F.76 — 🔴 The support-collapse mechanism is REAL but MODEST; my four-rung "ladder" framing is confounded and must be restated (2026-08-22)
+
+Run to defend F.71's support ladder against the obvious objection that its four rungs come from
+four incompatible studies. `scripts/support_collapse_test.py`, three cities with dense networks,
+same instrument class and era within each city. Across-station contrast (p90/p10, median over
+time steps, ≥5 concurrent stations) as a function of averaging window.
+
+| window | Medellín | Kathmandu | Chiang Mai |
+|---|---:|---:|---:|
+| 1 h | **2.53** | **1.84** | **1.82** |
+| 3 h | 2.16 | 1.72 | 1.76 |
+| 8 h | 1.91 | 1.54 | 1.65 |
+| 24 h | 1.71 | 1.38 | 1.56 |
+| weekly | 1.57 | 1.29 | 1.48 |
+| monthly | 1.51 | 1.26 | 1.49 |
+| annual | **1.50** | — | — |
+
+**Monotone in Medellín and Kathmandu; Chiang Mai breaks by +0.01 at one step (within noise).**
+
+### 1. 🟢 The mechanism is confirmed
+
+Contrast does fall monotonically with averaging support in real, internally consistent,
+same-instrument data. That was the thing to establish and it is established.
+
+### 2. 🔴 But the effect is SMALL, and that refutes my framing of F.71
+
+Total collapse from 1 h to the longest window: **1.69× (Medellín), 1.46× (Kathmandu),
+1.22× (Chiang Mai)**. The Kandy ladder runs **85× → 1.23×, a factor of 69**.
+
+**Temporal averaging therefore explains only a small fraction of the Kandy ladder.** I presented
+that ladder as a clean "collapse with averaging support" and proposed it as the paper's headline
+figure. That framing is **confounded**: across its four rungs, *support* and *siting design* move
+together. Elangasinghe deliberately sampled from a bus terminus to the inside of a botanical
+garden — the extremes — while the 8-hour, 24-hour and model rungs progressively do not. Most of
+the 69× is **siting contrast**, not averaging.
+
+**This is the same error the remediation plan recorded in its own §1** — several measurements
+agreeing is not confirmation when they share a structure — and I made it again, one level up. The
+test was run to catch exactly this, and it caught it.
+
+### 3. 🟢 What survives, and it is stronger than the ladder
+
+**F.69's paired-site result is unconfounded and it carries the argument alone.** Two microsites
+**300 m apart, both 3-hour samples, both in one 998 m pixel**: observed **27.5×**, modelled
+**1.000×**. Support is held fixed; only location varies; the model cannot represent the
+difference *by construction*. That is a direct demonstration that the signal is sub-grid, and it
+needs no scaling law.
+
+### 4. 🟢 And a genuinely new number: at MATCHED support the model is close to right
+
+The fair comparison is like-for-like — annual, network-scale contrast:
+
+| | annual p90/p10 |
+|---|---:|
+| Medellín observed | **1.50** |
+| Kathmandu observed (monthly) | 1.26 |
+| Chiang Mai observed (monthly) | 1.49 |
+| **Kandy, this model** | **1.23** |
+
+**At matched averaging support the model's within-city contrast sits inside the observed range.**
+The apparent catastrophic failure (1.23× against 85×) was almost entirely an artefact of
+comparing an annual areal mean with 3-hour kerbside samples. ⚠ The model is at the **low end** —
+1.23 against 1.26–1.50 — so it is plausibly still slightly under-contrasted, which is consistent
+with the `s_exp` route in F.75. But it is not out by a factor of 70, and the paper must not imply
+it is.
+
+### 5. What the paper must now say
+
+- **Lead with the paired-site test**, not the ladder. It is clean, visual, and unconfounded.
+- **Report the temporal collapse as a verified secondary mechanism** with its real magnitude
+  (1.2–1.7×), not as the explanation for the whole gap.
+- **Report the matched-support comparison** — this is the honest statement of the model's spatial
+  amplitude, and it is far more favourable than anything previously claimed.
+- **State plainly that the Kandy literature rungs confound support with siting design**, and that
+  the siting component is the larger one. That is a limitation of the *literature*, not of the
+  model, and saying so pre-empts the reviewer who spots it.
+
+⚠ The spatial half of the support effect — what happens when a point is averaged over 1 km —
+**cannot be measured from point networks at all**. That is why the Kandy literature, which samples
+at 300 m separations, is needed for it, and why F.69 remains the load-bearing evidence.
