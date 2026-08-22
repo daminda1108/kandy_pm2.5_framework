@@ -118,7 +118,7 @@ city is uniform (F.60), and a transferred LUR barely beats a population raster (
 
 | | question | state |
 |---|---|---|
-| 🔴 **W6** | **Kandy's source mix.** PMF at Katugastota: **traffic 7.6%, biomass burning 14.1%** of PM2.5 mass (Seneviratne 2017, 2012–14). `emix vehic = 0.85`. F.23 measured the vehicular **timing** (3.67× rush ratio) and explicitly did not bound the magnitude. | **REOPEN** |
+| 🟡 **W6** | **Kandy's source mix — now resolved by GEOGRAPHY (F.71).** A 20-site study finds traffic **predominant in the urban core**, firewood **co-dominant there and dominant rurally**. So `emix vehic = 0.85` is refuted (F.66) *and* Katugastota's 7.6% bounds one suburban site, not the core. **Defensible core value: `vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4`.** ⚠ PAHs are a combustion tracer, not mass — this licenses the ordering, not a percentage. | **narrowed, not closed** |
 | 🔴 **W11** | **The level discrepancy.** Of four independent Kandy point records, **three sit below the model** (FECT Hantana ~+44%, FECT Akurana, RF-CNN LCS +28%) and **one matches** (NBRO, +0.7%/−2.6%). The three low ones are all LCS carrying a downward calibration; the one that matches has an **undocumented instrument**. | **OPEN** |
 | ⚪ | `A_transport` is entirely unscored; the panel is 10 cities, **all valley/basin, zero coastal**; the panel does not bracket Kandy. | by design |
 
@@ -131,13 +131,15 @@ Three independent Kandy datasets measure the same city's spatial contrast at thr
 | measurement | support | observed spread |
 |---|---|---:|
 | Elangasinghe 2008, 25 sites | 3 h, kerbside, 1.5 m | **85×** |
+| Wickramasinghe 2011, 20 sites | 8 h, area-representative | **4.0×** sites / **2.0×** strata |
 | Premasiri 2010 (NBRO), 5 sites | 24 h, fixed sites | **3.0×** |
 | this model | 1 km, hourly→annual | **1.23×** |
 
 The contrast **collapses monotonically as the averaging support grows**. That is what a
 change-of-support argument predicts, and it reframes the model's 1.23× as approaching the right
-answer *for its own support* rather than as a failure. ⚠ It does not make 1.23× correct — 3.0×
-at 24 h against 1.23× at 1 km is still a gap.
+answer *for its own support* rather than as a failure. The **stratum means (2.0×)** are the fairest target: an areal average over a land-use type is
+what a 1 km cell represents. ⚠ It does not make 1.23× correct — the model still sits a factor
+of **1.6** below that, though not a factor of 70.
 
 ---
 

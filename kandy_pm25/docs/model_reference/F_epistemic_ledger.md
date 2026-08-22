@@ -3380,3 +3380,115 @@ or detection limits; and the AQI surface is GIS interpolation between sparse poi
 established is a weak estimator. The **28-site passive NO₂ network is nonetheless the densest
 Kandy air-quality sampling on record** and would be the natural target if the passive-sampler
 route is ever revisited — noting F.45's demotion of passive NO₂ for `P_local`.
+
+## F.71 — 🟢 A 20-site Kandy study completes the support ladder, sharpens W6, and fixes my PM2.5/PM10 assumption (2026-08-22)
+
+Five further papers, supplied by the user after the reference-list sweep.
+
+### 1. A fourth rung, and the ladder is now monotone across four supports
+
+**Wickramasinghe, Karunaratne & Sivakanesan (2011)**, *Atmos. Environ.* **45**:2642–2650.
+High-volume sampler, **8-hour** PM10 at **20 sites in Kandy**, stratified by land use *and* by
+source strength — the only Kandy study that samples a designed spatial contrast.
+
+| stratum | PM10 (µg/m³) | range |
+|---|---:|---|
+| **U/HT** urban heavy traffic | **167** | 92–221 |
+| S/HT suburban heavy traffic | 143 | 117–153 |
+| S/LT suburban light traffic | 104 | 82–126 |
+| R/B/HF rural, high firewood | 90 | 55–134 |
+| U/LT urban light traffic | 86 | (n=1) |
+| **R/B/LOF** rural, low firewood | **83** | 65–101 |
+| overall | 129 | 55–221 |
+
+Stratum means span **2.0×**; individual sites span **4.0×**.
+
+**The support-scaling ladder, now four rungs:**
+
+| measurement | support | spread |
+|---|---|---:|
+| Elangasinghe 2008, 25 sites | 3 h, kerbside, 1.5 m | **85×** |
+| Wickramasinghe 2011, 20 sites | 8 h, area-representative | **4.0×** (sites) / **2.0×** (strata) |
+| Premasiri 2010, 5 sites | 24 h, fixed | **3.0×** |
+| this model | 1 km, hourly→annual | **1.23×** |
+
+Monotone collapse with increasing support, across four independent datasets in one city. The
+**stratum means** are the closest analogue to what a 1 km cell represents — an areal average over
+a land-use type — and at **2.0×** they are the nearest thing to a fair target the literature
+offers. The model's 1.23× is below that, but by a factor of 1.6, not a factor of 70.
+
+### 2. 🔴 W6 — the evidence now supports a GRADED emix, and both extremes are wrong
+
+Wickramasinghe's source apportionment, from PAH signatures across the 20 sites:
+
+- **"in the urban and suburban areas automobile emissions are the predominant daytime source"**
+- **"domestic firewood burning is the major in rural areas, its commercial use has played a
+  significant role in U/HT sites"**
+- U/HT is "attributed principally by automobile emissions **and significant contribution from
+  firewood combustion as well**"
+
+This is the first evidence that **resolves the F.66 tension by geography rather than by choosing
+a side**, and it vindicates the user's objection that Katugastota need not represent the core:
+
+| | claim | verdict |
+|---|---|---|
+| `emix vehic = 0.85` ("~90% vehicular") | traffic overwhelmingly dominant everywhere | **REFUTED** (F.66) |
+| traffic = 7.6% of mass (Katugastota) | traffic marginal | **bounds one suburban site**, not the core |
+| **traffic predominant in the urban core, firewood co-dominant there and dominant rurally** | graded by land use | **supported** (this entry) |
+
+⚠ **PAHs are a combustion tracer, not PM2.5 mass.** "Predominant source of PAHs" does not mean
+"predominant share of PM2.5 mass" — PAH mass is a vanishing fraction of PM. What this licenses is
+the **ordering and its spatial gradient**, not a percentage.
+
+**Recommendation for `emix`:** Kandy's urban core is defensibly **traffic-led with a substantial
+burning sector** — of order `vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4` — rather than 0.85 or 0.08. ⚠ As
+F.66 already noted, this is a **correctness fix with no expected skill gain** (the spatial ceiling
+is a support limit, F.69/F.70), and the burning sector still has **no admissible FIRMS proxy**.
+
+### 3. ⚠ CORRECTION to F.68 — my PM2.5/PM10 conversion was too high
+
+F.68 converted Elangasinghe's PM10 to PM2.5 "at a typical Sri Lankan urban ratio of ~0.5–0.6".
+**Measured Sri Lankan value: 0.40** — "40% of the PM10 fraction is composed of PM2.5 particles"
+(Seneviratne *et al.* 2004, via Ileperuma 2020). The F.68 bracket was optimistic by ~25–50%.
+
+Restated with 0.40: Elangasinghe's off-road in-city sites (PM10 25–40) imply **PM2.5 10–16**, and
+his rural controls (10–20) imply **4–8**. Both now sit *below* the model's 17–21 basin mean rather
+than bracketing it — which is expected, since those are the paper's *cleanest* sites, not areal
+means. **The F.68 "ambient bracket" should be treated as withdrawn**, not tightened; it was the
+weakest use of that paper and it is now the wrong sign.
+
+⚠ A second source, **Premasiri *et al.*, "Particulate pollution and ratio of SPM:PM10:PM2.5 in
+Colombo atmosphere"** (NBRO), **contradicts itself**: its abstract gives SPM:PM10:PM2.5 = **4:3:2**
+(ratio 0.67) and says "65% is PM2.5", while its own results section says "**35% is PM2.5**". The
+paper also notes sea spray sits in the coarse fraction, which pushes the ratio *down* and favours
+the 0.35 reading. **Use 0.40, cite Seneviratne 2004, and do not cite the 4:3:2 figure.**
+Colombo Fort annual PM10 **84**, Met Dept background **54** — an urban/background contrast of
+1.56× at 24-h support, consistent with the ladder.
+
+### 4. 🟢 CEA's Kandy station is confirmed, and its 2019 data is already published as a FIGURE
+
+Ileperuma (2020), *Ceylon J. Sci.* **49**:225–238: **"In 2018, two automated air quality monitoring
+stations were installed at Battaramulla and Kandy."** His **Figure 6 plots PM2.5 and PM10 at
+Battaramulla and Kandy for 2019, sourced to the Central Environmental Authority.**
+
+Two consequences. First, it **corroborates CEA's own account** of the Kandy AQMS (F.-block,
+2026-08-12: hourly from 2019). Second, **a reference-grade Kandy PM2.5 series for the KOALA year
+already exists in the published literature** — as a figure, so the numbers are not extractable
+from the text, and I have **not** read values off it.
+
+🔴 He also states the values "most … exceeded the Sri Lanka standards" and that **"the data for
+Kandy are often higher than the corresponding values for Colombo."** ⚠ **Do not convert this into
+a number.** It is ambiguous whether "most values" refers to PM10, PM2.5 or both, and if it means
+24-h PM2.5 above the 50 µg/m³ standard it would be far above KOALA's 24.5 and the model's ~19.7.
+That is a **flag on W11, not a measurement.** It should be resolved by the CEA data request, which
+is now the only route (the Torrington Park BAM being defunct), and not by reading a figure.
+
+### 5. Minor
+
+**Meegahakotuwa & Nianthi (2018)**: **48 rain-gauge stations in Kandy District, 1981–2010**;
+district annual mean **1840 mm**; and a **Katugastota (Kandy) Meteorological station record back
+to 1875**. Consistent with gotcha #63, where IMERG landed at 0.98× the DoM Katugastota gauge.
+Not additive to the model, but it names a long gauge record inside the domain.
+
+⚠ **`airpollutionKandyVilani.pdf` is a scanned image** (CCITT stencil, no text layer) and was not
+read. It needs OCR before it can be assessed.
