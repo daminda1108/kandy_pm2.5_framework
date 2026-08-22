@@ -13,6 +13,12 @@ Native resolution **1 km hourly**. Single target: **Kandy**.
 - SharedTerrainAnsatz identifiability diagnostic (rigid Whiteman ansatz, all 6 params bound-saturated). Code in `src/stage3_pinn/models/shared_terrain_ansatz.py`.
 - PVAF v1 — Physics-based Valley Analogue Finder, source-city expansion tool. Code in `src/pvaf/`.
 
+> **🟢 [`CONTEXT.md`](CONTEXT.md) — read this first.** One page (<250 lines) of the load-bearing
+> facts: the model in one equation, the numbers you may quote, the numbers that are **retired**,
+> the evidence state per axis, the open questions, and the data situation. It is the fast path;
+> this file, `PROJECT.md` and the ledger stay authoritative. **Update it whenever a headline
+> number, a refutation or an open question changes.**
+
 ## Session Protocol (READ FIRST)
 
 **Session start:** Output this briefing before responding:
@@ -724,6 +730,7 @@ When running `/update-docs`, route information as follows:
 
 | Information type | Destination |
 |---|---|
+| **A headline number, a refutation, or an open question changing** | **CONTEXT.md** *(tracked, <250 lines — keep it tight; prune as hard as you add)* |
 | Current stage status (1-line summary per stage) | **CLAUDE.md** Current State |
 | Pending tasks (active only, top 7) | **CLAUDE.md** Pending Tasks |
 | New gotcha / hard rule discovered | **CLAUDE.md** Gotchas or Hard Rules |

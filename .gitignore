@@ -192,6 +192,7 @@ saf/
 # each directory on the path is un-ignored and then re-excluded with `dir/*`
 # before whitelisting the one file (this is the 1 GB-index trap from 2026-08-12).
 !CLAUDE.md
+!CONTEXT.md
 !PROJECT.md
 !kandy_pm25/docs/
 kandy_pm25/docs/*
