@@ -3868,3 +3868,74 @@ already-documented limitation.
 **Do not change `s_exp` in production.** Report it as *identifiable, fitted on the panel, found
 non-transferable (0.25–0.45), and therefore held at its prior of 1.0* — which is a complete and
 honest P4 disclosure, and the same treatment eps0 already receives.
+
+## F.78 — 🔴 THE COLOMBO ZERO-SHOT TEST FAILS, and every registered prior was wrong (2026-08-22)
+
+Pre-registered at **https://osf.io/nxqgb/**, registered `2026-08-22T17:29:53Z` — **before
+`scripts/colombo_zeroshot_test.py` existed**. This is the project's only third-party-verifiable
+registration. Design, gates and priors were fixed there and are unchanged here.
+
+### The technical pre-check passed, so this is a real result
+
+The pre-registration's §7 required that Colombo's driver distributions fall inside the panel's
+per-feature ranges before any scoring, precisely so a units or aggregation mismatch could not be
+mistaken for a regime failure. **All seven features passed** (temperature 300.8 K inside
+[265.6, 308.8]; BLH 553 m inside [51, 1601]; etc.). The failure below is not an artefact.
+
+### Result — 1,661 days against the US Embassy BAM
+
+| gate | value | criterion | |
+|---|---:|---|---|
+| **C-G1** daily RMSE | **17.68** | within [13.43, 45.54] | **PASS** |
+| **C-G2** seasonal r | **0.550** | ≥ 0.60 | **FAIL** |
+| **C-G3** level bias | **+31.3%** | \|bias\| ≤ 40% | **PASS** |
+| **C-G4** R² vs day-of-year climatology | **−4.069** | > 0 | 🔴 **FAIL** |
+
+Plain R² against the mean: **−0.896**. Observed mean 20.54, modelled **26.96**.
+
+**C-G4 was registered as the decisive gate and it fails catastrophically.** The sensorless tier
+is roughly **five times worse than simply knowing the date**, and worse than predicting the
+long-run mean. The two passes are hollow: C-G1 passes only because the band was calibrated on a
+panel containing far dirtier tropical cities, and C-G3 passes only because +31.3% happens to sit
+under an arbitrary 40%.
+
+### 🔴 All three registered priors refuted, one with the wrong sign
+
+| prior | outcome |
+|---|---|
+| seasonal r ≥ 0.6 | **0.550 — refuted** |
+| level **15–40% LOW** (sea salt unrepresented) | **+31.3% HIGH — refuted, wrong sign** |
+| "survives on seasonal and daily, fails on level" | **exactly inverted — refuted** |
+
+I reasoned that unmodelled marine aerosol would make the model read low. The opposite happened.
+The likely mechanism is the reverse: the panel's tropical arm is dominated by much dirtier South
+Asian and African cities, so the learner maps tropical-monsoon drivers onto high concentrations,
+while Colombo is a **well-ventilated coastal city that is clean for its band**. Sea-breeze
+ventilation is invisible to the seven drivers.
+
+### What this bounds
+
+🔴 **"The sensorless tier works anywhere" is refuted.** It fails at a coastal city **in the same
+country and monsoon as the target**. Any claim of general applicability must now be stated as
+**valley and basin regimes**, which is what the panel that supports it actually sampled.
+
+🟢 **It does not invalidate Kandy**, which is a valley basin, in regime, and — importantly — is
+**not run at `Bud0`**. Kandy's production chain is `Bud1`: it has two local sensors and a
+satellite level anchor.
+
+🟢 **And it is arguably the strongest demonstration in the programme of why the budget ladder
+matters.** The registered ladder result is that `Bud0→Bud1` buys a **38.5% median RMSE reduction
+in the deep tropics**. Colombo shows what `Bud0` alone is worth out of regime: less than
+climatology. The paper's thesis is that the information budget must be declared and its value
+measured — and here is a city where the sensorless budget is simply **not sufficient**, stated
+with the threshold written down beforehand.
+
+### Caveats
+
+One city, one point monitor. The change-of-support limit (F.69/F.77) applies to this comparison
+as to every other. Higher rungs could not be tested — Sri Lanka has too few OpenAQ stations to
+populate `Bud1`+ — so **this bounds the sensorless tier only**, and the natural follow-up (does
+`Bud1` rescue Colombo?) is unanswerable with public data. ⚠ The pool built 48 cities against the
+ladder's 47; one city yielded drivers but no ladder row. Immaterial to this result, worth a check.
+
+**Per the stopping rule, this is reported once, as run. No re-specification.**

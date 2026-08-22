@@ -120,6 +120,7 @@ city is uniform (F.60), and a transferred LUR barely beats a population raster (
 |---|---|---|
 | 🟡 **W6** | **Kandy's source mix — now resolved by GEOGRAPHY (F.71).** A 20-site study finds traffic **predominant in the urban core**, firewood **co-dominant there and dominant rurally**. So `emix vehic = 0.85` is refuted (F.66) *and* Katugastota's 7.6% bounds one suburban site, not the core. **Defensible core value: `vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4`.** ⚠ PAHs are a combustion tracer, not mass — this licenses the ordering, not a percentage. | **narrowed, not closed** |
 | 🔴 **W11** | **The level discrepancy.** Of four independent Kandy point records, **three sit below the model** (FECT Hantana ~+44%, FECT Akurana, RF-CNN LCS +28%) and **one matches** (NBRO, +0.7%/−2.6%). The three low ones are all LCS carrying a downward calibration; the one that matches has an **undocumented instrument**. | **OPEN** |
+| 🔴 **generality** | **The sensorless tier `Bud0` FAILS at Colombo** (F.78, pre-registered at osf.io/nxqgb): R² vs day-of-year climatology **−4.07**, level **+31% high**, seasonal r 0.55. All three registered priors refuted, one with the wrong sign. **"Works anywhere" is refuted — claim valley/basin regimes only.** Kandy is unaffected: in regime, and runs at `Bud1`, not `Bud0`. | **bounded** |
 | ⚪ | `A_transport` is entirely unscored; the panel is 10 cities, **all valley/basin, zero coastal**; the panel does not bracket Kandy. | by design |
 
 **Do not resolve W11 by picking the record that agrees.** State it as an open discrepancy.
