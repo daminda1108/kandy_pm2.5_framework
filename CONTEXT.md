@@ -157,6 +157,15 @@ Three papers produced the **first external checks on the Kandy field** in the pr
   either — the model puts the two sites within 2–3%.
 - ⚠ **Nirmani's meteorology is Open-Meteo/ERA5 reanalysis**, not station data → their Kandy CBPF
   source attribution is weak evidence (a 0.1° wind cannot resolve valley flow).
+- 🟢 **W2 externally corroborated (F.72).** Abeyratne & Ileperuma 2006 — the paper cited all
+  along without being read — bin three gases by monsoon and find the maximum in the **NE**
+  (SO₂ 46%), not the SW where Sri Lanka's own sources lie. A spatial falsification test pointing
+  to long-range transport: **seasonal, not chronic**, from a different decade and different
+  pollutants than our own evidence.
+- 🟢 **Arambekade, 8 km from Kandy**, has a published record as a **rural background station**
+  (gas-phase, 2002–03) — a siting lead for a background campaign, not a PM dataset.
+- ⚠ **Three sources now say Kandy reads dirtier than Colombo** in the gas phase (NO₂ 0.031 vs
+  0.026 ppm; SO₂ 1.8×). Gases, not PM — a flag on **W11**, not a measurement.
 
 ---
 

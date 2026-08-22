@@ -3492,3 +3492,87 @@ Not additive to the model, but it names a long gauge record inside the domain.
 
 ⚠ **`airpollutionKandyVilani.pdf` is a scanned image** (CCITT stencil, no text layer) and was not
 read. It needs OCR before it can be assessed.
+
+## F.72 — 🟢 W2's founding citation READ AT LAST: it corroborates "seasonal, not chronic", and names a rural background site 8 km from Kandy (2026-08-22)
+
+`references/papers/airpollutionKandyVilani.pdf` — **Abeyratne & Ileperuma (2006)**, *J. Natn.
+Sci. Found. Sri Lanka* **34**(3):137–141. A scanned image with no text layer; read visually.
+
+The project has cited this paper since the beginning as the origin of the transboundary framing
+(`[Abeyratne2006]` in the manuscript) **without anyone having read it**. It is a stronger source
+than assumed.
+
+### Design
+
+Passive diffusion samplers (Ferm 1991 type) for **NO₂, SO₂ and O₃**, weekly, exposed 4–6 days at
+1.5 m, analysed colorimetrically/turbidimetrically. **Three sites:**
+
+| site | role |
+|---|---|
+| **Bogambara** | congested Kandy city site |
+| **King's Street** | Kandy city, 1 km away, less congested |
+| 🟢 **Arambekade** | **rural background, 8 km from Kandy** |
+
+**Feb 2002 – Dec 2004** for the two city sites; the background site to **July 2003**. Method
+validated against the Colombo Fort automatic station over nine paired occasions per pollutant:
+deviations **−10.45% (NO₂), +1.92% (SO₂), +5.88% (O₃)** — i.e. the passive method was checked
+against a reference instrument, which is more than can be said for the FECT slopes (W5).
+
+### 🟢 The transboundary result — and why it corroborates W2
+
+Weekly means binned by monsoon (their Table 1, per-cent contribution):
+
+| monsoon | SO₂ | NO₂ | O₃ |
+|---|---:|---:|---:|
+| south-west | 31 | 28 | 28 |
+| **north-east** | **46** | **43** | **39** |
+| inter-monsoon | 23 | 28 | 33 |
+
+Their argument is a **spatial falsification test**, and it is a good one: Sri Lanka's major
+domestic pollution source is the Western Province, **south-west** of Kandy, so a locally-driven
+signal must peak in the SW monsoon. **The opposite is observed** — the maximum is in the NE
+monsoon, when air arrives from the north-east, where Sri Lanka has no appreciable local sources.
+The residual explanation is long-range transport from India and China, and SO₂ carries it most
+strongly (46%) because those regions burn high-sulphur coal.
+
+**This independently corroborates the project's W2 verdict** ([[project-w2-transboundary-verdict]]:
+*Kandy is intrinsically clean and episodically loaded; the regional share is SEASONAL, not
+chronic*), from a different decade, different pollutants and an argument the project did not use.
+W2 was previously supported by our own decomposition plus trajectory work; it now has an external,
+independent, published line.
+
+### 🟢 A named rural background site in Kandy's own airshed
+
+**Arambekade, 8 km out**, read **consistently lower for all three pollutants** than both city
+sites. F.63 established that coastal Colombo (93 km) cannot serve as Kandy's background donor
+(r 0.604 against a 0.923 benchmark), and F.64 flagged Nawalapitiya as a lead. Arambekade is a
+second such site, and unlike Nawalapitiya it has a **published record of being operated as a
+background station**. ⚠ Gas-phase only, 2002–03, passive weekly — **not** a PM background series.
+It is a *siting* lead for any future campaign, not a dataset.
+
+### ⚠ W6: this does NOT re-close it, and the reason matters
+
+The paper states: **"Since there are no power plants or major industries around the Kandy city,
+vehicular emissions are the main source for SO₂ in Kandy"** — with 65,000 vehicles/day entering
+Kandy in 2003 and 85,000/day in 2004, and a fall in SO₂ after March 2004 tracking Ceylon
+Petroleum's diesel sulphur cut from 0.50% to 0.25%. That last point is a genuine attribution: a
+**fuel-composition change moved the signal**, which is about as clean a causal link to vehicles
+as observational work gets.
+
+**But SO₂ is not PM2.5 mass.** Wood is a low-sulphur fuel, so biomass burning produces little SO₂
+and a great deal of particulate. "Vehicles dominate Kandy's SO₂" is therefore **fully compatible**
+with "biomass burning contributes a large share of Kandy's PM2.5 mass" (F.66: 14.1% vs traffic's
+7.6% at Katugastota). Reading this paper as vehicular dominance *of PM* would repeat exactly the
+tracer-for-mass error F.71 warned about. **W6 stays as F.71 left it — narrowed to a graded
+`emix`, not closed.**
+
+### Two further numbers worth keeping
+
+- **Kandy runs dirtier than Colombo in the gas phase.** Annual mean NO₂ **0.031 ppm** at Kandy vs
+  **0.026 ppm** Colombo (2001); SO₂ **0.032 ppm** vs **0.018 ppm** — Kandy ~**1.8×** Colombo. This
+  is a third independent statement of the same thing (Ileperuma 2020 says Kandy "often higher than
+  Colombo"; Premasiri's NBRO study says the same), and it is relevant to **W11**: if Kandy really
+  does sit above Colombo, a model that reads ~19.7 against Colombo's US-Embassy record deserves
+  scrutiny. ⚠ Gases, not PM, and 2001 — a flag, not a measurement.
+- Exceedance rates over the study: **NO₂ 14%, SO₂ 41%, O₃ 28%** of occasions above the Sri Lankan
+  ambient standard; SO₂ 43% on the monthly averages.
