@@ -37,6 +37,15 @@ Package: `kandy_pm25/src/modular/` (68 tests). Spec: `kandy_pm25/docs/MODEL_SPEC
 
 ---
 
+## 🔴 2026-08-23 — LADDER NUMBERS ARE SUSPENDED (F.84)
+
+**Do not quote the budget-ladder step gains, the learner-sensitivity figures, or the Colombo
+result.** The scored `Bud0` used **one of its three admitted streams** (drivers only; no satellite
+level, no static geography), so every gain above it is measured against an artificially weak
+baseline. Specification, pre-registration and implementation all disagreed.
+Rebuild plan: `kandy_pm25/docs/revalidation_plan_2026-08-23.md`.
+Unaffected: P3 nesting, all change-of-support results (F.68/F.69/F.76/F.77), P4 (F.75).
+
 ## 2. Numbers you may quote
 
 | quantity | value | source |

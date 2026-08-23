@@ -4128,3 +4128,79 @@ deliberately, as part of the figure rebuild rather than piecemeal.
 **Still pending:** the Premasiri 5-site pixel test. Overpass was unavailable on both attempts. Its
 value fell after F.76 showed the four-rung ladder confounds support with siting, so a fifth rung
 adds little; what it would still give is a second within-Kandy check at 24-h support.
+
+## F.84 — 🔴🔴 THE VALIDATED `Bud0` IS NOT THE SPECIFIED `Bud0`: the ladder's bottom rung is under-powered by two of its three admitted streams (2026-08-23)
+
+**Raised by the user from first principles, verified, and confirmed.** This is the most serious
+defect found in the programme, and it reaches the headline number.
+
+### The three layers disagree
+
+| layer | what `Bud0` is |
+|---|---|
+| **specification** — `budgets.py:81`, `_BASE` | `SATELLITE_LEVEL` + `DRIVERS_REANALYSIS` + `STATIC_GEO` |
+| **pre-registration** — `prereg_modular_validation_v2`, §2 table | "drivers **+ static covariates**, no observation of this city" |
+| 🔴 **implementation** — `modular_validation_all.py:43`, `FEATS` | `temperature_2m`, `u/v` wind, `wind`, `boundary_layer_height`, `doy_sin`, `doy_cos` — **drivers only** |
+
+**The scored `Bud0` uses one of its three admitted streams.** It has no satellite level, no
+terrain, no population, no road network, no emission proxy. It is not "sensorless"; it is
+**meteorology-only**, and it knows nothing about the place beyond its weather.
+
+### What this invalidates
+
+🔴 **The headline `Bud0→Bud1` gain of ~24% is inflated**, because the baseline it is measured
+against is artificially weak. A `Bud0` carrying a satellite level anchor starts far closer to the
+truth, so the marginal value of the first two stations must be **smaller** — possibly much
+smaller.
+
+🔴 **The `Bud2→Bud3` background gain (~38–40%) is also suspect**, and in the same direction: a
+satellite level product already carries regional information, so part of what the background rung
+currently "buys" may simply be information `Bud0` was entitled to and never given.
+
+🔴 **The Colombo failure (F.78) was scored against this strawman.** Its diagnosis stands —
+the tier has no information about the place — but that is now revealed as an *implementation*
+deficiency rather than a property of sensorless estimation, which is a materially different
+claim. **F.78 must be re-run before it is reported.**
+
+🔴 **The production Kandy chain is not the panel's `Bud1`.** Production re-anchors to Van
+Donkelaar annually; the panel's `Bud1` is meteorology + two sensors. The tier validated and the
+tier shipped are different objects.
+
+### What survives untouched
+
+- **P3** bit-exact nesting — structural, independent of feature content.
+- **The change-of-support results** (F.68/F.69/F.76/F.77) — a different axis entirely.
+- **P4 identifiability** (F.75) — run on the decomposition parameters, not the ladder.
+- **The qualitative finding that the background rung is the largest step** may well survive, but
+  its *magnitude* cannot be quoted until re-run.
+- **Learner-independence** (F.81) survives as a statement about estimator choice, but it was
+  measured on the wrong `Bud0` and should be re-run alongside.
+
+### 🔴 The deeper architectural finding
+
+**The admissibility machinery is one-sided.** `budgets.require()` raises when a tier *touches a
+stream it does not admit* — it prevents cheating upward. **Nothing checks that a tier uses what it
+is entitled to.** A rung can silently under-use its budget, which inflates every gain measured
+above it, and the registry will pass it.
+
+Gate **V2** asked only whether `Bud0` was *genuinely sensorless* (LOCO excludes the target city's
+stations — it does). Nobody asked whether `Bud0` was *genuinely `Bud0`*.
+
+**Fix:** add the dual check — assert that each tier's fitted feature set **covers** its admitted
+streams, not merely that it does not exceed them. This is the same class of error as gotcha #73
+(admissibility enforced by discipline rather than construction) and belongs in `budgets.py`.
+
+### Remediation
+
+1. Rebuild `Bud0` with **`STATIC_GEO`** — available now for all 47 cities from
+   `lur_predictors.csv` (roads at five radii, NDVI, tree cover, water, land cover, built volume,
+   population, night lights, 636 stations).
+2. Add **`SATELLITE_LEVEL`** — needs a per-city satellite PM2.5 pull; not currently on disk for
+   the full panel.
+3. Re-run the ladder, the learner-sensitivity check, and **Colombo**.
+4. Re-register before re-running Colombo, since the design has changed materially.
+
+⚠ **Expect the ladder to flatten.** If it does, that is a finding — *a satellite level anchor
+substitutes for local stations* — and arguably a more useful one for the network-design audience
+than the current numbers. It must not be presented as a disappointment, and the current numbers
+must not be quoted in the interim.
