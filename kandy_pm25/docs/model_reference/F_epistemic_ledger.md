@@ -3939,3 +3939,127 @@ populate `Bud1`+ — so **this bounds the sensorless tier only**, and the natura
 ladder's 47; one city yielded drivers but no ladder row. Immaterial to this result, worth a check.
 
 **Per the stopping rule, this is reported once, as run. No re-specification.**
+
+## F.79 — 🟢 P2 is NOT violated: the "46/47" was our own gate counting a missing rung as a failure (2026-08-23)
+
+F.74 recorded P2 (monotone skill under added data) as holding at **46/47 cities, 97.9%**, with
+one unexplained violation. Chasing the exception dissolved it.
+
+**City 3147** (subtropical, OpenAQ, `n_held=3`, 282 days):
+
+| rung | RMSE |
+|---|---:|
+| `Bud0` | 17.973 |
+| `Bud1` | 12.679 |
+| `Bud2` | 12.665 |
+| `Bud3` | **NaN** |
+
+**Every rung it has improves.** It has only three because with `n_held = 3` there are too few
+stations to form `Bud3`'s outer-ring background proxy, so that rung is *undefined*, not worse.
+
+🔴 **The gate counted it as a failure because it fills a missing rung with `+inf`** —
+`modular_validation_all.py:268`, `L.rmse_Bud3.fillna(np.inf) <= L.rmse_Bud2`. A city that cannot
+form a tier is treated as a city where more data made things worse.
+
+**Corrected:**
+
+| statement | value |
+|---|---|
+| monotone on `Bud0→Bud1→Bud2`, all cities | **47/47** |
+| monotone on every rung that **exists** | **47/47** |
+| monotone among the 46 cities with all four rungs | **46/46** |
+
+**P2 holds at 47/47.** The 97.9% figure understated it and must not be quoted again. ⚠ The same
+`fillna(np.inf)` sits in the production gate and should be corrected there, or the V1 gate will
+keep reporting a violation that does not exist.
+
+This is a strengthening found only by chasing an exception rather than reporting it as noise —
+and it is the second time this session that a "failure" turned out to be an artefact of our own
+measurement (cf. F.73, where a support penalty proved to bias the ladder conservatively).
+
+## F.80 — ⚠ The P1 drift explained: the stored pattern's mean is ~1.004, not exactly 1 (2026-08-23)
+
+The shipped field runs **+0.39 to +0.56%** above its anchor every year and the project reports
+conservation "to within 0.6 per cent" **without knowing what consumes the 0.5%**. Diagnosed.
+
+| year | field basin mean | `T_q50` | drift |
+|---|---:|---:|---:|
+| 2019 | 19.7517 | 19.6614 | **+0.459%** |
+| 2020 | 19.0923 | 19.0188 | +0.386% |
+| 2021 | 17.0786 | 16.9976 | +0.477% |
+| 2022 | 18.7550 | 18.6509 | **+0.558%** |
+| 2023 | 21.0377 | 20.9328 | +0.501% |
+
+### It is systematic, one-sided, and proportional to accumulation
+
+- **100.00% of hours drift positive. Not one hour is exact.**
+- Absolute drift: median +0.011, mean +0.105, max +2.39 µg/m³.
+- `corr(absolute drift, T) = +0.494` — the drift scales with concentration.
+- Cleanest decile of hours **+0.052%**; dirtiest decile **+0.810%**.
+- 🔴 **Not a quantile artefact.** q05, q50 and q95 all drift alike (+0.27, +0.37, +0.37%), so
+  this is not "mean of a median field ≠ median"; the whole field sits above its anchor.
+
+### Mechanism
+
+The formulation is analytically exact: with `mean(P) = 1`, `mean(PM) = T` in both the
+`acc ≥ eps0` and `acc < eps0` branches. But if `mean(P) = 1 + e`, then
+**`mean(PM) − T = acc · e`** — always positive for `e > 0`, and proportional to accumulation.
+That is exactly the observed signature.
+
+**Implied `mean(P_local) ≈ 1.004`, not 1.000.**
+
+The most likely source is the pattern-recovery step: gotcha #65 records that `P` is recovered by
+inverting the split (from the **q95** side) and that a **bounded (month, hour) climatology is
+substituted where the increment is too small to invert**. A substituted climatology has no reason
+to carry a mean of exactly 1, and injecting it on a subset of hours would produce precisely this
+small, one-sided, accumulation-proportional excess.
+
+### What to say, and what to do
+
+**Say:** P1 is a guarantee of the *formulation*, realised in the *build* to **within 0.6 per
+cent**, and the residual is a normalisation drift of the stored pattern (~0.4%), not a failure of
+the conservation identity. That is a stronger and more honest statement than the current silent
+"to within 0.6%".
+
+**Do (optional, low priority):** renormalise `P` to unit mean after the climatology substitution.
+⚠ Expect the basin means to move by ~0.4% — which would change every published annual figure by
+that amount, so it must not be done casually before submission. **Recommend documenting rather
+than fixing**, since the effect is smaller than every uncertainty the paper reports.
+
+## F.81 — 🟢 The budget ladder is a property of the INFORMATION, not the estimator: even a linear model reproduces it (2026-08-23)
+
+The whole value-of-information result rests on one `HistGradientBoostingRegressor` with one
+hyperparameter setting. If the step gains moved when the estimator changed, the ladder would be a
+property of that learner rather than of the observations. Tested with four estimators spanning
+boosting, bagging and a plain linear model. `scripts/tier2_robustness.py`.
+
+| `Bud0` learner | median `Bud0` RMSE | `Bud0→Bud1` | `Bud1→Bud2` | `Bud2→Bud3` |
+|---|---:|---:|---:|---:|
+| HistGBM (shipped) | 20.96 | 23.6% | 0.0% | 40.1% |
+| HistGBM shallow (depth 3) | 20.25 | 24.1% | 0.0% | 37.9% |
+| RandomForest | 20.74 | 22.4% | 0.1% | 39.6% |
+| **Ridge (linear)** | 20.56 | **24.2%** | 0.0% | **36.8%** |
+| **spread** | 0.7 | **1.8 pp** | **0.1 pp** | **3.3 pp** |
+
+### 🟢 A linear model reproduces the ladder
+
+This is stronger than the robustness check it was meant to be. **Ridge regression on seven
+drivers recovers the same step gains as gradient boosting** — 24.2% vs 23.6% on the first rung,
+36.8% vs 40.1% on the background rung — and reproduces the flat middle rung exactly.
+
+The consequence for the paper: **the value of each observation increment is a property of the
+information, not of model capacity.** The ladder cannot be dismissed as an artefact of a
+particular learner or of over-fitting, and the contribution does not depend on any ML
+sophistication at all. That is a considerably more durable claim than "our GBM improves when we
+give it more data".
+
+It also reinforces the standing conclusion that the binding constraint is **data content, not
+model class** — the same finding the dynamic-transport and spatial nulls reached from the other
+direction.
+
+⚠ Median `Bud0` RMSE here is 20.96 against `ladder_all.csv`'s 21.19: this run's pool built 48
+cities to the ladder's 47 (one city yields drivers but no ladder row, noted in F.78). Immaterial
+to the comparison, since all four learners share the same pool.
+
+⚠ The monotone percentages printed by this script (91–96%) carry the **`fillna(np.inf)` defect of
+F.79** and understate P2. Corrected: P2 holds on every rung that exists.
