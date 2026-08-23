@@ -4063,3 +4063,68 @@ to the comparison, since all four learners share the same pool.
 
 ⚠ The monotone percentages printed by this script (91–96%) carry the **`fillna(np.inf)` defect of
 F.79** and understate P2. Corrected: P2 holds on every rung that exists.
+
+## F.82 — 🟡 The v3 R² finally has an interval, and H3's "near-miss" is not distinguishable from a pass (2026-08-23)
+
+The Stage A v3 pooled LOMO R² of **0.581** has been a single-run point estimate since 2026-05 and
+was listed as open housekeeping. Bootstrapped.
+
+**Cluster bootstrap over the 53 non-empty LOMO folds** (B = 2000) — clustered because rows inside
+a station-month fold are not independent:
+
+| | point | 95% CI |
+|---|---:|---|
+| **R²** | **0.5814** | **[0.4849, 0.6441]** |
+| RMSE | 7.784 | [7.079, 8.511] |
+
+### 🟡 The consequence for H3
+
+The pre-registered gate was **R² ≥ 0.60**, closed as an "honest near-miss at 0.581".
+**The 95% interval includes 0.60.** The data therefore **do not distinguish a pass from a
+failure** on this gate. Calling it a near-miss was directionally right and is now quantified: the
+point estimate misses, the interval covers.
+
+The paper should state it that way — *0.581, 95% CI [0.485, 0.644], not separable from the 0.60
+threshold at this sample size* — rather than either claiming the gate or conceding it.
+
+### ⚠ A methodological point worth carrying
+
+A **naive i.i.d.** bootstrap gives **[0.563, 0.597]** — **4.7× narrower**, and it would have
+*excluded* 0.60 and licensed the confident claim "significantly below the gate". Ignoring the
+fold structure would have produced exactly the wrong conclusion with apparent precision.
+
+⚠ Caught en route: `q50_blend` in `predictions_blend_v3.parquet` is already the **absolute**
+prediction, not the residual. Adding `c_prior_anchored` to it (the natural reading of the v3
+architecture) gives **R² = −3.56**. The column is post-reconstruction. Anyone recomputing v3
+metrics should verify against the recorded 0.581 before trusting a number.
+
+## F.83 — 🔴 Colour-vision check, never run before: three palettes pass, `turbo` fails (2026-08-23)
+
+The locked palette set has never been checked for colour-vision deficiency, which affects roughly
+8% of male readers. Simulated deuteranopia, protanopia and tritanopia and tested each map for
+**monotone lightness** — the property that lets a reader with CVD still read high from low.
+
+| palette | role | monotone under all three simulations? |
+|---|---|---|
+| **YlOrRd** | PM heatmaps (headline) | ✅ yes |
+| **inferno** | emission surfaces | ✅ yes |
+| **magma** | uncertainty | ✅ yes |
+| **RdBu** | signed/diverging | ✅ non-monotone *by design*; both arms stay distinguishable — red–blue is CVD-safe where red–green is not |
+| 🔴 **turbo** | **episode scale** | ❌ **NOT monotone — under normal vision or any simulation** |
+
+**`turbo` is the only failure, and it is used for the episode scale** — the nowcast panel switches
+to it whenever the field's 98th percentile exceeds 35 µg/m³ (WHO IT-1). So the palette chosen for
+the *most consequential* maps in the product is the one a reader cannot reliably order. Its
+lightness range also collapses from 0.768 under normal vision to **0.542 under tritanopia**.
+
+Turbo is a rainbow-family map; non-monotone lightness is a known property of the family and is not
+specific to CVD — even a normal-sighted reader can misread ordering in it.
+
+**Recommendation:** replace `turbo` on the episode scale with **inferno**, which is already in the
+locked set, passes every simulation, and remains visually distinct from YlOrRd so the "this is an
+episode" signal is preserved. ⚠ Cheap to change, but it alters published figures — do it once,
+deliberately, as part of the figure rebuild rather than piecemeal.
+
+**Still pending:** the Premasiri 5-site pixel test. Overpass was unavailable on both attempts. Its
+value fell after F.76 showed the four-rung ladder confounds support with siting, so a fifth rung
+adds little; what it would still give is a second within-Kandy check at 24-h support.
