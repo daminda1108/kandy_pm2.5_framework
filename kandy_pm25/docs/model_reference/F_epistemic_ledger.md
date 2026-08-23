@@ -2040,6 +2040,8 @@ QA gate, then deploy, is a separate step and a shipping decision — deliberatel
 
 ## F.50 — the budget-ladder PILOT: P2 holds, and the biggest step is NOT the one I predicted
 
+⚠ **SUPERSEDED IN PART BY F.84–F.85 (2026-08-23).** The step gains here were measured against a `Bud0` that used one of its three admitted streams. Re-validated numbers: **17.9 / 0.1 / 40.6** from `Bud0c`.
+
 `scripts/modular_validation.py`, 39 CNEMC cities with >= 10 stations, 1,095 days each, scored on
 held-out stations no rung ever sees. Registered in `prereg_modular_validation_2026-08-18.md`
 (v1) — **superseded by v2 before these results were read, so this is a PILOT and is labelled as
@@ -2095,6 +2097,8 @@ sensors**, and the CEA reference monitor's value is mostly in identifying `b_k`,
 
 
 ## F.51 — the budget ladder on the WIDENED frame: 47 cities, 4 latitude bands, 32 countries
+
+⚠ **SUPERSEDED IN PART BY F.84–F.85 (2026-08-23).** Step gains re-measured against a spec-compliant `Bud0c`; the band ordering flipped. The **confound findings stand** — only the magnitudes changed.
 
 `scripts/modular_validation_all.py`, registered in `prereg_modular_validation_v2_2026-08-18.md`
 (option C, Amendment 2). 48 cities usable, **47 scored**, 32,396 city-days. Both arms share an
@@ -2168,6 +2172,8 @@ settle it - which is exactly what NBRO would be at Kandy.
 
 ## F.52 — 🔴 V6 FIRES: sensor class is aliased with latitude band, and it changes the F.51 reading
 
+⚠ **Magnitudes superseded by F.85 (2026-08-23).** The instrument-class confound itself **stands**.
+
 The registered LCS-honesty gate (V6) was the last one run and it found the third confound of
 this workstream.
 
@@ -2224,6 +2230,8 @@ a paper. The gates are the reason this workstream is trustworthy, not the result
 
 
 ## F.53 — the class/band confound CANNOT be sampled away: reference monitoring barely exists in the deep tropics
+
+⚠ **Magnitudes superseded by F.85 (2026-08-23).** The scarcity argument itself **stands**.
 
 Follow-up to F.52, checked against the full OpenAQ census (715 clusters) rather than the drawn
 sample, using `is_monitor` — which is known BEFORE ingest, so this is a property of the world,
@@ -3871,6 +3879,8 @@ honest P4 disclosure, and the same treatment eps0 already receives.
 
 ## F.78 — 🔴 THE COLOMBO ZERO-SHOT TEST FAILS, and every registered prior was wrong (2026-08-22)
 
+🔴 **RETRACTED AS STATED; see F.86/F.87 (2026-08-23).** Scored against the under-powered `Bud0` of F.84. With a spec-compliant `Bud0c` the level bias goes **+31.3% → −4.4%** and seasonal r **0.55 → 0.93**. What survives: no day-to-day skill beyond climatology.
+
 Pre-registered at **https://osf.io/nxqgb/**, registered `2026-08-22T17:29:53Z` — **before
 `scripts/colombo_zeroshot_test.py` existed**. This is the project's only third-party-verifiable
 registration. Design, gates and priors were fixed there and are unchanged here.
@@ -4027,6 +4037,8 @@ that amount, so it must not be done casually before submission. **Recommend docu
 than fixing**, since the effect is smaller than every uncertainty the paper reports.
 
 ## F.81 — 🟢 The budget ladder is a property of the INFORMATION, not the estimator: even a linear model reproduces it (2026-08-23)
+
+⚠ **Measured on the pre-F.84 `Bud0` (2026-08-23).** The conclusion — the ladder is estimator-independent — was not re-tested against `Bud0c` and should be re-run before it is quoted in the paper.
 
 The whole value-of-information result rests on one `HistGradientBoostingRegressor` with one
 hyperparameter setting. If the step gains moved when the estimator changed, the ladder would be a

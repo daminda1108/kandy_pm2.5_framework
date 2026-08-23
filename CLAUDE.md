@@ -153,7 +153,7 @@ reasoning `model_formulation_2026-08-18.md`; ML placement `model_formulation_ml_
   observation.* The contribution is the **declared budget with guaranteed nesting**, not the
   physics and not the ML.
 
-## Budget-ladder validation — COMPLETE (2026-08-19, ledger F.50–F.53)
+## Budget-ladder validation — RE-VALIDATED 2026-08-23 (ledger F.50–F.53, **corrected by F.84–F.87**)
 
 **Modular decomposition built** (`src/modular/`: budgets · observation model · constraints ·
 shrinkage · tier harness · production bindings · sector emission surface; **68 tests**).
@@ -163,13 +163,36 @@ registration `docs/prereg_modular_validation_v2_2026-08-18.md` (option C + 2 ame
 **Frame: 47 cities scored, 4 latitude bands, 32 countries, 32,396 city-days.** OpenAQ ingest
 46/46 attempted → 37 retained (9 excluded, named, never replaced) + 11 CNEMC. All six gates run.
 
-**Step gains (median % RMSE reduction):**
+🔴 **THE 2026-08-19 STEP GAINS ARE RETIRED (F.84).** The scored `Bud0` used **one of the
+three streams its budget admits** — drivers only, no satellite level, no static geography — so
+every gain above it was measured against an artificially weak baseline. Fixed in code by
+`Budget.require_covers()`; re-registered at **https://osf.io/g6hqb/** and re-run.
 
-| step | deep-trop | tropical | subtrop | temperate |
-|---|---:|---:|---:|---:|
-| `Bud0→Bud1` (+2 stn) | 38.5 | 16.0 | 22.7 | 24.9 |
-| `Bud1→Bud2` (+6 stn) | 1.6 | 0.1 | 0.0 | 0.0 |
-| `Bud2→Bud3` (+background) | 28.1 | 49.1 | 52.5 | 41.4 |
+**THE BOTTOM RUNG IS NOW DECOMPOSED**, so each globally available stream is measured on the same
+footing as a monitor (median RMSE across cities):
+
+| rung | median RMSE | step |
+|---|---:|---:|
+| `Bud0a` reanalysis drivers only | 21.94 | — |
+| `Bud0b` + static geography | 20.31 | **10.8%** |
+| **`Bud0c`** + satellite level — *the spec-compliant `Bud0`* | 19.99 | **7.6%** |
+
+🟢 **Static geography (10.8%) beats the satellite level (7.6%)** — an annual satellite level
+cannot touch day-to-day variance, which is what daily RMSE is made of.
+
+**Step gains from `Bud0c` (median % RMSE reduction) — QUOTE THESE:**
+
+| step | pooled | deep-trop | tropical | subtrop | temperate |
+|---|---:|---:|---:|---:|---:|
+| `Bud0c→Bud1` (+2 stn) | **17.9** | 21.9 | 6.7 | 29.7 | 33.5 |
+| `Bud1→Bud2` (+6 stn) | **0.1** | 0.9 | 0.1 | 0.3 | 1.1 |
+| `Bud2→Bud3` (+background) | **40.6** | 8.5 | 39.8 | 36.0 | 31.6 |
+
+⚠ The **band ordering flipped**: the first two stations now buy most in the **temperate** band
+(33.5) and least in the **tropical** (6.7), where previously the deep tropics led at 38.5. And in
+the deep tropics the background rung **collapses from 28.1 to 8.5** once a satellite level is
+present — the satellite substitutes for the background there. ⚠ Subtropical and temperate cells
+are **n=7**; small.
 
 🔴 **THREE CONFOUNDS CAUGHT BY REGISTERED GATES, not by review** — each invisible in the pooled
 numbers and each would have reached a paper:
@@ -187,6 +210,12 @@ noise. **Never state V4 unconditionally.** The pilot's 2.9% (F.50) must not be q
 
 🔴 **Two registered priors REFUTED**: `Bud0→Bud1` does NOT dominate (background does); and
 `Bud0` is worst in the **temperate** band (normalised 1.194), not the deep tropics (0.792).
+
+🔴 **And five of eight re-validation priors refuted (F.85)** — including my headline one: I
+registered the satellite level as the largest step below the ground rungs at 25–45%; it is
+**7.6%**. 🟢 **The coastal test held strongly:** a satellite level helps coastal cities **four
+times** as much as inland (24.4% vs 6.2%, n=21 vs 27; **not** confounded with instrument class,
+Fisher p=0.38).
 
 🔴 **F.53 — the class/band confound CANNOT be sampled away.** Worldwide only **5** deep-tropical
 clusters have ≥10 concurrent reference stations, against 32 temperate. *The regime that most

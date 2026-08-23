@@ -37,14 +37,28 @@ Package: `kandy_pm25/src/modular/` (68 tests). Spec: `kandy_pm25/docs/MODEL_SPEC
 
 ---
 
-## 🔴 2026-08-23 — LADDER NUMBERS ARE SUSPENDED (F.84)
+## 🟢 2026-08-23 — the ladder was RE-VALIDATED; use the corrected numbers (F.84–F.87)
 
-**Do not quote the budget-ladder step gains, the learner-sensitivity figures, or the Colombo
-result.** The scored `Bud0` used **one of its three admitted streams** (drivers only; no satellite
-level, no static geography), so every gain above it is measured against an artificially weak
-baseline. Specification, pre-registration and implementation all disagreed.
-Rebuild plan: `kandy_pm25/docs/revalidation_plan_2026-08-23.md`.
-Unaffected: P3 nesting, all change-of-support results (F.68/F.69/F.76/F.77), P4 (F.75).
+The scored `Bud0` had used **one of the three streams its budget admits** (drivers only — no
+satellite level, no static geography), inflating every gain above it. Fixed in code
+(`require_covers()`), **re-registered at https://osf.io/g6hqb/ before re-running**, and rebuilt.
+
+**The old headline was inflated but the story survived.** `Bud0→Bud1` falls **25.6% → 17.9%**;
+the background rung is essentially unchanged. The bottom rung is now decomposed so each global
+stream is measured against a monitor's worth:
+
+| step | value |
+|---|---:|
+| `Bud0a→Bud0b` static geography | **10.8%** |
+| `Bud0b→Bud0c` satellite level | **7.6%** |
+| **`Bud0c→Bud1`** (+2 stations) | **17.9%** |
+| `Bud1→Bud2` (+6 stations) | **0.1%** |
+| `Bud2→Bud3` (+background) | **40.6%** |
+
+🟢 Geography beats satellite — an *annual* level cannot touch the day-to-day variance that daily
+RMSE is made of. 🟢 A satellite level helps **coastal** cities **4×** more than inland (24.4% vs
+6.2%). 🔴 **Five of eight registered priors refuted**, including my headline prediction that the
+satellite step would be the largest.
 
 ## 2. Numbers you may quote
 
@@ -129,7 +143,7 @@ city is uniform (F.60), and a transferred LUR barely beats a population raster (
 |---|---|---|
 | 🟡 **W6** | **Kandy's source mix — now resolved by GEOGRAPHY (F.71).** A 20-site study finds traffic **predominant in the urban core**, firewood **co-dominant there and dominant rurally**. So `emix vehic = 0.85` is refuted (F.66) *and* Katugastota's 7.6% bounds one suburban site, not the core. **Defensible core value: `vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4`.** ⚠ PAHs are a combustion tracer, not mass — this licenses the ordering, not a percentage. | **narrowed, not closed** |
 | 🔴 **W11** | **The level discrepancy.** Of four independent Kandy point records, **three sit below the model** (FECT Hantana ~+44%, FECT Akurana, RF-CNN LCS +28%) and **one matches** (NBRO, +0.7%/−2.6%). The three low ones are all LCS carrying a downward calibration; the one that matches has an **undocumented instrument**. | **OPEN** |
-| 🔴 **generality** | **The sensorless tier `Bud0` FAILS at Colombo** (F.78, pre-registered at osf.io/nxqgb): R² vs day-of-year climatology **−4.07**, level **+31% high**, seasonal r 0.55. All three registered priors refuted, one with the wrong sign. **"Works anywhere" is refuted — claim valley/basin regimes only.** Kandy is unaffected: in regime, and runs at `Bud1`, not `Bud0`. | **bounded** |
+| 🟡 **generality** | **F.78's "the sensorless tier fails at Colombo" is RETRACTED as stated** — it was scored against the under-powered `Bud0` (F.84). Re-run with a spec-compliant `Bud0c` and Colombo's **real** geography (F.86/F.87): level bias **+31.3% → −4.4%**, seasonal r **0.55 → 0.93**, plain R² **−0.90 → +0.37**. 🔴 **What survives:** R² against a day-of-year climatology is still **−0.70**, so the model matches Colombo's level and season but adds **no day-to-day skill** — sea-breeze variation the seven drivers cannot resolve. A *located* deficiency, not a failure to transfer. | **narrowed** |
 | ⚪ | `A_transport` is entirely unscored; the panel is 10 cities, **all valley/basin, zero coastal**; the panel does not bracket Kandy. | by design |
 
 **Do not resolve W11 by picking the record that agrees.** State it as an open discrepancy.
