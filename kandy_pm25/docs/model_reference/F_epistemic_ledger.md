@@ -4204,3 +4204,164 @@ streams, not merely that it does not exceed them. This is the same class of erro
 substitutes for local stations* — and arguably a more useful one for the network-design audience
 than the current numbers. It must not be presented as a disappointment, and the current numbers
 must not be quoted in the interim.
+
+## F.85 — 🟡 THE RE-VALIDATED LADDER: the old numbers were inflated but the story survives; five of eight registered priors refuted (2026-08-23)
+
+Pre-registered at **https://osf.io/g6hqb/** (2026-08-23T04:21:32Z), before the satellite pull and
+before any number existed. `scripts/revalidate_ladder.py`, `ladder_revalidated.csv`.
+
+**R-G3 passed in the live pipeline, and `require_covers()` correctly rejected `Bud0a` as
+under-powered** — the F.84 fix works against the real defect, not only in a unit test.
+**R-G5 passed: 57/57 cities have a satellite level.**
+
+### The decomposed bottom rung
+
+| rung | median RMSE | step |
+|---|---:|---|
+| `Bud0a` drivers only | 21.944 | — |
+| `Bud0b` + static geography | 20.312 | **10.81%** |
+| `Bud0c` + satellite level | 19.987 | **7.62%** |
+
+### The ground rungs, from each bottom
+
+| bottom | →`Bud1` | →`Bud2` | →`Bud3` |
+|---|---:|---:|---:|
+| `Bud0a` (the old, under-powered rung) | **25.57%** | 0.26% | 43.34% |
+| `Bud0b` | 17.32% | 0.12% | 39.04% |
+| **`Bud0c`** (spec-compliant) | **17.85%** | **0.10%** | **40.56%** |
+
+### 🔴 Registered priors: three held, five refuted
+
+| prior | predicted | actual | |
+|---|---|---:|---|
+| geography step | 5–15% | **10.81%** | ✅ held |
+| **satellite step** | **25–45%, the largest step below the ground rungs** | **7.62%** | ❌ **badly refuted** |
+| `Bud0c→Bud1` | 5–15% | **17.85%** | ❌ refuted (it *is* below 24%, but not by what I claimed) |
+| `Bud1→Bud2` | ~0% | 0.10% | ✅ held |
+| `Bud2→Bud3` | 15–30% | **40.56%** | ❌ **refuted — essentially unchanged** |
+| **overall: the ladder flattens** | flattens | **modest only** | ❌ largely refuted |
+| coastal (a): `Bud0a` worse at coastal | worse | **better**, 19.55 vs 26.56 | ❌ refuted |
+| **coastal (b): satellite helps coastal more** | larger | **24.38% vs 6.18% — 4×** | ✅✅ **strongly held** |
+
+### What this means
+
+🟡 **The old headline was inflated, but only moderately, and the qualitative story survives.**
+`Bud0→Bud1` falls from **25.6% to 17.9%** — a real ~30% relative correction that had to be made —
+while `Bud2→Bud3` is essentially unchanged (43.3 → 40.6). **The background rung remains the
+largest step in the programme**, in-city stations beyond the first two still buy nothing, and the
+first two stations still buy a great deal. F.84 was a genuine defect and it did **not** overturn
+the finding.
+
+🔴 **The satellite level is worth far less than I predicted, and that is the interesting result.**
+7.6%, against a registered 25–45%. ⚠ **Post-hoc explanation, flagged as such:** GHAP supplies an
+**annual** level while the target is a **daily** city mean, and daily RMSE is dominated by
+day-to-day variance that an annual constant cannot touch. If so, a *daily* satellite product
+would be a different test — and that is a hypothesis for a future registration, not a rescue of
+this one.
+
+🟢 **Static geography (10.8%) beats the satellite level (7.6%).** Population, built volume and
+night lights carry more usable information about a city's daily PM2.5 than an annual satellite
+level does. Unexpected, and directly useful for the network-design framing.
+
+### 🟢 The coastal test: half the F.78 diagnosis confirmed, half refuted
+
+| | n | `Bud0a` RMSE | `Bud0c` RMSE | gain |
+|---|---:|---:|---:|---:|
+| inland | 27 | 26.56 | 26.14 | **6.18%** |
+| **coastal (<50 km)** | **21** | **19.55** | **12.91** | **24.38%** |
+
+**Satellite level helps coastal cities four times as much as inland ones.** That is the registered
+prediction (b), confirmed at n=21 vs 27 — and it supports the F.78 reading that the failure mode
+is *a tier with no information about the place beyond its weather*, since coastal cities are
+exactly where meteorology least predicts concentration.
+
+⚠ **Prediction (a) is refuted:** coastal cities are *easier* at `Bud0a` (19.55 vs 26.56), not
+harder. So coastal cities are not intrinsically hard — they are **intrinsically mis-levelled** by
+a meteorology-only tier, and a level anchor fixes it.
+
+⚠ **Checked before reporting:** coastal is **not** confounded with instrument class (Fisher exact
+**p = 0.382**; the matching n=21 in both strata was coincidence — the sets share only 11 cities).
+It **is** partially associated with band (9 of 13 deep-tropical cities are coastal), so the
+coastal claim must be reported alongside the band stratification, never instead of it.
+
+### R-G2 monotonicity, on every rung that exists (F.79 convention)
+
+`Bud0a` 47/48 · `Bud0b` **45/48** · **`Bud0c` 48/48**. The spec-compliant bottom rung is the only
+one that is perfectly monotone — a small point in favour of the corrected design, and the three
+`Bud0b` violations should be named if that rung is reported.
+
+### Consequence
+
+**The suspension of F.50–F.53 is lifted with corrected numbers**: quote **17.9% / 0.1% / 40.6%**
+from `Bud0c`, never the old 24%/0%/38–40%. Colombo (F.78) must still be re-run against `Bud0c`
+before its conclusion is restated.
+
+## F.86 — 🟢 COLOMBO RE-RUN: the F.78 diagnosis was RIGHT, the level failure vanishes, and the residual failure is now precisely located (2026-08-23)
+
+Pre-registered gates R-G6, https://osf.io/g6hqb/. Re-run against the spec-compliant `Bud0c`.
+`data/processed/modular/colombo_zeroshot_bud0c.csv`.
+
+| gate | F.78 (`Bud0a`) | **now (`Bud0c`)** | criterion | |
+|---|---:|---:|---|---|
+| C-G1 daily RMSE | 17.68 | **10.10** | in [13.43, 45.54] | ⚠ outside, **on the favourable side** |
+| C-G2 seasonal r | 0.550 | **0.950** | ≥ 0.60 | ✅ **PASS** |
+| C-G3 level bias | **+31.3%** | **−1.8%** | ≤ 40% | ✅ **PASS** |
+| C-G4 R² vs climatology | −4.069 | **−0.655** | > 0 | ❌ **FAIL** |
+| plain R² | −0.896 | **+0.381** | — | — |
+
+Observed mean 20.54; modelled **20.16**.
+
+### 🟢 The diagnosis in F.78 was correct
+
+F.78 attributed the Colombo failure to *a tier carrying no information about the place beyond its
+weather*. Giving it a satellite level anchor **fixes almost exactly what that predicted**: level
+bias collapses from **+31.3% to −1.8%**, seasonal correlation rises from **0.550 to 0.950**, and
+plain R² goes from **−0.896 to +0.381**. The registered prior "bias falls below 15%" **holds**.
+
+This also confirms, from the target's own regime, the panel finding that a satellite level is
+worth four times more at coastal cities (F.85).
+
+### 🔴 But C-G4 still fails, and the failure is now precisely located
+
+R² against day-of-year climatology remains negative (**−0.655**), so the registered prior "turns
+positive" is **refuted**. The precise statement is now available and is much more useful than
+F.78's blunt one:
+
+> At Colombo the model reproduces the **annual level** (−1.8%) and the **seasonal cycle**
+> (r = 0.95) well, and adds **no day-to-day skill beyond the seasonal climatology**. Daily
+> variation there is driven by sea-breeze onset, which the seven meteorological drivers do not
+> resolve.
+
+Failing to beat a day-of-year climatology while matching level and season is a *specific*
+deficiency, not a general failure to transfer.
+
+### ⚠ C-G1 "fails" by being too good — the gate was mis-specified
+
+RMSE 10.10 falls **below** the band's lower bound of 13.43. The registered interpretation of a
+C-G1 failure was "Colombo is an outlier against the panel, so the generality claim narrows"; that
+reading **does not apply** when the model is better than the panel's 10th percentile. The concern
+was one-sided and the gate was written two-sided. **Reported as a technical failure with the
+registered interpretation explicitly withdrawn** — not reinterpreted as a pass.
+
+### 🔴 DEVIATION FROM THE REGISTRATION, declared
+
+**Colombo has no entry in `lur_predictors.csv`**, so its `STATIC_GEO` block was filled with the
+**panel median**. Colombo's `Bud0c` therefore carries real drivers and a real satellite level but
+**substituted geography** — it sits between `Bud0b` and `Bud0c`, not at `Bud0c`.
+
+⚠ This is uncomfortably close to the very defect F.84 is about, and it matters: static geography
+was worth **10.8%** on the panel. The registration did not anticipate that an out-of-panel city
+would lack the predictor set.
+
+**Consequence:** this is a **partial** `Bud0c` test. The level and seasonal results are unlikely
+to be affected — they are driven by the satellite anchor — but C-G4 might be. **Pulling Colombo's
+real LUR predictors and re-running is the honest follow-up**, and until then C-G4's failure should
+be stated as *provisional*.
+
+### Net
+
+F.78's headline — "the sensorless tier fails at Colombo" — **must be retracted as stated**. What
+survives is narrower and better evidenced: a **meteorology-only** tier fails badly out of regime;
+adding a globally available satellite level repairs the level and the seasonal cycle almost
+completely; and what remains unrecovered is **day-to-day variation at a coastal site**, provisional
+on the geography substitution above.
