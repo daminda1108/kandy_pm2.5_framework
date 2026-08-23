@@ -130,11 +130,18 @@ appear to have been run.
 
 ### 2.3 The figures this paper needs
 
-**🔴 Fig. 1 — the support-scaling ladder. The money figure, and it does not exist.**
-Log-scaled contrast on the y-axis against averaging support on the x-axis, four points with
-error/range bars, annotated with the measurement that produced each. Inset: the botanical garden
-— two markers 300 m apart reading 110 and 4, with the 1 km pixel drawn around both. *A reader
-should understand the paper's hardest result in five seconds.* This single figure carries §5.
+🔴 **SUPERSEDED BY F.76 — the support-scaling ladder must NOT be Fig. 1.** Its four rungs
+confound averaging support with *siting design* (Elangasinghe sampled kerbside-to-garden extremes;
+the later rungs progressively did not), and a direct test on three dense networks found temporal
+averaging worth only **1.2–1.7×**, not the 69× the ladder spans.
+
+**🔴 Fig. 1 — the PAIRED-SITE panel.** The unconfounded result, and it carries §5 alone: two
+microsites **300 m apart, both 3-hour samples, both inside one 998 m pixel** — **27.5× observed,
+1.000× modelled**. Support held fixed, only location varies, the model cannot represent the
+difference *by construction*. Draw the garden, both markers, the reading at each, and the pixel
+boundary enclosing both. Second panel: the matched-support comparison (model **1.232** against
+observed **1.26–47**), which is what makes the honest point that the model is close to right *for
+its own support*. *A reader should understand the paper's hardest result in five seconds.*
 
 **🔴 Fig. 2 — the budget ladder.** Step gain per tier, stratified by latitude band and by
 instrument class. Must show the LCS/reference split, since "more in-city stations buy nothing" is

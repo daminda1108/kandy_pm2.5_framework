@@ -137,11 +137,17 @@ schematic.
 
 **New, in priority order:**
 
-1. 🔴 **The support-scaling ladder** — four campaigns, four supports, monotone collapse. *This is
-   the paper's money figure* and it does not exist yet.
-2. 🔴 **The budget ladder** — step gain per tier, stratified by band and by instrument class.
+1. 🔴 **The paired-site panel** — the botanical garden, two microsites 300 m apart inside one
+   998 m pixel, **27.5× observed against 1.000× modelled**, plus the matched-support comparison
+   (model 1.232 vs observed 1.26–1.47). *The paper's money figure.* ⚠ **Promoted from 4th by
+   F.76**, which found the support-scaling ladder confounds support with siting design and so
+   cannot carry §5.
+2. 🔴 **The budget ladder** — step gain per tier, stratified by band, instrument class **and
+   coastal/inland**. ⚠ Use the **re-validated** `Bud0c` numbers (F.85), never the retired ones,
+   and show the decomposed bottom rung so a satellite level and a monitor are compared directly.
 3. 🟡 **The three confounds** — what the pooled numbers hid.
-4. 🟡 **The paired-site panel** — the botanical garden at 300 m, observation vs model.
+4. 🟡 **The support-scaling ladder**, demoted — reportable as a secondary, explicitly
+   confounded observation, not as a scaling law.
 
 **Cut with the health block:** exposure weighting and burden figures.
 

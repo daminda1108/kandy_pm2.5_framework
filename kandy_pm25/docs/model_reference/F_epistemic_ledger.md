@@ -4038,7 +4038,7 @@ than fixing**, since the effect is smaller than every uncertainty the paper repo
 
 ## F.81 — 🟢 The budget ladder is a property of the INFORMATION, not the estimator: even a linear model reproduces it (2026-08-23)
 
-⚠ **Measured on the pre-F.84 `Bud0` (2026-08-23).** The conclusion — the ladder is estimator-independent — was not re-tested against `Bud0c` and should be re-run before it is quoted in the paper.
+🔴 **RE-RUN AND REFUTED at `Bud0c` — see F.88 (2026-08-23).** On the spec-compliant 68-feature bottom rung the linear model **collapses** (RMSE 35.0 vs 18.9) and the first-rung spread goes from 1.8 pp to **38.5 pp**. The surviving claim is *robust across NON-LINEAR estimators*, never *"even a linear model reproduces it"*.
 
 The whole value-of-information result rests on one `HistGradientBoostingRegressor` with one
 hyperparameter setting. If the step gains moved when the estimator changed, the ladder would be a
@@ -4429,3 +4429,62 @@ It also mildly reinforces F.85's surprise that static geography is worth less th
 (city centroid) while the LUR predictors were sampled at the Embassy monitor 6.909 N, 79.875 E —
 about 2 km apart. Immaterial for an annual level averaged over a 5 km buffer, but the two should
 be reconciled to a single coordinate if this is repeated.
+
+## F.88 — 🔴 F.81 IS REFUTED at `Bud0c`: the linear model collapses, and the first rung is NOT estimator-independent (2026-08-23)
+
+F.81 concluded that the budget ladder is *"a property of the INFORMATION, not the estimator"*
+because four learners — including plain Ridge regression — gave step gains within 1.8 pp. I
+described that as one of the most durable claims in the programme. **It was measured on the
+pre-F.84 `Bud0` (7 meteorological features) and it does not survive the correction.**
+
+`scripts/learner_sensitivity_bud0c.py`, re-run against the spec-compliant `Bud0c` (68 features).
+
+| learner | `Bud0c` RMSE | `Bud0c→Bud1` | `Bud1→Bud2` | `Bud2→Bud3` |
+|---|---:|---:|---:|---:|
+| HistGBM (shipped) | **18.91** | **11.7%** | 0.3% | 40.8% |
+| HistGBM shallow | 19.76 | 14.2% | 0.3% | 40.3% |
+| RandomForest | 19.92 | 14.0% | 0.6% | 43.4% |
+| 🔴 **Ridge (linear)** | 🔴 **35.01** | 🔴 **50.2%** | 0.1% | 38.8% |
+| **spread** | **16.09** | **38.5 pp** | **0.46 pp** | **4.60 pp** |
+
+*F.81 on the old `Bud0` gave spreads of 1.8 / 0.1 / 3.3 pp.*
+
+### Why it breaks, and why that is the interesting part
+
+Ridge kept up on **seven meteorological drivers**. On **68 features** — including population,
+built volume, night lights, road density and a satellite level — a linear model cannot exploit
+the information, so its `Bud0c` is nearly **twice as bad** (35.0 vs 18.9). The first two stations
+then appear to "buy" **50%** rather than **12%**, because they are correcting a badly wrong
+baseline rather than adding to a good one.
+
+🟢 **The corrected claim is more useful than the one it replaces:**
+
+> **The measured value of a monitor depends on how well you can exploit the data you already have
+> for free.** A model unable to use satellite and geography makes monitors look four times more
+> valuable than they are. Value of information is not a property of the information alone — it is
+> a property of the information *and the estimator's capacity to use it*.
+
+For a network-design audience that is a sharper and more actionable message than
+estimator-independence would have been: *before buying a monitor, check whether your model is
+already leaving free information on the table.*
+
+### What survives
+
+- **Among learners that can represent non-linearity** — the two GBMs and the random forest —
+  the ladder is robust: 11.7 / 14.2 / 14.0%, a spread of **2.5 pp**. The claim is therefore
+  *"robust across non-linear estimators"*, **not** *"even a linear model reproduces it"*.
+- 🟢 **`Bud1→Bud2` ≈ 0 holds under every learner including Ridge** (0.1–0.6%, spread **0.46 pp**).
+  This is now the most estimator-robust result in the ladder.
+- 🟢 **`Bud2→Bud3` is robust** at 38.8–43.4%, spread 4.6 pp.
+
+### ⚠ Two things to state whenever these numbers are used
+
+1. **This run uses complete cases** (Ridge cannot take NaN), so it scores **46 cities**, while
+   F.85's ladder scores 48 with a NaN-tolerant learner. HistGBM's `Bud0c→Bud1` is therefore
+   **11.7%** here against **17.9%** there. The **cross-learner comparison within this run is
+   valid**; the two runs' absolute gains are not directly comparable and must not be mixed.
+2. The RandomForest was **deliberately capped** (100 trees, `n_jobs=2`, depth 14) after
+   `n_jobs=-1` was killed for memory on 68 features × 46 LOCO fits. A larger forest might close
+   a little of its gap to HistGBM; it would not change the Ridge conclusion.
+
+**F.81's banner is upgraded from "should be re-run" to "re-run and refuted at `Bud0c`".**

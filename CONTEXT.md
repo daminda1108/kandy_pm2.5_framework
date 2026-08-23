@@ -56,7 +56,15 @@ stream is measured against a monitor's worth:
 | `Bud2→Bud3` (+background) | **40.6%** |
 
 🟢 Geography beats satellite — an *annual* level cannot touch the day-to-day variance that daily
-RMSE is made of. 🟢 A satellite level helps **coastal** cities **4×** more than inland (24.4% vs
+RMSE is made of.
+
+🔴 **A linear baseline no longer reproduces the ladder (F.88).** On the 68-feature `Bud0c`,
+Ridge **collapses** (RMSE 35.0 vs 18.9) and its first rung reads **50%** against HistGBM's 12%.
+The claim is now *robust across **non-linear** estimators* (spread 2.5 pp), never "even a linear
+model reproduces it". The useful reading: **the measured value of a monitor depends on how well
+you exploit the free data** — a model that cannot use satellite and geography makes monitors
+look four times more valuable than they are. 🟢 `Bud1→Bud2` ≈ 0 survives under *every* learner
+including Ridge (spread 0.46 pp) and is now the ladder's most estimator-robust result. 🟢 A satellite level helps **coastal** cities **4×** more than inland (24.4% vs
 6.2%). 🔴 **Five of eight registered priors refuted**, including my headline prediction that the
 satellite step would be the largest.
 
