@@ -4365,3 +4365,55 @@ survives is narrower and better evidenced: a **meteorology-only** tier fails bad
 adding a globally available satellite level repairs the level and the seasonal cycle almost
 completely; and what remains unrecovered is **day-to-day variation at a coastal site**, provisional
 on the geography substitution above.
+
+## F.87 — 🟢 The F.86 deviation is closed: Colombo's real geography changes nothing, so C-G4's failure is confirmed (2026-08-23)
+
+F.86 declared a deviation — Colombo has no entry in `lur_predictors.csv`, so its `STATIC_GEO`
+block was filled with the panel median, making it a *partial* `Bud0c` test and C-G4's failure
+**provisional**. Colombo's real predictors have now been pulled with the **same `gee_city()` and
+`osm_city()` functions that built the panel's**, at the US Embassy monitor (6.909 N, 79.875 E).
+All 67 columns returned; none missing. `data/processed/modular/lur_predictors_colombo.csv`.
+
+### The substitution was materially wrong — and it made no difference
+
+Colombo's real geography differs from the panel median on every predictor that matters:
+
+| predictor | Colombo | panel median |
+|---|---:|---:|
+| `ndvi_1000` | **0.462** | 0.334 |
+| `ntl_1000` (night lights) | **18.5** | 29.1 |
+| `built_1000` | **42,419** | 31,908 |
+| `road_major_300` | **1.789** | 0.000 |
+| `dist_major_km` | **0.170** | 0.354 |
+
+The Embassy site is greener, darker, more built, and sits **170 m from a major road** against a
+panel median of 354 m. So the median substitution was not a harmless stand-in.
+
+### The result is unchanged
+
+| gate | median geo (F.86) | **real geo** | criterion | |
+|---|---:|---:|---|---|
+| C-G1 RMSE | 10.10 | **10.23** | in [13.43, 45.54] | ⚠ outside, favourable side |
+| C-G2 seasonal r | 0.950 | **0.931** | ≥ 0.60 | ✅ PASS |
+| C-G3 level bias | −1.8% | **−4.4%** | ≤ 40% | ✅ PASS |
+| **C-G4 R² vs climatology** | −0.655 | **−0.699** | > 0 | ❌ **FAIL** |
+| plain R² | 0.381 | **0.365** | — | — |
+
+Every metric moves by a trivial amount. **C-G4's failure is confirmed and no longer provisional.**
+
+### What this settles
+
+**The residual deficiency at Colombo is real**: with a correct, spec-compliant `Bud0c` carrying
+real drivers, real satellite level and real geography, the model reproduces the **annual level**
+(−4.4%) and the **seasonal cycle** (r = 0.93) but adds **no day-to-day skill beyond a day-of-year
+climatology**. That is a specific, located deficiency — sea-breeze-driven daily variation the
+seven meteorological drivers cannot resolve — and it is not an artefact of any substitution.
+
+It also mildly reinforces F.85's surprise that static geography is worth less than expected for a
+*city-mean daily* target: swapping a whole geography block for another changed daily RMSE by
+**0.13 µg/m³**.
+
+⚠ **Minor inconsistency, recorded:** the GHAP satellite level was sampled at 6.9271 N, 79.8612 E
+(city centroid) while the LUR predictors were sampled at the Embassy monitor 6.909 N, 79.875 E —
+about 2 km apart. Immaterial for an annual level averaged over a 5 km buffer, but the two should
+be reconciled to a single coordinate if this is repeated.

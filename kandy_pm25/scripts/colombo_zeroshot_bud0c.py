@@ -46,9 +46,13 @@ lev=ee.ImageCollection("projects/sat-io/open-datasets/GHAP/GHAP_Y1K_PM25").filte
     ee.Reducer.mean(),pt,scale=1000,maxPixels=1e9).getInfo()["b1"]
 print(f"Colombo satellite level = {lev:.2f} ug/m3")
 c["sat_level"]=float(lev)
-# static geo: Colombo is not in lur_predictors -> use the panel MEDIAN, declared as a limitation
-for f_ in geo_f: c[f_]=geo[f_].median()
-print("WARN: Colombo static geo unavailable -> panel median substituted (declared limitation)")
+# static geo: Colombo's REAL LUR predictors, pulled 2026-08-23 with the same gee_city/osm_city
+# functions that built the panel's, at the US Embassy monitor (6.909 N, 79.875 E).
+cl=pd.read_csv(MOD/"lur_predictors_colombo.csv")
+_missing=[f_ for f_ in geo_f if f_ not in cl.columns]
+assert not _missing, f"colombo LUR missing {_missing}"
+for f_ in geo_f: c[f_]=float(cl.iloc[0][f_])
+print("Colombo static geo: REAL predictors (67 cols)")
 
 c=c.dropna(subset=feats+["pm25_observed"])
 print(f"Colombo {len(c)} matched days")
@@ -73,4 +77,4 @@ print(f"       (plain R2 {r2p:.3f})")
 print(f"\n  PRIOR: bias falls from +31.3% to under 15%  -> {bias:+.1f}%  {'HELD' if abs(bias)<15 else 'REFUTED'}")
 print(f"  PRIOR: R2 vs climatology turns positive     -> {r2c:.3f}  {'HELD' if r2c>0 else 'REFUTED'}")
 pd.DataFrame([dict(n=len(c),obs=y.mean(),mod=yh.mean(),rmse=rmse,seasonal_r=sr,
-    bias_pct=bias,r2_clim=r2c,r2_plain=r2p)]).to_csv(MOD/"colombo_zeroshot_bud0c.csv",index=False)
+    bias_pct=bias,r2_clim=r2c,r2_plain=r2p)]).to_csv(MOD/"colombo_zeroshot_bud0c_realgeo.csv",index=False)
