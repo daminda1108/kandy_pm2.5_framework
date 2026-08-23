@@ -17,15 +17,19 @@ Everything in the paper serves one of these six links. Anything that serves none
 1. **The problem.** Most cities that need a PM2.5 field have no monitors to build or check one
    with. Models get built anyway, and almost none state what information they would need to be
    trustworthy.
-2. **Contribution 1 — a formulation in which the information budget is declared.** Tiers `Bud0`
-   (sensorless) to `Bud4`, with four properties that are asserted and tested, not hoped for:
-   **P1** conservation, **P2** monotone skill under added data, **P3** exact (bit-exact) nesting
-   between tiers, **P4** declared identifiability.
+2. **Contribution 1 — a formulation in which the information budget is declared.** Tiers
+   `Bud0a/b/c` (sensorless, decomposed by stream) to `Bud4`. ⚠ **Do NOT write "four guaranteed
+   properties" (F.74).** The honest statement is **two guarantees** — **P1** conservation
+   (realised to within 0.6%) and **P3** bit-exact nesting (proven and tested) — **one enforced
+   and measured mechanism**, **P2** monotone skill (shrinkage; **47/47** on every rung that
+   exists, F.79) — and **P4** declared identifiability, **now discharged** (F.75).
 3. **Contribution 2 — the value of each increment of information is measured**, not asserted:
    47 cities, 32 countries, 4 latitude bands, 32,396 city-days, gates registered before running.
 4. **Contribution 3 — two axes have measured ceilings**, and the spatial one is **a limit of
-   definition, not of data**: within-city contrast collapses monotonically with averaging support
-   (85× → 4.0× → 3.0× → 1.23×) across four independent campaigns in a single city.
+   definition, not of data**. ⚠ **Lead with the paired-site result, not the ladder (F.76):** two
+   microsites **300 m apart inside one 998 m pixel** read **27.5×** in observation and **1.000×**
+   in the model. At **matched support** the model is close to right — annual p90/p10 **1.232**
+   against observed **1.26–1.47** (F.77).
 5. **Demonstration.** The whole apparatus run at a city with two low-cost sensors, and checked
    against records that played no part in building it.
 6. **What the evidence forbids.** Nulls, refuted priors, a retracted claim, and the bounds.
@@ -78,8 +82,11 @@ be told.
 
 The section the paper is worth publishing for. Three parts:
 
-1. **The support-scaling result.** Four independent campaigns in one city at four averaging
-   supports; monotone collapse; a decay length of order 10² m against a 10³ m grid.
+1. **The paired-site result.** Support held fixed, only location varied: **27.5× observed vs
+   1.000× modelled** at 300 m inside one pixel, plus the matched-support comparison. ⚠ The
+   four-rung "support ladder" is **confounded** — support and siting design move together across
+   its rungs, and a direct test found temporal averaging worth only **1.2–1.7×**, not 69×
+   (F.76). Report it as a secondary, explicitly confounded observation.
 2. **The reattribution.** The five spatial nulls are all scored model-field-against-point-station
    and therefore **share a defect**; five agreeing tests are not five independent confirmations
    when they share one. The attribution splits three ways — sample size (isolated by the
