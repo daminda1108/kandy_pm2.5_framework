@@ -93,8 +93,7 @@ def main() -> None:
         for (c, yr), g in prev.groupby(["city", "yr"]):
             done.add((str(c), int(yr)))
             rows.append(g[["city", "date", "aod"]])
-        print(f"resuming: {len(done)} city-years already on disk, {len(prev):,} rows
-")
+        print(f"resuming: {len(done)} city-years already on disk, {len(prev):,} rows\n")
 
     failed = []
     for i, r in enumerate(tgt.itertuples(), 1):

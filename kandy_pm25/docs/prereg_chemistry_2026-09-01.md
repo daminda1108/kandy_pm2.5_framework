@@ -2,7 +2,9 @@
 
 **Drafted 2026-09-01, before any directional test is scored.** Companion to
 [`prereg_subgrid_and_streams_2026-09-01.md`](prereg_subgrid_and_streams_2026-09-01.md)
-(OSF [`bkpyr`](https://osf.io/bkpyr/)). **OSF: to be lodged.**
+(OSF [`bkpyr`](https://osf.io/bkpyr/)).
+**OSF: [`kx23c`](https://osf.io/kx23c/)** — registered 2026-09-01T22:55:44Z, Open-Ended
+Registration, project [`zvqp4`](https://osf.io/zvqp4/).
 
 ---
 
