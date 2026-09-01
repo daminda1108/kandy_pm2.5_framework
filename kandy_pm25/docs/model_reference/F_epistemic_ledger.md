@@ -4488,3 +4488,58 @@ already leaving free information on the table.*
    a little of its gap to HistGBM; it would not change the Ridge conclusion.
 
 **F.81's banner is upgraded from "should be re-run" to "re-run and refuted at `Bud0c`".**
+
+## F.89 — 🔴 S1 REFUTED: the sub-grid field exists, carries contrast, and still does not place it (2026-09-01)
+
+**Registered at https://osf.io/bkpyr/ before running.** Script `scripts/s1_subgrid_placement.py`;
+product `data/processed/modular/s1_subgrid_placement.csv`.
+
+**What opened it.** `S_traffic_kandy.npz` ships `E_fine` at 160×160 (**94 m**) beside the 16×16
+(**998 m**) surface the shipped product reports on. At the paired botanical-garden microsites the
+shipped field gives **1.000×** and raw `E_fine` gives **2.25×**, correctly signed, against
+**27.5×** observed. The model therefore contains sub-grid structure it discards, and the
+question was whether that structure survives physics.
+
+**It does not place the contrast.** A pure forward run of the calibrated terrain solver at 94 m,
+forced with the transect's own 11–13 LT climatology (u +0.62, v −0.27 m/s, BLH 1015 m), nothing
+fitted:
+
+| | observed | production 238 m | **fine 94 m** |
+|---|---:|---:|---:|
+| botanical garden pair | **27.5×** | 1.165× | **1.135×** |
+| transect rank ρ (n=12) | — | +0.385 | **+0.383** |
+
+**Registered outcomes: S1a REFUTED, S1b HELD, S1c REFUTED, S1d HELD.** Going from 238 m to 94 m
+changes the paired ratio from 1.165 to 1.135 and the rank correlation from +0.385 to +0.383 —
+i.e. **nothing**. This is the strongest available form of the ceiling claim and, per the
+registration, **the question is now closed**: the model cannot place within-city contrast even at
+94 m with its own high-contrast emission field.
+
+🟢 **But the contrast is not lost to resolution — that premise is refuted too.** The field-wide
+budget, p90/p10 over positive cells:
+
+| stage | p90/p10 | lost |
+|---|---:|---:|
+| raw `E_fine`, 94 m | 63.85× | — |
+| + `log1p` tempering | 47.61× | ×1.34 |
+| + dispersion at 94 m | 35.70× | ×1.33 |
+| + solve at 238 m | 26.01× | ×1.37 |
+| + report at 998 m | 18.70× | ×1.91 |
+
+The dispersed field still spans **18.7× at the shipped 998 m resolution**. So there is plenty of
+contrast; it is simply **in different places than the transect measured**. The limitation is one
+of *placement*, not of *dynamic range* or of *support* — which sharpens, and partly corrects, the
+change-of-support framing of F.68/F.70/F.76.
+
+⚠ **Why the shipped field nonetheless spans only 1.23×.** `A_transport` is the unscored scenario
+layer; the **headline** `P_local` uses `S_emit` (VanD satellite, p90/p10 **1.11**), not the
+traffic surface (22.7×). The shipped field's flatness is a consequence of **which surface was
+chosen for the headline**, not of resolution. F.77 already bracketed observation between the two;
+S1 shows the high-contrast option would not have helped, because its contrast is misplaced.
+
+🔴 **A data defect found in passing, and it weakens a published-facing claim.** The
+"school junction vs its grounds" pair — reported in F.69 as 4.6× observed against 1.000×
+modelled — **has a single coordinate for both sites** (7.2870, 80.6262). The model returns
+1.000× because it is being asked about *the same point twice*. That pair is **not a spatial
+test** and must be withdrawn; only the botanical-garden pair (7.2682/80.5974 vs 7.2707/80.5963,
+~304 m apart) is genuine. The paper's money figure survives on one pair, not two.

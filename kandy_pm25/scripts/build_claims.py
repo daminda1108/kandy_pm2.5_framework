@@ -329,6 +329,37 @@ def spatial(c: Claims) -> None:
                    "This is what S1 tests after dispersion.")
 
 
+def s1(c: Claims) -> None:
+    """F.89. The registered sub-grid test: refuted, and it refutes its own premise too."""
+    p = MOD / "s1_subgrid_placement.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    for _, r in d[d.kind == "contrast_budget"].iterrows():
+        tag = r.label.split(". ", 1)[1].replace(" ", "_").replace("+_", "").replace(",", "")
+        c.add(f"s1.contrast.{tag}", float(r.value), stat="p90/p10 over positive cells", n=None,
+              source="s1_subgrid_placement.csv", ledger="F.89")
+    pr = d[d.kind == "paired"]
+    if len(pr):
+        bg = pr[pr.label == "botanical garden"].iloc[0]
+        c.add("s1.paired_fine_94m", float(bg["fine N=160 tempered"]), stat="ratio", n=2,
+              source="s1_subgrid_placement.csv", ledger="F.89",
+              note="against 27.5x observed -- S1a REFUTED; 94 m does not place the contrast")
+        c.add("s1.paired_production_238m", float(bg["production N=64 tempered"]), stat="ratio", n=2,
+              source="s1_subgrid_placement.csv", ledger="F.89")
+    for _, r in d[d.kind == "rank"].iterrows():
+        c.add(f"s1.rank_{r.label}", float(r.value), stat="Spearman rho", n=12,
+              source="s1_subgrid_placement.csv", ledger="F.89",
+              note="n=12 with 7 distinct observed values -- heavy ties, weak by construction")
+    held = d[(d.kind == "prediction") & (d.value == 1)].label.tolist()
+    ref = d[(d.kind == "prediction") & (d.value == 0)].label.tolist()
+    c.add("s1.predictions_held", ",".join(held), stat="registered outcome", n=4,
+          source="s1_subgrid_placement.csv", ledger="F.89", note="osf.io/bkpyr")
+    c.add("s1.predictions_refuted", ",".join(ref), stat="registered outcome", n=4,
+          source="s1_subgrid_placement.csv", ledger="F.89",
+          note="S1a refuted closes the spatial question per the registration; S1c likewise")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -390,6 +421,7 @@ def build() -> dict:
     learners(c)
     colombo(c)
     spatial(c)
+    s1(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),
