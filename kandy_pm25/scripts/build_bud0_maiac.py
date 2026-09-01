@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -80,11 +81,28 @@ def main() -> None:
                 .multiply(0.001)                       # MCD19A2 scale factor
                 .copyProperties(img, ["system:time_start"]))
 
-    rows, failed = [], []
+    # RESUME. The first run lost 131 of 228 city-years to computation timeouts and connection
+    # drops while a second GEE job competed with it, leaving 26 of 57 cities. Re-pulling the
+    # ~14k rows that already succeeded would just burn the same budget again, so completed
+    # city-years are skipped and only the gaps are fetched.
+    done = set()
+    rows = []
+    if OUT.exists():
+        prev = pd.read_csv(OUT, parse_dates=["date"])
+        prev["yr"] = prev.date.dt.year
+        for (c, yr), g in prev.groupby(["city", "yr"]):
+            done.add((str(c), int(yr)))
+            rows.append(g[["city", "date", "aod"]])
+        print(f"resuming: {len(done)} city-years already on disk, {len(prev):,} rows
+")
+
+    failed = []
     for i, r in enumerate(tgt.itertuples(), 1):
         pt = ee.Geometry.Point([float(r.lon), float(r.lat)]).buffer(BUFFER_M)
         got = 0
         for yr in range(y0, y1 + 1):
+            if (str(r.city), yr) in done:
+                continue
             try:
                 col = (ee.ImageCollection(MAIAC)
                        .filterDate(f"{yr}-01-01", f"{yr + 1}-01-01")
@@ -100,8 +118,19 @@ def main() -> None:
                     return ee.Feature(None, {"t": img.date().millis(), "aod": v})
 
                 fc = ee.FeatureCollection(col.map(to_feat)).filter(ee.Filter.notNull(["aod"]))
-                pairs = fc.reduceColumns(ee.Reducer.toList(2), ["t", "aod"]).get("list").getInfo()
+                # Retry with backoff: the losses were transport drops and server-side
+                # timeouts, not bad queries, so a single attempt throws away recoverable work.
+                pairs = None
+                for attempt in range(3):
+                    try:
+                        pairs = fc.reduceColumns(ee.Reducer.toList(2),
+                                                 ["t", "aod"]).get("list").getInfo()
+                        break
+                    except Exception:
+                        if attempt < 2:
+                            time.sleep(15 * (attempt + 1))
                 if not pairs:
+                    failed.append((r.city, yr, "no data after retries"))
                     continue
                 df = pd.DataFrame(pairs, columns=["t", "aod"]).dropna()
                 if df.empty:
