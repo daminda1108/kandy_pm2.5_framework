@@ -73,34 +73,42 @@ def main() -> None:
     tgt = targets()
     bands = list(SPECIES)
     # One multi-year mean image, sampled once per city: the cheapest form of the question.
-    # Sample four synoptic hours (00/06/12/18 UTC) rather than all 24. Meaning four years of
-    # HOURLY GEOS-CF is ~35,000 images and does not finish; this is 6x cheaper and a composition
-    # SHARE is slow-varying. Four hours rather than one because nitrate partitions to the
-    # particle phase in the cool hours, so a single-hour sample would bias the share.
-    mean_img = (ee.ImageCollection(COLL)
-                .filterDate(f"{y0}-01-01", f"{y1 + 1}-01-01")
-                .filter(ee.Filter.Or(*[ee.Filter.calendarRange(h, h, "hour")
-                                       for h in (0, 6, 12, 18)]))
-                .select(bands).mean())
-    print(f"panel speciation: {len(tgt)} cities, {y0}-{y1} mean, {len(bands)} species\n")
-
-    # One reduceRegions over ALL points. Sampling city-by-city made the server recompute the
-    # multi-year mean for every request -- two cities in ten minutes. This is one composite.
+    # Per-YEAR chunking. One 4-year composite over 57 buffers times out server-side even at
+    # four synoptic hours (gotcha #44's lesson: chunk the reduction, don't shrink the question).
+    # Years are averaged client-side afterwards, which is identical for a mean.
     feats = [ee.Feature(ee.Geometry.Point([float(r.lon), float(r.lat)]).buffer(10000),
                         {"city": str(r.city)}) for r in tgt.itertuples()]
     fc = ee.FeatureCollection(feats)
-    res = mean_img.reduceRegions(collection=fc, reducer=ee.Reducer.mean(),
-                                 scale=27750).getInfo()
-    rows = []
-    for ft in res["features"]:
-        p_ = ft["properties"]
-        row = {"city": p_.get("city")}
-        row.update({SPECIES[b_]: p_.get(b_) for b_ in bands})
-        rows.append(row)
-    rows = pd.DataFrame(rows).merge(
-        tgt.assign(city=tgt.city.astype(str))[["city", "lat", "lon"]], on="city", how="left"
-    ).to_dict("records")
-    print(f"  reduced {len(rows)} cities in one call")
+    hours = ee.Filter.Or(*[ee.Filter.calendarRange(h, h, "hour") for h in (0, 6, 12, 18)])
+
+    per_year = []
+    for yr in range(y0, y1 + 1):
+        img = (ee.ImageCollection(COLL)
+               .filterDate(f"{yr}-01-01", f"{yr + 1}-01-01")
+               .filter(hours).select(bands).mean())
+        try:
+            res = img.reduceRegions(collection=fc, reducer=ee.Reducer.mean(),
+                                    scale=27750).getInfo()
+        except Exception as e:
+            print(f"  {yr}: FAILED {str(e)[:70]}", flush=True)
+            continue
+        yr_rows = []
+        for ft in res["features"]:
+            pr = ft["properties"]
+            row = {"city": pr.get("city")}
+            row.update({SPECIES[b_]: pr.get(b_) for b_ in bands})
+            yr_rows.append(row)
+        per_year.append(pd.DataFrame(yr_rows))
+        print(f"  {yr}: {len(yr_rows)} cities", flush=True)
+
+    if not per_year:
+        print("nothing pulled"); sys.exit(1)
+    rows = (pd.concat(per_year, ignore_index=True)
+            .groupby("city", as_index=False)[list(SPECIES.values())].mean()
+            .merge(tgt.assign(city=tgt.city.astype(str))[["city", "lat", "lon"]],
+                   on="city", how="left")
+            .to_dict("records"))
+    print(f"  averaged {len(per_year)} years -> {len(rows)} cities")
 
     d = pd.DataFrame(rows)
     sp = list(SPECIES.values())

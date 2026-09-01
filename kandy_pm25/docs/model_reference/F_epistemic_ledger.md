@@ -4627,3 +4627,47 @@ observed 110, sits at quantile **0.17** of its own cell. **Report S2b as uninfor
 with the **1.232×** annual figure quoted elsewhere; midday is ventilated and therefore flatter.
 And per-site values exist only for Elangasinghe — Wickramasinghe (4.0×) and Premasiri (3.0×)
 are published spreads only, so the support-ordering half of S2b could not be tested at all.
+
+## F.92 — 🔴 R1: the standing acquisition advice is a POOLED number, and Kandy's own band inverts it (2026-09-01)
+
+Script `scripts/r1_network_design.py`; product `data/processed/modular/r1_network_design.csv`.
+No new modelling — this is the ladder turned into the question a ministry actually asks.
+
+**The programme's standing advice** has been *chase the regional background first*: the
+`Bud2→Bud3` rung is the largest measured gain anywhere in the study (**40.6%** pooled) against
+**17.8%** for the first two in-city stations. That advice is written into `CLAUDE.md` §3 and into
+the improvement plan.
+
+**Stratified, it inverts in Kandy's own band:**
+
+| stratum | n | +2 stations | +6 more | +background |
+|---|---:|---:|---:|---:|
+| POOLED | 48 | 17.8% | 0.1% | **40.6%** |
+| **deep_tropical (Kandy)** | 13 | **21.9%** | 0.9% | **8.5%** |
+| tropical | 10 | 6.7% | 0.1% | 39.8% |
+| subtropical | 7 | 29.7% | 0.3% | 36.0% |
+| temperate | 7 | 33.5% | 1.1% | 31.6% |
+
+**In the deep tropics the first two local stations are worth 2.6× the regional background rung**,
+and the pooled row that says otherwise is computed mostly from bands Kandy is not in. Recommending
+NBRO to Kandy on the strength of the pooled number is the same error this programme keeps
+making — a quantity attributed to the wrong stratum (F.84, C2, C7, C1).
+
+**At Kandy's level (21 µg/m³):** 2 local stations ≈ **4.6 µg/m³** of RMSE · a regional background
+station ≈ **1.8** · stations 3–8 ≈ **0.2**.
+
+🔴 **PROVISIONAL, and the caveat is load-bearing.** The recorded explanation for the deep-tropical
+background collapse (28.1% → 8.5%) is that *the satellite level substitutes for a background
+station there*. C1 established that the satellite stream is **GHAP — a fused product trained on
+this panel's own OpenAQ and CNEMC monitors**. If a contaminated satellite stream is standing in
+for a background station, the substitution is **leakage, not physics**, and the background rung is
+undervalued in this band. **This recommendation must be re-derived once C1 re-runs with raw MAIAC
+AOD.** Recorded before the re-run, not after.
+
+⚠ n = 13 for the deep-tropical cell; subtropical and temperate are n = 7.
+🟢 "Stations 3–8 buy nothing" is unaffected — robust across every learner tested (F.88, spread
+0.46 pp) and the single most estimator-stable result in the ladder.
+
+**Instrument class, if stations are added:** median `w_Bud2` LCS **0.575** vs reference **0.350** —
+low-cost units gain more from extra devices because per-device error averages down, while a
+reference monitor's third-to-eighth unit still buys close to nothing.
