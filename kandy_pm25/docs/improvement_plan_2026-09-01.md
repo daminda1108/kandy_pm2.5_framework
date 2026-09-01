@@ -20,7 +20,7 @@ produced F.84.
 | class | rule | items |
 |---|---|---|
 | **Correction** — re-deriving an existing quantity, or fixing an implementation defect | no registration; the result replaces the old one and the ledger records the delta | C2, C3, C4, C5, C6 |
-| **New test** — any question with a directional expectation whose answer could change a claim | **register on OSF before running**, with priors stated and a refutation criterion | C1, S1, S2, R2, R3 |
+| **New test** — any question with a directional expectation whose answer could change a claim | **register on OSF before running**, with priors stated and a refutation criterion | C1, S1, S2, R2, R3 — ✅ **all five registered 2026-09-01 as [`bkpyr`](https://osf.io/bkpyr/)** |
 
 ⚠ The registration must state what result would make us *abandon* the hypothesis, not only what
 would confirm it. Five of eight priors were refuted in the last registered round; that is the

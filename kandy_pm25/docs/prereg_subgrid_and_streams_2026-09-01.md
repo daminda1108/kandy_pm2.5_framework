@@ -5,8 +5,9 @@
 independence), **S1** (sub-grid placement), **S2** (the within-pixel distribution), **R2**
 (`A_transport`), **R3** (external benchmark).
 
-OSF: *to be assigned.* Prior registrations in this programme: `nxqgb` (Colombo, superseded),
-`g6hqb` (re-validation).
+**OSF: [`bkpyr`](https://osf.io/bkpyr/)** — registered 2026-09-01T11:44:45Z, Open-Ended
+Registration, project [`h8m9j`](https://osf.io/h8m9j/). Prior registrations in this programme:
+`nxqgb` (Colombo, superseded), `g6hqb` (re-validation).
 
 ---
 

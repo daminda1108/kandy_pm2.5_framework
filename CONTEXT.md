@@ -43,6 +43,13 @@ The scored `Bud0` had used **one of the three streams its budget admits** (drive
 satellite level, no static geography), inflating every gain above it. Fixed in code
 (`require_covers()`), **re-registered at https://osf.io/g6hqb/ before re-running**, and rebuilt.
 
+⚠ **2026-09-01 — five of these numbers moved again.** See `docs/improvement_plan_2026-09-01.md`:
+the frame is **48 cities / 28,930 city-days** (not 47 / 32,396); the coastal "4x satellite" is
+the combined geography+satellite step and satellite alone is **1.8x**; `w_Bud2` is reference
+**0.350** / LCS **0.575** (not 0.000 / 0.900); and enforcing per-city stream coverage (C7) moves
+the first rung **17.8% -> 15.8%**. Numbers now regenerate from `scripts/build_claims.py`; the
+manuscript build fails if prose and data disagree. New registration **https://osf.io/bkpyr/**.
+
 **The old headline was inflated but the story survived.** `Bud0→Bud1` falls **25.6% → 17.9%**;
 the background rung is essentially unchanged. The bottom rung is now decomposed so each global
 stream is measured against a monitor's worth:
