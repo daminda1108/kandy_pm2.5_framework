@@ -386,6 +386,26 @@ def r2(c: Claims) -> None:
           note="A_transport helps in a minority of panel cities")
 
 
+def s2(c: Claims) -> None:
+    """F.91. The within-pixel distribution."""
+    p = MOD / "s2_within_pixel.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p).set_index("label")
+    g = lambda k: float(d.loc[k, "value"])
+    c.add("s2.between_pixel_p90p10", g("between_pixel_p90p10"), stat="p90/p10", n=256,
+          source="s2_within_pixel.csv", ledger="F.91",
+          note="MIDDAY ONLY -- not the 1.232x annual figure quoted elsewhere; midday is "
+               "ventilated and therefore flatter")
+    c.add("s2.within_pixel_p90p10", g("within_pixel_p90p10_median"), stat="median over cells",
+          n=256, source="s2_within_pixel.csv", ledger="F.91",
+          note="S2a HELD: the spread INSIDE a typical pixel exceeds the spread BETWEEN pixels, "
+               "so most midday spatial variation is sub-grid by the model's own structure")
+    c.add("s2.cell_mean_drift", g("max_cell_mean_drift"), stat="max abs", n=256,
+          source="s2_within_pixel.csv", ledger="F.91",
+          note="S2c: P1 survives one level down, exactly")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -449,6 +469,7 @@ def build() -> dict:
     spatial(c)
     s1(c)
     r2(c)
+    s2(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),

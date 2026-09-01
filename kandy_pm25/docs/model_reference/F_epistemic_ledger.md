@@ -4586,3 +4586,44 @@ regime it was calibrated for. It does not test the diurnal timing factor `e(t)` 
 panel scoring is on station means. Chandigarh flips sign (+0.486 → −0.486) at n=6; gotcha #69
 already warns that Chandigarh's n is too small to carry a conclusion, and it is not driving the
 median.
+
+## F.91 — 🟢 S2: a within-pixel distribution exists, is gauge-exact, and says most spatial variation is SUB-GRID (2026-09-01)
+
+**Registered at https://osf.io/bkpyr/ before running.** Script
+`scripts/s2_within_pixel_distribution.py`; product `data/processed/modular/s2_within_pixel.csv`.
+
+**Why it is the right product.** F.89 killed the pointwise version: at 94 m the model still
+cannot say *which* corner of a cell is dirty. A distribution does not need placement — *"this
+cell spans roughly this range"* is defensible where *"it is worse at your corner"* is not.
+
+**Construction.** The model is additive and `B` is spatially uniform, so only the increment may
+be structured: `PM_fine = B(t) + increment_cell(t) · w_fine`, with `mean(w) = 1` inside every
+cell. That is the specification's own gauge argument (C1/C4) applied one level down, and it
+makes the cell mean exactly preserved.
+
+| | value |
+|---|---:|
+| between-pixel p90/p10, midday 2023 | **1.049×** |
+| **within-pixel p90/p10, median cell** | **1.218×** |
+| within-pixel p90/p10, 90th-percentile cell | 2.075× |
+| max cell-mean drift | **7.11e-15** µg/m³ (gate 0.05) |
+
+🟢 **S2a HELD, and it is the finding.** The spread *inside* a typical pixel (1.218×) is larger
+than the spread *between* pixels (1.049×). By the model's own structure, **most of Kandy's
+midday spatial variation is sub-grid** — which is what F.68/F.89 imply and what no shipped
+product has ever expressed.
+
+🟢 **S2c HELD exactly** (7.11e-15). P1 survives the extra level; the distribution is a
+decomposition, not a re-level.
+
+🔴 **S2b HELD but the test is near-degenerate, and it must not be quoted as validation.**
+Predicted within-cell spread is ~1.2× while the observed sites span 85×, so every high site
+saturates at quantile 1.00 and every low site at 0.00. The scored contrast (kerbside 0.88 vs
+quiet 0.00) therefore **re-detects the known amplitude gap rather than testing within-cell
+ordering**. The single non-saturated case runs the *other* way: Botanical Gardens entrance,
+observed 110, sits at quantile **0.17** of its own cell. **Report S2b as uninformative.**
+
+⚠ Two scope notes. The 1.049× between-pixel figure is **midday-only** and must not be confused
+with the **1.232×** annual figure quoted elsewhere; midday is ventilated and therefore flatter.
+And per-site values exist only for Elangasinghe — Wickramasinghe (4.0×) and Premasiri (3.0×)
+are published spreads only, so the support-ordering half of S2b could not be tested at all.
