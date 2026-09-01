@@ -346,6 +346,33 @@ def identifiability(c: Claims) -> None:
           note="the honest results, and the interesting ones -- lead with these")
     c.add("p4.saturated", int(d.saturated.sum()), stat="count", n=len(d),
           source="p4_identifiability.csv", ledger="F.75")
+    if "grid" in d.columns:
+        c.add("p4.grid", int(d.grid.max()), stat="profile grid points", n=len(d),
+              source="p4_identifiability.csv", ledger="C5 / plan 2026-09-01",
+              note="C5: was 7. At 7 points a profile with one point under the chi2 threshold "
+                   "gave lo95 == hi95 and was scored `identified`.")
+    if "grid_limited" in set(d.status):
+        c.add("p4.grid_limited", int((d.status == "grid-limited").sum()), stat="count", n=len(d),
+              source="p4_identifiability.csv", ledger="C5 / plan 2026-09-01",
+              note="profiles whose interval is narrower than the grid can resolve -- reported "
+                   "as such rather than as `identified`")
+    c.add("p4.identified", int((d.status == "identified").sum()), stat="count", n=len(d),
+          source="p4_identifiability.csv", ledger="C5 / plan 2026-09-01",
+          note="C5: 19 at grid 7, of which 11 rested on a zero-width interval")
+
+    # s_exp carries F.77's conclusion that the panel cannot justify moving it off 1.0. At grid 7
+    # that rested on zero-width intervals; the refined profiles make it a real result.
+    se = d[d.param == "s_exp"]
+    if len(se):
+        holds = int(((se.lo95 <= 1.0) & (se.hi95 >= 1.0)).sum())
+        c.add("p4.s_exp_intervals_containing_1", holds, stat="count", n=len(se),
+              source="p4_identifiability.csv", ledger="F.77 / C5",
+              note="every profile interval for s_exp contains 1.0, so keeping s_exp = 1.0 is "
+                   "supported by an interval rather than by a grid artefact")
+        c.add("p4.s_exp_median_box_fraction", round(float(se.box_fraction.median()), 3),
+              stat="median", n=len(se), source="p4_identifiability.csv", ledger="F.77 / C5",
+              note="the narrowest parameter in the model -- F.77's 'the one the data can "
+                   "constrain' survives the grid refinement")
 
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────

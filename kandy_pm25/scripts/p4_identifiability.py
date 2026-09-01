@@ -163,10 +163,39 @@ def fit(F, T, B, obs, cells, sigma, fixed=None, steps=150, seed=0):
     return best
 
 
+def _crossing(grid, rel, imin, step):
+    """Where the profile deviance crosses the chi2_1 threshold, INTERPOLATED (C5).
+
+    Taking the outermost grid point still under the threshold quantises the interval to the grid
+    spacing, and when only one point is under it the interval collapses to zero width -- which
+    the old code then reported as `identified`, the exact opposite of what a zero-width interval
+    from a coarse grid means.
+
+    Walk outward from the profile minimum while the deviance stays under the threshold, then
+    linearly interpolate the crossing between the last point below and the first point above.
+    Returns (value, at_bound); at_bound is True when the profile never rises above the threshold
+    before running into the parameter's box, i.e. the data does not bound it on that side.
+    """
+    i = imin
+    while 0 <= i + step < len(grid) and rel[i + step] <= CHI2_1_95:
+        i += step
+    j = i + step
+    if not (0 <= j < len(grid)):
+        return float(grid[i]), True
+    denom = rel[j] - rel[i]
+    if denom <= 0:                      # non-monotone profile; fall back to the grid point
+        return float(grid[i]), False
+    f = (CHI2_1_95 - rel[i]) / denom
+    return float(grid[i] + f * (grid[j] - grid[i])), False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cities", default="medellin,kathmandu,chiangmai")
-    ap.add_argument("--grid", type=int, default=7)
+    # C5: was 7. At 7 points a profile with one point under the chi2 threshold produced
+    # lo95 == hi95 and was scored `identified`. 25 points plus interpolated crossings makes the
+    # interval a property of the likelihood rather than of the grid spacing.
+    ap.add_argument("--grid", type=int, default=25)
     a = ap.parse_args()
 
     rows = []
@@ -190,23 +219,41 @@ def main():
             for name, (lo, hi) in BOUNDS.items():
                 grid = np.linspace(lo, hi, a.grid)
                 dev = np.array([fit(F, T, B, obs, sel, sigma, fixed={name: g}) for g in grid])
-                dmin = dev.min()
-                inside = grid[dev - dmin <= CHI2_1_95]
-                width = float(inside.max() - inside.min()) if len(inside) else 0.0
+                rel = dev - dev.min()
+                imin = int(rel.argmin())
+                mle = float(grid[imin])
+                under = rel <= CHI2_1_95
+                n_under = int(under.sum())
+
+                lo95, lo_at_bound = _crossing(grid, rel, imin, -1)
+                hi95, hi_at_bound = _crossing(grid, rel, imin, +1)
+                width = hi95 - lo95
                 frac = width / (hi - lo)
-                mle = float(grid[int(dev.argmin())])
                 sat = mle <= lo + 1e-9 or mle >= hi - 1e-9
-                status = ("UNIDENTIFIED" if frac > 0.90 else
-                          "weak" if frac > 0.40 else "identified")
+
+                # C5. A single grid point under the threshold does NOT mean the parameter is
+                # sharply determined -- it means the grid is too coarse to resolve the interval.
+                # The old code reported exactly that case as `identified` with lo95 == hi95.
+                grid_limited = n_under < 2
+                if grid_limited:
+                    status = "grid-limited"
+                elif frac > 0.90:
+                    status = "UNIDENTIFIED"
+                elif frac > 0.40:
+                    status = "weak"
+                else:
+                    status = "identified"
+
                 rows.append(dict(city=city, budget=bud, n_stations=len(sel), param=name,
-                                 true=TRUE[name], mle=mle, lo95=float(inside.min()) if len(inside) else np.nan,
-                                 hi95=float(inside.max()) if len(inside) else np.nan,
-                                 box_fraction=round(frac, 3), saturated=sat, status=status))
+                                 true=TRUE[name], mle=mle, lo95=lo95, hi95=hi95,
+                                 box_fraction=round(frac, 3), saturated=sat,
+                                 n_under=n_under, grid=a.grid,
+                                 lo_at_bound=lo_at_bound, hi_at_bound=hi_at_bound,
+                                 status=status))
+                flags = ("  SATURATED" if sat else "") + ("  GRID-LIMITED" if grid_limited else "")
                 print(f"     {name:<10} MLE {mle:7.3f} (true {TRUE[name]:6.3f})  "
-                      f"95% CI [{inside.min():6.3f},{inside.max():6.3f}]  "
-                      f"{frac*100:5.1f}% of box  {status}"
-                      f"{'  SATURATED' if sat else ''}" if len(inside) else
-                      f"     {name:<10} degenerate")
+                      f"95% CI [{lo95:6.3f},{hi95:6.3f}]  {frac*100:5.1f}% of box  "
+                      f"{status}  (n_under={n_under}/{a.grid}){flags}")
 
     df = pd.DataFrame(rows)
     OUT.parent.mkdir(parents=True, exist_ok=True)

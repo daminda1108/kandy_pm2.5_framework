@@ -182,7 +182,7 @@ referee:
 | P1 | holds |
 | P2 | **demonstrated** on 3 real networks (F.48), then on **48 cities** (F.51/F.85). ⚠ 1 of the 48 is scored in `Bud0c` while missing the STATIC_GEO stream entirely (C7) |
 | P3 | **generalised** — bit-exact degradation asserted for all 4 adjacent tier pairs |
-| P4 | **run 2026-08-22 (F.75)**, per parameter per budget. ⚠ **11 of 45 rows report `lo95 == hi95` and are labelled `identified` — that is a single grid cell, not a profile-likelihood interval (C5, plan 2026-09-01).** Refine the grid or relabel them `grid-limited` before P4 is claimed. The honest results — Kathmandu's `kappa`, `eps0`, `w_evening` all UNIDENTIFIED with `box_fraction = 1.0` — are the ones to lead with. |
+| P4 | **run 2026-08-22 (F.75), refined 2026-09-01 (C5).** Profiles now use a 25-point grid with interpolated chi2 crossings; **zero-width intervals mislabelled `identified` went 11 → 0**, and six rows lost `identified` status, so the model is less identifiable than the coarse-grid table suggested (13 identified, 17 weak, 13 UNIDENTIFIED, 2 grid-limited). 🟢 **`s_exp` survives and is now properly evidenced: all 9 profile intervals contain 1.0** (median width 16% of box, the narrowest parameter), so F.77's decision to keep it at 1.0 rests on an interval rather than an artefact. Lead with the UNIDENTIFIED rows — Kathmandu's `kappa`, `eps0`, `w_evening` at `Bud1`, all bound-saturated. |
 
 
 ---
