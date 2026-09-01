@@ -90,6 +90,23 @@ TRAJ = DEC / "w2" / "d1_trajectories_850.parquet"
 YEARS = list(range(2019, 2024))
 B_MARINE = 6.5
 MARINE_SECTORS = {"SW_marine"}
+
+# W1 of docs/prereg_hourly_background_and_learnable_decomp_2026-08-18.md.
+# The trajectory archive is 6-HOURLY (arrivals at 00/06/12/18 UTC, 11,676 rows over 2,919
+# days) and daily_class() collapsed it with .mode() to one class per day. Measured on the
+# archive: the sector changes within the day on 24.8% of days, and the binary marine flag
+# that actually sets B's level flips within the day on 11.3%. On roughly one day in nine the
+# background genuinely steps mid-day and the model held it flat by construction.
+#
+# SCOPE, stated so this is not over-claimed: the marine rate is flat across arrival hours
+# (0.292/0.293/0.292/0.287), so this adds EPISODIC sub-daily transitions, NOT a diurnal
+# cycle. It makes B step when the air mass steps. It does not make B breathe with the
+# boundary layer -- that component is collinear with the local increment's own driver and
+# is not identifiable from a total-only series (ledger F.41).
+#
+# No new free parameter: B_MARINE, the continental-level solve, the annual-mean lock and the
+# F.43 coherence cap are unchanged in form. False reproduces the daily-mode behaviour exactly.
+SUBDAILY_ORIGIN = True
 # Local fraction f, per year. STATUS: a PRIOR, not fitted — the weakest number in
 # the chain and disclosed as such in the preprint (Section 8). Source-apportionment
 # literature gives the level; the year-to-year variation is REASONED (2020 pandemic
@@ -103,15 +120,29 @@ MARINE_SECTORS = {"SW_marine"}
 FRAC_LOCAL_YEAR = {2019: 0.28, 2020: 0.25, 2021: 0.21, 2022: 0.20, 2023: 0.27}  # = v1
 
 
+def _is_marine(sector: str, month: int) -> bool:
+    return (sector in MARINE_SECTORS) or (sector == "BoB_marine" and month in (6, 7, 8, 9))
+
+
 def daily_class() -> pd.DataFrame:
     t = pd.read_parquet(TRAJ)
     t["date"] = pd.to_datetime(t["date"])
     dom = t.groupby("date").sector.agg(lambda s: s.mode().iloc[0]).rename("sector").reset_index()
     dom["month"] = dom.date.dt.month
-    dom["marine"] = dom.apply(
-        lambda r: (r.sector in MARINE_SECTORS) or
-                  (r.sector == "BoB_marine" and r.month in (6, 7, 8, 9)), axis=1)
+    dom["marine"] = [_is_marine(s, m) for s, m in zip(dom.sector, dom.month)]
     return dom[["date", "marine"]]
+
+
+def subdaily_class() -> pd.DataFrame:
+    """The trajectory class at its native 6-hourly arrival, keyed for a floor('6h') join."""
+    t = pd.read_parquet(TRAJ)
+    t["arrival"] = pd.to_datetime(t["arrival"])
+    t["month"] = t.arrival.dt.month
+    t["marine"] = [_is_marine(s, m) for s, m in zip(t.sector, t.month)]
+    return (t[["arrival", "marine"]]
+            .drop_duplicates("arrival")
+            .sort_values("arrival")
+            .reset_index(drop=True))
 
 
 def geos_daily(year) -> pd.Series:
@@ -121,24 +152,50 @@ def geos_daily(year) -> pd.Series:
     return df.groupby("date").g.mean()
 
 
-def build_B_v2(year, b_annual) -> pd.DataFrame:
-    """origin-conditioned hourly B(t) v2 on the T-anchor clock; annual mean = b_annual."""
+def build_B_v2(year, b_annual, T_override: pd.DataFrame | None = None) -> pd.DataFrame:
+    """origin-conditioned hourly B(t) v2 on the T-anchor clock; annual mean = b_annual.
+
+    T_override -- optional (datetime_utc, T_q50) frame used IN PLACE of the on-disk anchor
+    when evaluating the F.43 coherence cap. Sensitivity analysis only (the diurnal-amplitude
+    sweep); production passes None and reads the anchor from disk unchanged.
+    """
     t = pd.read_parquet(TANCHOR / f"T_kandy_hourly_{year}.parquet", columns=["datetime_utc"])
     t["date"] = pd.to_datetime(t["datetime_utc"]).dt.tz_localize(None).dt.floor("D")
-    cls = daily_class()
     g = geos_daily(year).rename("g").reset_index()
-    day = t[["date"]].drop_duplicates().merge(cls, on="date", how="left").merge(g, on="date", how="left")
-    day["marine"] = day.marine.fillna(False)
-    day["g"] = day.g.fillna(day.g.mean())
-    fm = day.marine.mean()
-    b_cont = (b_annual - fm * B_MARINE) / (1 - fm) if fm < 1 else b_annual
-    day["level"] = np.where(day.marine, B_MARINE, b_cont)
-    # within-class GEOS modulation (mean 1 per class)
-    day["gz"] = day.groupby("marine").g.transform(lambda s: s / s.mean())
-    day["Bd"] = day.level * day.gz
-    day["Bd"] *= b_annual / day.Bd.mean()                 # exact annual mean
-    bmap = dict(zip(day.date, day.Bd))
-    B = t.date.map(bmap).to_numpy()
+
+    if SUBDAILY_ORIGIN:
+        # Same construction, but the air-mass class is carried at its native 6-hourly
+        # arrival instead of being collapsed to the daily mode. The GEOS-CF modulation
+        # stays DAILY (it is a daily product); only the class -- and therefore the level
+        # -- is allowed to step within the day.
+        h = t[["date"]].copy()
+        h["arrival"] = pd.to_datetime(t["datetime_utc"]).dt.tz_localize(None).dt.floor("6h")
+        h = h.merge(subdaily_class(), on="arrival", how="left").merge(g, on="date", how="left")
+        h["marine"] = h.marine.fillna(False)
+        h["g"] = h.g.fillna(h.g.mean())
+        fm = h.marine.mean()                              # hour-weighted marine fraction
+        b_cont = (b_annual - fm * B_MARINE) / (1 - fm) if fm < 1 else b_annual
+        h["level"] = np.where(h.marine, B_MARINE, b_cont)
+        h["gz"] = h.groupby("marine").g.transform(lambda s: s / s.mean())
+        Bh = (h.level * h.gz).to_numpy(float)
+        B = Bh * (b_annual / Bh.mean())                   # exact annual mean
+        flips = int((h.marine.to_numpy()[:-1] != h.marine.to_numpy()[1:]).sum())
+        print(f"    sub-daily origin: {flips:,} class transitions on the hourly clock "
+              f"(marine fraction {fm:.3f})")
+    else:
+        cls = daily_class()
+        day = t[["date"]].drop_duplicates().merge(cls, on="date", how="left").merge(g, on="date", how="left")
+        day["marine"] = day.marine.fillna(False)
+        day["g"] = day.g.fillna(day.g.mean())
+        fm = day.marine.mean()
+        b_cont = (b_annual - fm * B_MARINE) / (1 - fm) if fm < 1 else b_annual
+        day["level"] = np.where(day.marine, B_MARINE, b_cont)
+        # within-class GEOS modulation (mean 1 per class)
+        day["gz"] = day.groupby("marine").g.transform(lambda s: s / s.mean())
+        day["Bd"] = day.level * day.gz
+        day["Bd"] *= b_annual / day.Bd.mean()             # exact annual mean
+        bmap = dict(zip(day.date, day.Bd))
+        B = t.date.map(bmap).to_numpy()
 
     # ── COHERENCE CAP (2026-08-09) ────────────────────────────────────────────
     # Physical constraint, raised by an external reviewer and correct: local sources
@@ -159,8 +216,9 @@ def build_B_v2(year, b_annual) -> pd.DataFrame:
     # shipped f of 0.244 sat BELOW its own coherence floor in nine months of twelve, and
     # three independent lines (floor >= 0.41, hierarchical 0.392, network 0.446) place it
     # near 0.4. The T-lock means basin means, exposure and burden are unchanged.
-    Tq = pd.read_parquet(TANCHOR / f"T_kandy_hourly_{year}.parquet",
-                         columns=["datetime_utc", "T_q50"])
+    Tq = (T_override.copy() if T_override is not None else
+          pd.read_parquet(TANCHOR / f"T_kandy_hourly_{year}.parquet",
+                          columns=["datetime_utc", "T_q50"]))
     Tq["date"] = pd.to_datetime(Tq["datetime_utc"]).dt.tz_localize(None).dt.floor("D")
     tmin = Tq.groupby("date").T_q50.min()
     cap = (1.0 - F_MIN) * t.date.map(tmin).to_numpy()
@@ -212,6 +270,15 @@ def assemble_v2(year):
 def main():
     vand = pd.read_csv(REPO / "data" / "processed" / "stage1_v3" /
                        "vandonkelaar_kandy_annual.csv").set_index("year")
+    # Information-budget declaration (src/modular/production.py). The locked chain runs at
+    # Bud1: satellite level + reanalysis drivers + static geography + the FECT sensor pair.
+    # This asserts the builder is not reaching for a stream that budget does not admit.
+    from src.modular import production as _prod, budgets as _bd
+    _budget = _prod.require("build_additive_field_v2",
+                            _bd.SATELLITE_LEVEL, _bd.DRIVERS_REANALYSIS,
+                            _bd.STATIC_GEO, _bd.SENSOR_PAIR)
+    print(f"    [budget {_budget.id}] estimates={sorted(_budget.estimates)} "
+          f"imposes={sorted(_budget.imposes)}")
     print("=== B(t) v2 additive field (origin-conditioned; v1 untouched) ===")
     for y in YEARS:
         b_annual = (1 - FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "basin_mean"])
