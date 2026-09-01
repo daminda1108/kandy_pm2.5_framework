@@ -52,3 +52,52 @@ def test_every_rung_can_satisfy_its_own_budget():
     for bid in ("Bud0", "Bud1", "Bud2", "Bud3", "Bud4"):
         b = get(bid)
         b.require_covers(*sorted(b.admits))
+
+
+# ── C7: per-unit coverage (plan 2026-09-01) ───────────────────────────────────────────────
+# require_covers() closes F.84 at the TIER level. It cannot see that an individual scored city
+# carries none of the data the tier is named for. One city was scored in Bud0c with no
+# STATIC_GEO at all; HistGBM accepts NaN and trained around it, and enforcing coverage moves the
+# headline first rung 17.8% -> 15.8%.
+
+def test_require_covers_units_passes_when_every_unit_is_complete():
+    b = get("Bud0")
+    full = {s: sorted(b.admits) for s in ("cityA", "cityB", "cityC")}
+    b.require_covers_units(full)  # must not raise
+
+
+def test_require_covers_units_raises_on_a_single_short_unit():
+    b = get("Bud0")
+    cov = {"cityA": sorted(b.admits), "cityB": sorted(b.admits)}
+    cov["3147"] = [s for s in b.admits if s != STATIC_GEO]
+    with pytest.raises(AdmissibilityError) as e:
+        b.require_covers_units(cov)
+    msg = str(e.value)
+    assert "3147" in msg and STATIC_GEO in msg
+    assert "1 of 3" in msg
+
+
+def test_require_covers_units_allow_declares_the_concession():
+    b = get("Bud0")
+    cov = {"c1": [DRIVERS_REANALYSIS, SATELLITE_LEVEL]}
+    with pytest.raises(AdmissibilityError):
+        b.require_covers_units(cov)
+    b.require_covers_units(cov, allow=[STATIC_GEO])  # declared -> allowed
+
+
+def test_require_covers_units_reports_all_offenders_not_just_the_first():
+    b = get("Bud0")
+    cov = {f"c{i}": [DRIVERS_REANALYSIS] for i in range(9)}
+    with pytest.raises(AdmissibilityError) as e:
+        b.require_covers_units(cov)
+    assert "9 of 9" in str(e.value)
+    assert "+4 more" in str(e.value)
+
+
+def test_tier_level_check_passes_while_unit_level_fails():
+    """The exact C7 shape: the design is right and the data is not."""
+    b = get("Bud0")
+    b.require_covers(DRIVERS_REANALYSIS, SATELLITE_LEVEL, STATIC_GEO)  # tier-level: PASS
+    cov = {"good": sorted(b.admits), "3147": [DRIVERS_REANALYSIS, SATELLITE_LEVEL]}
+    with pytest.raises(AdmissibilityError):
+        b.require_covers_units(cov)  # unit-level: FAIL

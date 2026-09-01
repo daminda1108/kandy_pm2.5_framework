@@ -103,6 +103,58 @@ class Budget:
                 f"omission explicitly."
             )
 
+    def require_covers_units(
+        self,
+        coverage: "dict[str, Iterable[str]]",
+        *,
+        allow: Iterable[str] = (),
+        label: str = "city",
+    ) -> None:
+        """Assert EVERY SCORED UNIT carries every stream this budget admits, else raise.
+
+        `require_covers` closes the F.84 hole at the level of the TIER: the code declares which
+        streams it is feeding in, and a stream left out has to be waived out loud. It cannot see
+        one level down. A tier can pass it and still score individual cities that carry none of
+        the data the tier is named for -- the stream is present in the design and absent in the
+        row.
+
+        That is exactly what happened (C7, plan 2026-09-01). `revalidate_ladder.py` merged the
+        geography and satellite streams with how="left" and never dropped the misses, so one
+        city was scored in `Bud0c` with no STATIC_GEO at all. Nothing failed, because
+        HistGradientBoostingRegressor accepts NaN natively and simply trained around it. The
+        defect surfaced only when a second script -- which had to drop those rows, because Ridge
+        cannot take NaN -- disagreed by six percentage points on the headline first rung.
+        Enforcing coverage moves `Bud0c -> Bud1` from 17.8% to 15.8%.
+
+        The lesson generalises past this model: **a tolerant learner will silently absorb an
+        admissibility error that a strict one would have raised.** Coverage has to be asserted
+        on the data, not inferred from the fact that the fit converged.
+
+        `coverage` maps each unit to the streams actually present for it, so this stays free of
+        any dataframe dependency and is trivially testable. `allow` names streams that may be
+        absent per unit, and forces that concession to be written at the call site.
+
+        Raises rather than filtering: dropping a unit changes what the paper reports, so the
+        caller must make that choice explicitly rather than inherit it from a helper.
+        """
+        waived = set(allow)
+        required = self.admits - waived
+        short: dict[str, list[str]] = {}
+        for unit, present in coverage.items():
+            gap = sorted(required - set(present))
+            if gap:
+                short[str(unit)] = gap
+        if short:
+            shown = ", ".join(f"{u} missing {g}" for u, g in sorted(short.items())[:5])
+            more = "" if len(short) <= 5 else f" (+{len(short) - 5} more)"
+            raise AdmissibilityError(
+                f"budget {self.id}: {len(short)} of {len(coverage)} {label} units do not carry "
+                f"every admitted stream -- {shown}{more}. A unit scored in a rung whose streams "
+                f"it lacks is not in that rung (C7). Either restrict the frame to "
+                f"stream-complete units and say so, or pass allow=[...] to declare the "
+                f"concession."
+            )
+
 
 _BASE = frozenset({SATELLITE_LEVEL, DRIVERS_REANALYSIS, STATIC_GEO})
 
