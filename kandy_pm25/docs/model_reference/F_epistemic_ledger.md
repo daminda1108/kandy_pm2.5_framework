@@ -4543,3 +4543,46 @@ modelled — **has a single coordinate for both sites** (7.2870, 80.6262). The m
 1.000× because it is being asked about *the same point twice*. That pair is **not a spatial
 test** and must be withdrawn; only the botanical-garden pair (7.2682/80.5974 vs 7.2707/80.5963,
 ~304 m apart) is genuine. The paper's money figure survives on one pair, not two.
+
+## F.90 — 🔴 R2 REFUTED: `A_transport`, scored at last, does not improve spatial rank — it costs it (2026-09-01)
+
+**Registered at https://osf.io/bkpyr/ before running.** Script `scripts/r2_score_atransport.py`;
+product `data/processed/modular/r2_atransport.csv`.
+
+`A_transport` has shipped as an unscored "scenario" since 2026-06-02 and was the most attackable
+thing in the paper. The registration allowed two outcomes: score it, or state in the abstract
+that the headline field excludes it. It is now scored.
+
+**The counterfactual.** The layer's entire job is to redistribute an emission surface through
+terrain-steered advection and dispersion, so the honest control is that same surface,
+undispersed. Both scored identically against the same held-out stations, nothing fitted, the
+solver's cross-city calibrated parameters, stable-calm regime.
+
+| | median across the panel |
+|---|---:|
+| `rho_S` — raw emission surface | **+0.371** |
+| `rho_C` — after the terrain solver (`A_transport`) | **+0.274** |
+| delta | **−0.026** |
+
+**Improves rank in 3 of 10 cities; Wilcoxon on the paired deltas p = 0.496.** So the layer is not
+significantly harmful either — it is simply **not doing the job it is in the model to do**.
+
+**R2a REFUTED · R2b HELD.** Per the registration this resolves the item: **the abstract must
+state that the headline field excludes `A_transport`**, and now with evidence rather than as a
+hedge.
+
+🟢 **And it agrees with F.89 from the opposite direction.** S1 found the dispersed field's
+contrast is real but *misplaced*; R2 measures what that misplacement costs — dispersing the
+emission surface moves the panel median rank **down** from +0.371 to +0.274. Two independent
+lines, one conclusion: **the dispersion step relocates contrast to the wrong places.**
+
+⚠ **A consequence for the spatial-ceiling framing.** The *undispersed emission surface* scores
+**+0.371**, which is **above** the 0.2–0.28 ceiling quoted throughout. The ceiling was measured
+on model fields that had already been through this machinery. The honest statement is that the
+ceiling applies to the *shipped construction*, not to every possible use of the emission proxy.
+
+⚠ **Scope, stated plainly.** This tests the layer's SPATIAL contribution under the stable-calm
+regime it was calibrated for. It does not test the diurnal timing factor `e(t)` and cannot —
+panel scoring is on station means. Chandigarh flips sign (+0.486 → −0.486) at n=6; gotcha #69
+already warns that Chandigarh's n is too small to carry a conclusion, and it is not driving the
+median.

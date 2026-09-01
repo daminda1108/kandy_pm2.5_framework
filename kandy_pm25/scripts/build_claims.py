@@ -360,6 +360,32 @@ def s1(c: Claims) -> None:
           note="S1a refuted closes the spatial question per the registration; S1c likewise")
 
 
+def r2(c: Claims) -> None:
+    """F.90. A_transport scored for the first time: it does not improve spatial rank."""
+    p = MOD / "r2_atransport.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    m = d[d.city == "MEDIAN"]
+    if not len(m):
+        return
+    m = m.iloc[0]
+    c.add("r2.rho_emission_surface", float(m.rho_S), stat="median across panel", n=int(m.n),
+          source="r2_atransport.csv", ledger="F.90",
+          note="the raw emission surface, undispersed -- ABOVE the 0.2-0.28 ceiling quoted "
+               "elsewhere, which was measured on fields already through this machinery")
+    c.add("r2.rho_with_atransport", float(m.rho_C), stat="median across panel", n=int(m.n),
+          source="r2_atransport.csv", ledger="F.90",
+          note="R2a REFUTED: dispersing the surface COSTS rank")
+    c.add("r2.delta", float(m.delta), stat="median of per-city deltas", n=int(m.n),
+          source="r2_atransport.csv", ledger="F.90")
+    body = d.dropna(subset=["delta"])
+    body = body[body.city != "MEDIAN"]
+    c.add("r2.cities_improved", int((body.delta > 0).sum()), stat="count", n=len(body),
+          source="r2_atransport.csv", ledger="F.90",
+          note="A_transport helps in a minority of panel cities")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -422,6 +448,7 @@ def build() -> dict:
     colombo(c)
     spatial(c)
     s1(c)
+    r2(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),
