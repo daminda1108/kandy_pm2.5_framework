@@ -4723,3 +4723,34 @@ Bengal sector sits *above* local recirculation. Future work should split them.
 
 ⚠ **Scope.** GEOS-CF is a model at ~25 km: this corroborates or contradicts, it cannot validate.
 It tests the **temporal** origin claim, not the spatial one. `IGP_E_India` is n = 15.
+
+## F.94 — ⚫ R3 BLOCKED on data availability, and the attempt settles how to position the competitor (2026-09-01)
+
+**Registered at https://osf.io/bkpyr/ §5.** R3 proposed benchmarking the Kandy field against
+EGU26-9786 (Aunan, Amarakoon, Jayawardena et al., CICERO / Oslo), *"the first high-resolution
+(1 × 1 km, daily) PM2.5 dataset for Sri Lanka"* — a free external check on the **level** axis,
+which is where W11 is open.
+
+**It cannot be run.** The conference abstract carries **no DOI, no repository and no download
+link**, and no peer-reviewed version exists yet. Routes tried: the Copernicus abstract itself, a
+search for a published or preprint version, and a check for any dataset landing page. The only
+remaining route is **contacting the authors**, which is the user's action, not mine.
+
+🟢 **But the abstract answers the question R3's own caveat raised.** The dataset is built by
+*"combining in-situ measurements, satellite retrievals, and reanalysis products using a hybrid
+modeling framework"* — i.e. **the same class of monitor-trained fusion as GHAP** (C1). The
+pre-registration said in advance: *"agreement is not validation — if it is also a monitor-trained
+fusion it shares GHAP's contamination and much of our driver set, so agreement partly measures
+shared inputs."* That caveat is now **confirmed as applicable rather than hypothetical**, and it
+was recorded before any comparison, so a favourable result could not have been over-read.
+
+**Consequence for positioning, which is the useful outcome.** The competitor is a *fused product*;
+this work is a *tier-declared decomposition*. They answer different questions — theirs is "what
+was the concentration", ours is "what information would you need to trust an answer". The paper
+should cite EGU26-9786 as the state of the art for a Sri Lankan field and distinguish on
+**method and claim**, not compete on accuracy against a dataset we cannot obtain.
+
+⚠ Their reported finding that **relative humidity is a key confounder and precipitation modifies
+the PM2.5–hospitalisation relationship** is independently interesting: it is consistent with the
+scavenging signal found here today (PM2.5 *rises* as it gets drier at both FECT sensors), from a
+different dataset and a different endpoint.
