@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -86,11 +87,22 @@ def main() -> None:
         img = (ee.ImageCollection(COLL)
                .filterDate(f"{yr}-01-01", f"{yr + 1}-01-01")
                .filter(hours).select(bands).mean())
-        try:
-            res = img.reduceRegions(collection=fc, reducer=ee.Reducer.mean(),
-                                    scale=27750).getInfo()
-        except Exception as e:
-            print(f"  {yr}: FAILED {str(e)[:70]}", flush=True)
+        # Retry with backoff. The first run died on a transport-level drop
+        # ("Remote end closed connection without response") while a second GEE job was running,
+        # not on anything about the query -- so a bare rerun would just roll the dice again.
+        res = None
+        for attempt in range(4):
+            try:
+                res = img.reduceRegions(collection=fc, reducer=ee.Reducer.mean(),
+                                        scale=27750).getInfo()
+                break
+            except Exception as e:
+                wait = 20 * (attempt + 1)
+                print(f"  {yr}: attempt {attempt + 1} failed ({str(e)[:50]}); "
+                      f"retrying in {wait}s", flush=True)
+                time.sleep(wait)
+        if res is None:
+            print(f"  {yr}: GAVE UP after 4 attempts", flush=True)
             continue
         yr_rows = []
         for ft in res["features"]:
