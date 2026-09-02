@@ -228,8 +228,8 @@ Three papers produced the **first external checks on the Kandy field** in the pr
 
 | route | state |
 |---|---|
-| 🔴 **CEA Kandy AQMS** | **FIRST AND ONLY route to a Kandy reference monitor.** Granted in principle 2026-08-12: hourly 2019→2026-05, PM2.5/PM10/gases plus full met incl. rain gauge and wind. Needs a letter on university letterhead to the DG + a signed R&D agreement. Gap 2021-07→2022-10. |
-| 🔴 **NBRO regional background** | The background rung is the largest measured gain in the programme, and it has **no free substitute**. NBRO already supplied the F.65 series, so the channel works. |
+| 🔴 **CEA Kandy AQMS** | **FIRST AND ONLY route to a Kandy reference monitor — and now also the highest-value acquisition by measurement (F.92), ahead of NBRO.** Granted in principle 2026-08-12: hourly 2019→2026-05, PM2.5/PM10/gases plus full met incl. rain gauge and wind. Needs a letter on university letterhead to the DG + a signed R&D agreement. Gap 2021-07→2022-10. |
+| ⚠ **NBRO regional background** | **DEMOTED for Kandy 2026-09-01 (F.92).** The "largest gain in the programme" is a POOLED number; in Kandy's own band local stations buy 21.9% and the background 8.5%. Still no free substitute (F.63) and the channel works — but second priority, not first. Provisional pending C1. |
 | ⚫ **Torrington Park BAM-1020, Kandy** | **DEFUNCT (user, 2026-08-22).** The instrument that anchored the RF-CNN calibration and Dhammapala's correction is **no longer operating**. It is provenance for the published records, not a data route. |
 | ⚠ **NBRO domain moved** | `nbro.gov.lk` → **`nbri.gov.lk`** (301). Update every NBRO URL in notes and letters. |
 | **PDN Uni's own islandwide sensor network** | Unexploited, and it is the user's own institution. Chase internally. |

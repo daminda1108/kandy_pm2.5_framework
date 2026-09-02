@@ -70,6 +70,59 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-01, 🔬 **AUDIT + FIVE REGISTERED TESTS**)
+
+A full development cycle. Every headline claim was re-derived from the scored files; **three did
+not reproduce**. Five registered tests ran, **three refuted**. The model has composition data for
+the first time. Narrative: SESLOG 2026-09-01. Plan:
+[`kandy_pm25/docs/improvement_plan_2026-09-01.md`](kandy_pm25/docs/improvement_plan_2026-09-01.md).
+
+### 🔴 Numbers that MOVED today — quote these, not the August ones
+| was | is | why |
+|---|---|---|
+| 47 cities / 32,396 city-days | **48 / 28,930** | superseded pre-F.84 frame (C4) |
+| satellite helps coastal **4x** | **1.8x** (satellite alone) | the 4x was geography+satellite, reported under the satellite's name (C2) |
+| `w_Bud2` ref **0.000** / LCS **0.900** | **0.350 / 0.575** | stratified stats were never re-derived after the re-validation (C3) |
+| `Bud0c→Bud1` **17.8%** | **15.8%** stream-complete | one city was scored in `Bud0c` with no STATIC_GEO (C7) |
+| P4: 19 `identified` | **13**, 11 zero-width artefacts removed | grid too coarse (C5) |
+
+🟢 **`s_exp` survived the P4 refinement** — all 9 profile intervals contain 1.0, so F.77's
+decision rests on an interval rather than an artefact.
+
+### 🔬 Registered results (OSF `bkpyr`, `kx23c`) — ledger F.89–F.93
+- **S1 REFUTED** — at 94 m the paired microsites read **1.135×** against 27.5× observed. The
+  spatial question is **closed**. 🟢 But its premise died too: the dispersed field spans **18.7×**
+  at 998 m, so contrast is **misplaced, not lost to resolution**.
+- **R2 REFUTED** — `A_transport` scored at last and it **costs** rank (+0.371 → +0.274, 3/10
+  cities). **The abstract must state the headline field excludes it.**
+- **S2 delivered** — within-pixel spread **1.218×** exceeds between-pixel **1.049×**, gauge-exact
+  to 7e-15. Most midday spatial variation is **sub-grid**.
+- **R1 — 🔴 THE ACQUISITION ADVICE INVERTS FOR KANDY (F.92).** Pooled says background (40.6%);
+  Kandy's own band says **local stations 21.9% vs background 8.5%**. **CEA now outranks NBRO.**
+  ⚠ Provisional pending C1.
+- **Chemistry (F.93)** — **C-H1 HELD**, continental air is more secondary-rich than marine
+  (0.410 vs 0.365, p=3.1e-09): **the decomposition's first chemical corroboration**. **C-H2
+  REFUTED usefully** — stagnation ages air in place, so *"local increment = fresh primary"* is too
+  simple. **OC/BC 13.8** is a third independent refutation of "~90% vehicular".
+
+### 🔴 C1 — the satellite stream is not a satellite stream
+GHAP trains on ~9,500 stations **including OpenAQ and CNEMC, this panel's own sources**, and its
+predictors substantially overlap our other two streams. `Bud0c` is not drivers + geography + an
+independent observation. **The 7.6% is a mixture.** Raw MAIAC AOD is being pulled as the honest
+stream; the ladder will be reported both ways. Research note:
+`kandy_pm25/docs/c1_satellite_stream_research_2026-09-01.md`.
+
+### 🟢 Machinery that now prevents the recurrence
+`scripts/build_claims.py` regenerates **99 claims** from source with statistic, n and provenance;
+`assemble_manuscript.py` **refuses to build** if prose and data disagree (it blocked on first use);
+`scripts/submission_gate.py` runs six checks. `Budget.require_covers_units()` closes C7 in code.
+
+### Pending
+1. **MAIAC gap-fill** running → then C1's three-way ladder → then re-derive F.92.
+2. **R3** (competitor benchmark) untried. 3. **Phase 6** propagation to the release repo.
+4. Approve the two OSF registrations (48-h window). 5. **Send the CEA letter** — now the
+   highest-value acquisition by measurement, not just the only route.
+
 ## Current State (updated 2026-08-14, 📄 **NEW PAPER BUILT END TO END, 28 pp**)
 
 The preprint is superseded. A new manuscript was defined, evidence-frozen, drafted, figured,
@@ -285,7 +338,7 @@ civil-vs-solar-time sub-hypothesis is **refuted by construction**: true offsets 
 
 **⚠ ACQUISITION CONSEQUENCE — this changes the CEA/NBRO priority.** Do **not** request the CEA
 passive NO₂ network as a fix for `P_local`; its value is the `f` partition and local activity
-tracing (F.45). **NBRO (regional background) is the acquisition that pays** — the background rung
+tracing (F.45). ⚠ **SUPERSEDED 2026-09-01 by F.92 — see below. For KANDY, local stations outrank the background station.** The claim below is the POOLED result: the background rung
 is the largest measured gain in the programme and 75% of it survives an independent network.
 **⚫ 2026-08-22 correction: the Torrington Park BAM is DEFUNCT** (user). It anchored the
 published RF-CNN calibration and Dhammapala's correction, but it is not a data route. **CEA is
@@ -717,7 +770,8 @@ Also standing, by design not oversight: `A_transport` entirely unscored · panel
 ### 3. 🎯 THE ONE THING THAT UNBLOCKS EVERYTHING — a local measurement
 Routes, **re-ordered 2026-08-22 by measured value**:
 - **⚫ Torrington Park BAM-1020, Kandy (F.65) — DEFUNCT (user, 2026-08-22).** It anchored two published Kandy records but no longer operates. **Do not re-propose it.**
-- **🔴 NBRO regional background** — the background rung is the largest measured gain in the programme (F.51/F.54) and **has no free substitute** (F.63 ruled out Colombo at r 0.60 vs a 0.92 benchmark). NBRO also supplied the Kandy series in F.65, so the channel demonstrably works.
+- 🔴 **REORDERED 2026-09-01 (F.92). CEA local stations now outrank NBRO for Kandy.** The "background pays most" advice is a POOLED number (40.6%) computed mostly from bands Kandy is not in. In the **deep tropics** — Kandy's own band, n=13 — the first two local stations buy **21.9%** and the background rung only **8.5%**, so local stations are worth **2.6x** the background (~4.6 vs ~1.8 ug/m3 at Kandy's level). ⚠ **PROVISIONAL pending C1:** the deep-tropical background collapse is explained by the satellite level substituting for a background station, and C1 found that stream is GHAP — trained on this panel's own monitors. If the substitution is leakage, the background rung is undervalued here. Re-derive after the MAIAC re-run.
+- **NBRO regional background** — still worth having (no free substitute; F.63 ruled out Colombo at r 0.60 vs a 0.92 benchmark), and the channel demonstrably works since it supplied the F.65 series. Second priority for Kandy, not first.
 - **CEA Kandy AQMS** — granted in principle 2026-08-12, hourly 2019→2026-05 incl. full met; blocked on a letter + R&D agreement. Gap 2021-07→2022-10.
 - **⚠ CEA passive NO₂ — DEMOTED.** It will **not** fix `P_local`: the spatial ceiling is measured and information-limited (F.56/F.61). Its value is the `f` partition and local activity tracing only.
 - **Mobile campaign** — 4–8 drive days per segment (~34 calendar days full-domain) and it **still needs one fixed reference to anchor to**.
