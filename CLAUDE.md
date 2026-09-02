@@ -99,7 +99,7 @@ decision rests on an interval rather than an artefact.
   to 7e-15. Most midday spatial variation is **sub-grid**.
 - **R1 — 🔴 THE ACQUISITION ADVICE INVERTS FOR KANDY (F.92).** Pooled says background (40.6%);
   Kandy's own band says **local stations 21.9% vs background 8.5%**. **CEA now outranks NBRO.**
-  ⚠ Provisional pending C1.
+  🟢 **CONFIRMED AND DOUBLED on the honest stream (F.96): 43.7% vs 10.3%, local wins 4.2×.**
 - **Chemistry (F.93)** — **C-H1 HELD**, continental air is more secondary-rich than marine
   (0.410 vs 0.365, p=3.1e-09): **the decomposition's first chemical corroboration**. **C-H2
   REFUTED usefully** — stagnation ages air in place, so *"local increment = fresh primary"* is too
@@ -774,7 +774,7 @@ Also standing, by design not oversight: `A_transport` entirely unscored · panel
 ### 3. 🎯 THE ONE THING THAT UNBLOCKS EVERYTHING — a local measurement
 Routes, **re-ordered 2026-08-22 by measured value**:
 - **⚫ Torrington Park BAM-1020, Kandy (F.65) — DEFUNCT (user, 2026-08-22).** It anchored two published Kandy records but no longer operates. **Do not re-propose it.**
-- 🔴 **REORDERED 2026-09-01 (F.92). CEA local stations now outrank NBRO for Kandy.** The "background pays most" advice is a POOLED number (40.6%) computed mostly from bands Kandy is not in. In the **deep tropics** — Kandy's own band, n=13 — the first two local stations buy **21.9%** and the background rung only **8.5%**, so local stations are worth **2.6x** the background (~4.6 vs ~1.8 ug/m3 at Kandy's level). ⚠ **PROVISIONAL pending C1:** the deep-tropical background collapse is explained by the satellite level substituting for a background station, and C1 found that stream is GHAP — trained on this panel's own monitors. If the substitution is leakage, the background rung is undervalued here. Re-derive after the MAIAC re-run.
+- 🔴 **REORDERED 2026-09-01 (F.92). CEA local stations now outrank NBRO for Kandy.** The "background pays most" advice is a POOLED number (40.6%) computed mostly from bands Kandy is not in. In the **deep tropics** — Kandy's own band, n=13 — the first two local stations buy **21.9%** and the background rung only **8.5%**, so local stations are worth **2.6x** the background (~4.6 vs ~1.8 ug/m3 at Kandy's level). 🟢 **CAVEAT DISCHARGED 2026-09-01 (F.96).** Re-run end to end on raw MAIAC AOD: local stations **43.7%** vs background **10.3%** in Kandy's band — the inversion roughly **doubles**, to a **4.2x** local advantage. The leakage was real but in the opposite place from where C1 looked: a monitor-trained product does not inflate its own rung, it **deflates the rung above**, so GHAP was understating the value of a local station by about half.
 - **NBRO regional background** — still worth having (no free substitute; F.63 ruled out Colombo at r 0.60 vs a 0.92 benchmark), and the channel demonstrably works since it supplied the F.65 series. Second priority for Kandy, not first.
 - **CEA Kandy AQMS** — granted in principle 2026-08-12, hourly 2019→2026-05 incl. full met; blocked on a letter + R&D agreement. Gap 2021-07→2022-10.
 - **⚠ CEA passive NO₂ — DEMOTED.** It will **not** fix `P_local`: the spatial ceiling is measured and information-limited (F.56/F.61). Its value is the `f` partition and local activity tracing only.
