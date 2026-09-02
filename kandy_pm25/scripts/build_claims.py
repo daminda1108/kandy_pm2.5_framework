@@ -406,6 +406,30 @@ def s2(c: Claims) -> None:
           note="S2c: P1 survives one level down, exactly")
 
 
+def chemistry(c: Claims) -> None:
+    """F.93. The decomposition's first chemical corroboration."""
+    p = MOD / "chemistry_origin_test.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    sec = d[d.kind == "sector"].set_index("label")
+    for s_ in sec.index:
+        c.add(f"chem.sec_frac.{s_}", float(sec.loc[s_, "sec_frac"]), stat="median",
+              n=int(sec.loc[s_, "n"]), source="chemistry_origin_test.csv", ledger="F.93")
+    c.add("chem.oc_bc_min_monthly", 13.2, stat="min of monthly medians", n=1826,
+          source="chemistry_origin_test.csv", ledger="F.93",
+          note="C-H4: traffic-dominated aerosol runs ~1-2. Third independent line refuting "
+               "'Kandy ~90% vehicular', after the PMF (F.66) and the PM2.5-NO2 decoupling")
+    pr = d[d.kind == "prediction"].set_index("label").sec_frac
+    c.add("chem.predictions_held", ",".join(sorted(pr[pr == 1].index)), stat="registered outcome",
+          n=4, source="chemistry_origin_test.csv", ledger="F.93",
+          note="osf.io/kx23c. C-H3 held only nominally (+0.021 vs +0.019) and is uninformative")
+    c.add("chem.predictions_refuted", ",".join(sorted(pr[pr == 0].index)), stat="registered outcome",
+          n=4, source="chemistry_origin_test.csv", ledger="F.93",
+          note="C-H2: local_recirc is NOT the freshest sector -- stagnation ages air in place, "
+               "so 'local increment = fresh primary' is too simple")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -470,6 +494,7 @@ def build() -> dict:
     s1(c)
     r2(c)
     s2(c)
+    chemistry(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),

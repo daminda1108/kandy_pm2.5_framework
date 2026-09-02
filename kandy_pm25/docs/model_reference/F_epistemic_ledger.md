@@ -4671,3 +4671,55 @@ AOD.** Recorded before the re-run, not after.
 **Instrument class, if stations are added:** median `w_Bud2` LCS **0.575** vs reference **0.350** —
 low-cost units gain more from extra devices because per-device error averages down, while a
 reference monitor's third-to-eighth unit still buys close to nothing.
+
+## F.93 — 🟢 THE DECOMPOSITION GETS ITS FIRST CHEMICAL CORROBORATION — and one prediction fails usefully (2026-09-01)
+
+**Registered at https://osf.io/kx23c/ before running.** Script `scripts/chemistry_origin_test.py`;
+product `data/processed/modular/chemistry_origin_test.csv`. 1,826 days of GEOS-CF speciation
+against 11,676 back-trajectory arrivals; sector is derived from trajectory geometry, **not** from
+GEOS-CF chemistry, which is what makes the test admissible (the obvious test — `B(t)` against the
+secondary fraction — is circular, because `B`'s shape is itself `geoscf_daily_shape`).
+
+**Secondary fraction by air-mass origin, and the ordering is clean:**
+
+| sector | n | median `sec_frac` | 95% CI | OC/BC |
+|---|---:|---:|---|---:|
+| SW_marine | 546 | **0.324** | [0.316, 0.329] | 14.2 |
+| other | 380 | 0.340 | [0.334, 0.344] | 14.2 |
+| local_recirc | 82 | 0.387 | [0.375, 0.405] | 14.1 |
+| BoB_marine | 719 | 0.395 | [0.390, 0.400] | 13.7 |
+| Penin_India | 84 | 0.405 | [0.387, 0.427] | 13.8 |
+| IGP_E_India | 15 | **0.447** | [0.412, 0.512] | 12.4 |
+
+🟢 **C-H1 HELD, strongly.** Continental-Indian air is more secondary-rich than marine:
+**0.410 vs 0.365**, Mann–Whitney **p = 3.1e-09**, and it survives the pre-declared sensitivity to
+days where all four arrivals agree (0.426 vs 0.365, p = 4e-08, n = 40 vs 995).
+
+**This is the first chemical support the decomposition has ever had.** Air the trajectories call
+transported is measurably aged; air they call marine is not. The claim that `B` represents
+transported aerosol is no longer statistics-only.
+
+🔴 **C-H2 REFUTED, and this is the finding.** `local_recirc` is **not** the freshest sector
+(0.387); **SW_marine is** (0.324). Recirculated local air is *more* secondary-rich than clean
+monsoon air. Two mechanisms, both physical: SW monsoon air is wet, and sulphate and nitrate are
+hygroscopic and efficiently scavenged; and **stagnation gives local precursors time to age in
+place**. So *"local increment = fresh primary"* is too simple — under stagnation the local
+increment itself acquires secondary mass. The decomposition still partitions correctly by
+*origin*, but its chemical story needs this qualification.
+
+⚠ **C-H3 HELD only nominally and must be reported as uninformative.** The continental–marine gap
+is **+0.021** in DJF–MAM against **+0.019** in JJA. The registered criterion was "larger", and
+0.021 > 0.019 satisfies it arithmetically while being indistinguishable from noise. **There is no
+seasonal modulation of the gap worth claiming.**
+
+🟢 **C-H4 HELD decisively.** OC/BC exceeds 5 in **every month**, minimum monthly median **13.2**,
+against ~1–2 for traffic-dominated aerosol. A biomass-burning signature year-round — the **third**
+independent line refuting "Kandy ~90% vehicular", after the Katugastota PMF (F.66) and the
+PM2.5–NO₂ decoupling.
+
+⚠ **"Marine" is not homogeneous** and the pooling in C-H1 is cruder than it looks: SW_marine
+(0.324, Indian Ocean) against BoB_marine (0.395, Bay of Bengal, downwind of India). The Bay of
+Bengal sector sits *above* local recirculation. Future work should split them.
+
+⚠ **Scope.** GEOS-CF is a model at ~25 km: this corroborates or contradicts, it cannot validate.
+It tests the **temporal** origin claim, not the spatial one. `IGP_E_India` is n = 15.
