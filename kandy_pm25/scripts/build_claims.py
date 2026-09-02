@@ -458,6 +458,34 @@ def c1_satellite(c: Claims) -> None:
           note="P3 refuted usefully; P4 refuted as flagged weak in advance")
 
 
+def maiac_ladder(c: Claims) -> None:
+    """F.96. The ladder re-derived on the honest stream, and where the leakage actually was."""
+    p = MOD / "ladder_maiac.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    x = d[d.bottom == "Bud0c"]
+    f = lambda a, b: round(float((100 * (a - b) / a).median()), 1)
+    c.add("maiac.step_bud0c_bud1", f(x.rmse_Bud0, x.rmse_Bud1),
+          stat="median of per-city ratios", n=len(x), source="ladder_maiac.csv", ledger="F.96",
+          note="on raw MAIAC. GHAP gave 17.8 -- a monitor-trained stream DEFLATES the measured "
+               "value of the monitors it was trained on")
+    c.add("maiac.step_bud2_bud3", f(x.rmse_Bud2, x.rmse_Bud3),
+          stat="median of per-city ratios", n=len(x), source="ladder_maiac.csv", ledger="F.96")
+    dt = x[x.band == "deep_tropical"]
+    c.add("maiac.deep_tropical_first2", f(dt.rmse_Bud0, dt.rmse_Bud1),
+          stat="median of per-city ratios", n=len(dt), source="ladder_maiac.csv", ledger="F.96",
+          note="Kandy's band. GHAP gave 21.9 -- the honest stream roughly DOUBLES the measured "
+               "value of the first two local stations")
+    c.add("maiac.deep_tropical_background", f(dt.rmse_Bud2, dt.rmse_Bud3),
+          stat="median of per-city ratios", n=len(dt), source="ladder_maiac.csv", ledger="F.96")
+    c.add("maiac.deep_tropical_local_advantage",
+          round(f(dt.rmse_Bud0, dt.rmse_Bud1) / f(dt.rmse_Bud2, dt.rmse_Bud3), 1),
+          stat="ratio of medians", n=len(dt), source="ladder_maiac.csv", ledger="F.96",
+          note="F.92 re-derived: CEA local stations outrank an NBRO background station for "
+               "Kandy by this factor, up from 2.6x on the fused stream")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -524,6 +552,7 @@ def build() -> dict:
     s2(c)
     chemistry(c)
     c1_satellite(c)
+    maiac_ladder(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),
