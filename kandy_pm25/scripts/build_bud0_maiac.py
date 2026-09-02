@@ -90,6 +90,13 @@ def main() -> None:
     if OUT.exists():
         prev = pd.read_csv(OUT, parse_dates=["date"])
         prev["yr"] = prev.date.dt.year
+        # 🔴 Normalise to a plain date. Resumed rows are read back as datetimes and would be
+        # written as "2019-01-01 00:00:00", while freshly pulled rows use `.dt.date` and write
+        # as "2019-01-01". A file carrying both formats defeats pandas' format inference, and
+        # `pd.to_datetime(..., errors="coerce")` then silently NaTs the minority format -- which
+        # is gotcha #46 exactly (the CNEMC archive, where it cost ~50% of rows without an
+        # error). Caught here because 21,302 of 35,398 rows would not parse.
+        prev["date"] = prev.date.dt.date
         for (c, yr), g in prev.groupby(["city", "yr"]):
             done.add((str(c), int(yr)))
             rows.append(g[["city", "date", "aod"]])
@@ -150,6 +157,10 @@ def main() -> None:
     if not rows:
         print("no data pulled"); sys.exit(1)
     out = pd.concat(rows, ignore_index=True)[["city", "date", "aod"]]
+    # Belt-and-braces on the date format (see the resume block): normalise once more before the
+    # final write, and assert it, so a mixed-format file can never leave this script.
+    out["date"] = pd.to_datetime(out.date).dt.date
+    assert pd.to_datetime(out.date, errors="coerce").notna().all(), "unparseable dates in output"
     out.to_csv(OUT, index=False)
     print(f"\nwrote {OUT.relative_to(REPO)}")
     print(f"  {len(out):,} city-days, {out.city.nunique()} cities")
