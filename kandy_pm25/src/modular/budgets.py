@@ -156,6 +156,60 @@ class Budget:
             )
 
 
+def require_stream_coverage(
+    frame,
+    column: str,
+    *,
+    unit: str = "city",
+    min_unit_fraction: float = 0.30,
+    min_units_covered: float = 0.80,
+) -> None:
+    """Assert a merged stream is actually PRESENT, not merely merged.
+
+    A stream can join cleanly and arrive empty. The join key matches, the column exists, every
+    value is NaN, and a tolerant learner fits it without a word. That happened five separate
+    ways in one session:
+
+      - a tier fed one of the three streams its budget admits (F.84),
+      - a city scored in a rung whose stream it lacks (C7, `require_covers_units`),
+      - a daily stream pulled for the wrong YEARS, so the merge matched almost nothing
+        (gotcha #85: MAIAC pulled 2019-2022 against a frame spanning 2021-2026, 86% post-2023;
+        median per-city day coverage came out at 0.0% and HistGradientBoostingRegressor
+        returned a clean, plausible, meaningless -0.41%),
+      - and a mixed date format that silently NaT'd 60% of rows on read (gotcha #46).
+
+    `require_covers` and `require_covers_units` check the DESIGN and the ROWS. This checks the
+    VALUES, which is the only level at which an empty-but-merged stream is visible.
+
+    Raises rather than warning, and reports the distribution rather than a single number, so a
+    stream that is present for a handful of units and absent for the rest cannot pass on its
+    mean.
+
+    Parameters
+    ----------
+    min_unit_fraction : the share of a unit's rows that must carry a non-null value for that
+        unit to count as covered. Default 0.30 is deliberately permissive -- satellite streams
+        have genuine cloud gaps, and the failure this guards against is 0%, not 40%.
+    min_units_covered : the share of units that must clear `min_unit_fraction`.
+    """
+    if column not in frame.columns:
+        raise AdmissibilityError(
+            f"stream column {column!r} is not in the frame at all -- the merge did not happen")
+    per_unit = frame.groupby(unit)[column].apply(lambda s: float(s.notna().mean()))
+    covered = per_unit >= min_unit_fraction
+    share = float(covered.mean()) if len(per_unit) else 0.0
+    if share < min_units_covered:
+        worst = per_unit.sort_values().head(5)
+        detail = ", ".join(f"{u}={v:.1%}" for u, v in worst.items())
+        raise AdmissibilityError(
+            f"stream {column!r} is merged but EMPTY for most units: only {share:.0%} of "
+            f"{len(per_unit)} {unit} units have >= {min_unit_fraction:.0%} of rows populated "
+            f"(required {min_units_covered:.0%}). Median coverage {per_unit.median():.1%}. "
+            f"Worst: {detail}. A merged-but-empty stream fits without error and means nothing "
+            f"(gotcha #85) -- check the stream's date range against the frame's before pulling."
+        )
+
+
 _BASE = frozenset({SATELLITE_LEVEL, DRIVERS_REANALYSIS, STATIC_GEO})
 
 REGISTRY: dict[str, Budget] = {}

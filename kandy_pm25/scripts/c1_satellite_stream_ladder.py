@@ -44,7 +44,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 from modular_validation_all import FEATS, build_frame, ladder   # noqa: E402
-from src.modular.budgets import get                              # noqa: E402
+from src.modular.budgets import get, require_stream_coverage      # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
 OUT = MOD / "c1_satellite_ladder.csv"
@@ -126,7 +126,12 @@ def main() -> None:
     n_aod = p.groupby("city").aod.apply(lambda s: s.notna().mean())
     print(f"    MAIAC day coverage: median {n_aod.median():.1%}, "
           f"p10 {n_aod.quantile(.1):.1%}, min {n_aod.min():.1%}")
-    print("    (cloud gaps left as gaps -- filling them would stop it being a satellite stream)\n")
+    print("    (cloud gaps left as gaps -- filling them would stop it being a satellite stream)")
+    # gotcha #85. The first run of this script fitted an all-NaN AOD column and returned a
+    # clean, plausible, meaningless number, because the stream had been pulled for 2019-2022
+    # against a frame that is 86% post-2023. Assert values, not just that the merge ran.
+    require_stream_coverage(p, "aod", unit="city")
+    print("    coverage assertion PASSED\n")
 
     print("[fitting the three rungs, identical frame / learner / seed / folds]")
     variants = {
