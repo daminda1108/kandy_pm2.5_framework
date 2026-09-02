@@ -1,8 +1,12 @@
 """Diurnal emission-timing profile e(t) for the transport modulation (§3.4b).
 
-Kandy's emissions are ~90% vehicular (vs ~55-60% in Colombo); the diurnal cycle is
-therefore dominated by the road-traffic profile, reinforced by a smaller domestic-
-combustion (cooking) term on the same morning/evening hours. The traffic shape follows
+Kandy's local emissions are weighted here as ~90% road-traffic FOR THEIR TIMING ONLY. That
+is NOT a mass share: the Katugastota PMF measures traffic at 7.6% of ambient PM2.5 mass and
+biomass burning at 14.1% (F.66), and GEOS-CF speciation gives OC/BC = 13.8, a biomass
+fingerprint (F.93). What is measured is that traffic dominates the local increment's
+sub-daily CLOCK -- 3.67x stronger at rush hours, zero at midnight (F.23). The diurnal cycle
+therefore follows the road-traffic profile, reinforced by a smaller domestic-combustion
+(cooking) term on the same morning/evening hours. The traffic shape follows
 the EDGAR road-transport hour-of-day temporal profile (Crippa et al. 2020, Sci. Data);
 domestic follows cooking studies (morning + heavier-evening peaks). Bimodal, mean 1.
 
@@ -22,14 +26,28 @@ E_DOMESTIC = np.array([0.10, 0.10, 0.10, 0.10, 0.10, 0.30, 0.80, 1.80, 1.40, 0.7
                        0.40, 0.40, 0.50, 0.40, 0.40, 0.50, 0.80, 1.40, 2.00, 1.80,
                        1.20, 0.60, 0.30, 0.20])
 
-VEHICULAR_SHARE = 0.90        # Kandy ~90% vehicular
-# ── STATUS (2026-08-06, W10): the vehicular share is a prior with LOCAL OBSERVATIONAL
-# SUPPORT, and the evening lobe below is a LOCAL CORRECTION, not literature.
-# `scripts/kandy_holiday_experiment.py` uses Sri Lankan public holidays as a natural
-# experiment: they remove local activity and leave transboundary transport untouched, so
-# the holiday-minus-working-day difference at hour h estimates the local emission clock.
-# It confirmed the ~90% vehicular assumption (the effect is 3.67x stronger at rush hours,
-# and zero at midnight -- the vehicle signature) and rejected one feature of the profile.
+VEHICULAR_SHARE = 0.90        # weight on the TRAFFIC CLOCK, not a mass share -- see below
+# ── 🔴 STATUS CORRECTED 2026-09-01 (F.66/F.71/F.93). THIS IS A TIMING WEIGHT, NOT A MASS
+# SHARE, and it must never again be described as "Kandy is ~90% vehicular".
+#
+# What is REFUTED: the mass claim. The Katugastota PMF (Seneviratne 2017) measures traffic at
+# **7.6%** of ambient PM2.5 mass and biomass burning at **14.1%** -- burning is roughly twice
+# traffic, and the vehicular share is wrong by an order of magnitude as a mass statement.
+# Two further independent lines agree: PM2.5 does not track the TROPOMI NO2 column
+# (r = +0.084 even at fresh overpass), and GEOS-CF speciation gives OC/BC = 13.8, a
+# biomass-burning fingerprint where traffic-dominated aerosol runs ~1-2 (F.93).
+# F.71 resolves it by geography: traffic predominant in the urban core, firewood co-dominant
+# there and dominant rurally. A defensible core mix is vehic ~0.5-0.6, burn ~0.3-0.4.
+#
+# What SURVIVES, and is why this constant still stands at 0.90: the number here weights the
+# SHAPE of the diurnal clock, not the mass. `scripts/kandy_holiday_experiment.py` uses Sri
+# Lankan public holidays as a natural experiment -- they remove local activity and leave
+# transboundary transport untouched, so the holiday-minus-working-day difference at hour h
+# estimates the local emission clock. It measured the effect as **3.67x stronger at rush hours
+# and zero at midnight**, which is the vehicle signature in TIME. F.23 established the timing
+# and said in its own caveats that it did not bound the magnitude; F.66 then bounded the
+# magnitude and found it small. Both are correct about different quantities.
+#
 # `scripts/kandy_emission_clock_fit.py` quantifies it on 971 treated sensor-hours:
 #
 #     quantity                 EDGAR prior     measured (bootstrap 90% CI)
@@ -44,6 +62,11 @@ VEHICULAR_SHARE = 0.90        # Kandy ~90% vehicular
 # remain the EDGAR prior -- the instrument identifies the evening lobe and nothing more.
 # Agreement with the measured clock rises from r=0.49 to r=0.79.
 # Set EVENING_FIT = False to recover the pre-2026-08-06 literature-only profile exactly.
+#
+# ⚠ Wiring a sector-weighted surface (`src/modular/emission.py`) is a CORRECTNESS fix, not an
+# expected skill gain: the spatial ceiling (F.56/F.61) means it will not move rank, and Kandy's
+# burning sector has no admissible FIRMS proxy (incense, oil lamps and domestic burning are
+# invisible to FIRMS, exactly as Kathmandu's kilns are).
 EVENING_FIT = True
 _EVE = np.arange(14, 24)      # hours the correction touches
 _EVE_SHIFT = 1                # hours later, from the measured peak
