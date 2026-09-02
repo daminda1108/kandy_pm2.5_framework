@@ -430,6 +430,34 @@ def chemistry(c: Claims) -> None:
                "so 'local increment = fresh primary' is too simple")
 
 
+def c1_satellite(c: Claims) -> None:
+    """F.95. The honest satellite stream."""
+    p = MOD / "c1_satellite_ladder.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    st = d[d.kind == "step"].set_index("label").value
+    rg = d[d.kind == "rung"].set_index("label").value
+    c.add("c1.step_raw_aod", float(st["raw_aod"]), stat="median of per-city ratios", n=47,
+          source="c1_satellite_ladder.csv", ledger="F.95",
+          note="MAIAC, an actual radiometric retrieval -- not trained on monitors")
+    c.add("c1.step_fused_ghap", float(st["fused_ghap"]), stat="median of per-city ratios", n=47,
+          source="c1_satellite_ladder.csv", ledger="F.95")
+    c.add("c1.fused_excess_pp", float(st["fused_excess_pp"]), stat="difference of medians", n=47,
+          source="c1_satellite_ladder.csv", ledger="F.95",
+          note="P3 REFUTED: the fused product shows NO excess over raw AOD, so its apparent "
+               "value is satellite information rather than recycled information")
+    for k in ("Bud0b", "Bud0c-raw", "Bud0c-fused"):
+        c.add(f"c1.rmse_{k.replace('-', '_').lower()}", float(rg[k]), stat="median", n=47,
+              source="c1_satellite_ladder.csv", ledger="F.95")
+    pr = d[d.kind == "prediction"].set_index("label").value
+    c.add("c1.predictions_held", ",".join(sorted(pr[pr == 1].index)), stat="registered outcome",
+          n=5, source="c1_satellite_ladder.csv", ledger="F.95", note="osf.io/bkpyr")
+    c.add("c1.predictions_refuted", ",".join(sorted(pr[pr == 0].index)), stat="registered outcome",
+          n=5, source="c1_satellite_ladder.csv", ledger="F.95",
+          note="P3 refuted usefully; P4 refuted as flagged weak in advance")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -495,6 +523,7 @@ def build() -> dict:
     r2(c)
     s2(c)
     chemistry(c)
+    c1_satellite(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),

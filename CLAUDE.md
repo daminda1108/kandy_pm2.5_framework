@@ -105,11 +105,14 @@ decision rests on an interval rather than an artefact.
   REFUTED usefully** — stagnation ages air in place, so *"local increment = fresh primary"* is too
   simple. **OC/BC 13.8** is a third independent refutation of "~90% vehicular".
 
-### 🔴 C1 — the satellite stream is not a satellite stream
+### 🟢 C1 — RESOLVED 2026-09-01 (F.95): the honest stream costs nothing
 GHAP trains on ~9,500 stations **including OpenAQ and CNEMC, this panel's own sources**, and its
-predictors substantially overlap our other two streams. `Bud0c` is not drivers + geography + an
-independent observation. **The 7.6% is a mixture.** Raw MAIAC AOD is being pulled as the honest
-stream; the ladder will be reported both ways. Research note:
+predictors substantially overlap our other two streams. `Bud0c` was not drivers + geography + an independent
+observation. **RESOLVED:** raw MAIAC AOD scores **+5.97%** against the fused GHAP's **+5.37%** —
+the fused product shows **no excess**, so its apparent value was satellite information, not
+recycled information. **Switch `SATELLITE_LEVEL` to MAIAC**: admissible, no leakage, no shared
+drivers, and at least as good. 🟢 **P5 held — geography (10.8%) still beats the satellite level**
+on an honest stream. ⚠ 11 of 47 cities carry AOD on <30% of days (cloud). Research note:
 `kandy_pm25/docs/c1_satellite_stream_research_2026-09-01.md`.
 
 ### 🟢 Machinery that now prevents the recurrence

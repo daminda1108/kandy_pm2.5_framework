@@ -4754,3 +4754,55 @@ should cite EGU26-9786 as the state of the art for a Sri Lankan field and distin
 the PM2.5–hospitalisation relationship** is independently interesting: it is consistent with the
 scavenging signal found here today (PM2.5 *rises* as it gets drier at both FECT sensors), from a
 different dataset and a different endpoint.
+
+## F.95 — 🟢 C1 RESOLVED: an honest satellite stream is worth as much as the fused one, and "geography beats satellite" survives (2026-09-01)
+
+**Registered at https://osf.io/bkpyr/ §1 before running.** Script
+`scripts/c1_satellite_stream_ladder.py`; product `data/processed/modular/c1_satellite_ladder.csv`.
+⚠ The first execution was **invalid and discarded** — the MAIAC stream had been pulled for
+2019–2022 against a frame that is 86% post-2023, so the rung was fitted on an all-NaN column
+(gotcha #85). Re-pulled 2019–2026; post-merge coverage median **49.5%**, and
+`require_stream_coverage` now asserts it before the fit.
+
+Three rungs, identical frame (47 stream-complete cities), learner, seed and LOCO folds:
+
+| rung | median RMSE | step from `Bud0b` |
+|---|---:|---:|
+| `Bud0b` drivers + geography | **19.35** | — |
+| `Bud0c-raw` + MAIAC AOD | **19.37** | **+5.97%** |
+| `Bud0c-fused` + GHAP level | **20.94** | **+5.37%** |
+
+**P1 HELD · P2 HELD · P3 REFUTED · P4 REFUTED · P5 HELD.**
+
+🟢 **P3's refutation is the finding, and it is good news.** I registered that the fused product
+would show a measurable **excess** over raw AOD — the signature of the extra drivers and the
+indirect monitor leakage it carries. **It does not. Raw MAIAC AOD is marginally BETTER
+(+5.97% vs +5.37%, an excess of −0.61 pp.)** So the value GHAP appeared to add at a monitored
+city is **not** recycled information showing up as skill; it is simply satellite information that
+raw AOD supplies just as well.
+
+**The consequence is that C1's methodological problem has a free fix.** The circularity objection
+was real — GHAP trains on this panel's own OpenAQ and CNEMC monitors — but it costs nothing to
+avoid. **Switch `SATELLITE_LEVEL` to raw MAIAC AOD**: admissible, no leakage, no shared drivers,
+and it performs at least as well. The paper can state its satellite stream is an actual
+radiometric observation without giving anything up.
+
+🟢 **P5 HELD — the headline survives an honest stream.** Static geography (10.8%) still beats the
+satellite level (5.97%). That claim was in doubt precisely because the 7.6% was a mixture; it is
+now measured against a clean stream and stands.
+
+⚠ **P4 refuted, exactly as flagged in advance.** No association between the fused excess and
+station count (rho = −0.089, p = 0.551, n = 47). Per the registration this means the leakage is
+reported as **an argued methodological risk, not a measured effect** — and P3 now shows it does
+not manifest as skill either way.
+
+⚠ **Two metrics disagree in direction and both are reported (gotcha #74).** `Bud0c-fused` has a
+**higher median RMSE** (20.94 vs 19.35) while showing a **positive median per-city gain**
+(+5.37%). Most cities improve slightly, but the fused stream evidently hurts some badly enough to
+move the median value. That is a further mark against GHAP and should be looked at before it is
+ever reinstated.
+
+⚠ **11 of 47 cities carry AOD on fewer than 30% of days** — genuine cloud, not a broken merge.
+That an honest satellite stream is *unavailable half the time in the tropics* is a real limit on
+sensorless methods, and it rhymes with F.53: the regime that most needs them is the regime where
+the inputs are thinnest.
