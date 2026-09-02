@@ -6,6 +6,20 @@
 **OSF: [`kx23c`](https://osf.io/kx23c/)** — registered 2026-09-01T22:55:44Z, Open-Ended
 Registration, project [`zvqp4`](https://osf.io/zvqp4/).
 
+> **How OSF approval works — no action is required.** A new registration sits at
+> `pending_registration_approval` for **48 hours**, and per OSF's own documentation *"after 48
+> hours, the submission will automatically be approved"*. **The window is a CANCELLATION window,
+> not an approval requirement**: if every admin does nothing, the registration goes public by
+> itself. Acting early is possible only through the notification email's Approve / Cancel
+> buttons — there is no dashboard equivalent — and rejecting returns the registration to draft
+> for editing and resubmission.
+>
+> This one auto-approves at **2026-09-03 22:55 UTC**.
+>
+> ⚠ The scientific value does not depend on approval. What makes a pre-registration meaningful
+> is the **timestamp**, and that is fixed at creation, so tests scored against this document are
+> properly pre-registered whatever happens at the deadline.
+
 ---
 
 ## 1. The claim under test, and why it has never been tested
