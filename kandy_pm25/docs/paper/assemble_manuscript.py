@@ -56,6 +56,20 @@ FIGURES = {
                  "never have. (b) Withheld monitors per city and (c) scored city-days across "
                  "the full panel, both drawn from the scored file rather than recorded by hand, "
                  "so they cannot drift from the analysis."),
+    "schematic": ("F8_schematic",
+                  "The formulation. (a) The decomposition and its gauge: a spatially uniform "
+                  "regional background plus a local increment redistributed by a unit-mean "
+                  "pattern. Because the pattern integrates to unity, the spatial average of the "
+                  "field returns the temporal anchor exactly, so an error in the pattern is an "
+                  "error in where material sits and never in how much there is. (b) The "
+                  "information budget: what each tier may use and the first quantity it can "
+                  "constrain. Tiers are nested, and a lower one is recoverable bit-exactly from "
+                  "a higher one when a stream is withheld -- the property that turns an "
+                  "ablation into a measurement. Bud4 is a declared design assumption, not a "
+                  "validated rung. (c) The observation operator: the model reports a cell mean "
+                  "while a monitor samples a point inside it, so a systematic offset and a "
+                  "representativeness error must be carried explicitly. Without them a "
+                  "centring error is read as a failure of interval width."),
     "ladder": ("F2_ladder",
                "What each increment of information buys, as the median across cities of the "
                "per-city reduction in daily RMSE. (a) The pooled ladder, coloured by whether a "

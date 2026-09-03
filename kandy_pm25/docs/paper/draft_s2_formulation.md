@@ -31,7 +31,8 @@ The elementary form is the first line with `ε = 0`: a uniform background plus a
 redistributed by a unit-mean pattern — the additive urban-increment decomposition familiar from
 monitoring-network analyses [@Lenschow2001]. The additional terms are corrections, derived in §2.5.
 
-Because `P` integrates to unity, **the spatial average of the field returns `T(t)` exactly**.
+{{fig:schematic}}a states the decomposition and its gauge. Because `P` integrates to unity,
+**the spatial average of the field returns `T(t)` exactly**.
 The pattern redistributes material within the basin without altering the total. This gauge
 condition does three things at once. It prevents an imposed spatial pattern from displacing the
 level, which is the quantity the observations *do* constrain. It renders level and pattern
@@ -49,8 +50,8 @@ in practice, and we state it that way rather than as an exact identity.
 
 ## 2.2 The observation model
 
-A field is areal; a monitor is a point. Comparing them by co-location is a change-of-support
-error, and it is the single most common way a model of this kind is scored wrongly. For each
+A field is areal; a monitor is a point ({{fig:schematic}}c). Comparing them by co-location is a
+change-of-support error, and it is the single most common way a model of this kind is scored wrongly. For each
 instrument `k` we write
 
 ```
@@ -89,7 +90,8 @@ kind of thing the budget below is designed to make visible.
 
 ## 2.3 The information budget
 
-An information budget declares which observation streams a tier may use. Builders assert against
+{{fig:schematic}}b sets out the tiers. An information budget declares which observation
+streams a tier may use. Builders assert against
 it, so a stream a tier is not entitled to is unreachable by construction rather than by
 discipline.
 
