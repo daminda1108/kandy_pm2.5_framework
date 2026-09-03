@@ -6,11 +6,13 @@ a Sri Lankan city" to "no model declares its information budget".*
 ---
 
 Most of the world's population breathes air that nobody measures. Ground monitoring is
-concentrated where it was historically affordable, and the deficit is not uniform — it is worst
+concentrated where it was historically affordable [@Shaddick2020; @Martin2019], and the deficit is not uniform — it is worst
 in exactly the places where concentrations are highest and where the health burden per
 microgram falls on the largest populations. The response has been a generation of models that
-supply a field where instruments do not: satellite–reanalysis fusions, land-use regressions,
-chemical transport models, and increasingly machine-learned combinations of all three.
+supply a field where instruments do not: satellite–reanalysis fusions
+[@vanDonkelaar2021; @Hammer2020], land-use regressions [@Hoek2008], chemical transport models
+[@Denby2020; @Cimorelli2005], and increasingly machine-learned combinations of all three
+[@Di2019; @Reid2015; @Wei2023].
 
 These models work. The difficulty is not that they are inaccurate; it is that **in the places
 they are built for, there is no way to find out.** A model trained where monitors are dense and
@@ -23,7 +25,7 @@ always conducted where monitors exist, which is the wrong regime by construction
 Faced with an unmonitored city, a ministry has a decision to make, and it is not "which model is
 most accurate". It is: **what would I have to buy to trust an answer here, and in what order?**
 A reference monitor costs tens of thousands of dollars and years of maintenance. A pair of
-low-cost sensors costs a few hundred. A rural background station serves no constituency and is
+low-cost sensors costs a few hundred [@Morawska2018]. A rural background station serves no constituency and is
 politically the hardest to fund. These are not interchangeable, and the literature offers
 remarkably little to distinguish them.
 

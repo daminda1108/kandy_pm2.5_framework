@@ -31,13 +31,13 @@ untidy one.
 
 ## 7.2 Nulls
 
-**Spatial pattern learning fails, five ways** — a learned-pattern test, dynamic transport,
-earth-observation embeddings, a full land-use predictor set at 636 stations across the panel, and
-sub-grid refinement. §5.5 shows these are not five independent confirmations; they share a
+**Spatial pattern learning fails, five ways** — a learned-pattern test [@Gordon2020], dynamic
+transport, earth-observation embeddings, a full land-use predictor set [@Hoek2008] at 636
+stations across the panel, and sub-grid refinement. §5.5 shows these are not five independent confirmations; they share a
 defect, and the attribution splits three ways.
 
 **The dilution term is approximately zero.** The fitted exponent on boundary-layer dilution is
-0.054 against 1.0 for pure inverse-BLH behaviour. A ~40-fold diurnal swing in mixing depth
+0.054 against 1.0 for pure inverse-BLH behaviour [@Stull1988; @DeWekker2015]. A ~40-fold diurnal swing in mixing depth
 produces almost no swing in city-mean concentration, because only the local increment dilutes
 while the background is already well mixed. There is consequently no physical dilution component
 to peel off and transfer.
@@ -57,7 +57,7 @@ We list these because several are in the published record under our names.
 
 | claim | status |
 |---|---|
-| "~90% of local PM2.5 is vehicular" | **refuted as a mass share**, three independent ways; it is a *timing* statement |
+| "~90% of local PM2.5 is vehicular" | **refuted as a mass share** [@Seneviratne2017], three independent ways; it is a *timing* statement |
 | local fraction ≈ 0.25 | **refuted** by a physical constraint; it is ≈ 0.48 (§2.6) |
 | "four guaranteed properties" | **two** guarantees, one enforced mechanism, one discharged (§2.4) |
 | reference networks gain nothing from added stations | **not supported**; the contrast is {{claim:class.w_bud2_contrast}}×, not infinite |

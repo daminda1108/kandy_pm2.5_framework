@@ -82,7 +82,7 @@ be re-made rather than inherited.
 ## 4.4 Is this a property of the information or of the model?
 
 A value-of-information result is worthless if it is really a statement about one estimator.
-Re-running the first rung across four learners:
+Re-running the first rung across four learners [@Ke2017; @Chen2016; @Prokhorenkova2018]:
 
 | learner | `Bud0c → Bud1` |
 |---|---:|
@@ -108,14 +108,14 @@ monitor is the most robust finding in the study.
 
 ## 4.5 What a fused product does to a value-of-information study
 
-The satellite stream in `Bud0c` was initially a published fused PM2.5 product. Such products are
-trained on ground monitors — in this case ~9,500 stations including the two networks that supply
-this study's entire panel — and predicted from a feature set that substantially overlaps the
+The satellite stream in `Bud0c` was initially a published fused PM2.5 product [@Wei2023]. Such
+products are trained on ground monitors — in this case ~9,500 stations including the two networks
+that supply this study's entire panel — and predicted from a feature set that substantially overlaps the
 tier's other streams. The stream was therefore not an independent observation, and its measured
 value was a mixture.
 
-We re-ran the ladder on raw satellite aerosol optical depth, a radiometric retrieval trained on
-nothing:
+We re-ran the ladder on raw satellite aerosol optical depth [@Lyapustin2018; @Levy2013], a
+radiometric retrieval trained on nothing:
 
 | | fused product | **raw AOD** |
 |---|---:|---:|

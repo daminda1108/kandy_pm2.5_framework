@@ -14,7 +14,7 @@ question was mis-specified" call for different responses, and only one of them i
 
 Kandy's within-city gradient is not small. A 25-site roadside survey conducted across the city
 in 2004–06 records concentrations falling from 110 to 4 µg m⁻³ over 300 m inside a single
-botanical garden, with an R² of 0.82 against traffic intensity at the site. Across the whole
+botanical garden, with an R² of 0.82 against traffic intensity at the site [@Elangasinghe2008]. Across the whole
 survey the observed spread is {{claim:spatial.obs_spread}}×. The shipped 1 km field spans
 {{claim:spatial.model_spread}}×.
 
@@ -112,7 +112,7 @@ They are not independent. **All five score an areal model field against point st
 therefore share one defect. Five tests that share a defect are one test repeated. The
 attribution splits three ways and only the residual is an information limit:
 
-- **Sample size.** Isolated by the point-to-point land-use regression, which fails on its own
+- **Sample size.** Isolated by the point-to-point land-use regression [@Hoek2008], which fails on its own
   terms at a median of {{claim:lur.median_stations_per_city}} stations per city across {{claim:lur.cities}} cities with {{claim:lur.predictors}} predictors — far below what such designs require.
 - **Change of support.** Measured, and the subject of §5.6.
 - **An information limit.** What remains after the first two, and smaller than the raw null
@@ -146,6 +146,14 @@ fall in the predicted quantiles of their own cell and record the test as **uninf
 predicted within-cell spread is ~1.2× while observations span {{claim:spatial.obs_spread}}×, so
 every high site saturates at the top quantile and every low one at the bottom. It re-detects the
 amplitude gap rather than testing ordering, and the single non-saturated case runs the other way.
+
+Validating a *distributional* claim properly needs observations at several supports within one
+city, which is a rare and specific kind of campaign. Kandy has the beginnings of one — a 3-hour
+kerbside survey [@Elangasinghe2008] and an 8-hour area-representative survey
+[@Wickramasinghe2011] sample different quantiles of the same underlying distribution — but they
+were conducted two decades and one decade ago respectively, and neither was designed for this
+purpose. We name the requirement rather than claim to have met it: **a within-cell distribution
+is testable, and testing it needs a campaign that samples supports deliberately.**
 
 ## 5.7 What this licenses
 

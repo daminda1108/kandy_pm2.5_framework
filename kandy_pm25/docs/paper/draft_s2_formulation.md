@@ -18,7 +18,8 @@ measurement, and Sections 3 and 4 depend on it entirely.
 
 Let `T(t)` be the basin-mean concentration at hour `t`, `B(t)` the regional and transboundary
 background — taken horizontally uniform across the 15 × 15 km domain — and `P(x, y, t)` a
-dimensionless local pattern normalised to unit spatial mean. Writing the local increment as
+dimensionless local pattern normalised to unit spatial mean, built from a road-network emission
+proxy [@Ntziachristos2000] with a diurnal activity profile [@Crippa2020]. Writing the local increment as
 `inc(t) = T(t) − B(t)`, concentration on the 1 km grid is
 
 ```
@@ -27,7 +28,8 @@ PM(x, y, t) = B(t) + max( max(inc, 0), ε ) · P(x, y, t)
 ```
 
 The elementary form is the first line with `ε = 0`: a uniform background plus a local increment
-redistributed by a unit-mean pattern. The additional terms are corrections, derived in §2.5.
+redistributed by a unit-mean pattern — the additive urban-increment decomposition familiar from
+monitoring-network analyses [@Lenschow2001]. The additional terms are corrections, derived in §2.5.
 
 Because `P` integrates to unity, **the spatial average of the field returns `T(t)` exactly**.
 The pattern redistributes material within the basin without altering the total. This gauge
@@ -38,7 +40,7 @@ exploits. And it makes the consequence of `P` being wrong bounded and legible: a
 is an error in *where* the material sits, never in *how much* of it there is.
 
 One qualification, stated rather than buried. The satellite anchor is exact — the annual mean of
-`T` equals the Van Donkelaar basin mean to four decimal places every year — but the delivered
+`T` equals the Van Donkelaar basin mean [@vanDonkelaar2021] to four decimal places every year — but the delivered
 field sits **0.39 to 0.56 per cent above** it, consistently and in the same direction. The cause
 is a chain effect, not a defect in the gauge: each build step preserves the mean, but the
 unit-mean pattern is recovered from an upstream field rather than from the anchor directly, and
@@ -63,13 +65,16 @@ integrates along a path.
 
 Two quantities are distinct and are routinely conflated. `b_k` is a **systematic** offset —
 siting bias plus device calibration; a kerbside monitor inside a 1 km cell reads systematically
-above the cell mean, and this is where a low-cost sensor's calibration lives. `σ_rep` is a
+above the cell mean, and this is where a low-cost sensor's calibration lives
+[@Barkjohn2021; @Morawska2018]. `σ_rep` is a
 **random** error from unresolved sub-grid structure, and it is estimated from the local spatial
 variability of the field itself, so it grows in structured hours and shrinks when the field is
 well mixed.
 
-This level is not decoration. The shipped 90 per cent interval covers 72.4 per cent of
-observations at the two Kandy sensors — but observations fall *below* the lower bound in 25.7
+This level is not decoration. The field's predictive intervals are produced by split-conformal
+calibration [@Vovk2005; @Romano2019; @Angelopoulos2023], which guarantees marginal coverage
+*given* that the comparison is well posed — and the observation model is what makes it so. The
+shipped 90 per cent interval covers 72.4 per cent of observations at the two Kandy sensors — but observations fall *below* the lower bound in 25.7
 per cent of hours and above the upper in only 1.9 per cent. That is a one-sided offset, not a
 width failure: removing each sensor's own median offset restores coverage to 91.5 per cent. The
 interval was correctly scaled and incorrectly centred, and only an explicit `b_k` makes that
@@ -90,7 +95,7 @@ discipline.
 
 | budget | adds | first thing it can constrain |
 |---|---|---|
-| `Bud0` sensorless | satellite AOD, reanalysis drivers, static geography | level; **no diurnal cycle** |
+| `Bud0` sensorless | satellite AOD [@Lyapustin2018], reanalysis drivers [@Hersbach2020; @Keller2021], static geography [@Farr2007; @Elvidge2017; @Tatem2017] | level; **no diurnal cycle** |
 | `Bud1` two-sensor | 2 local low-cost sensors | diurnal and seasonal shape |
 | `Bud2` reference | a continuous reference monitor | `b_k`; removes in-sample circularity |
 | `Bud3` regional | a rural or regional network | **`B(t)`** |
@@ -221,7 +226,7 @@ Stated explicitly, because overclaiming here is the most attackable thing availa
 - 🔴 **Not dependent on its transport layer, which has now been scored and does not help.**
   Across ten monitored cities, ranking neighbourhoods on the raw emission surface achieves
   {{claim:r2.rho_emission_surface}} against {{claim:r2.rho_with_atransport}} after the
-  terrain-aware dispersion solver has run — it improves rank in {{claim:r2.cities_improved}} of
+  terrain-aware dispersion solver [@Forthofer2014; @Cimorelli2005] has run — it improves rank in {{claim:r2.cities_improved}} of
   ten cities. The solver is a topographically-steered redistribution filter, **not forward fluid
   dynamics**: it is steady-state per hour, so it cannot represent recirculating valley eddies or
   multi-hour stagnation. It is retained because it supplies hour-to-hour behaviour the headline

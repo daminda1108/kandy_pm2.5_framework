@@ -39,12 +39,12 @@ questions this model does not answer, such as compliance or exposure at street s
 say and do not claim.
 
 **A fused covariate under-prices the observations it was trained on.** This is the result we did
-not expect and did not register (§4.5). A product trained on a city's monitors encodes part of
+not expect and did not register (§4.5). Fused products [@Wei2023; @vanDonkelaar2021; @Hammer2020]
+are now the default covariate in this field. A product trained on a city's monitors encodes part of
 what those monitors would say, so adding one appears to buy less — pooled,
 {{claim:step.bud0c_bud1}}% against {{claim:maiac.step_bud0c_bud1}}% on a clean stream, and
 roughly double that gap in the tropics. The contamination does not inflate the rung that carries
-it; **it deflates the rung above.** Fused products are now the default covariate in this field,
-and any value-of-information analysis built on one will systematically under-price observation.
+it; **it deflates the rung above.** Any value-of-information analysis built on one will systematically under-price observation.
 
 ## 8.3 Where the model stops
 

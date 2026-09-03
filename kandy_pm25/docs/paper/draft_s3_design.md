@@ -18,8 +18,12 @@ and demonstrated where they do not.
 For each panel city we withhold most of the network, give the model only what a target city's
 budget would allow, and score against the stations withheld. A city with 30 monitors is treated
 as a city with two, and the other 28 become the test set. The design measures what the model
-would have produced had that city been as data-poor as the target — which is the counterfactual
+would have produced had that city been as data-poor as the target — the counterfactual structure
+of an optimal-design problem [@Ryan2016; @Dehideniya2018] — which is the counterfactual
 a ministry actually faces.
+
+Drivers are ERA5 meteorology [@Hersbach2020] with composition priors from GEOS-CF [@Keller2021]
+and CAMS [@Inness2019].
 
 **The panel:** {{claim:frame.cities}} cities, 32 countries, four latitude bands,
 {{claim:frame.city_days}} city-days. A median of {{claim:frame.med_days_per_city}} days and

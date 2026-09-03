@@ -5,8 +5,11 @@ burden calculation and the health block are excised to the second paper.*
 
 ---
 
-Kandy is a city of about 400,000 in a steep valley in the central highlands of Sri Lanka. Its
-monitoring record is two low-cost sensors and a single published year from a research campaign.
+Kandy is a city of about 400,000 in a steep valley in the central highlands of Sri Lanka
+[@Whiteman2000; @Chemel2016]. Its
+monitoring record is two low-cost sensors and a single published year from a research campaign
+[@Senarathna2024; @Ileperuma2020].
+The city carries a documented respiratory-health burden [@Priyankara2021].
 It is the condition the model was built for, and it is a demonstration rather than a validation —
 the distinction is maintained throughout.
 
@@ -29,10 +32,10 @@ Four independent point records exist, recovered from the literature rather than 
 
 | record | instrument | observed | model | difference |
 |---|---|---:|---:|---:|
-| NBRO Kandy, 2021 | undocumented | 19.6 | 19.74 | **+0.7%** |
-| NBRO Kandy, 2022 | undocumented | 22.7 | 22.11 | **−2.6%** |
+| NBRO Kandy, 2021 [@Nirmani2025] | undocumented | 19.6 | 19.74 | **+0.7%** |
+| NBRO Kandy, 2022 [@Nirmani2025] | undocumented | 22.7 | 22.11 | **−2.6%** |
 | calibrated low-cost, 2022–24 | LCS, BAM-anchored | 19.49 | 25.01 | +28% |
-| research sensor, full record | LCS | 17.8 | — | corroborates a BAM-anchored ~18–19 |
+| research sensor, full record | LCS | 17.8 | — | corroborates a BAM-anchored ~18–19 [@Dhammapala2022] |
 
 The first two are the strongest external check the model has, and they are genuinely
 out-of-sample: the pixel sits 15.6% above the basin mean, and that lift is imposed physics never
@@ -48,8 +51,8 @@ strong**, and it is the single clearest argument for the acquisition in §6.5.
 ## 6.3 What the field says
 
 Basin annual means run {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} µg m⁻³ across 2019–2023, above the WHO annual guideline
-throughout. The seasonal maximum falls in the inter-monsoon, not in a burning season — Kandy has
-none. The diurnal cycle is bimodal with rush-hour peaks and, counter-intuitively, a **midday
+throughout [@WHO2021]. The seasonal maximum falls in the inter-monsoon, not in a burning season — Kandy has
+none; the elevated season is associated with long-range transport [@Abeyratne2006; @Jayalath2023]. The diurnal cycle is bimodal with rush-hour peaks and, counter-intuitively, a **midday
 minimum** rather than a nocturnal one: the deep-night hours run about 15% above the midday
 trough, which the model reproduces and which we flag because it inverts the expectation for a
 valley city.
@@ -64,7 +67,7 @@ load-bearing physical claim and it had never been tested against composition.
 
 Classifying days by back-trajectory sector — independent of the chemistry — and taking the
 secondary fraction (sulphate, nitrate, secondary organics: species that form over hours to days
-and therefore mark aged air):
+and therefore mark aged air) from a composition reanalysis [@Keller2021]:
 
 | air-mass origin | secondary fraction |
 |---|---:|
@@ -88,7 +91,8 @@ a model at ~25 km, so it corroborates or contradicts; it cannot validate.
 🟢 One incidental result carries weight beyond this section. The organic-to-black-carbon ratio
 exceeds {{claim:chem.oc_bc_min_monthly}} in every month, against ~1–2 for traffic-dominated
 aerosol. That is a biomass-burning signature, and it is the third independent line — after a
-local source-apportionment study and the absence of any correlation with the satellite NO₂ column
+local source-apportionment study [@Seneviratne2017; @Hopke2016] and the absence of any
+correlation with the satellite NO₂ column [@Veefkind2012]
 — refuting the "predominantly vehicular" characterisation this city has carried in the
 literature and in our own earlier work.
 
