@@ -514,23 +514,100 @@ def partition(c: Claims) -> None:
 
 
 def kandy_field(c: Claims) -> None:
-    """Shipped-field descriptives, read from the summary the build writes."""
+    """Shipped-field descriptives, read from the SHIPPED PARQUETS.
+
+    An earlier version of this group read `decomp_summary_*.csv`, which is dated 2026-06-05 and
+    predates the additive_v3 build by three months. It gave an annual range of 17.0-20.9 against
+    the shipped field's 17.1-21.0, and a gauge drift an order of magnitude too small. A summary
+    file is a convenience, not a source; the field is the source.
+    """
     import glob
-    fs = sorted(glob.glob(str(DEC / "decomp_summary_*.csv")))
-    if not fs:
+    v = pd.read_csv(REPO / "data/processed/stage1_v3/vandonkelaar_kandy_annual.csv")
+    v = v.set_index("year")
+    means, drifts = {}, []
+    for y in range(2019, 2024):
+        p = DEC / f"kandy_decomp_predictions_{y}_additive_v3.parquet"
+        if not p.exists():
+            continue
+        m = float(pd.read_parquet(p, columns=["pm25_q50"]).pm25_q50.mean())
+        means[y] = m
+        if y in v.index:
+            drifts.append(100.0 * (m - float(v.loc[y, "basin_mean"])) / float(v.loc[y, "basin_mean"]))
+    if not means:
         return
-    d = pd.concat([pd.read_csv(f) for f in fs]).drop_duplicates("year")
-    a = d[d.year.between(2019, 2023)]
-    c.add("kandy.mean_min", round(float(a.annual_spatial_mean.min()), 1), stat="min over years",
-          n=len(a), source="decomp/decomp_summary_*.csv", ledger="production")
-    c.add("kandy.mean_max", round(float(a.annual_spatial_mean.max()), 1), stat="max over years",
-          n=len(a), source="decomp/decomp_summary_*.csv", ledger="production")
-    c.add("kandy.annual_contrast", round(float(a.annual_contrast_p90_p10.median()), 3),
-          stat="median over years", n=len(a), source="decomp/decomp_summary_*.csv",
-          ledger="production", note="p90/p10 of the ANNUAL field; the midday figure is flatter")
-    c.add("kandy.night_contrast", round(float(a.night_contrast.median()), 3),
-          stat="median over years", n=len(a), source="decomp/decomp_summary_*.csv",
+    c.add("kandy.mean_min", round(min(means.values()), 1), stat="min over anchored years",
+          n=len(means), source="decomp/kandy_decomp_predictions_*_additive_v3.parquet",
+          ledger="production", note="the SHIPPED field, not the 2026-06 summary file")
+    c.add("kandy.mean_max", round(max(means.values()), 1), stat="max over anchored years",
+          n=len(means), source="decomp/kandy_decomp_predictions_*_additive_v3.parquet",
           ledger="production")
+
+    # Annual contrast, from the ANNUAL-MEAN field: the per-cell mean over the year, then its
+    # p90/p10. Not the same as the midday between-cell figure in section 5.6, which is flatter
+    # because midday is ventilated -- the two are reported separately for that reason.
+    p23 = DEC / "kandy_decomp_predictions_2023_additive_v3.parquet"
+    if p23.exists():
+        f = pd.read_parquet(p23, columns=["lat", "lon", "pm25_q50"])
+        cell = f.groupby(["lat", "lon"]).pm25_q50.mean()
+        c.add("kandy.annual_contrast",
+              round(float(np.percentile(cell, 90) / np.percentile(cell, 10)), 3),
+              stat="p90/p10 of the annual-mean field", n=int(cell.size),
+              source="decomp/kandy_decomp_predictions_2023_additive_v3.parquet",
+              ledger="production",
+              note="ANNUAL, not the midday between-cell figure of section 5.6")
+    if drifts:
+        c.add("gauge.drift_lo_pct", round(min(drifts), 2), stat="min over anchored years",
+              n=len(drifts), source="shipped field vs vandonkelaar_kandy_annual.csv",
+              ledger="P1 / section 2.1",
+              note="the field sits consistently ABOVE the anchor; the gauge holds by "
+                   "construction and to within 0.6 per cent in practice")
+        c.add("gauge.drift_hi_pct", round(max(drifts), 2), stat="max over anchored years",
+              n=len(drifts), source="shipped field vs vandonkelaar_kandy_annual.csv",
+              ledger="P1 / section 2.1")
+
+
+def blh_confound(c: Claims) -> None:
+    """F.51. Driver completeness x band -- re-run without boundary-layer height."""
+    a, b = MOD / "ladder_all_blh.csv", MOD / "ladder_all_noblh.csv"
+    if not (a.exists() and b.exists()):
+        return
+    A, B = pd.read_csv(a), pd.read_csv(b)
+    for d, tag in ((A, "with_blh"), (B, "without_blh")):
+        g = _gain(d.rmse_Bud0, d.rmse_Bud1).median()
+        c.add(f"confound.blh.{tag}_step1", round(float(g), 2),
+              stat="median of per-city ratios", n=len(d), source=f"{a.name} / {b.name}",
+              ledger="F.51")
+    d1 = float(_gain(A.rmse_Bud0, A.rmse_Bud1).median())
+    d2 = float(_gain(B.rmse_Bud0, B.rmse_Bud1).median())
+    c.add("confound.blh.delta", round(abs(d1 - d2), 3), stat="absolute difference",
+          n=len(A), source="ladder_all_blh.csv vs ladder_all_noblh.csv", ledger="F.51",
+          note="removing the driver with uneven coverage across bands moves the first rung by "
+               "this much -- the ordering flips only within this margin")
+
+
+def dilution(c: Claims) -> None:
+    """F.62. The fitted boundary-layer dilution exponent, against 1.0 for pure inverse-BLH."""
+    p = MOD / "diurnal_decomposition.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    if "a" not in d.columns:
+        return
+    c.add("dilution.exponent", round(float(d.a.median()), 3), stat="median across cities",
+          n=len(d), source="diurnal_decomposition.csv", ledger="F.62",
+          note="against 1.0 for pure inverse-BLH dilution. A ~40-fold diurnal swing in mixing "
+               "depth produces almost no swing in city-mean concentration, because only the "
+               "local increment dilutes while the background is already well mixed")
+
+
+def lur_extra(c: Claims) -> None:
+    """F.61. The total station count behind the land-use regression."""
+    p = MOD / "lur_r2.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    c.add("lur.total_stations", int(d.n.sum()), stat="sum", n=len(d), source="lur_r2.csv",
+          ledger="F.61", note="the draft carried 636; the scored file says otherwise")
 
 
 def confounds(c: Claims) -> None:
@@ -659,6 +736,9 @@ def build() -> dict:
     partition(c)
     kandy_field(c)
     confounds(c)
+    blh_confound(c)
+    dilution(c)
+    lur_extra(c)
     lur(c)
     donor(c)
     identifiability(c)

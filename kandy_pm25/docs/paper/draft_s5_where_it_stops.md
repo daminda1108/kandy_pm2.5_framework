@@ -113,7 +113,7 @@ therefore share one defect. Five tests that share a defect are one test repeated
 attribution splits three ways and only the residual is an information limit:
 
 - **Sample size.** Isolated by the point-to-point land-use regression [@Hoek2008], which fails on its own
-  terms at a median of {{claim:lur.median_stations_per_city}} stations per city across {{claim:lur.cities}} cities with {{claim:lur.predictors}} predictors — far below what such designs require.
+  terms at a median of {{claim:lur.median_stations_per_city}} stations per city ({{claim:lur.total_stations}} in total across {{claim:lur.cities}} cities, with {{claim:lur.predictors}} predictors) — far below what such designs require.
 - **Change of support.** Measured, and the subject of §5.6.
 - **An information limit.** What remains after the first two, and smaller than the raw null
   count suggests.

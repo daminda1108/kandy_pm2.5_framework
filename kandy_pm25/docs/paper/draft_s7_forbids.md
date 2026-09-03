@@ -32,12 +32,12 @@ untidy one.
 ## 7.2 Nulls
 
 **Spatial pattern learning fails, five ways** — a learned-pattern test [@Gordon2020], dynamic
-transport, earth-observation embeddings, a full land-use predictor set [@Hoek2008] at 636
-stations across the panel, and sub-grid refinement. §5.5 shows these are not five independent confirmations; they share a
+transport, earth-observation embeddings, a full land-use predictor set [@Hoek2008] at
+{{claim:lur.total_stations}} stations across the panel, and sub-grid refinement. §5.5 shows these are not five independent confirmations; they share a
 defect, and the attribution splits three ways.
 
 **The dilution term is approximately zero.** The fitted exponent on boundary-layer dilution is
-0.054 against 1.0 for pure inverse-BLH behaviour [@Stull1988; @DeWekker2015]. A ~40-fold diurnal swing in mixing depth
+{{claim:dilution.exponent}} against 1.0 for pure inverse-BLH behaviour [@Stull1988; @DeWekker2015]. A ~40-fold diurnal swing in mixing depth
 produces almost no swing in city-mean concentration, because only the local increment dilutes
 while the background is already well mixed. There is consequently no physical dilution component
 to peel off and transfer.
@@ -93,6 +93,8 @@ than either disagrees with the model.
 ## Drafting notes, to remove before submission
 
 - §7.1's table should be generated from the registered-outcome records rather than typed.
-- The 0.054 dilution exponent, the 93 km / 0.604 / 0.923 donor figures, the 636-station LUR and
-  the 80%-power bound need claim tokens.
+- The dilution exponent and the LUR station count are now tokenised (and the count was 613,
+  not the 636 the draft carried).
+- Still needing generating scripts: the 93 km / 0.604 / 0.923 donor figures and the
+  80%-power bound.
 - Check that every "refuted" here is cross-referenced to the section that refutes it.

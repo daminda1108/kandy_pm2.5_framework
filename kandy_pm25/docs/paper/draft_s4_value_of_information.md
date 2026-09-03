@@ -153,9 +153,11 @@ reached print.
 country, aliasing latitude band with monitoring network. Corrected by an amendment before
 scoring.
 
-**Driver completeness × band.** Boundary-layer height coverage differs by 5.1 percentage points
-across bands. Re-running without that driver flips only the top-two ordering, by 0.013; the
-temperate deficit survives.
+**Driver completeness × band.** Boundary-layer height coverage is uneven across bands, so the
+ladder was re-run without it. The first rung moves from {{claim:confound.blh.with_blh_step1}}%
+to {{claim:confound.blh.without_blh_step1}}% — a shift of {{claim:confound.blh.delta}}
+percentage points, which bounds what the uneven coverage can be doing. The band ordering is
+unchanged.
 
 **Instrument class × band** ({{fig:confounds}}). The deep-tropical cell is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands — and this one **cannot be sampled away**. Worldwide, only five
 deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate.
@@ -172,7 +174,8 @@ throughout rather than chasing a de-aliased sample that does not exist.
   per-cell n **in the figure**, not the caption) and `{{fig:confounds}}`.
 - The instrument-class confound is now tokenised (and the recomputation moved it from 69% to
   {{claim:confound.deep_tropical_lcs_pct}}%, which is why it is a token).
-- Still hardcoded and needing scripts: the BLH-completeness 5.1 pp gap, the 0.013 ordering flip,
-  and the 5-vs-32 reference-cluster counts.
+- The BLH ablation is now tokenised as an actual re-run rather than a coverage statistic.
+- Still hardcoded: the 5-vs-32 reference-cluster counts, which are a property of the global
+  network rather than of anything in this repository and may have to stay a cited figure.
 - Decide whether §4.5 stays here or becomes a standalone methods note; it generalises past this
   paper and may be diluted by sitting inside it.

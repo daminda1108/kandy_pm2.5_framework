@@ -42,7 +42,7 @@ is an error in *where* the material sits, never in *how much* of it there is.
 
 One qualification, stated rather than buried. The satellite anchor is exact — the annual mean of
 `T` equals the Van Donkelaar basin mean [@vanDonkelaar2021] to four decimal places every year — but the delivered
-field sits **0.39 to 0.56 per cent above** it, consistently and in the same direction. The cause
+field sits **{{claim:gauge.drift_lo_pct}} to {{claim:gauge.drift_hi_pct}} per cent above** it, consistently and in the same direction. The cause
 is a chain effect, not a defect in the gauge: each build step preserves the mean, but the
 unit-mean pattern is recovered from an upstream field rather than from the anchor directly, and
 a small positive offset accumulates. The gauge holds by construction and to within 0.6 per cent
@@ -240,7 +240,10 @@ Stated explicitly, because overclaiming here is the most attackable thing availa
 ## Drafting notes, to remove before submission
 
 - Claim tokens resolve from `claims.json`; run `scripts/build_claims.py --check` before any
-  build. The partition figures are now tokenised.
+  build. The partition figures and the gauge drift are now tokenised.
+- ⚠ The gauge drift was nearly tokenised from `decomp_summary_*.csv`, which is dated
+  2026-06 and predates the shipped field by three months; it would have given a drift an
+  order of magnitude too small. The claim now reads the shipped parquets directly.
 - STILL HARDCODED, each needing a generating script in `build_claims.py`: the 0.39–0.56 per cent
   gauge drift, the 72.4/25.7/1.9/91.5 interval-coverage set, the 38.5/38.2 inversion pair, and
   the constraint-form sweep (0.477–0.502, 0.481/0.487/0.540). All four are computable from the
