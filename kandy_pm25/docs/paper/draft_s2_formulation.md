@@ -180,7 +180,7 @@ sits inside a pooled bracket rather than being determined by it.
 
 The decomposition makes available an attribution a single-term model cannot: how much of the
 annual mean is generated inside the basin. Across the anchored years the local fraction is
-**0.483**, ranging 0.466 to 0.501.
+**{{claim:partition.f}}**, ranging {{claim:partition.f_lo}} to {{claim:partition.f_hi}}.
 
 That follows from a physical constraint, not a parameter choice, and the argument is short.
 Local sources emit continuously; rain changes removal, not emission. Therefore at an emitting
@@ -191,12 +191,12 @@ background**. Since `B` is flat within a day, the constraint has a closed form: 
 
 Before the constraint, the background exceeded the total in 24.8 to 36.1 per cent of hours,
 averaging 29.9 per cent. In each such hour the field rendered exactly flat and reported a zero
-local share at the traffic core. After it, the residual is under 0.5 per cent per year, and every
+local share at the traffic core. After it, the residual is under {{claim:partition.residual_b_gt_t_pct}} per cent per year, and every
 remaining case is an hour where the anchor itself returned a negative total, which no constraint
 on the background can repair.
 
 **The result does not depend on the free parameter.** Sweeping `F_min` from 0 to 0.08 — a
-fourfold change — moves the local fraction from 0.477 to 0.502. The value used was chosen as the
+fourfold change — moves the local fraction from 0.477 to 0.502. The value used ({{claim:partition.f_min_parameter}}) was chosen as the
 smallest that removes the defect, *before* the resulting fraction was known. Nor does it depend
 much on the form of the constraint, which is the more searching test: replacing the calendar-day
 minimum with a centred rolling 24-hour minimum moves the fraction from 0.481 to 0.487. Doubling
@@ -231,11 +231,12 @@ Stated explicitly, because overclaiming here is the most attackable thing availa
 
 ## Drafting notes, to remove before submission
 
-- Claim tokens resolve from `claims.json`; run `scripts/build_claims.py --check`
-  before any build. Prose figures still hardcoded here and needing tokens: the 0.39–0.56 per cent
-  gauge drift, the 72.4/25.7/1.9/91.5 coverage set, the 38.5/38.2 inversion pair, the partition
-  sweep (0.483, 0.466–0.501, 0.477–0.502, 0.481/0.487/0.540) and the 24.8–36.1/29.9 background
-  excess. Each needs a generating script registered in `build_claims.py`.
+- Claim tokens resolve from `claims.json`; run `scripts/build_claims.py --check` before any
+  build. The partition figures are now tokenised.
+- STILL HARDCODED, each needing a generating script in `build_claims.py`: the 0.39–0.56 per cent
+  gauge drift, the 72.4/25.7/1.9/91.5 interval-coverage set, the 38.5/38.2 inversion pair, and
+  the constraint-form sweep (0.477–0.502, 0.481/0.487/0.540). All four are computable from the
+  shipped parquets plus the anchor; none is a literature value.
 - §2.3 should cite the four admissibility checks by their ledger entries once the reference list
   is rebuilt.
 - Decide with the supervisor whether §2.6's partition stays here or moves to the Kandy

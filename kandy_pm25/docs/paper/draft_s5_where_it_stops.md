@@ -113,7 +113,7 @@ therefore share one defect. Five tests that share a defect are one test repeated
 attribution splits three ways and only the residual is an information limit:
 
 - **Sample size.** Isolated by the point-to-point land-use regression, which fails on its own
-  terms at a median of 12 stations per city — far below what such designs require.
+  terms at a median of {{claim:lur.median_stations_per_city}} stations per city across {{claim:lur.cities}} cities with {{claim:lur.predictors}} predictors — far below what such designs require.
 - **Change of support.** Measured, and the subject of §5.6.
 - **An information limit.** What remains after the first two, and smaller than the raw null
   count suggests.
@@ -150,7 +150,7 @@ amplitude gap rather than testing ordering, and the single non-saturated case ru
 ## 5.7 What this licenses
 
 At matched support and matched statistic the model is close to right: annual p90/p10 of
-{{claim:spatial.model_spread}} against 1.26–1.47 observed at comparable cities. The failure in
+{{claim:kandy.annual_contrast}} against 1.26–1.47 observed at comparable cities. The failure in
 §5.1 is a comparison between quantities defined at different supports, not a skill deficit.
 
 So the operational statement is narrow and, we think, honest. **Can a user rank neighbourhoods
@@ -163,6 +163,8 @@ number is retained; what it is said to measure changes.
 ## Drafting notes, to remove before submission
 
 - Needs the paired-site figure (`{{fig:paired}}`), the money figure, once the panel is drawn.
-- The 110 → 4 µg m⁻³ transect, R² 0.82, 12 stations/city, and the 1.26–1.47 matched-support
-  range are still hardcoded and need generating scripts registered in `build_claims.py`.
+- ⚠ The 110 → 4 µg m⁻³ transect and its R² 0.82 are LITERATURE values and must stay as cited
+  text — putting them in `claims.json` would fake provenance for someone else's measurement.
+  The same applies to the 1.26–1.47 matched-support range until we recompute it ourselves.
+- The stations-per-city figure is now tokenised from `lur_r2.csv`.
 - §5.5's five nulls each need a citation to their ledger entry in the final reference pass.

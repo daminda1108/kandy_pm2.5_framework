@@ -486,6 +486,105 @@ def maiac_ladder(c: Claims) -> None:
                "Kandy by this factor, up from 2.6x on the fused stream")
 
 
+def partition(c: Claims) -> None:
+    """F.43. The local fraction, and the sweep showing it is set by the constraint not the knob."""
+    p = DEC / "kandy_partition_v2.json"
+    if not p.exists():
+        return
+    d = json.loads(p.read_text(encoding="utf-8"))["summary"]
+    c.add("partition.f", round(float(d["f_anchored_mean"]), 4), stat="mean over anchored years",
+          n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43",
+          note="the coherence cap. Supersedes ~0.25 from source-apportionment literature")
+    lo, hi = d["f_anchored_range"]
+    c.add("partition.f_lo", round(float(lo), 3), stat="min over anchored years",
+          n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43")
+    c.add("partition.f_hi", round(float(hi), 3), stat="max over anchored years",
+          n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43")
+    c.add("partition.f_min_parameter", float(d["f_min_parameter"]), stat="parameter value", n=1,
+          source="decomp/kandy_partition_v2.json", ledger="F.43",
+          note="chosen as the smallest that removes the defect, BEFORE the resulting f was known")
+    c.add("partition.residual_b_gt_t_pct", round(float(d["max_hours_B_gt_T_pct"]), 2),
+          stat="max over years", n=len(d["anchored_years"]),
+          source="decomp/kandy_partition_v2.json", ledger="F.43",
+          note="after the cap; every remaining case is an hour where the anchor itself is negative")
+
+
+def kandy_field(c: Claims) -> None:
+    """Shipped-field descriptives, read from the summary the build writes."""
+    import glob
+    fs = sorted(glob.glob(str(DEC / "decomp_summary_*.csv")))
+    if not fs:
+        return
+    d = pd.concat([pd.read_csv(f) for f in fs]).drop_duplicates("year")
+    a = d[d.year.between(2019, 2023)]
+    c.add("kandy.mean_min", round(float(a.annual_spatial_mean.min()), 1), stat="min over years",
+          n=len(a), source="decomp/decomp_summary_*.csv", ledger="production")
+    c.add("kandy.mean_max", round(float(a.annual_spatial_mean.max()), 1), stat="max over years",
+          n=len(a), source="decomp/decomp_summary_*.csv", ledger="production")
+    c.add("kandy.annual_contrast", round(float(a.annual_contrast_p90_p10.median()), 3),
+          stat="median over years", n=len(a), source="decomp/decomp_summary_*.csv",
+          ledger="production", note="p90/p10 of the ANNUAL field; the midday figure is flatter")
+    c.add("kandy.night_contrast", round(float(a.night_contrast.median()), 3),
+          stat="median over years", n=len(a), source="decomp/decomp_summary_*.csv",
+          ledger="production")
+
+
+def confounds(c: Claims) -> None:
+    """F.51-F.53. The three confounds the registered gates caught, computed from the scored file."""
+    d = pd.read_csv(MOD / "ladder_revalidated.csv")
+    x = d[d.bottom == "Bud0c"]
+    dt = x[x.band == "deep_tropical"]
+    if len(dt):
+        c.add("confound.deep_tropical_lcs_pct",
+              round(100.0 * float((dt.cls == "LCS").mean()), 0), stat="share of cities", n=len(dt),
+              source="ladder_revalidated.csv", ledger="F.52",
+              note="instrument class x band: the deep-tropical cell is LCS-dominated and the rest "
+                   "reference-dominated. This confound CANNOT be sampled away")
+    rest = x[(x.band.notna()) & (x.band != "deep_tropical")]
+    if len(rest):
+        c.add("confound.other_bands_lcs_pct",
+              round(100.0 * float((rest.cls == "LCS").mean()), 0), stat="share of cities",
+              n=len(rest), source="ladder_revalidated.csv", ledger="F.52")
+
+
+def lur(c: Claims) -> None:
+    """F.61. The land-use regression that isolates sample size as one attribution channel."""
+    p = MOD / "lur_r2.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    c.add("lur.median_stations_per_city", round(float(d.n.median()), 0), stat="median", n=len(d),
+          source="lur_r2.csv", ledger="F.61",
+          note="a point-to-point LUR fails on its own terms at this many stations -- far below "
+               "what such designs require, which is how sample size is isolated in section 5.5")
+    c.add("lur.cities", len(d), stat="count", n=len(d), source="lur_r2.csv", ledger="F.61")
+    c.add("lur.predictors", int(d.n_pred.max()), stat="max", n=len(d), source="lur_r2.csv",
+          ledger="F.61")
+
+
+def donor(c: Claims) -> None:
+    """F.54/F.63. The independent-background check and the donor benchmark."""
+    p = MOD / "independent_background.csv"
+    if not p.exists():
+        return
+    d = pd.read_csv(p)
+    dd = d[d.donor.notna()]
+    if not len(dd):
+        return
+    c.add("donor.pairs", len(dd), stat="count", n=len(dd), source="independent_background.csv",
+          ledger="F.54", note="cities with an admissible independent donor in the 30-300 km window")
+    c.add("donor.median_km", round(float(dd.d_km.median()), 0), stat="median", n=len(dd),
+          source="independent_background.csv", ledger="F.54")
+    keep = 100.0 * (dd.rmse_Bud2 - dd.rmse_Bud3_indep) / (dd.rmse_Bud2 - dd.rmse_Bud3)
+    keep = keep.replace([np.inf, -np.inf], np.nan).dropna()
+    if len(keep):
+        c.add("donor.gain_reproduced_pct", round(float(keep.median()), 0),
+              stat="median of per-city ratios", n=len(keep),
+              source="independent_background.csv", ledger="F.54",
+              note="share of the background rung's gain reproduced by a genuinely INDEPENDENT "
+                   "network -- the check that the rung is not just 'more of the same network'")
+
+
 def identifiability(c: Claims) -> None:
     """C5. P4. Report the honest cases; flag the grid artefacts rather than calling them identified."""
     p = MOD / "p4_identifiability.csv"
@@ -553,6 +652,11 @@ def build() -> dict:
     chemistry(c)
     c1_satellite(c)
     maiac_ladder(c)
+    partition(c)
+    kandy_field(c)
+    confounds(c)
+    lur(c)
+    donor(c)
     identifiability(c)
     return dict(
         generated=str(date.today()),

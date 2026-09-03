@@ -157,8 +157,7 @@ scoring.
 across bands. Re-running without that driver flips only the top-two ordering, by 0.013; the
 temperate deficit survives.
 
-**Instrument class × band.** The deep-tropical cell is 69 per cent low-cost sensors while the
-rest are reference-dominated — and this one **cannot be sampled away**. Worldwide, only five
+**Instrument class × band.** The deep-tropical cell is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands — and this one **cannot be sampled away**. Worldwide, only five
 deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate.
 
 That last constraint is a finding in itself: **the regime that most needs a sensorless method is
@@ -171,6 +170,9 @@ throughout rather than chasing a de-aliased sample that does not exist.
 
 - Needs `{{fig:ladder}}` (step gain per rung, stratified by band, class and coastal/inland, with
   per-cell n **in the figure**, not the caption) and `{{fig:confounds}}`.
-- §4.6's three confounds and the 5/32 reference-cluster counts are still hardcoded.
+- The instrument-class confound is now tokenised (and the recomputation moved it from 69% to
+  {{claim:confound.deep_tropical_lcs_pct}}%, which is why it is a token).
+- Still hardcoded and needing scripts: the BLH-completeness 5.1 pp gap, the 0.013 ordering flip,
+  and the 5-vs-32 reference-cluster counts.
 - Decide whether §4.5 stays here or becomes a standalone methods note; it generalises past this
   paper and may be diluted by sitting inside it.

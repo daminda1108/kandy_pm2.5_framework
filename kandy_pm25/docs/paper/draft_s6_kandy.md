@@ -47,15 +47,15 @@ strong**, and it is the single clearest argument for the acquisition in §6.5.
 
 ## 6.3 What the field says
 
-Basin annual means run 17.1 to 21.0 µg m⁻³ across 2019–2023, above the WHO annual guideline
+Basin annual means run {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} µg m⁻³ across 2019–2023, above the WHO annual guideline
 throughout. The seasonal maximum falls in the inter-monsoon, not in a burning season — Kandy has
 none. The diurnal cycle is bimodal with rush-hour peaks and, counter-intuitively, a **midday
 minimum** rather than a nocturnal one: the deep-night hours run about 15% above the midday
 trough, which the model reproduces and which we flag because it inverts the expectation for a
 valley city.
 
-The local fraction is {{claim:frame.cities}}-city-independent and derived in §2.6: about 0.48 of
-the annual mean is generated inside the basin, the remainder arriving as regional background.
+The local fraction is derived in §2.6: **{{claim:partition.f}}** of the annual mean is generated
+inside the basin, the remainder arriving as regional background.
 
 ## 6.4 A chemical check on the decomposition's premise
 
@@ -117,7 +117,8 @@ rests on a 13-city band.
 ## Drafting notes, to remove before submission
 
 - Needs `{{fig:studyarea}}`, `{{fig:cycles}}` and the Kandy field panel.
-- Annual means, the 15.6% pixel lift, the 400,000 population, the WHO comparison and the
-  midday-trough ratio need claim tokens.
+- Annual means and the local fraction are now tokenised.
+- ⚠ The 400,000 population and the WHO guideline are EXTERNAL values and stay as cited text.
+- Still needing generating scripts: the 15.6% pixel lift and the midday-trough ratio.
 - The four external records need their citations attached; two are 2025 papers.
 - Cross-check §6.3's local fraction sentence against §2.6 so the number appears once, not twice.
