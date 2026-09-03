@@ -15,8 +15,8 @@ Kandy cannot validate this model: it has two low-cost sensors and no reference m
 the condition the model exists for. So the model is validated **where the observations exist**
 and demonstrated where they do not.
 
-For each panel city we withhold most of the network, give the model only what a target city's
-budget would allow, and score against the stations withheld. A city with 30 monitors is treated
+{{fig:protocol}}a states the design. For each panel city we withhold most of the network, give
+the model only what a target city's budget would allow, and score against the stations withheld. A city with 30 monitors is treated
 as a city with two, and the other 28 become the test set. The design measures what the model
 would have produced had that city been as data-poor as the target — the counterfactual structure
 of an optimal-design problem [@Ryan2016; @Dehideniya2018] — which is the counterfactual
@@ -24,6 +24,8 @@ a ministry actually faces.
 
 Drivers are ERA5 meteorology [@Hersbach2020] with composition priors from GEOS-CF [@Keller2021]
 and CAMS [@Inness2019].
+
+{{fig:protocol}}b and c show how much was withheld and over how long.
 
 **The panel:** {{claim:frame.cities}} cities, 32 countries, four latitude bands,
 {{claim:frame.city_days}} city-days. A median of {{claim:frame.med_days_per_city}} days and
@@ -104,7 +106,8 @@ against records that played no part in construction.
 
 ## Drafting notes, to remove before submission
 
-- Needs `{{fig:protocol}}` — the withholding protocol and what each city was given vs scored on.
+- Figures: the protocol figure is placed. A study-area map for the demonstration city is still
+  wanted in §6.
 - "32 countries", the 25.6% pre-correction figure, and the median-stations-per-city count need
   claim tokens.
 - §3.3's "majority were refuted" should be replaced by an exact count once the registered-outcome

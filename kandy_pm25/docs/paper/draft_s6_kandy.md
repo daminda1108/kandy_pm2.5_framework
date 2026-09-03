@@ -65,7 +65,7 @@ inside the basin, the remainder arriving as regional background.
 The decomposition asserts that `B` is transported and the increment is local. That is its
 load-bearing physical claim and it had never been tested against composition.
 
-Classifying days by back-trajectory sector — independent of the chemistry — and taking the
+{{fig:chemistry}} classifies days by back-trajectory sector — independent of the chemistry — and takes the
 secondary fraction (sulphate, nitrate, secondary organics: species that form over hours to days
 and therefore mark aged air) from a composition reanalysis [@Keller2021]:
 
@@ -120,7 +120,8 @@ rests on a 13-city band.
 
 ## Drafting notes, to remove before submission
 
-- Needs `{{fig:studyarea}}`, `{{fig:cycles}}` and the Kandy field panel.
+- Still wanted: a study-area map and the Kandy field panel. The 2026-08 `F_cycles` figure
+  predates the current field build by a day and must be regenerated before reuse, not assumed.
 - Annual means and the local fraction are now tokenised.
 - ⚠ The 400,000 population and the WHO guideline are EXTERNAL values and stay as cited text.
 - Still needing generating scripts: the 15.6% pixel lift and the midday-trough ratio.

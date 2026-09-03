@@ -135,14 +135,15 @@ preserved exactly (drift {{claim:s2.cell_mean_drift}} µg m⁻³, against a gate
 | **between** cells, midday | {{claim:s2.between_pixel_p90p10}}× |
 | **within** a typical cell | **{{claim:s2.within_pixel_p90p10}}×** |
 
-**The spread inside a typical pixel exceeds the spread across the map.** Most of the city's
+{{fig:withinpixel}}a shows the comparison. **The spread inside a typical pixel exceeds the spread across the map.** Most of the city's
 midday spatial variation is sub-grid — which is simultaneously the explanation for §5.2, the
 reason a pointwise product is not available, and a quantity no shipped field of this kind
 currently reports.
 
 ⚠ The between-pixel figure is midday-only and is not the annual {{claim:spatial.model_spread}}×
 quoted in §5.1; midday is ventilated and therefore flatter. ⚠ We tested whether observed sites
-fall in the predicted quantiles of their own cell and record the test as **uninformative**: the
+fall in the predicted quantiles of their own cell ({{fig:withinpixel}}b) and record the test as
+**uninformative**: the
 predicted within-cell spread is ~1.2× while observations span {{claim:spatial.obs_spread}}×, so
 every high site saturates at the top quantile and every low one at the bottom. It re-detects the
 amplitude gap rather than testing ordering, and the single non-saturated case runs the other way.

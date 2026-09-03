@@ -48,18 +48,71 @@ ORDER = [
 # dropping a figure never leaves a stale "Figure 9" in the prose. This is the durable fix for
 # a trap this project has hit before.
 FIGURES = {
-    "paired": ("F1_paired",
-               "The spatial limit, measured. (a) Two sites 300 m apart inside one 998 m model "
-               "cell: observed against the field as shipped and after re-running the physics at "
-               "94 m. (b) The same ratio against model resolution, coarse to fine; refining the "
-               "grid tenfold in area does not close the gap. (c) Where the contrast goes -- "
-               "spread through each stage of the build. It is relocated, not destroyed."),
+    "protocol": ("F7_protocol",
+                 "Budget-matched validation. (a) The protocol: a city with a dense network is "
+                 "given only what the target city budget allows, and scored against the "
+                 "monitors withheld. The budget match is what makes the test informative -- a "
+                 "model that has seen thirty monitors measures a capability the target will "
+                 "never have. (b) Withheld monitors per city and (c) scored city-days across "
+                 "the full panel, both drawn from the scored file rather than recorded by hand, "
+                 "so they cannot drift from the analysis."),
     "ladder": ("F2_ladder",
                "What each increment of information buys, as the median across cities of the "
                "per-city reduction in daily RMSE. (a) The pooled ladder, coloured by whether a "
-               "stream is freely available everywhere, a local instrument, or regional. "
-               "(b) The same two rungs stratified by latitude band, with the number of cities "
-               "in each cell shown on the axis. The ordering inverts in the deep tropics."),
+               "stream is freely available everywhere, a local instrument, or regional. Free "
+               "static geography is worth about as much as the first local instrument, and "
+               "monitors three through eight are indistinguishable from zero. (b) The same two "
+               "rungs stratified by latitude band, with the number of cities in each cell on "
+               "the axis. The ordering inverts in the deep tropics, so the pooled "
+               "recommendation is the wrong recommendation there."),
+    "streams": ("F3_streams",
+                "Two results about what is being measured. (a) The same two monitors priced by "
+                "four estimators. The three non-linear learners agree to within a few "
+                "percentage points; ridge regression, unable to exploit sixty-eight sensorless "
+                "predictors, reports the monitor as worth four times more. The measured value "
+                "of an observation is not a property of the observation alone. (b) Replacing a "
+                "fused PM2.5 product with raw satellite retrievals. The satellite rung itself "
+                "barely moves, so the fused product was not inflating its own score; the rung "
+                "above it roughly doubles, because a product trained on a city's monitors "
+                "already encodes part of what those monitors would say."),
+    "confounds": ("F4_confounds",
+                  "The confound that cannot be sampled away. Instrument class is strongly "
+                  "associated with latitude band: the deep-tropical cell is dominated by "
+                  "low-cost sensors while the higher-latitude bands are reference-dominated. "
+                  "Worldwide there are too few densely reference-monitored tropical cities to "
+                  "break the association by sampling, so results are reported stratified by "
+                  "class throughout. The regime that most needs a sensorless method is the "
+                  "regime where reference monitoring is scarcest."),
+    "paired": ("F1_paired",
+               "The spatial limit, measured rather than asserted. (a) Two sites 300 m apart "
+               "inside a single model cell, sampled by the same instrument over the same "
+               "three-hour window: observed against the field as shipped and after re-running "
+               "the physics ten times finer in area. (b) The same ratio against model "
+               "resolution, coarse to fine; refinement does not close the gap, and a "
+               "pre-registered prediction that it would is refuted. (c) Where the contrast "
+               "goes, through each stage of the build. It is relocated, not destroyed -- the "
+               "dispersed field still spans an order of magnitude at the shipped resolution, in "
+               "different places from where the survey measured it."),
+    "withinpixel": ("F5_withinpixel",
+                    "What survives the limit. (a) The spread inside a typical cell exceeds the "
+                    "spread between cells across the whole map, so most within-city variation "
+                    "is sub-grid by the model's own structure. This is simultaneously the "
+                    "explanation for the paired-site result and the reason a pointwise product "
+                    "is not available. (b) The check on it, reported as uninformative: because "
+                    "the predicted within-cell spread is far smaller than the observed range, "
+                    "every high site saturates at the top quantile and every low one at the "
+                    "bottom, so the test re-detects the amplitude gap rather than testing "
+                    "ordering. The single non-saturated site runs the other way."),
+    "chemistry": ("F6_chemistry",
+                  "A chemical check on the decomposition's load-bearing assumption, using "
+                  "back-trajectory sector -- independent of the composition product -- to "
+                  "classify air-mass origin. Continental-Indian air is measurably more "
+                  "secondary-rich, and therefore more aged, than marine air: the ordering the "
+                  "decomposition requires, and its first chemical support. The registered "
+                  "prediction that recirculated local air would be the freshest is refuted, "
+                  "because stagnation gives local precursors time to age in place, so treating "
+                  "the local increment as fresh primary aerosol is too simple. Bars show "
+                  "medians with bootstrap intervals; n is the number of days per sector."),
 }
 
 # Figures planned but not yet regenerated against the post-cap fields. Callouts to these are

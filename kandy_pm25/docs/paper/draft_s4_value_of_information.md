@@ -91,7 +91,7 @@ Re-running the first rung across four learners [@Ke2017; @Chen2016; @Prokhorenko
 | random forest | {{claim:learner.randomforest.step_bud0c_bud1}}% |
 | ridge regression | **{{claim:learner.ridge_linear.step_bud0c_bud1}}%** |
 
-Across the three non-linear learners the spread is
+{{fig:streams}}a shows all four. Across the three non-linear learners the spread is
 {{claim:learner.nonlinear_spread_bud0c_bud1}} percentage points. **Ridge collapses**, reporting
 {{claim:learner.ridge_linear.step_bud0c_bud1}}% — because on a 68-feature sensorless tier a
 linear model cannot exploit the free data, so the monitor appears to rescue it.
@@ -123,7 +123,7 @@ radiometric retrieval trained on nothing:
 | `Bud0c → Bud1` pooled | {{claim:step.bud0c_bud1}}% | **{{claim:maiac.step_bud0c_bud1}}%** |
 | `Bud0c → Bud1` deep tropics | {{claim:band.deep_tropical.step_bud0c_bud1}}% | **{{claim:maiac.deep_tropical_first2}}%** |
 
-**The satellite rung barely moves** ({{claim:c1.fused_excess_pp}} pp): the fused product's
+{{fig:streams}}b puts the two side by side. **The satellite rung barely moves** ({{claim:c1.fused_excess_pp}} pp): the fused product's
 apparent value was satellite information that raw AOD supplies as well, not recycled information
 inflating its own score. We had registered the opposite prediction.
 
@@ -157,7 +157,7 @@ scoring.
 across bands. Re-running without that driver flips only the top-two ordering, by 0.013; the
 temperate deficit survives.
 
-**Instrument class × band.** The deep-tropical cell is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands — and this one **cannot be sampled away**. Worldwide, only five
+**Instrument class × band** ({{fig:confounds}}). The deep-tropical cell is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands — and this one **cannot be sampled away**. Worldwide, only five
 deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate.
 
 That last constraint is a finding in itself: **the regime that most needs a sensorless method is
