@@ -1,0 +1,176 @@
+# 4. The value of information
+
+*New section per `rewrite_plan_2026-08-22.md` §4.*
+
+---
+
+Section 3 described a design in which information can be withheld exactly. This section reports
+what each increment of it is worth. The measurement is possible because of P3: a lower rung is
+not a different model, it is the same model with a stream removed, so the difference between
+rungs is information loss and nothing else.
+
+All figures are the median across cities of the per-city percentage reduction in daily RMSE —
+never a ratio of medians, and never averaged across metrics.
+
+## 4.1 The ladder
+
+{{claim:frame.cities}} cities, {{claim:frame.city_days}} city-days, a median of
+{{claim:frame.med_days_per_city}} days and {{claim:frame.med_held_stations}} withheld stations
+per city.
+
+| step | median RMSE reduction |
+|---|---:|
+| `Bud0a → Bud0b` add static geography | **{{claim:step.geography}}%** |
+| `Bud0b → Bud0c` add a satellite level | {{claim:step.satellite}}% |
+| `Bud0c → Bud1` add 2 local sensors | **{{claim:step.bud0c_bud1}}%** |
+| `Bud1 → Bud2` add 6 more sensors | **{{claim:step.bud1_bud2}}%** |
+| `Bud2 → Bud3` add a regional background | **{{claim:step.bud2_bud3}}%** |
+
+Four things in that table are worth more than the ordering itself.
+
+**Free data is not negligible.** Static geography — terrain, roads, land cover, night lights,
+population, all globally available — buys {{claim:step.geography}}%, which is comparable to what
+the first local instrument buys, and it buys it at every city on Earth for nothing.
+
+**The second monitor through the eighth buys nothing.** {{claim:step.bud1_bud2}}% is not a small
+effect; it is indistinguishable from zero, and it is the most estimator-robust result in the
+study (§4.4). A city with two sensors and a city with eight are, for this model, the same city.
+
+**The regional background is the largest single gain in the programme**
+({{claim:step.bud2_bud3}}%), and it is the rung most air-quality programmes never build, because
+a rural station serves no constituency.
+
+⚠ **And a caveat that applies to the background rung specifically.** `Bud3`'s background is an
+outer-ring proxy drawn from the *same* network in every city, so its gain partly measures "more
+of the same network" rather than a genuinely regional signal. Only a true regional network
+settles it. We report the number with that qualification attached rather than in a footnote.
+
+## 4.2 Stratification is not optional
+
+The pooled table above is misleading if read as a recommendation, and the stratified table is
+the finding.
+
+| band | n | `Bud0c → Bud1` | `Bud2 → Bud3` |
+|---|---:|---:|---:|
+| deep tropical | 13 | {{claim:band.deep_tropical.step_bud0c_bud1}}% | **{{claim:band.deep_tropical.step_bud2_bud3}}%** |
+| tropical | 10 | {{claim:band.tropical.step_bud0c_bud1}}% | {{claim:band.tropical.step_bud2_bud3}}% |
+| subtropical | 7 | {{claim:band.subtropical.step_bud0c_bud1}}% | {{claim:band.subtropical.step_bud2_bud3}}% |
+| temperate | 7 | {{claim:band.temperate.step_bud0c_bud1}}% | {{claim:band.temperate.step_bud2_bud3}}% |
+
+**In the deep tropics the ordering inverts.** Local sensors buy
+{{claim:band.deep_tropical.step_bud0c_bud1}}% and the regional background only
+{{claim:band.deep_tropical.step_bud2_bud3}}% — the reverse of the pooled result, which is
+computed largely from bands the deep tropics is not in. A programme in Colombo or Kampala
+following the pooled recommendation would buy the wrong instrument.
+
+⚠ The subtropical and temperate cells are n = 7. We report them and do not build on them.
+
+## 4.3 What kind of instrument, not just how many
+
+The gain from additional sensors depends on what they are. Median shrinkage weight placed on
+sensors three through eight: low-cost {{claim:class.LCS.w_bud2}}, reference
+{{claim:class.reference.w_bud2}} — a contrast of {{claim:class.w_bud2_contrast}}×. Low-cost
+units gain more from replication because per-device error averages down; a reference monitor's
+third unit is close to redundant.
+
+⚠ An earlier version of this work reported that contrast as *infinite* (0.000 against 0.900) and
+concluded that reference networks gain nothing at all from added stations. That was computed on
+a superseded run. The direction survives, the magnitude does not, and any argument resting on
+the strong form — including our own use of the low-cost stratum as the Kandy analogue — has to
+be re-made rather than inherited.
+
+## 4.4 Is this a property of the information or of the model?
+
+A value-of-information result is worthless if it is really a statement about one estimator.
+Re-running the first rung across four learners:
+
+| learner | `Bud0c → Bud1` |
+|---|---:|
+| gradient boosting (shipped) | {{claim:learner.histgbm_shipped.step_bud0c_bud1}}% |
+| gradient boosting, shallow | {{claim:learner.histgbm_shallow.step_bud0c_bud1}}% |
+| random forest | {{claim:learner.randomforest.step_bud0c_bud1}}% |
+| ridge regression | **{{claim:learner.ridge_linear.step_bud0c_bud1}}%** |
+
+Across the three non-linear learners the spread is
+{{claim:learner.nonlinear_spread_bud0c_bud1}} percentage points. **Ridge collapses**, reporting
+{{claim:learner.ridge_linear.step_bud0c_bud1}}% — because on a 68-feature sensorless tier a
+linear model cannot exploit the free data, so the monitor appears to rescue it.
+
+That is the useful reading, and it is a result rather than a nuisance. **The measured value of a
+monitor depends on how well you exploit the data you already have.** A programme modelling badly
+will conclude that monitors are worth four times what a programme modelling well would conclude.
+We therefore claim the ladder is robust across **non-linear** estimators, and explicitly not
+that "even a linear model reproduces it" — which an earlier version of this work did claim.
+
+🟢 One result survives every learner including Ridge: `Bud1 → Bud2` ≈ 0, spread
+{{claim:learner.all_spread_bud1_bud2}} percentage points. The redundancy of the third-to-eighth
+monitor is the most robust finding in the study.
+
+## 4.5 What a fused product does to a value-of-information study
+
+The satellite stream in `Bud0c` was initially a published fused PM2.5 product. Such products are
+trained on ground monitors — in this case ~9,500 stations including the two networks that supply
+this study's entire panel — and predicted from a feature set that substantially overlaps the
+tier's other streams. The stream was therefore not an independent observation, and its measured
+value was a mixture.
+
+We re-ran the ladder on raw satellite aerosol optical depth, a radiometric retrieval trained on
+nothing:
+
+| | fused product | **raw AOD** |
+|---|---:|---:|
+| step from `Bud0b` | {{claim:c1.step_fused_ghap}}% | {{claim:c1.step_raw_aod}}% |
+| `Bud0c → Bud1` pooled | {{claim:step.bud0c_bud1}}% | **{{claim:maiac.step_bud0c_bud1}}%** |
+| `Bud0c → Bud1` deep tropics | {{claim:band.deep_tropical.step_bud0c_bud1}}% | **{{claim:maiac.deep_tropical_first2}}%** |
+
+**The satellite rung barely moves** ({{claim:c1.fused_excess_pp}} pp): the fused product's
+apparent value was satellite information that raw AOD supplies as well, not recycled information
+inflating its own score. We had registered the opposite prediction.
+
+🔴 **The rung above it moves a great deal.** On an honest stream the first two monitors buy
+{{claim:maiac.step_bud0c_bud1}}% pooled rather than {{claim:step.bud0c_bud1}}%, and
+{{claim:maiac.deep_tropical_first2}}% rather than
+{{claim:band.deep_tropical.step_bud0c_bud1}}% in the deep tropics — **roughly double**.
+
+The mechanism is straightforward once seen. A product trained on a city's monitors already
+encodes part of what those monitors would tell you. Adding the monitor therefore appears to buy
+less. **The contamination does not inflate the contaminated rung; it deflates the rung above
+it.** Our own pre-registered test looked for the excess in the satellite's own skill, found none,
+and would have reported the leakage as immaterial had the ladder not been re-run.
+
+**This generalises beyond this study.** Any value-of-information analysis that prices
+observations against a covariate trained on those observations will **under-price them** — and
+fused products are now the default covariate in this field. We know of no prior work that
+reports this, and it is invisible unless the analysis is repeated on a stream with clean
+provenance.
+
+## 4.6 Three confounds the pooled numbers hid
+
+Each was caught by a gate declared before the run, not by review, and each would otherwise have
+reached print.
+
+**Country × latitude.** A minimum-cost design made the mid-latitude arm 33 cities from a single
+country, aliasing latitude band with monitoring network. Corrected by an amendment before
+scoring.
+
+**Driver completeness × band.** Boundary-layer height coverage differs by 5.1 percentage points
+across bands. Re-running without that driver flips only the top-two ordering, by 0.013; the
+temperate deficit survives.
+
+**Instrument class × band.** The deep-tropical cell is 69 per cent low-cost sensors while the
+rest are reference-dominated — and this one **cannot be sampled away**. Worldwide, only five
+deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate.
+
+That last constraint is a finding in itself: **the regime that most needs a sensorless method is
+the regime where reference monitoring is scarcest.** We therefore report class-stratified results
+throughout rather than chasing a de-aliased sample that does not exist.
+
+---
+
+## Drafting notes, to remove before submission
+
+- Needs `{{fig:ladder}}` (step gain per rung, stratified by band, class and coastal/inland, with
+  per-cell n **in the figure**, not the caption) and `{{fig:confounds}}`.
+- §4.6's three confounds and the 5/32 reference-cluster counts are still hardcoded.
+- Decide whether §4.5 stays here or becomes a standalone methods note; it generalises past this
+  paper and may be diluted by sitting inside it.
