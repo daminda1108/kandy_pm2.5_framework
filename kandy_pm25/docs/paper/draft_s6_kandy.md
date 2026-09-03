@@ -6,7 +6,9 @@ burden calculation and the health block are excised to the second paper.*
 ---
 
 Kandy is a city of about 400,000 in a steep valley in the central highlands of Sri Lanka
-[@Whiteman2000; @Chemel2016]. Its
+({{fig:studyarea}}) [@Whiteman2000; @Chemel2016]. The valley is closed to the south by the
+Hantana range and vents to the north-west along the Mahaweli corridor — the geometry that
+makes the confinement term of §2.1 physically motivated rather than fitted. Its
 monitoring record is two low-cost sensors and a single published year from a research campaign
 [@Senarathna2024; @Ileperuma2020].
 The city carries a documented respiratory-health burden [@Priyankara2021].
@@ -120,8 +122,9 @@ rests on a 13-city band.
 
 ## Drafting notes, to remove before submission
 
-- Still wanted: a study-area map and the Kandy field panel. The 2026-08 `F_cycles` figure
-  predates the current field build by a day and must be regenerated before reuse, not assumed.
+- The study-area map is placed. ⚠ The 2026-08 `F_cycles` figure predates the current
+  field build by a day and must be REGENERATED before reuse, not assumed — the same
+  mistake as the 2026-06 summary file that nearly supplied a wrong gauge drift.
 - Annual means and the local fraction are now tokenised.
 - ⚠ The 400,000 population and the WHO guideline are EXTERNAL values and stay as cited text.
 - Still needing generating scripts: the 15.6% pixel lift and the midday-trough ratio.

@@ -56,6 +56,13 @@ FIGURES = {
                  "never have. (b) Withheld monitors per city and (c) scored city-days across "
                  "the full panel, both drawn from the scored file rather than recorded by hand, "
                  "so they cannot drift from the analysis."),
+    "studyarea": ("F1_study_area",
+                  "The demonstration city. Kandy sits on the floor of a steep valley in the "
+                  "central highlands of Sri Lanka, closed to the south by the Hantana range and "
+                  "open to the north-west along the Mahaweli valley, which is its principal "
+                  "ventilation corridor. Terrain, drainage and settlement only: no model output "
+                  "appears in this panel, which is why it is the one figure in this paper that "
+                  "cannot go out of date."),
     "schematic": ("F8_schematic",
                   "The formulation. (a) The decomposition and its gauge: a spatially uniform "
                   "regional background plus a local increment redistributed by a unit-mean "

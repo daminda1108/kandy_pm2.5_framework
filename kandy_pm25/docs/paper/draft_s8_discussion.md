@@ -53,11 +53,10 @@ it; **it deflates the rung above.** Any value-of-information analysis built on o
 map* ({{claim:s2.between_pixel_p90p10}}×). No refinement of the physics changes that, and a
 registered test at {{claim:subgrid.fine_res_m}} m confirms it.
 
-The consequence is a change in what the model may be *asked*, not a reduction in what it is worth.
-It cannot say which corner of a cell is dirty. It can say how wide that cell's distribution is —
-and since that quantity is both well-posed and the larger of the two, it is arguably the more
-useful product. We suggest that fields of this kind should report it, and note that none
-currently do.
+The consequence is a change in what the model may be asked, not a reduction in what it is
+worth. It cannot identify which part of a cell is most polluted. It can report the range that
+cell spans, which is both well-posed and the larger of the two quantities. We are not aware
+of a gridded PM2.5 product that currently reports it.
 
 ## 8.4 Limitations we consider material
 
@@ -86,14 +85,14 @@ For the demonstration city the recommendation is specific: two local stations ar
 {{claim:maiac.deep_tropical_local_advantage}}× a regional background station, which reverses what
 the pooled result would have advised.
 
-The measurement is only as good as the honesty of the streams it prices. We found that out the
-hard way, twice, and report both instances rather than the corrected numbers alone.
+The measurement is only as reliable as the provenance of the streams it prices. Two of the
+streams used here turned out not to be what they were labelled, and both instances are
+reported alongside the corrected numbers rather than in place of them.
 
 ---
 
 ## Drafting notes, to remove before submission
 
 - §8.2's third result is the strongest candidate for a standalone note; decide before submission.
-- Ensure no number appears here that is not established in §2–§7; this section should introduce
-  none of its own.
-- Tone pass: target zero rhetorical flourishes in §8.3–8.4.
+- Tone pass done on §8.3–§8.5. Every number in this section is a token established in §2–§7;
+  the section introduces none of its own.
