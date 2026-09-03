@@ -120,8 +120,21 @@ on an honest stream. ⚠ 11 of 47 cities carry AOD on <30% of days (cloud). Rese
 `assemble_manuscript.py` **refuses to build** if prose and data disagree (it blocked on first use);
 `scripts/submission_gate.py` runs six checks. `Budget.require_covers_units()` closes C7 in code.
 
+### 🟢 THE PAPER IS DRAFTED END TO END (2026-09-03)
+9,754 words, 8 sections, **9 figures**, 50 citations, 135 claims. **Edit `draft_s*.md`, never
+`manuscript_kandy.md`.** Build: `scripts/build_claims.py` → `docs/paper/assemble_manuscript.py`
+→ `docs/paper/build_docx.py`. The build **refuses** if prose and data disagree.
+- Sections: `draft_s1_problem` · `s2_formulation` · `s3_design` · `s4_value_of_information` ·
+  `s5_where_it_stops` · `s6_kandy` · `s7_forbids` · `s8_discussion`. The 2026-08 drafts
+  (`draft_s1_s2_intro` etc.) are **superseded and not built**.
+- Figures: `scripts/paper2026_figures{,_b,_c}.py`. Every value reads `claims.json`.
+- ⚠ **Never write "four guaranteed properties"** — two guarantees (P1, P3), one enforced
+  mechanism (P2), one discharged (P4).
+- ⚠ `F_cycles` predates the current field build by a day: **regenerate before reuse.**
+
 ### Pending
-1. **MAIAC gap-fill** running → then C1's three-way ladder → then re-derive F.92.
+1. **Circulate the paper** to the four readers — user action, and the critical path.
+2. **MAIAC gap-fill** complete; C1 and F.92 both resolved (F.95/F.96).
 2. **R3** (competitor benchmark) untried. 3. **Phase 6** propagation to the release repo.
 4. Approve the two OSF registrations (48-h window). 5. **Send the CEA letter** — now the
    highest-value acquisition by measurement, not just the only route.
