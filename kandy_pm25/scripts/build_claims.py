@@ -336,7 +336,11 @@ def s1(c: Claims) -> None:
         return
     d = pd.read_csv(p)
     for _, r in d[d.kind == "contrast_budget"].iterrows():
-        tag = r.label.split(". ", 1)[1].replace(" ", "_").replace("+_", "").replace(",", "")
+        # Keep tags strictly [A-Za-z0-9_.] -- the manuscript's token regex excludes anything
+        # else, and a tag it cannot match survives into the PDF as literal text instead of
+        # raising. Found exactly that way: "solve_at_238_m_(production)".
+        tag = (r.label.split(". ", 1)[1].replace(" ", "_").replace("+_", "")
+               .replace(",", "").replace("(", "").replace(")", ""))
         c.add(f"s1.contrast.{tag}", float(r.value), stat="p90/p10 over positive cells", n=None,
               source="s1_subgrid_placement.csv", ledger="F.89")
     pr = d[d.kind == "paired"]

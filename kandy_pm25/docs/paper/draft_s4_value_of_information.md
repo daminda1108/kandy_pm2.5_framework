@@ -26,7 +26,7 @@ per city.
 | `Bud1 → Bud2` add 6 more sensors | **{{claim:step.bud1_bud2}}%** |
 | `Bud2 → Bud3` add a regional background | **{{claim:step.bud2_bud3}}%** |
 
-Four things in that table are worth more than the ordering itself.
+{{fig:ladder}}a shows the same ladder. Four things in that table are worth more than the ordering itself.
 
 **Free data is not negligible.** Static geography — terrain, roads, land cover, night lights,
 population, all globally available — buys {{claim:step.geography}}%, which is comparable to what
@@ -57,7 +57,7 @@ the finding.
 | subtropical | 7 | {{claim:band.subtropical.step_bud0c_bud1}}% | {{claim:band.subtropical.step_bud2_bud3}}% |
 | temperate | 7 | {{claim:band.temperate.step_bud0c_bud1}}% | {{claim:band.temperate.step_bud2_bud3}}% |
 
-**In the deep tropics the ordering inverts.** Local sensors buy
+{{fig:ladder}}b stratifies it. **In the deep tropics the ordering inverts.** Local sensors buy
 {{claim:band.deep_tropical.step_bud0c_bud1}}% and the regional background only
 {{claim:band.deep_tropical.step_bud2_bud3}}% — the reverse of the pooled result, which is
 computed largely from bands the deep tropics is not in. A programme in Colombo or Kampala

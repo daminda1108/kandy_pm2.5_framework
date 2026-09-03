@@ -1,8 +1,9 @@
 # 2. Formulation: an information-tiered decomposition
 
 *Rewrite of `draft_s4_formulation.md` per `rewrite_plan_2026-08-22.md` §2. Numbers are
-claim tokens (`{{claim:<name>}}`) resolved at build time from `data/processed/modular/claims.json`;
-the build fails if any of them disagrees with a fresh recomputation.*
+claim tokens resolved at build time from `data/processed/modular/claims.json`; the build fails
+if any of them disagrees with a fresh recomputation, or if any token reaches the output
+unresolved.*
 
 ---
 

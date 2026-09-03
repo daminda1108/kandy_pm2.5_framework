@@ -33,7 +33,7 @@ Support is held fixed; only location varies.
 | observed | 110 | 4 | **{{claim:spatial.paired_obs_ratio}}×** |
 | model, as shipped | — | — | **{{claim:spatial.paired_model_ratio}}×** |
 
-The model returns exactly unity because it is being asked about one pixel twice. This is the
+{{fig:paired}}a shows the pair. The model returns exactly unity because it is being asked about one pixel twice. This is the
 cleanest available statement of the limit: **the model's entire dynamic range across Kandy is
 smaller than the difference between two points 300 m apart in one garden.**
 
@@ -67,7 +67,7 @@ with the survey's own midday climatology and with nothing fitted:
 | paired-site ratio | {{claim:s1.paired_production_238m}}× | **{{claim:s1.paired_fine_94m}}×** |
 | rank across the survey | {{claim:s1.rank_production_238m}} | {{claim:s1.rank_fine_94m}} |
 
-A tenfold refinement in area moves the paired ratio by 0.03 and the rank correlation by 0.002.
+{{fig:paired}}b plots the same ratio against resolution. A tenfold refinement in area moves the paired ratio by 0.03 and the rank correlation by 0.002.
 Registered predictions {{claim:s1.predictions_refuted}} are refuted. Resolution is not the
 binding constraint, and per the registration **we treat the question as closed rather than
 re-scoping it**.
@@ -75,14 +75,14 @@ re-scoping it**.
 ## 5.4 What is actually lost, and where
 
 The refutation also disposes of the premise that motivated it. Contrast is not destroyed by
-coarsening — it is **relocated**. Tracking the spread through the build:
+coarsening — it is **relocated**. Tracking the spread through the build ({{fig:paired}}c):
 
 | stage | p90/p10 |
 |---|---:|
 | raw emission surface at {{claim:subgrid.fine_res_m}} m | {{claim:s1.contrast.raw_E_fine_94_m}}× |
 | after tempering | {{claim:s1.contrast.log1p_tempering}}× |
 | after dispersion at {{claim:subgrid.fine_res_m}} m | {{claim:s1.contrast.dispersion_94_m}}× |
-| after solving at 238 m | {{claim:s1.contrast.solve_at_238_m_(production)}}× |
+| after solving at 238 m | {{claim:s1.contrast.solve_at_238_m_production}}× |
 | reported at {{claim:subgrid.coarse_res_m}} m | {{claim:s1.contrast.report_at_998_m}}× |
 
 The dispersed field still spans {{claim:s1.contrast.report_at_998_m}}× at the shipped

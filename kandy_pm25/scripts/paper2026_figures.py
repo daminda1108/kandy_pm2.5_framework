@@ -141,7 +141,16 @@ def fig_ladder():
     a.set_ylim(0, 48); a.grid(axis="y", color=GRID, lw=0.5, zorder=0)
     a.set_title(f"(a)  what each increment buys   ·   n = {v('frame.cities')} cities",
                 fontsize=7.5, loc="left", pad=6)
-    a.text(3, 6, "indistinguishable\nfrom zero", ha="center", fontsize=6.4, color=MUTE, style="italic")
+    a.text(3, 6.2, "indistinguishable\nfrom zero", ha="center", fontsize=6.4, color=MUTE,
+           style="italic")
+    # The colours carry meaning -- free/global vs local instrument vs regional -- and a reader
+    # cannot decode that from the bars alone.
+    from matplotlib.patches import Patch
+    a.legend(handles=[Patch(facecolor="#4D9221", label="free, global"),
+                      Patch(facecolor=MODEL, label="local instrument"),
+                      Patch(facecolor="#762A83", label="regional")],
+             fontsize=6.4, frameon=False, loc="upper left", handlelength=1.0,
+             handleheight=0.9, borderpad=0.2, labelspacing=0.35)
 
     # (b) stratified -- the ordering inverts in the deep tropics
     b = ax[1]

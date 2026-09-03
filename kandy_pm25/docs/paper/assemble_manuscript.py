@@ -24,16 +24,21 @@ OUT = DIR / "manuscript_kandy.md"
 newline_ = chr(10)
 # The sentence Table 1 is spliced after. Kept as a constant so a reworded
 # sentence fails loudly at the assertion rather than silently dropping the table.
-TABLE1_ANCHOR = "Table 1 and {{fig:scorecard}} give the full scorecard."
+# The rewrite has no Table 1 anchor yet; assembly of the table is deferred until section 3
+# settles. Set to None so the assembler does not assert on a sentence that no longer exists.
+TABLE1_ANCHOR = None
 
+# 2026-09 rewrite order (rewrite_plan_2026-08-22.md). The previous eight files are retained
+# on disk as the superseded draft; they are NOT built. Editing them has no effect.
 ORDER = [
-    "draft_s1_s2_intro.md",
-    "draft_s3_information_bound.md",
-    "draft_s4_formulation.md",
-    "draft_s5_validation.md",
-    "draft_s6_results.md",
+    "draft_s1_problem.md",
+    "draft_s2_formulation.md",
+    "draft_s3_design.md",
+    "draft_s4_value_of_information.md",
+    "draft_s5_where_it_stops.md",
+    "draft_s6_kandy.md",
     "draft_s7_forbids.md",
-    "draft_s8_s9_discussion.md",
+    "draft_s8_discussion.md",
 ]
 
 # figure key -> (number, caption). Only figures that exist as files are inserted; the rest
@@ -43,65 +48,18 @@ ORDER = [
 # dropping a figure never leaves a stale "Figure 9" in the prose. This is the durable fix for
 # a trap this project has hit before.
 FIGURES = {
-    "studyarea": ("F1_study_area",
-                  "The Kandy basin, 15 by 15 km. Terrain, towns, the Mahaweli river and its "
-                  "ventilation corridor to the north-west, and the Hantana range closing the "
-                  "basin to the south. Marked are the city centre, the valley-floor research "
-                  "site whose single published year of observation is used here, and the "
-                  "ridge-top low-cost sensor. The second low-cost sensor, at Akurana, lies "
-                  "about 1 km beyond the northern edge of the domain. Pure geography: no "
-                  "model output appears in this panel."),
-    "schematic": ("F2_schematic",
-                  "The decomposition and its gauge condition. (a) Inputs and terms, coloured "
-                  "by whether the observations can constrain them. (b) The unit-mean gauge: "
-                  "the area average of the field returns the anchor exactly. (c) The two "
-                  "correction terms and the defect each repairs."),
-    "bound": ("F3_information_bound",
-              "The information bound. (a) Where each bounded parameter of the rigid ansatz "
-              "came to rest within its admissible range; two sit exactly on their lower "
-              "bounds. (b) Per-city change from a Gaussian to a Student-t likelihood: mean "
-              "correlation rises while mean coverage falls. (c) Annual mean against distance "
-              "from the nearest tuning sensor, for the zero-shot and two-sensor fine-tuned "
-              "fields."),
-    "protocol": ("F6_protocol",
-                 "Validation by borrowed ground truth. (a) The protocol. (b) What each city "
-                 "was given and what it was scored against; 174 monitors were withheld across "
-                 "the ten cities, and Kandy has none to withhold."),
-    "scorecard": ("F7_scorecard",
-                  "The ten-city scorecard. Seasonal and diurnal correlation, level bias and "
-                  "fine spatial rank, scored against withheld monitors. Spatial rank is shown "
-                  "against each city's own permutation null at the 95th percentile. "
-                  "Chandigarh has no usable station pairs."),
-    "ktm": ("F8_kathmandu",
-            "Kathmandu, the deepest single test in the panel. The model was given two "
-            "stations and is compared against the rest. (a) Seasonal cycle. (b) Diurnal "
-            "cycle. (c) Fine spatial rank, per-station anomaly after the network mean is "
-            "removed within each hour. The panels carry no scores of their own: the scored "
-            "values, which apply the completeness screens and exclude the two anchor "
-            "stations, are in Table 1."),
-    "cycles": ("F_cycles",
-               "Kandy seasonal and diurnal shape against the two local sensors. Unlike the "
-               "Kathmandu comparison this one is in sample, because the temporal anchor is "
-               "calibrated to these sensors, so agreement measures the calibration rather "
-               "than skill. It is shown for the shape it carries, in particular the "
-               "afternoon minimum, which is counter-intuitive and verified."),
-    "episode": ("F_episode",
-                "The December 2022 episode. (a) The field at the peak hour, on a scale "
-                "adapted to that hour so the within-basin structure is visible. (b) Basin "
-                "mean through the 48 hours, against the WHO 24 hour interim target."),
-    "burden": ("F_burden",
-               "Exposure and burden. (a) Four exposure tiers by year; the area mean "
-               "understates exposure because population concentrates in the "
-               "higher-concentration core. (b) Attributable and avoidable deaths for 2023, "
-               "with the interval reflecting field uncertainty only."),
-    "uncertainty": ("F11_uncertainty",
-                    "The shipped interval is correctly scaled and incorrectly centred. "
-                    "(a) Where observations fall relative to the interval, as shipped and "
-                    "after removing each sensor's own median offset. (b) Coverage by season."),
-    "nullpower": ("F12_null_power",
-                  "What the earth-observation embedding null could have detected at 80 per "
-                  "cent power. The measured partial correlations lie far inside the range the "
-                  "test was blind to, so the null excludes only large effects."),
+    "paired": ("F1_paired",
+               "The spatial limit, measured. (a) Two sites 300 m apart inside one 998 m model "
+               "cell: observed against the field as shipped and after re-running the physics at "
+               "94 m. (b) The same ratio against model resolution, coarse to fine; refining the "
+               "grid tenfold in area does not close the gap. (c) Where the contrast goes -- "
+               "spread through each stage of the build. It is relocated, not destroyed."),
+    "ladder": ("F2_ladder",
+               "What each increment of information buys, as the median across cities of the "
+               "per-city reduction in daily RMSE. (a) The pooled ladder, coloured by whether a "
+               "stream is freely available everywhere, a local instrument, or regional. "
+               "(b) The same two rungs stratified by latitude band, with the number of cities "
+               "in each cell shown on the axis. The ordering inverts in the deep tropics."),
 }
 
 # Figures planned but not yet regenerated against the post-cap fields. Callouts to these are
@@ -110,7 +68,7 @@ FIGURES = {
 DEFERRED: set[str] = set()
 
 FRONT = """---
-title: "Estimating urban PM~2.5~ where no monitor exists: an information-bounded decomposition, validated by transfer across ten cities"
+title: "What is a monitor worth? Exact model degradation as a measurement instrument for urban PM~2.5~ in data-scarce cities"
 author: "Daminda Alahakoon"
 date: ""
 ---
@@ -308,7 +266,7 @@ def resolve_claims(text: str) -> tuple:
             return f"{v}%"
         return str(v)
 
-    text = re.sub(r"\{\{claim:([A-Za-z0-9_.]+)(?:\|([,a-z]+))?\}\}", token, text)
+    text = re.sub(r"\{\{claim:([^}|]+)(?:\|([,a-z]+))?\}\}", token, text)
     if unknown:
         raise RuntimeError(
             "unknown claim tag(s): " + ", ".join(sorted(unknown))
@@ -323,19 +281,28 @@ def main() -> None:
                               for f in ORDER)
     keys = _bib_keys()
     body, unknown = citations(body, keys)
-    table1 = (DIR / "table1.md").read_text(encoding="utf-8").strip()
-    if TABLE1_ANCHOR not in body:
-        raise RuntimeError("Table 1 anchor sentence not found; it was reworded")
-    body = body.replace(TABLE1_ANCHOR, TABLE1_ANCHOR + 2 * newline_ + table1)
+    if TABLE1_ANCHOR is not None:
+        table1 = (DIR / "table1.md").read_text(encoding="utf-8").strip()
+        if TABLE1_ANCHOR not in body:
+            raise RuntimeError("Table 1 anchor sentence not found; it was reworded")
+        body = body.replace(TABLE1_ANCHOR, TABLE1_ANCHOR + 2 * newline_ + table1)
     body, n_fig, deferred = resolve_figures(body)
+    abstract, _, _ = resolve_claims(abstract)
     body, claims_used, claims_unused = resolve_claims(body)
     body = tex_safe(body)
     # citeproc places the bibliography at this div; without it the list is appended
     # unlabelled, which is what happened on the first build.
     body += (2 * newline_ + "---" + 2 * newline_ + "# References" + 2 * newline_
              + "::: {#refs}" + newline_ + ":::" + newline_)
-    OUT.write_text(FRONT + abstract + 2 * newline_ + "---" + 2 * newline_ + body,
-                   encoding="utf-8")
+    doc = FRONT + abstract + 2 * newline_ + "---" + 2 * newline_ + body
+    # Nothing token-shaped may reach the PDF. A tag the resolver's regex cannot match used to
+    # survive as literal text without raising -- silent pass-through, the same failure class as
+    # a merged-but-empty data stream.
+    leftover = re.findall(r"\{\{[^}]{0,80}\}\}", doc)
+    if leftover:
+        raise RuntimeError("unresolved tokens reached the manuscript: "
+                           + ", ".join(sorted(set(leftover))[:6]))
+    OUT.write_text(doc, encoding="utf-8")
 
     words = len(re.sub(r"!\[.*?\]\(.*?\)", "", body).split())
     print(f"wrote {OUT.name}")
