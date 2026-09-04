@@ -105,6 +105,15 @@ VISUALS: dict[str, tuple[str, str]] = {
         "D12_timeline",
         "What was attempted and how each attempt ended, in the order the work was done. "
         "Dates are from the project's own dated record."),
+    "bound": (
+        "F3_information_bound",
+        "Three independent lines on the same limit. A rigid physical form fitted jointly across "
+        "cities drives two of its six parameters onto their bounds, which is identifiability "
+        "failure rather than a result. A flexible neural model reaches a modest cross-city "
+        "correlation and no more. And the memorisation signature runs the wrong way for a model "
+        "that had learned the field, with agreement far higher near a sensor than away from it. "
+        "That the limit appears in model families sharing almost nothing is the strongest form "
+        "this kind of argument can take."),
     "dispersion": (
         "F5_5_dispersion_costs",
         "The step intended to place the local increment, scored on two independently selected "
@@ -212,6 +221,7 @@ def resolve_visuals(text: str) -> tuple[str, dict, list[str]]:
     """
     counters: dict[tuple[str, int], int] = {}
     assigned: dict[str, str] = {}
+    placed_keys: set[str] = set()
     missing: list[str] = []
     chapter = 0
 
@@ -255,6 +265,7 @@ def resolve_visuals(text: str) -> tuple[str, dict, list[str]]:
             # carry the number, and the number is only known here
             if body and body[0].startswith("Table:"):
                 body[0] = f"Table: {lab}. {body[0][len('Table:'):].strip()}"
+            placed_keys.add(f"tbl:{tag}")
             out_lines.append("")
             out_lines.extend(body)
             out_lines.append("")
@@ -279,6 +290,7 @@ def resolve_visuals(text: str) -> tuple[str, dict, list[str]]:
                 continue
             # pandoc's implicit_figures turns a lone image into a figure with its alt text
             # as the caption, which is where the reference.docx Caption style lands.
+            placed_keys.add(f"fig:{tag}")
             out_lines.append(f"![{lab}. {caption}]({path})")
             out_lines.append("")
             continue

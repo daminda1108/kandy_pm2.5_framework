@@ -116,7 +116,15 @@ def cited_spans(raw: str) -> list[tuple[int, int]]:
     bounds = [0] + [m.end() for m in re.finditer(r"[.!?]+(?=\s|$)", raw)] + [len(raw)]
     spans = []
     for a, b in zip(bounds, bounds[1:]):
-        if "[@" in raw[a:b]:
+        seg = raw[a:b]
+        # THREE categories of number, and every number must be in one of them:
+        #   generated   a {{claim:}} token, recomputed from a scored file at build time
+        #   literature  someone else's measurement, carrying [@citation]
+        #   recorded    this project's own archived result, carrying [ledger F.nn]
+        # The third exists because runs from earlier in the project cannot be regenerated:
+        # the models are gone and the inputs have moved. Marking them as recorded rather than
+        # recomputed is the honest description, and it tells a reader which is which.
+        if "[@" in seg or re.search(r"\[ledger [A-Za-z0-9.,\s#]+\]", seg):
             spans.append((a, b))
     return spans
 

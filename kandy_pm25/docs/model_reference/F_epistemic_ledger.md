@@ -354,7 +354,7 @@ the NBRO regional floor.
 
 | Diagnostic | Result |
 |---|---|
-| fitted $\alpha$ | **0.80 — bound-saturated** (cf. SharedTerrainAnsatz, all 6 params bound-hit) |
+| fitted $\alpha$ | **0.80 — bound-saturated** (cf. SharedTerrainAnsatz, **2 of 6** params bound-hit — ⚠ corrected 2026-09-04; this line read "all 6" and the recomputation in `paper2026_fig3_information_bound.py` reports 2 of 6, namely `H_trap_m` and `alpha_valley`) |
 | coherence | B > T 28.5% → **21.8%**, still FAIL |
 | W2 JJA/DJF | **0.427** vs observed 0.53, FAIL |
 | agreement with NBRO floor | **r = −0.07**, against **+0.37 for the v2 daily background it replaced** |
