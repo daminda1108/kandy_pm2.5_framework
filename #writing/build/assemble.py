@@ -49,6 +49,91 @@ DRAFTING = re.compile(r"(?ms)^## Drafting notes.*?(?=^## |\Z)")
 # convention the project's manuscript already uses and it removes the whole class of error
 # where prose says Figure 4 and the image is Figure 5.
 VISUALS: dict[str, tuple[str, str]] = {
+    # Chapter 1
+    "obsdensity": (
+        "F1_1_observing_density",
+        "Every location worldwide that publishes fine particulate measurements openly, and "
+        "the same locations counted by absolute latitude. Reference-grade instruments are "
+        "marked separately from low-cost ones. The deficit is not random: it falls hardest "
+        "towards the equator, where concentrations are highest and the population exposed "
+        "per instrument is largest. The star marks Kandy."),
+    # Chapter 2
+    "valley": (
+        "D11_valley",
+        "The setting, taken from a digital elevation model rather than from a photograph. "
+        "The left panel is the modelled domain with hillshade; the right is a section running "
+        "south to north through the city centre, from the Hantana range that closes the basin "
+        "to the Mahaweli corridor that ventilates it. The relief along that line and across "
+        "the whole domain are both given, because they differ and the larger figure is the "
+        "one quoted elsewhere in this thesis."),
+    "refbyband": (
+        "F2_2_reference_by_band",
+        "Cities worldwide carrying ten or more concurrent reference monitors, counted by "
+        "latitude band. This is the population from which any validation panel must be "
+        "drawn, and it is the reason the association between instrument class and latitude "
+        "cannot be removed by sampling more carefully."),
+    # Chapter 3
+    "transect": (
+        "F3_2_transect",
+        "A roadside survey of Kandy against the model at the same locations. The survey "
+        "measured coarse particulate at the kerbside over three hours and the model reports "
+        "fine particulate as a cell mean, so the two have no common scale and each series is "
+        "shown relative to its own median. Open markers are sites censored at a common upper "
+        "value, which are lower bounds and not measurements. What the comparison establishes "
+        "is a difference in spread, not a difference in level."),
+    # Chapter 4
+    "pipeline": (
+        "D1_pipeline",
+        "The construction end to end. Blue marks information available everywhere at no cost, "
+        "red marks information that has to be bought locally. The temporal anchor carries the "
+        "level, the background carries the regional contribution, and the pattern decides only "
+        "where the local increment sits. Because the pattern has unit spatial mean it cannot "
+        "change how much material there is."),
+    "panel": (
+        "F4_3_panel",
+        "The cities whose monitoring networks supply the borrowed ground truth, sized by the "
+        "number of monitors withheld from the model at each. The star marks the target city, "
+        "which contributes no training data of any kind."),
+    # Chapter 5
+    "taxonomy": (
+        "D8_failure_taxonomy",
+        "Eight approaches that did not work, placed by whether an expectation was recorded "
+        "before the run and whether the failure produced a bounded claim. The attempts lie "
+        "close to the diagonal, which is this chapter's argument: an approach yields about as "
+        "much when it fails as it declared before it started."),
+    "timeline": (
+        "D12_timeline",
+        "What was attempted and how each attempt ended, in the order the work was done. "
+        "Dates are from the project's own dated record."),
+    "dispersion": (
+        "F5_5_dispersion_costs",
+        "The step intended to place the local increment, scored on two independently selected "
+        "sets of cities. Each line is one city, from its source emission surface to the same "
+        "surface after the terrain solver has redistributed it. Green improves and pink "
+        "worsens. Both frames agree that the redistribution removes rank."),
+    # Chapter 6
+    "decomposition": (
+        "D2_decomposition",
+        "The decomposition drawn as a section across the basin. The background is spatially "
+        "uniform, so all of the structure in the delivered field belongs to the local "
+        "increment, and the increment is the only part a local intervention can change. "
+        "Because the pattern integrates to unity, the shaded area is fixed whatever shape the "
+        "pattern takes. A schematic, not model output."),
+    "tiers": (
+        "D3_budget_tiers",
+        "The information budget. Each tier admits one further observation stream and can "
+        "constrain one further quantity. The tiers are nested, so a lower tier is the same "
+        "model with a stream withheld and not a different model, which is the property that "
+        "turns an ablation into a measurement. The spatial tier is drawn in grey because it "
+        "is a declared design assumption rather than a validated rung."),
+    "obsoperator": (
+        "D4_observation_operator",
+        "Why an areal model and a point monitor cannot be compared directly. The model "
+        "reports a cell mean and the instrument samples one location inside that cell, so a "
+        "systematic offset and a representativeness error must both be carried explicitly. "
+        "Without them a centring error is misread as a failure of interval width. A "
+        "schematic, not model output."),
+    # Chapter 7
     "protocol": (
         "D5_validation_protocol",
         "Budget matched validation. A city with a dense network is reduced to the target "
@@ -56,6 +141,34 @@ VISUALS: dict[str, tuple[str, str]] = {
         "Blue marks what the model is permitted to see; red marks what is held back. The "
         "budget match is what makes the test informative, because a model that has seen "
         "thirty monitors measures a capability the target city will never have."),
+    "prereg": (
+        "D6_prereg_workflow",
+        "Pre-registration as a procedure. The branch that matters is the one distinguishing a "
+        "defect found before scoring, which may be amended and dated, from a criterion "
+        "changed once the result is known, which may not."),
+    # Chapter 9
+    "acquisition": (
+        "F9_1_acquisition",
+        "What each of the two decisive instruments is worth, pooled across all cities and "
+        "within the latitude band the demonstration city belongs to. The ordering reverses, "
+        "so the recommendation derived from the global average is the wrong recommendation "
+        "for the tropics."),
+    "learnedbar": (
+        "F9_2_learned_bar",
+        "The pre-registered test of a learned spatial pattern. The bar was fixed before the "
+        "model was written, as the benchmark plus the smallest improvement the frame could "
+        "detect at eighty per cent power. Nothing learned reaches it, and the per-city panel "
+        "shows the learned pattern is indistinguishable from the single best predictor."),
+    "radius": (
+        "F9_3_radius",
+        "Predictor skill against the radius of the buffer the predictor is measured over. For "
+        "the two strongest families skill rises with radius and peaks coarser than the cell "
+        "the model reports on. Read together with the within-cell result of Chapter 8, the "
+        "band of usable spatial information is bounded from both directions at once."),
+    "decisiontree": (
+        "D9_acquisition",
+        "The acquisition decision as a procedure, with the branch that inverts between "
+        "latitude bands."),
 }
 
 
