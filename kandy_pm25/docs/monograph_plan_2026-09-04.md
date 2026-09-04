@@ -143,10 +143,19 @@ Front matter: title page, declaration of originality, abstract (300 words), ackn
 table of contents, list of figures, list of tables, list of abbreviations and symbols.
 Back matter: references in a single consistent style, then the appendices.
 
-⚠ **Institutional format is unknown and is a blocker for final production, not for writing.**
-The University of Peradeniya will have requirements for margins, line spacing, page numbering,
-declaration wording, binding and possibly a prescribed title page. See question 1 in section 6.
-Everything in this plan can be written before that is settled; only the final build depends on it.
+**Format: standard practice, fixed now so nothing is blocked.** If the department later issues a
+template, only the reference.docx changes and no text has to move.
+
+| element | setting |
+|---|---|
+| page | A4, 2.5 cm margins, 3.5 cm left for binding |
+| body | Times New Roman 12 pt, 1.5 line spacing, justified |
+| headings | Times New Roman bold; 14 pt chapter, 13 pt section, 12 pt subsection |
+| captions | Times New Roman 12 pt, above tables and below figures, per convention |
+| numbering | by chapter: Figure 3.2, Table 5.1 |
+| pagination | roman numerals for front matter, arabic from Chapter 1 |
+| references | author-year, single consistent style, generated from `references.bib` |
+| declaration | standard originality wording, signed page |
 
 **Appendices.** ~1,500 words plus tables
 A: symbols and constants. B: the epistemic ledger, abridged to the entries the text cites.
@@ -241,12 +250,73 @@ Mostly the manuscript's existing suite, all regenerated 2026-09-03 or later.
 | 9.2 | The learned pattern result against its registered bar | **NEW** from `phase1_predictor_ranking.csv`, `phase2_learned_pattern.csv` | to build |
 | 9.3 | Predictor skill against buffer radius | **NEW** from `phase1_predictor_ranking.csv` | to build |
 
+### Tables
+
+Under-planned in the first draft of this plan. A thesis of this kind carries its evidence in
+tables as much as in figures, and most of these already exist as data.
+
+| tbl | content | source | status |
+|---|---|---|---|
+| 1.1 | Weather against air quality on the three conditions: observation, closure, assimilation | prose, structured | to write |
+| 2.1 | Kandy at a glance: population, elevation, relief, monitoring, climate regime | `claims.json` + census | to build |
+| 2.2 | What each acquisition route would cost and what it would settle | `claims.json` (F.92, F.96) | to build |
+| 3.1 | Every Kandy air quality study: year, method, sites, duration, finding, limit | literature, already read | **to write, the most valuable table in Part I** |
+| 3.2 | The four independent Kandy point records against the model | `nbro_pixel_check.csv` + literature | to build |
+| 4.1 | Data inventory: stream, product, resolution, coverage, provenance, admissible tier | disk audit | to build |
+| 4.2 | The information budget: what each tier admits and the first quantity it constrains | `src/modular/budgets.py` | exists in manuscript |
+| 4.3 | The 48 city panel: city, country, band, stations, days, instrument class | `ladder_revalidated.csv` | to build |
+| 5.1 | **Every method tried: expectation, outcome, cost, what it established** | ledger F.1 to F.98 | **to build, the spine table of Chapter 5** |
+| 5.2 | The five spatial nulls and the detection limit each actually had | `F12_null_power` + ledger | to build |
+| 5.3 | Five background rebuilds and why each was rejected | ledger F.13 to F.19 | to build |
+| 6.1 | Symbols, units and constants used in the formulation | `model_reference/A_symbols.md`, `B_constants.md` | exists |
+| 7.1 | The value of information ladder, pooled | `claims.json` | exists in manuscript |
+| 7.2 | The ladder stratified by latitude band, with n | `claims.json` | exists |
+| 7.3 | Estimator sensitivity: four learners on the same rung | `learner_sensitivity_bud0c.csv` | exists |
+| 7.4 | Ten city validation scorecard | `validation_scorecard.csv` | exists |
+| 7.5 | Registered predictions across all five pre-registrations, and their outcomes | the prereg documents | **to build, and it is the thesis's strongest single table** |
+| 8.1 | Contrast against averaging support and against siting design | `support_collapse.csv` | exists |
+| 8.2 | What the model may and may not be asked | prose, structured | to write |
+| 9.1 | Next steps ranked by measured value, not by appeal | `claims.json` | to build |
+| A.1 | Abbreviations and acronyms | to compile | to build |
+
+**21 tables.** 6 exist, 15 to build or write, all from material on disk.
+
+### Diagrams and flowcharts
+
+Also under-planned. These carry the process argument, which is a large part of what this thesis
+is actually about. **All to be drawn in matplotlib** rather than in a diagramming tool, so the
+typography matches the data figures and the whole document reads as one system.
+
+| dia | content | why it earns its place |
+|---|---|---|
+| D1 | The full pipeline: drivers and satellite in, anchor and background and pattern, field out | Ch 4. The reader cannot follow Chapters 6 to 8 without it |
+| D2 | The decomposition as a picture: uniform background plus redistributed increment | Ch 6. One diagram replaces two pages of equations |
+| D3 | Budget tier nesting and exact degradation between tiers | Ch 6. The paper's central mechanism |
+| D4 | The observation operator: areal field against point sensor | Ch 6. Change of support, the single most common scoring error |
+| D5 | Budget matched validation: what is withheld, what is scored | Ch 7. The protocol that makes the ladder mean anything |
+| D6 | The pre-registration workflow, from prediction to refutation | Ch 7. This is a method, and it should be drawn as one |
+| D7 | The claims gate: from scored file to number in the text, and where it fails the build | Ch 10 or Ch 7 |
+| D8 | Failure taxonomy: the eight failures classified by what made them informative | **Ch 5, and it is the chapter's argument in one image** |
+| D9 | Acquisition decision tree: what to buy first, with the tropical branch inverting | Ch 9. The practical output of the whole thesis |
+| D10 | Regeneration chain: which script owns which artefact | Ch 10 or appendix. Prevents the stale artefact class of error |
+| D11 | Kandy valley schematic: terrain, ventilation corridor, sensor positions, drainage | Ch 2. Orientation before any result |
+| D12 | Timeline: what was tried when, and what each attempt closed | Ch 5 opener |
+
+**12 diagrams, all new.**
+
 ### Totals
 
 **34 figures.** 19 exist and are current, 1 is stale and needs regenerating (6.4), 2 are exempt
 historical records, and **12 are new**. Every new figure draws on a CSV or NPZ already on disk,
-so none requires new modelling. Estimated build effort for the 12 new figures is the largest
-single block of work in the plan.
+so none requires new modelling.
+
+**Whole document: 34 figures, 21 tables, 12 diagrams = 67 visual elements** across roughly 100
+pages, or one every 1.5 pages. That is dense, and appropriate: this is a thesis whose argument
+is carried by measured quantities and by process, and both are better shown than described.
+
+**Build load: 12 figures, 15 tables, 12 diagrams = 39 new artefacts.** None requires new
+modelling. The diagrams are the largest single block of work because they have no data source to
+generate from, only a design.
 
 ### On web images: ruled out
 
@@ -308,36 +378,37 @@ the project has already found nine times.
 
 ## 5. Sequencing
 
-| stage | work | output |
-|---|---|---|
-| A | reference.docx, build chain, lint script | pipeline that produces a 12 pt Times document |
-| B | the 12 new figures | `results/figures/monograph/` |
-| C | regenerate figure 6.4 | current mechanism panel |
-| D | Chapters 4, 6, 7, 8 by adaptation from existing text | roughly 14,000 words |
-| E | Chapters 1, 2, 3, 5, 9 written fresh | roughly 16,000 words |
-| F | full read, lint, claim gate, build | the .docx |
+Ordered so that nothing is written into a format that later has to change, and so the largest
+uncertainty is retired first.
 
-Stage E is the real work. Stage D is selection and rewriting rather than composition.
+| stage | work | output | why here |
+|---|---|---|---|
+| A | reference.docx, assemble/build chain, style lint | a chain that demonstrably emits 12 pt Times with no em dashes | writing 30,000 words before this exists is the expensive mistake |
+| B | **the 12 diagrams** | `results/figures/monograph/D*.png` | largest unknown, no data source, pure design. Doing them first means Chapters 4 to 9 can be written against a picture that already exists |
+| C | the 12 new figures | `results/figures/monograph/F*.png` | all from CSV or NPZ on disk |
+| D | the 15 new tables | generated into markdown by script, not typed | same claims gate as the prose |
+| E | regenerate figure 6.4 | current mechanism panel | one script run |
+| F | Chapters 4, 6, 7, 8 by adaptation | ~14,000 words | selection and rewriting, not composition |
+| G | Chapters 1, 2, 3, 5, 9 written fresh | ~16,000 words | the real writing. Chapter 5 is the largest single piece |
+| H | front and back matter, full read, lint, claim gate, build | the .docx | |
 
----
+Stages B, C and D are mechanical and can be done in long uninterrupted runs. Stage G is the work.
+
+⚠ **One sequencing risk worth naming.** Chapter 5 depends on the ledger being accurate about
+what was expected before each attempt, and the earliest entries predate the pre-registration
+habit. Where an expectation was not recorded in advance, the chapter must say so rather than
+reconstruct one. That is the difference between a chapter about learning and a chapter about
+looking clever in hindsight.
 
 ## 6. Open questions
 
-1. 🔴 **What are the University of Peradeniya thesis format requirements?** Margins, line
-   spacing, page numbering, declaration wording, title page layout, reference style, word or page
-   limit, and whether a prescribed template exists. This blocks final production, not writing.
-   If a template exists it should replace the reference.docx route in section 4 entirely.
-2. **Reference style.** The manuscript uses author-year through pandoc-citeproc against
-   `references.bib`. Does the department require a specific style, and does it require numbered
-   citations?
-3. **12 pt minimum for captions and tables as well**, or 12 pt body with smaller captions? A
-   strict reading lengthens the document by roughly ten pages.
-4. **Is a valley photograph wanted for Chapter 2?** If so it needs to be the author's own or
+1. **Is a photograph of the valley wanted for Chapter 2?** If so it must be the author's own or
    carry a recorded licence. Figure 2.3, the DEM cross section, covers the scientific need
    without one.
-5. **Does the thesis need a chapter the paper does not have, on software and reproducibility?**
-   The material exists (`model_reference` parts 7b and 10) and examiners sometimes expect it.
-   It would add roughly 2,000 words as a Chapter 10 or as an extended appendix.
+2. **Should there be a Chapter 10 on software and reproducibility?** The material exists
+   (`model_reference` parts 7b and 10) and examiners often expect it. Around 2,000 words, or it
+   can stay an extended appendix. Recommendation: make it Chapter 10, because the claims gate
+   and the pre-registration machinery are among the more defensible things the project built.
 
 ---
 
