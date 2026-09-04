@@ -156,6 +156,69 @@ evidence that those cities have no industry.
    `emission.compose()` into production is a correctness fix with no expected skill gain, and
    should be described that way if it is adopted at all.
 
+## 3b. 🟢 Phase 1 RESULT — the frame, the real benchmark, and the detection limit
+
+Run 2026-09-04, `scripts/phase1_frame_and_power.py`, on the LUR frame: **46 cities, 630
+stations**, median 12 stations per city, 60 candidate predictors. Every predictor is globally
+available static geography and admissible at `Bud0`; no observation of the target city enters.
+
+### The benchmark is NOT night lights, and it is not 0.34
+
+Phase 0's "night lights at ρ ≈ 0.34" was an eight-city figure and it does not survive the wider
+frame. Median per-city rank correlation across 46 cities:
+
+| predictor | median ρ | positive in |
+|---|---:|---:|
+| **built-up land cover, 2.4 km** | **+0.309** | 35/46 |
+| built-up land cover, 1 km | +0.291 | 38/46 |
+| population, 2.4 km | +0.252 | 33/46 |
+| night lights, 300 m | +0.197 | 30/46 |
+| non-residential built volume, 300 m | +0.177 | 31/46 |
+| major roads, 500 m | +0.165 | — |
+| **NDVI, 300 m** | **−0.270** | 10/46 |
+
+🔴 **The benchmark a learned pattern must beat is +0.309, from built-up land-cover fraction.**
+Night lights lands at +0.197 here, materially below what the eight-city frame suggested, so the
+figure quoted after Phase 0 was optimistic and is withdrawn.
+
+🟢 **NDVI is the most consistent predictor in the set.** At −0.270 it is nearly as strong as the
+best positive proxy and more consistent in sign (36 of 46 negative). Absence of vegetation
+discriminates better than any single presence-of-source proxy — which is a statement about how
+little source-specific information survives at this support.
+
+### The scale that survives is COARSER than the grid cell
+
+| family | 100 m | 300 m | 1 km | 2.4 km |
+|---|---:|---:|---:|---:|
+| built-up land cover | +0.240 | +0.216 | +0.291 | **+0.309** |
+| population | +0.138 | +0.141 | +0.243 | **+0.252** |
+| night lights | +0.181 | **+0.197** | +0.161 | +0.154 |
+| non-residential built | +0.124 | **+0.177** | +0.144 | +0.119 |
+
+For the two strongest families, skill **rises monotonically with radius** and peaks at the
+coarsest buffer available — 2.4 km, which is larger than the 1 km cell the model reports on.
+
+This is the sub-grid finding arriving from the opposite direction. §5 established that
+within-cell spread exceeds between-cell spread, so fine structure cannot be placed. Phase 1 adds
+that the information which *does* rank stations lives at scales **larger** than a grid cell.
+Together they bracket the usable band tightly: too fine is unrecoverable, and what remains is
+nearly coarse enough to be the city-mean question the model already answers well.
+
+### Power: the frame is now adequate, and the bar is high
+
+| frame | n | sd of paired difference | detectable at 80 % power |
+|---|---:|---:|---:|
+| Phase 0 (valley cities) | 8 | 0.250 | Δρ = 0.320 |
+| **Phase 1 (LUR frame)** | **46** | 0.290 | **Δρ = 0.130** |
+
+A 2.5× improvement, and 0.130 is a limit an experiment can be registered against.
+
+🔴 **But note what it implies.** To be *detectable*, a learned pattern must reach ρ ≈ **0.44**
+pooled — 0.309 plus 0.130. That is at the bottom edge of what published LUR achieves (R²
+0.43–0.83) on campaigns that site monitors deliberately across land-use contrast, which ours do
+not. **The bar is reachable in principle and demanding in practice, and it should be written
+into the registration as the number the work has to clear.**
+
 ## 4. Phase 1 — registration
 
 Pre-register on OSF before any scoring, per project norm. Must contain:
