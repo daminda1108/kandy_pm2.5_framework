@@ -178,12 +178,16 @@ suggested, and P4 is the one property that could not survive being wrong in this
 The elementary form fails in two specific, diagnosable ways, and each additional term repairs
 exactly one.
 
-**The increment split.** When the hourly total dips below the daily background — which happens
-in 38.5 per cent of Kandy hours — `inc` is negative, and multiplying a core-high pattern by a
-negative number renders the *core cleaner than the countryside*. The repair is to structure only
-the accumulation above background and let ventilation below it apply uniformly: the `max(inc,0)·P`
-and `min(inc,0)` terms. The basin mean is preserved exactly, and the inversion falls from 38.2
-per cent of midday hours to zero.
+**The increment split.** When the hourly total dips below the background, `inc` is negative,
+and multiplying a core-high pattern by a negative number renders the *core cleaner than the
+countryside* — a defect that is obvious once seen and invisible in every aggregate statistic,
+because it preserves the mean. Against the unconstrained background it occurs in
+{{claim:field.precap_excess_mean}} per cent of Kandy hours and, because ventilation peaks when
+the boundary layer is deepest, in {{claim:field.precap_excess_midday}} per cent of *midday*
+hours — so the defect concentrates in exactly the hours a daytime user would look at. The repair
+is to structure only the accumulation above background and let ventilation below it apply
+uniformly: the `max(inc,0)·P` and `min(inc,0)` terms. The basin mean is preserved exactly, and
+the midday inversion falls to {{claim:field.postcap_inversion_midday}} per cent.
 
 **The ventilated-hour floor.** The split renders ventilated hours perfectly flat, and ground
 truth at a monitored analogue shows they are not. A bounded, mean-zero floor `ε(t)` restores
@@ -205,20 +209,30 @@ the total, and **a background at or above the total is not a physical state but 
 background**. Since `B` is flat within a day, the constraint has a closed form: cap each day at
 `(1 − F_min)` times that day's minimum hourly total.
 
-Before the constraint, the background exceeded the total in 24.8 to 36.1 per cent of hours,
-averaging 29.9 per cent. In each such hour the field rendered exactly flat and reported a zero
-local share at the traffic core. After it, the residual is under {{claim:partition.residual_b_gt_t_pct}} per cent per year, and every
-remaining case is an hour where the anchor itself returned a negative total, which no constraint
-on the background can repair.
+Before the constraint, the background exceeded the total in
+{{claim:field.precap_excess_lo}} to {{claim:field.precap_excess_hi}} per cent of hours,
+averaging {{claim:field.precap_excess_mean}} — the same quantity §2.5 reports, derived once and
+quoted twice rather than measured twice. In each such hour the field rendered exactly flat and
+reported a zero local share at the traffic core. After the constraint the residual is at worst
+{{claim:field.postcap_excess_max}} per cent in any year, and every remaining case is an hour
+where the anchor itself returned a negative total, which no constraint on the background can
+repair.
 
-**The result does not depend on the free parameter.** Sweeping `F_min` from 0 to 0.08 — a
-fourfold change — moves the local fraction from 0.477 to 0.502. The value used ({{claim:partition.f_min_parameter}}) was chosen as the
+**The result does not depend on the free parameter.** Sweeping `F_min` from 0 to
+{{claim:field.f_sweep_param_hi}} — a fourfold change — moves the local fraction from
+{{claim:field.f_sweep_lo}} to {{claim:field.f_sweep_hi}}. The value used ({{claim:partition.f_min_parameter}}) was chosen as the
 smallest that removes the defect, *before* the resulting fraction was known. Nor does it depend
-much on the form of the constraint, which is the more searching test: replacing the calendar-day
-minimum with a centred rolling 24-hour minimum moves the fraction from 0.481 to 0.487. Doubling
-the window to 48 hours moves it to 0.540 — so the answer is stable across constraint forms that
-respect the daily structure of `B`, and drifts only when the window exceeds the timescale on
-which `B` is defined.
+much on the form of the constraint, which is the more searching test: replacing the
+calendar-day minimum with a centred rolling 24-hour minimum moves the fraction by less than
+0.01, and doubling the window to 48 hours moves it to {{claim:field.f_form_roll48}} — so the
+answer is stable across constraint forms that respect the daily structure of `B`, and drifts
+only when the window exceeds the timescale on which `B` is defined.
+
+⚠ The sweep and the constraint-form figures in this paragraph come from an independent
+reimplementation of the constraint rather than from the production code path, because the
+original sweep left no artefact. It lands within 0.01 of the originally reported values
+throughout and supports the same conclusion; we report the reproducible numbers and say which
+they are.
 
 We note that this replaces an earlier estimate of about 0.25 taken from source-apportionment
 literature. The constraint refutes that value rather than refining it.

@@ -725,6 +725,119 @@ def colombo_donor(c: Claims) -> None:
                "distances one pair at 285 km scores lower, so 'weakest of all 20' is wrong")
 
 
+def field_diagnostics(c: Claims) -> None:
+    """§2.5, §2.6 and §5.7, from scripts/kandy_field_diagnostics.py (2026-09-04).
+
+    🔴 WHAT THIS PASS FOUND. The manuscript carried THREE different literals for what is one
+    quantity -- how often the background exceeded the total before the coherence constraint.
+    §2.5 said 38.5 per cent of hours, §2.5 said 38.2 per cent of midday hours, and §2.6 said
+    24.8 to 36.1 per cent averaging 29.9. Recomputed against the uncapped background retained
+    on disk and the shipped anchor, it is 38.8 per cent of all hours and 53.9 per cent of midday
+    hours. The first reproduces; the other two do not.
+
+    ⚠ The historical figures were computed against background generations that have since been
+    superseded -- there were three -- so they are not reproducible rather than wrong, and the
+    fix is to define the quantity once and derive it once. The "after" numbers, which are what
+    the argument actually rests on, reproduce exactly: the residual is under a fifth of one per
+    cent and the midday inversion is zero.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from figdata import load  # noqa: E402
+    d = load("kandy_diagnostics")
+    if not d:
+        return
+
+    c.add("field.precap_excess_mean", d["precap_excess_mean"],
+          stat="mean over years of the share of hours with B > T, uncapped background",
+          n=5, source="decomp/kandy_field_diagnostics.csv", ledger="F.43 / gotcha #57",
+          note="ONE definition for a quantity the manuscript previously stated three ways")
+    c.add("field.precap_excess_lo", d["precap_excess_lo"], stat="min over years", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.precap_excess_hi", d["precap_excess_hi"], stat="max over years", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.precap_excess_midday", d["precap_excess_midday"],
+          stat="mean over years of the share of MIDDAY hours with B > T, uncapped background",
+          n=5, source="decomp/kandy_field_diagnostics.csv", ledger="gotcha #57",
+          note="the inversion rate the increment split repairs; the manuscript said 38.2")
+    c.add("field.postcap_excess_max", d["postcap_excess_max"],
+          stat="worst year's share of hours with B > T after the constraint", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43",
+          note="the repair, which does reproduce")
+    c.add("field.postcap_inversion_midday", d["ventilated_midday_pct"],
+          stat="share of midday hours still inverted after the split and the cap", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="gotcha #57")
+
+    # The sweep. An INDEPENDENT reimplementation, not the production code path, so it is
+    # labelled as such: it lands within 0.01 of the originally reported values everywhere and
+    # supports the same conclusion, which is the point of reporting it at all.
+    c.add("field.f_sweep_lo", d["f_sweep_lo"],
+          stat="local fraction at F_min = 0, independent reimplementation", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43",
+          note="the originally reported sweep ran 0.477 to 0.502 and left no artefact; this "
+               "reimplementation gives 0.482 to 0.509 and is the reproducible one")
+    c.add("field.f_sweep_hi", d["f_sweep_hi"],
+          stat=f"local fraction at F_min = {d['f_sweep_param_hi']}, same reimplementation", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.f_sweep_param_hi", d["f_sweep_param_hi"], stat="top of the parameter sweep",
+          n=1, source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.f_form_roll48", d["f_form_roll48"],
+          stat="local fraction with a 48-hour rolling minimum instead of a calendar day", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43",
+          note="the most sensitive constraint form tried, and the honest upper end")
+
+    # Contrast by averaging window, so §5.7 compares like with like.
+    c.add("field.contrast_monthly", d["contrast_monthly"],
+          stat="median over months of the between-cell p90/p10 of the shipped field", n=60,
+          source="decomp/kandy_contrast_by_window.csv", ledger="F.71",
+          note="§5.7 was comparing an ANNUAL model contrast against observed values taken at "
+               "mixed windows; this is the window-matched figure")
+    c.add("field.contrast_hourly", d["contrast_hourly"],
+          stat="median over hours of the between-cell p90/p10 of the shipped field", n=43824,
+          source="decomp/kandy_contrast_by_window.csv", ledger="F.71")
+
+    # How wide the sensorless tier actually is. §4.4's argument is that a linear model cannot
+    # exploit this many predictors, so the width is part of the claim and not decoration.
+    try:
+        sys.path.insert(0, str(REPO))
+        from modular_validation_all import FEATS  # noqa: E402
+        geo = pd.read_csv(MOD / "bud0_static_geo.csv")
+        geo_f = [x for x in geo.columns if x not in ("city", "geo_n_stations")]
+        c.add("bud0c.n_features", len(FEATS) + len(geo_f) + 1,
+              stat="meteorological drivers + static geography + the satellite level",
+              n=1, source="modular_validation_all.FEATS + bud0_static_geo.csv", ledger="F.88",
+              note="7 drivers, 60 geography columns, 1 satellite level")
+        c.add("bud0c.n_geo_features", len(geo_f), stat="static-geography columns", n=1,
+              source="bud0_static_geo.csv", ledger="F.88")
+    except Exception:                                                   # noqa: BLE001
+        pass
+
+    # The global census behind §4.6's "cannot be sampled away". A property of the world's
+    # published network, not of our panel, and now pulled rather than remembered.
+    g = load("global_census")
+    if g:
+        for b in ("deep_tropical", "tropical", "subtropical", "temperate"):
+            c.add(f"census.{b}", g[b],
+                  stat=f"clusters with >= {g['min_stations']} concurrent reference PM2.5 "
+                       f"stations overlapping >= {g['min_overlap_days']} days",
+                  n=g["reference_locations"],
+                  source="modular/global_reference_census.csv", ledger="F.53",
+                  note="OpenAQ global pull, clustered at "
+                       f"{g['cluster_km']:.0f} km; reference class is OpenAQ's own isMonitor flag")
+        c.add("census.temperate_over_deep_tropical",
+              round(g["temperate"] / max(g["deep_tropical"], 1), 1),
+              stat="ratio of counts", n=g["reference_locations"],
+              source="modular/global_reference_census.csv", ledger="F.53",
+              note="the retired pair was 5 and 32; an independent census gives "
+                   f"{g['deep_tropical']} and {g['temperate']}, so the disparity is LARGER "
+                   "than previously reported, not smaller")
+        c.add("census.locations_total", g["total_locations"],
+              stat="OpenAQ locations reporting PM2.5, worldwide", n=1,
+              source="openaq/discovery/global_locations.csv", ledger="F.53")
+        c.add("census.locations_reference", g["reference_locations"],
+              stat="of those, reference-grade with usable start and end dates", n=1,
+              source="openaq/discovery/global_locations.csv", ledger="F.53")
+
+
 def nbro_pixel(c: Claims) -> None:
     """F.65, re-derived 2026-09-04 by scripts/nbro_pixel_check.py.
 
@@ -1047,6 +1160,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    field_diagnostics(c)
     nbro_pixel(c)
     kandy_application(c)
     confounds(c)

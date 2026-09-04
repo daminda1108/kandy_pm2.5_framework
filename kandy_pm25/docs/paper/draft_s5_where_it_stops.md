@@ -107,7 +107,8 @@ misplaces it.
 
 ⚠ This qualifies a number quoted throughout the literature on this model, including our own
 earlier work. The undispersed emission surface achieves ρ = {{claim:r2.rho_emission_surface}},
-**above** the ρ ≈ 0.2–0.28 ceiling we and others have reported. That ceiling was always measured
+**above** the ρ = {{claim:r2.rho_with_atransport}} the dispersed field achieves, and above the ceiling of roughly 0.2 to 0.28
+this programme has reported across four successive attempts. That ceiling was always measured
 on fields already through this machinery. It is a property of the *construction*, not a bound on
 what the emission proxy can support.
 
@@ -200,13 +201,23 @@ is testable, and testing it needs a campaign that samples supports deliberately.
 
 ## 5.7 What this licenses
 
-At matched support and matched statistic the model is close to right: annual p90/p10 of
-{{claim:kandy.annual_contrast}} against 1.26–1.47 observed at comparable cities. The failure in
-§5.1 is a comparison between quantities defined at different supports, not a skill deficit.
+At matched support and matched statistic the model is close to right. At monthly averaging its
+between-cell p90/p10 is {{claim:field.contrast_monthly}}, against 1.26 to 1.51 measured across
+the stations of three comparable cities at the same window; annually it is
+{{claim:kandy.annual_contrast}}. The failure in §5.1 is a comparison between quantities defined
+at different supports, not a skill deficit.
+
+⚠ One mismatch remains and we state it rather than let the agreement carry more than it should.
+The observed figures are spreads across a city's *stations*; the model's is a spread across its
+*cells*. Matching the averaging window removes the larger part of the discrepancy — an earlier
+version of this comparison set an annual model contrast against observed values taken at mixed
+windows — and the residual is a support difference we cannot close without a campaign designed
+for it.
 
 So the operational statement is narrow and, we think, honest. **Can a user rank neighbourhoods
-against what a monitor would read there? No** — ρ ≈ 0.2–0.28 stands, and §5.5 explains what it
-measures. **Can a user be told the range their cell spans? Yes**, and §5.6 supplies it. The
+against what a monitor would read there? No** — the fine spatial rank of the shipped
+construction is ρ = {{claim:r2.rho_with_atransport}}, and §5.5 explains what that measures and
+what it does not. **Can a user be told the range their cell spans? Yes**, and §5.6 supplies it. The
 number is retained; what it is said to measure changes.
 
 ---

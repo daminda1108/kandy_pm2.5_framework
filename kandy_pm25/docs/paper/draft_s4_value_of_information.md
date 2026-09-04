@@ -109,8 +109,9 @@ interpretable without the other beside it.
 
 Panel (a) first. Across the three non-linear learners the spread is
 {{claim:learner.nonlinear_spread_bud0c_bud1}} percentage points. **Ridge collapses**, reporting
-{{claim:learner.ridge_linear.step_bud0c_bud1}}% — because on a 68-feature sensorless tier a
-linear model cannot exploit the free data, so the monitor appears to rescue it.
+{{claim:learner.ridge_linear.step_bud0c_bud1}}% — because on a {{claim:bud0c.n_features}}-feature sensorless tier, of which
+{{claim:bud0c.n_geo_features}} are static geography, a linear model cannot exploit the free data, so the monitor
+appears to rescue it.
 
 That is the useful reading, and it is a result rather than a nuisance. **The measured value of a
 monitor depends on how well you exploit the data you already have.** A programme modelling badly
@@ -165,9 +166,11 @@ provenance.
 Each was caught by a gate declared before the run, not by review, and each would otherwise have
 reached print.
 
-**Country × latitude.** A minimum-cost design made the mid-latitude arm 33 cities from a single
-country, aliasing latitude band with monitoring network. Corrected by an amendment before
-scoring.
+**Country × latitude.** A minimum-cost sampling design drew the entire mid-latitude arm from a single
+national network, aliasing latitude band with monitoring network so completely that no
+band-stratified result could have been interpreted. It was caught and corrected by a registered
+amendment before any scoring took place, which is the only reason it appears here as a
+methodological note rather than as a retraction.
 
 **Driver completeness × band.** Boundary-layer height coverage is uneven across bands, so the
 ladder was re-run without it. The first rung moves from {{claim:confound.blh.with_blh_step1}}%
@@ -182,9 +185,19 @@ deep-tropical cell of the panel is {{claim:confound.deep_tropical_lcs_pct}} per 
 sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands, so latitude
 band and instrument class are entangled in the data and any band-stratified number carries a
 class effect inside it. The obvious fix is to sample a better-balanced panel, and
-{{fig:confounds}} exists to show why that fix is not available: worldwide, only five
-deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate. The
-population of candidate cities does not contain a balanced draw.
+{{fig:confounds}} exists to show why that fix is not available. Across the
+{{claim:census.locations_total}} locations worldwide that publish PM2.5 openly, of which
+{{claim:census.locations_reference}} are reference-grade, only {{claim:census.deep_tropical}}
+urban clusters carry ten or more concurrent reference stations in the deep tropics, against
+{{claim:census.temperate}} in the temperate band — a factor of
+{{claim:census.temperate_over_deep_tropical}}. The population of candidate cities does not
+contain a balanced draw, so this is not a sampling choice we made badly; it is a property of
+where the world has chosen to measure.
+
+⚠ That census counts what is *openly published*, not what exists: several large national
+networks do not federate and are invisible to it. The counts are therefore a lower bound on the
+world's instruments and an accurate count of what an outside researcher could actually assemble
+— and the second reading is the one this argument needs.
 
 That last constraint is a finding in itself: **the regime that most needs a sensorless method is
 the regime where reference monitoring is scarcest.** We therefore report class-stratified results
