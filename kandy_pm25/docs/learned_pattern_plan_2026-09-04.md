@@ -65,10 +65,57 @@ reproduces the traffic surface bit-exactly — and it is **not wired into produc
    problem — incense, oil lamps and domestic burning are invisible to FIRMS. Declare the gap;
    do not substitute a placeholder and call it a sector.
 
-**Phase 0 gate:** if the sector-weighted surface alone closes a material part of the 0.371 → we
+**Phase 0 gate:** if the sector-weighted surface alone closes a material part of the gap we
 report that and the learned-P work starts from a higher baseline. If it does not, we have
 established that the source-mix mis-specification is not what is limiting placement — which is
 itself worth knowing before spending a month on a network.
+
+### 🔴 Phase 0 RESULT (run 2026-09-04, `scripts/phase0_sector_surface.py`)
+
+Nine cities attempted, **8 scored**, all arms on the same held-out stations.
+
+| arm | median ρ |
+|---|---:|
+| night lights | **+0.338** |
+| road centrality × emission factor (production) | +0.319 |
+| **sector-weighted composite** | +0.098 |
+| night lights + terrain solver | +0.189 |
+| sector + terrain solver | +0.080 |
+
+**Sector weighting does not help.** Median Δ against the production traffic surface is
+**−0.011**, better in 4 of 8 cities, p = 0.64. Against night lights it is −0.097. Excluding the
+one city whose burn sector falls back to the placeholder proxy, sector scores +0.110 against
+traffic's +0.331.
+
+**But the test is severely underpowered and that is the more important output.** With 8 cities
+and a between-city delta standard deviation of 0.250, the smallest improvement detectable at 80
+per cent power is **Δρ = 0.35** — larger than the entire rank correlation of most cities in the
+frame. This excludes a transformative gain from sector weighting and says nothing about a
+moderate one.
+
+🔴 **A methodological error was caught in this run and it invalidated the first version.** The
+night-lights surface is built over the *station* footprint while the traffic surface is built
+over the narrower *modelling* box, so interpolating the traffic surface at an outside station
+returned the fill value of zero — 21 of 33 stations at Chiang Mai, 7 of 24 at Medellín. The
+traffic and sector arms were partly scored on padding. All arms are now restricted to stations
+inside every proxy's footprint. Same family as gotcha #43.
+
+### What this changes for Phases 1–3
+
+1. **The benchmark for a learned pattern is night lights at ρ ≈ 0.34**, not the production
+   traffic surface and not the dispersed field at 0.274. The simplest proxy is the strongest
+   one, which is itself a result worth reporting.
+2. 🔴 **The frame is too small for the question.** If a paired test across 8 cities cannot see
+   anything below Δρ = 0.35, Phase 3 will produce another uninterpretable null on the same
+   frame. **Phase 1 must widen the frame before Phase 2 is worth starting** — more cities, or
+   many more stations per city, and the power calculation decides which.
+3. **Dispersion costs rank again**, −0.124 median and better in only 2 of 8 cities, on a wider
+   and differently selected frame than the one where this was first measured. That is now two
+   independent frames agreeing, and it strengthens the case that the solver step — not the
+   source surface — is where placement is lost.
+4. The source-mix mis-specification is **real but is not the binding constraint**, so wiring
+   `emission.compose()` into production is a correctness fix with no expected skill gain, and
+   should be described that way if it is adopted at all.
 
 ## 4. Phase 1 — registration
 
