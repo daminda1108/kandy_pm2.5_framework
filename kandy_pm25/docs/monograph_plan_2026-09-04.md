@@ -284,8 +284,8 @@ tables as much as in figures, and most of these already exist as data.
 ### Diagrams and flowcharts
 
 Also under-planned. These carry the process argument, which is a large part of what this thesis
-is actually about. **All to be drawn in matplotlib** rather than in a diagramming tool, so the
-typography matches the data figures and the whole document reads as one system.
+is actually about. **Drawn with dedicated diagramming libraries**, not hand placed in matplotlib. Tooling is
+installed and proven, see section 4b.
 
 | dia | content | why it earns its place |
 |---|---|---|
@@ -334,6 +334,48 @@ The three candidates that would have been web images are replaced:
 photograph, or an image with a recorded CC licence. Nothing else.
 
 ---
+
+## 4b. Diagram toolchain, installed and proven 2026-09-04
+
+Everything lives in `D:\ProjectCD\#writing`.
+
+```
+#writing/src/thesisviz.py       house style: palette, fonts, save helpers, both backends
+#writing/src/d*.py              one script per diagram
+#writing/thesis/diagrams/       output, gitignored, regenerated from src
+#writing/thesis/figures/        output
+#writing/thesis/chapters/       ch01..ch10.md
+#writing/build/                 reference.docx, assemble.py, build_docx.py, lint.py
+```
+
+**Two libraries, chosen by what the picture is.**
+
+| library | version | used for |
+|---|---|---|
+| **graphviz** (+ Graphviz 16.0.0 binary) | 0.21 | anything that branches or rejoins. Automatic layout solves collisions that hand placement cannot: the pipeline, the validation protocol, tier nesting, the decision tree, the regeneration chain |
+| **schemdraw** | 0.23 | linear or spatially meaningful diagrams where node position itself carries information |
+
+Both were installed and a full diagram (D5, the validation protocol) was built end to end to
+prove the chain before committing to twelve. **Three things that proof established:**
+
+🔴 **Graphviz silently loses Times New Roman.** It renders through Pango, which parses a trailing
+"Roman" as a *style* keyword and drops it, falling back to Sans without failing. `"Times-Roman"`
+and `"Times New Roman,"` (trailing comma) both load correctly; the obvious spelling does not.
+Fixed in `thesisviz.GV_FONT` with the reason recorded, because the failure is silent and would
+otherwise reappear in whichever diagram was written next.
+
+🔴 **A diagram of more than about six ranks will not sit on a page.** D5's first draft had nine
+boxes for a four step procedure. Top to bottom it came out at aspect 0.46, a full page tall and
+half a page wide; left to right at 7.76, a strip. **The fix was not a layout parameter, it was
+deleting five boxes.** The rule for the remaining eleven: if it does not fit, remove content
+before touching `ranksep`. The final D5 is aspect 1.30 with four ranks.
+
+⚠ **Captions belong in the graph label, not in a node.** A caption node needs an invisible edge
+to position it, which adds a rank and stretches the drawing. `thesisviz.gv_note()` handles it.
+
+**Palette**, in `thesisviz.C`: blue for information that is free everywhere, red for information
+that must be bought locally, light red for regional, green for held, magenta for refuted. Every
+pair is separable in greyscale by lightness, because a thesis is printed as often as it is read.
 
 ## 4. Production pipeline
 
