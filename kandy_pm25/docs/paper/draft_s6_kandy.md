@@ -117,14 +117,22 @@ independent point records exist for this city:
 
 | record | instrument | observed | model | difference |
 |---|---|---:|---:|---:|
-| NBRO Kandy, 2021 [@Nirmani2025] | undocumented | 19.6 | 19.74 | **+0.7%** |
-| NBRO Kandy, 2022 [@Nirmani2025] | undocumented | 22.7 | 22.11 | **−2.6%** |
+| NBRO Kandy, 2021 [@Nirmani2025] | undocumented | 19.6 | {{claim:nbro.model_pixel_2021}} | **+{{claim:nbro.diff_pct_2021}}%** |
+| NBRO Kandy, 2022 [@Nirmani2025] | undocumented | 22.7 | {{claim:nbro.model_pixel_2022}} | **{{claim:nbro.diff_pct_2022}}%** |
 | calibrated low-cost, 2022–24 | LCS, BAM-anchored | 19.49 | 25.01 | +28% |
 | research sensor, full record | LCS | 17.8 | — | corroborates a BAM-anchored ~18–19 [@Dhammapala2022] |
 
-The first two are the strongest external check the model has and they are genuinely
-out-of-sample: the pixel concerned sits 15.6% above the basin mean, and that lift is imposed
-physics never fitted to any Kandy station.
+The first two are the strongest external check the model has, and the reason they are
+genuinely out of sample deserves stating rather than asserting. The temporal anchor is
+calibrated to the FECT sensors, so the model's basin *mean* is not independent of Kandy
+observations; the spatial pattern is, because it is an emission proxy multiplied by a
+confinement term, both imposed and neither fitted to anything measured in this city. What the
+NBRO comparison therefore tests is the **lift** — how far the field rises from the basin mean to
+that particular cell — and the lift is {{claim:nbro.lift_pct_2021}}% in 2021 and
+{{claim:nbro.lift_pct_2022}}% in 2022. Had it been near zero the comparison would have collapsed
+into a check on the anchor and carried no spatial information at all. The station sits
+{{claim:nbro.station_offset_km}} km from the centre of the cell it falls in, so the pairing is
+not marginal.
 
 🔴 **We do not resolve the discrepancy between them, and we decline to.** Three of the four
 records sit below the model and one matches it. The three low ones are all low-cost sensors

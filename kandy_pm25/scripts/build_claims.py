@@ -725,6 +725,39 @@ def colombo_donor(c: Claims) -> None:
                "distances one pair at 285 km scores lower, so 'weakest of all 20' is wrong")
 
 
+def nbro_pixel(c: Claims) -> None:
+    """F.65, re-derived 2026-09-04 by scripts/nbro_pixel_check.py.
+
+    The paper's only external check on the model's FIELD rather than its basin mean. The
+    observed values stay cited (Nirmani et al., Table 1); everything the model contributes is
+    regenerated here. The lift is the load-bearing quantity: without it the comparison reduces
+    to a check on the anchor, which is calibrated to Kandy sensors and therefore not external.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from figdata import load  # noqa: E402
+    d = load("nbro_pixel")
+    if not d:
+        return
+
+    for y in (2021, 2022):
+        c.add(f"nbro.model_pixel_{y}", d[f"model_pixel_{y}"],
+              stat="annual mean of the shipped field at the station's cell", n=1,
+              source="decomp/nbro_pixel_check.csv", ledger="F.65")
+        c.add(f"nbro.lift_pct_{y}", d[f"lift_pct_{y}"],
+              stat="pixel annual mean over basin annual mean, as a percentage", n=1,
+              source="decomp/nbro_pixel_check.csv", ledger="F.65",
+              note="imposed physics: emission proxy times confinement, never fitted to any "
+                   "Kandy station, which is what makes the comparison out of sample")
+        c.add(f"nbro.diff_pct_{y}", d[f"diff_pct_{y}"],
+              stat="model pixel against the observed annual mean, as a percentage", n=1,
+              source="decomp/nbro_pixel_check.csv", ledger="F.65",
+              note="the observed value is EXTERNAL (Nirmani et al. Table 1) and stays cited")
+    c.add("nbro.station_offset_km", d["station_offset_km"],
+          stat="distance from the station to the centre of the cell it falls in", n=1,
+          source="decomp/nbro_pixel_check.csv", ledger="F.65",
+          note="reported so a reader can confirm the cell really contains the station")
+
+
 def kandy_application(c: Claims) -> None:
     """Everything section 7 quotes about the model's own output.
 
@@ -1014,6 +1047,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    nbro_pixel(c)
     kandy_application(c)
     confounds(c)
     blh_confound(c)
