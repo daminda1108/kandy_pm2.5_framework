@@ -30,13 +30,7 @@ loss and nothing else.
 Reported as the median across cities of the per city percentage reduction in daily root mean
 square error, never as a ratio of medians:
 
-| step | median reduction |
-|---|---:|
-| add static geography | {{claim:step.geography}} per cent |
-| add a satellite level | {{claim:step.satellite}} per cent |
-| add two local sensors | {{claim:step.bud0c_bud1}} per cent |
-| add six more sensors | {{claim:step.bud1_bud2}} per cent |
-| add a regional background | {{claim:step.bud2_bud3}} per cent |
+{{tbl:T7_1}}
 
 Three features of that table matter more than its ordering. Static geography, which is free
 everywhere on Earth, is worth about as much as the first local instrument. The second through
@@ -47,9 +41,16 @@ constituency.
 
 ## 7.3 The recommendation inverts in the tropics
 
-The pooled table is misleading if read as advice. Stratified by latitude band, the ordering
+The pooled table is misleading if read as advice, and {{tbl:T7_2}} is the finding.
+Stratified by latitude band, the ordering
 reverses in the band Kandy belongs to: local sensors buy
 {{claim:band.deep_tropical.step_bud0c_bud1}} per cent there against
 {{claim:band.deep_tropical.step_bud2_bud3}} per cent for the regional background, which is the
 opposite of the pooled result. A programme following the pooled recommendation in Colombo or
 Kampala would buy the wrong instrument first.
+
+{{tbl:T7_2}}
+
+The reversal is not a curiosity. It means the recommendation this thesis is most likely to be
+quoted for is the wrong recommendation for the city it was built for, and a reader who takes the
+pooled row without the band row will act on it.

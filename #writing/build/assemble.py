@@ -29,6 +29,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CHAPTERS = ROOT / "thesis" / "chapters"
 DIAGRAMS = ROOT / "thesis" / "diagrams"
+TABLES = ROOT / "thesis" / "tables"
 FIGURES = ROOT / "thesis" / "figures"
 OUT = ROOT / "build" / "thesis.md"
 
@@ -121,6 +122,31 @@ def resolve_visuals(text: str) -> tuple[str, dict, list[str]]:
             chapter = int(m.group(1))
 
         placed = VIS_TOKEN.fullmatch(line.strip())
+
+        # A table token alone on a line pulls in the generated fragment from thesis/tables/.
+        # Same convention as figures, and for the same reason: the number in "Table 5.1" is
+        # assigned here, so inserting a table cannot leave a stale reference elsewhere.
+        if placed and placed.group(1) == "tbl":
+            tag = placed.group(2)
+            lab = label_for("tbl", tag)
+            frag = TABLES / f"{tag}.md"
+            if not frag.exists():
+                cand = sorted(TABLES.glob(f"{tag}*.md"))
+                frag = cand[0] if cand else frag
+            if not frag.exists():
+                missing.append(f"tbl:{tag}")
+                out_lines.append(lab)
+                continue
+            body = io.open(frag, encoding="utf-8").read().strip().splitlines()
+            # the generated fragment starts "Table: <title>"; pandoc wants the caption to
+            # carry the number, and the number is only known here
+            if body and body[0].startswith("Table:"):
+                body[0] = f"Table: {lab}. {body[0][len('Table:'):].strip()}"
+            out_lines.append("")
+            out_lines.extend(body)
+            out_lines.append("")
+            continue
+
         if placed and placed.group(1) in ("fig", "dia"):
             kind, tag = placed.group(1), placed.group(2)
             lab = label_for(kind, tag)
@@ -167,9 +193,13 @@ def main() -> int:
         parts.append(t.rstrip() + "\n")
     text = "\n\n".join(parts)
 
+    # ORDER MATTERS. Visuals first: a table fragment is pulled in whole and carries its own
+    # {{claim:}} tokens, so resolving claims before insertion leaves those tokens untouched
+    # and the build fails on them. Figure captions may carry tokens for the same reason.
+    text, assigned, vis_missing = resolve_visuals(text)
+    all_missing += vis_missing
     text, missing = resolve_claims(text, claims)
     all_missing += missing
-    text, assigned, _ = resolve_visuals(text)
 
     leftover = re.findall(r"\{\{[^}]+\}\}", text)
     if all_missing or leftover:

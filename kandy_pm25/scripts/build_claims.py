@@ -725,6 +725,78 @@ def colombo_donor(c: Claims) -> None:
                "distances one pair at 285 km scores lower, so 'weakest of all 20' is wrong")
 
 
+def learned_pattern(c: Claims) -> None:
+    """Paper 2 / thesis Chapter 5, from the pre-registered run at osf.io/2jyfg (2026-09-04).
+
+    Registered BEFORE the model was written: the benchmark, the detection limit, and the bar.
+    The result is a null, and it is the first of six spatial nulls in this programme that
+    carries a stated detection limit, which is what makes it a bounded claim rather than an
+    absence of evidence.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from figdata import load  # noqa: E402
+
+    p1, p2 = load("phase1_frame"), load("phase2_learned")
+    if p1:
+        c.add("phase1.best_predictor", p1["best_predictor"],
+              stat="best single globally available predictor by median per-city rho",
+              n=p1["cities"], source="phase1_predictor_ranking.csv", ledger="paper 2",
+              note="built-up land-cover fraction at 2.4 km, a buffer COARSER than the 1 km "
+                   "cell the model reports on")
+        c.add("phase1.best_rho", p1["best_median_rho"],
+              stat="median per-city Spearman rho", n=p1["cities"],
+              source="phase1_predictor_ranking.csv", ledger="paper 2",
+              note="the benchmark a learned pattern has to beat")
+        c.add("phase1.cities", p1["cities"], stat="cities with at least 8 stations",
+              n=p1["cities"], source="lur_predictors.csv", ledger="paper 2")
+        c.add("phase1.stations", p1["stations"], stat="stations in the frame", n=1,
+              source="lur_predictors.csv", ledger="paper 2")
+        c.add("phase1.min_detectable", p1["min_detectable_delta"],
+              stat="smallest paired improvement detectable at 80 per cent power",
+              n=p1["paired_n"], source="phase1_frame_and_power.py", ledger="paper 2",
+              note="simulated on this frame BEFORE the model was built")
+    if p2:
+        c.add("phase2.bar", p2["bar"], stat="registered bar: benchmark plus detection limit",
+              n=1, source="prereg_learned_pattern_2026-09-04.md", ledger="OSF 2jyfg",
+              note="a result below this is reported as undetectable at this power, NOT as a "
+                   "modest success")
+        c.add("phase2.rho_learned", p2["rho_learned"],
+              stat="median per-city rho, best learner, leave-one-city-out", n=p2["cities"],
+              source="phase2_learned_pattern.csv", ledger="OSF 2jyfg")
+        c.add("phase2.delta", p2["delta"],
+              stat="median paired difference against the benchmark", n=p2["cities"],
+              source="phase2_learned_pattern.csv", ledger="OSF 2jyfg")
+        c.add("phase2.better_in", p2["better_in"],
+              stat="cities where the learned pattern beats the benchmark", n=p2["cities"],
+              source="phase2_learned_pattern.csv", ledger="OSF 2jyfg")
+        c.add("phase2.p_value", p2["p_value"], stat="Wilcoxon signed-rank on paired deltas",
+              n=p2["cities"], source="phase2_learned_pattern.csv", ledger="OSF 2jyfg")
+        for k in ("rho_rf", "rho_mlp", "rho_ridge", "rho_baseline"):
+            c.add(f"phase2.{k}", p2[k], stat="median per-city rho", n=p2["cities"],
+                  source="phase2_learned_pattern.csv", ledger="OSF 2jyfg")
+
+    g = load("phase2_gauge")
+    if g:
+        c.add("phase2.gauge_drift", g["worst_pattern_drift"],
+              stat="worst |mean(P) - 1| across seven degenerate cases", n=g["cases"],
+              source="phase2_gauge_check.py", ledger="OSF 2jyfg, L3",
+              note="includes a saturated pattern and an overflow-range logit field. A learned "
+                   "pattern can misplace material; it cannot create it")
+
+    s0 = load("phase0_sector")
+    if s0:
+        c.add("phase0.rho_sector", s0["rho_sector"],
+              stat="median per-city rho, sector-weighted emission surface", n=s0["cities"],
+              source="phase0_sector_surface.csv", ledger="paper 2")
+        c.add("phase0.rho_traffic", s0["rho_traffic"],
+              stat="median per-city rho, production traffic surface", n=s0["cities"],
+              source="phase0_sector_surface.csv", ledger="paper 2")
+        c.add("phase0.dispersion_cost", s0["dispersion_cost_delta"],
+              stat="median change in rho from applying the dispersion solver", n=s0["cities"],
+              source="phase0_sector_surface.csv", ledger="paper 2 / F.90",
+              note="negative: the step meant to place the increment removes rank")
+
+
 def field_diagnostics(c: Claims) -> None:
     """§2.5, §2.6 and §5.7, from scripts/kandy_field_diagnostics.py (2026-09-04).
 
@@ -1160,6 +1232,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    learned_pattern(c)
     field_diagnostics(c)
     nbro_pixel(c)
     kandy_application(c)
