@@ -300,6 +300,75 @@ are removed.
 All three are results. The third is the most likely and is still worth the work, because it
 converts "we could not find it" into "an effect larger than Δρ = *x* is not there".
 
+## 7b. 🔴 PHASE 2 RESULT — the bar is not cleared
+
+Run 2026-09-04, `scripts/phase2_learned_pattern.py` + `phase2_gauge_check.py`.
+Registered at [osf.io/2jyfg](https://osf.io/2jyfg/) **before the model was written**.
+
+| learner | median ρ | positive in |
+|---|---:|---:|
+| random forest | **+0.286** | 37/46 |
+| MLP | +0.236 | 36/46 |
+| ridge | +0.221 | 38/46 |
+| **benchmark** (built-up land cover, 2.4 km) | **+0.309** | 35/46 |
+
+**The learned pattern is indistinguishable from a single predictor.** Median paired delta
+**+0.022**, better in **25 of 46** cities, **p = 0.94**.
+
+⚠ **The two summaries disagree in sign and both are reported.** The median of the paired
+differences is +0.022; the difference of the medians is −0.023. Medians are not linear, so this
+is not a contradiction, but quoting either alone would misrepresent the result. The defensible
+statement is that there is **no detectable difference**, which both agree on.
+
+### The registered verdict
+
+| | prediction | outcome |
+|---|---|---|
+| **L1** | does **not** reach ρ ≥ 0.44 | 🟢 **HELD** — achieved 0.286 |
+| **L2** | beats the shipped dispersed field (0.274) | 🟢 **HELD** — 0.286 > 0.274 |
+| **L3** | conservation holds to floating point | 🟢 **HELD** — worst drift 3.3e-16 |
+| **L4** | skill lower in the deep tropics than temperate | 🟢 **HELD** — 0.236 vs 0.457 |
+| **L5** | coarse-radius inputs dominate | 🟡 held by the letter only — 52.1 % vs 47.9 % |
+
+Per the registration: the gain over the benchmark is **+0.022 against a detection limit of
+0.130**, so this is reported as **undetectable at this power**, not as a modest success.
+
+### What is worth keeping
+
+🔴 **The transfer problem is now measured, not inferred.** Skill by band: temperate **+0.457**,
+deep tropical +0.236, subtropical +0.204, tropical +0.201. The learned pattern works roughly
+**twice as well in temperate cities as anywhere else** — and temperate is where the
+reference-dense cities are (65 clusters against 6 deep-tropical). A method learned from the
+world's monitored cities and applied to its unmonitored ones inherits exactly this gap, and this
+is the first direct measurement of it in the programme.
+
+🟢 **The gauge is exact and survives abuse.** Worst |mean(P) − 1| is 3.3e-16 across seven cases
+including a saturated pattern where one cell takes 4096× the mean, an overflow-range logit field
+(sd 200), and a dead constant field. The field's spatial mean returns the anchor to 7e-15, and a
+ventilated hour renders exactly flat. **A learned pattern can misplace material; it cannot
+create it.** That property is what would make this safe to ship if it ever did work.
+
+🟢 **NDVI at 2.4 km is the single most important feature** (importance 0.086, more than double
+the next), corroborating Phase 1 from inside the model. Absence of vegetation carries more
+usable spatial information than any presence-of-source proxy.
+
+⚠ **L5 is technically held and substantively uninformative.** Coarse radii take 52.1 % of
+radius-tagged importance against 47.9 % fine — a ratio of 1.09. It does not refute the
+registered direction and it does not support it either, and it should be reported that way
+rather than as confirmation.
+
+### The conclusion this licenses
+
+This is the **sixth null on within-city spatial pattern in this programme, and the first with a
+detection limit stated in advance**. It converts "we could not find it" into a bounded claim:
+
+> On 46 cities and 630 stations, a learned within-city pattern does not beat the best single
+> globally available predictor by more than 0.13 in rank correlation, and the best single
+> predictor reaches 0.309.
+
+The model paper's §5 position — that the spatial rung is a **declared design assumption** — is
+unchanged and now rests on a test that could have overturned it. `Bud4` stays declared.
+
 ## 8. Sequencing
 
 | phase | work | gate |
