@@ -9,3 +9,6 @@ build/*.docx
 build/reference.docx
 __pycache__/
 *.pyc
+build/thesis.md
+build/thesis.docx
+build/_pandoc_default.docx
