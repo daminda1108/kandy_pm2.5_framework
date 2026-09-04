@@ -667,6 +667,64 @@ def domain_and_resolution(c: Claims) -> None:
               source="derived from s1.rank_* claims", ledger="F.89")
 
 
+def colombo_donor(c: Claims) -> None:
+    """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
+
+    Three numbers were quoted from a test whose output was never written to a file. Re-running
+    it reproduced one exactly and corrected two. The conclusion is unchanged and better founded:
+    Colombo does not track Kandy well enough to serve as its regional background.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from figdata import load  # noqa: E402
+    d = load("colombo_donor")
+    if not d:
+        return
+
+    c.add("donor.colombo_km", d["d_km"], stat="great-circle, city centre to donor", n=1,
+          source="colombo_donor_test.csv", ledger="F.63",
+          note="CITY centre, the convention every panel pair uses. The two FECT sensors sit at "
+               "91.7 and 96.4 km; averaging their positions would redefine the statistic")
+    c.add("donor.colombo_r", d["r_daily"], stat="Pearson r, daily means on common days",
+          n=d["common_days"], source="colombo_donor_test.csv", ledger="F.63",
+          note="reproduces the recorded value exactly")
+    c.add("donor.colombo_r_rank", d["r_rank"], stat="Spearman rho, daily",
+          n=d["common_days"], source="colombo_donor_test.csv", ledger="F.63",
+          note="reported so a low Pearson cannot be dismissed as a tail artefact; it is not one")
+    c.add("donor.colombo_r_disattenuated", d["r_disattenuated"],
+          stat="Pearson r divided by the square root of Kandy's between-sensor reliability",
+          n=d["common_days"], source="colombo_donor_test.csv", ledger="F.63",
+          note="the GENEROUS reading: Kandy's series is two low-cost sensors and the panel's "
+               "targets are reference networks, so the raw r is attenuated. The conclusion has "
+               "to survive this number, and it does")
+    c.add("donor.kandy_sensor_reliability", d["sensor_reliability"],
+          stat="between-sensor Pearson r on common days", n=d["common_days"],
+          source="colombo_donor_test.csv", ledger="F.63",
+          note="Kandy's own ceiling: no donor correlation can exceed what its sensors achieve "
+               "against each other")
+    c.add("donor.benchmark_median", d["benchmark_median"],
+          stat="median daily target-donor r across scored panel pairs", n=d["benchmark_pairs"],
+          source="colombo_donor_test.csv", ledger="F.63",
+          note="the retired figure was 0.923, which is not a median of anything -- it is the "
+               "single NEAREST pair's value. See donor.benchmark_nearest_r")
+    c.add("donor.benchmark_median_matched", d["benchmark_median_distance_matched"],
+          stat=f"median r among pairs within +/-{d['benchmark_band_km']:.0f} km of Kandy's "
+               "separation", n=d["benchmark_band_pairs"],
+          source="colombo_donor_test.csv", ledger="F.63",
+          note="the like-for-like comparison, since donor skill decays with distance")
+    c.add("donor.benchmark_nearest_r", d["nearest_pair_r"],
+          stat="r of the single panel pair closest in separation to Kandy-Colombo", n=1,
+          source="colombo_donor_test.csv", ledger="F.63",
+          note=f"at {d['nearest_pair_km']} km. This is what the retired 0.923 actually was")
+    c.add("donor.benchmark_band_pairs", d["benchmark_band_pairs"],
+          stat=f"panel pairs within +/-{d['benchmark_band_km']:.0f} km of Kandy's separation",
+          n=d["benchmark_pairs"], source="colombo_donor_test.csv", ledger="F.63")
+    c.add("donor.colombo_rank_in_band", d["pairs_below_kandy_in_band"],
+          stat="panel pairs in the distance band scoring BELOW Kandy-Colombo",
+          n=d["benchmark_band_pairs"], source="colombo_donor_test.csv", ledger="F.63",
+          note="zero: Kandy-Colombo is the weakest pair at comparable separation. Across all "
+               "distances one pair at 285 km scores lower, so 'weakest of all 20' is wrong")
+
+
 def kandy_application(c: Claims) -> None:
     """Everything section 7 quotes about the model's own output.
 
@@ -955,6 +1013,7 @@ def build() -> dict:
     partition(c)
     kandy_field(c)
     domain_and_resolution(c)
+    colombo_donor(c)
     kandy_application(c)
     confounds(c)
     blh_confound(c)

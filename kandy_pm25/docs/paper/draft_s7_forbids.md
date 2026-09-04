@@ -46,10 +46,24 @@ to peel off and transfer.
 transferred diurnal cycle is *worse* than assuming no cycle at all. It transfers within the deep
 tropics — the demonstration city's own regime — and nowhere else.
 
-**A nearby coastal city is not a usable background donor.** At 93 km, correlation is 0.604
-against a distance-matched benchmark of 0.923 — the weakest of twenty donor pairs tested. The
-central highlands decouple the coast from the interior, and no free substitute for a regional
-station exists.
+**A nearby coastal city is not a usable background donor.** Sri Lanka's only reference-grade
+record inside the admissible 30–300 km window is in Colombo, {{claim:donor.colombo_km}} km away,
+so if it tracked Kandy the largest rung on the ladder would already be free. It does not. The
+daily correlation is {{claim:donor.colombo_r}} ({{claim:donor.colombo_r_rank}} by rank, so this
+is not a tail artefact), against a benchmark of {{claim:donor.benchmark_median}} across the
+{{claim:donor.pairs}} panel donor pairs and {{claim:donor.benchmark_median_matched}} among the
+pairs at comparable separation. It is the weakest pair in its distance band —
+{{claim:donor.colombo_rank_in_band}} of the {{claim:donor.benchmark_band_pairs}} matched pairs
+score below it.
+
+⚠ Kandy's series is two low-cost sensors while the panel's targets are mostly reference
+networks, so its correlation is attenuated by measurement error the comparison pairs do not
+carry. Kandy's own between-sensor correlation is
+{{claim:donor.kandy_sensor_reliability}}, which is the ceiling any donor could reach; correcting
+for it lifts Colombo to {{claim:donor.colombo_r_disattenuated}}. Even on that generous reading
+the pair sits below the distance-matched benchmark, which is why we state the conclusion at all.
+The central highlands decouple the coast from the interior, and no free substitute for a
+regional station exists.
 
 ## 7.3 Corrections to our own prior claims
 
