@@ -128,6 +128,51 @@ core) reaching ρ 0.67 on a 30× traffic gradient locates the spatial signal in 
 pattern, not relief**, where a valley confounds the two. Temporal and level are the validated
 claims; the partition is identified annually only (see above).
 
+## 2b. The spatial rung, tested under pre-registration (2026-09-04, OSF `2jyfg`)
+
+§5 of the manuscript declares the spatial rung a **design assumption** rather than a validated
+one. That assumption was tested. It held.
+
+| | value |
+|---|---:|
+| best single globally available predictor (built-up land cover, 2.4 km) | **ρ = 0.309** |
+| minimum detectable paired improvement, 80 % power, 46 cities / 630 stations | **0.130** |
+| registered bar | **ρ ≥ 0.44** |
+| learned pattern achieved (random forest; MLP 0.236, ridge 0.221) | **0.286** |
+| median paired delta against the benchmark | **+0.022** (25/46, *p* = 0.94) |
+
+**L1 held — the bar is not cleared**, and per the registration this is reported as *undetectable
+at this power*, not as a modest success. L2 (beats the dispersed field, 0.274), L3 (conservation
+to 3.3e-16) and L4 (lower outside temperate) held; L5 held by the letter only and is reported as
+uninformative.
+
+**This is the sixth null on within-city spatial pattern and the first with a detection limit
+stated in advance.** The previous five could only have detected effects of 0.65–0.96. The claim
+it licenses is bounded: *on 46 cities and 630 stations, a learned within-city pattern does not
+beat the best single globally available predictor by more than 0.13 in rank correlation.*
+
+**Two results survive the null.**
+
+🟢 **Conservation is exact and survives abuse.** `P = N·softmax` over cells holds to 3.3e-16
+across saturated, overflow-range and dead-constant logit fields; the field's spatial mean returns
+the anchor to 7e-15 and a ventilated hour renders exactly flat. A learned pattern can misplace
+material; it cannot create it. We argue in the note that this — not the learning — is what a
+model of this kind should be judged on.
+
+🟢 **Skill rises with buffer radius and peaks at 2.4 km**, coarser than the 1 km reporting cell.
+Read with the sub-grid result (within-cell 1.218 > between-cell 1.049), the usable band is
+bracketed from both sides.
+
+⚠ **Withdrawn:** "night lights is the best spatial proxy at ρ ≈ 0.34" was an eight-city figure;
+on 46 cities night lights reaches 0.197. ⚠ **Not established:** the band difference is real
+(temperate +0.457 vs +0.225, *p* = 0.006) but its mechanism is not, and the de-confounding test
+was not pre-registered. ⚠ **No engineered emission surface beats a single free raster** — not
+congestion-weighted road centrality, not a sector-weighted composite, not one carrying OSM
+industrial land use (which is a real predictor, and rescues Yichang where the traffic surface
+scores −0.091, but does not win overall).
+
+---
+
 ## 3. Epistemic status (what each claim can bear)
 
 - **Validated by transfer:** seasonal & diurnal structure (held-out networks, 10 cities).
