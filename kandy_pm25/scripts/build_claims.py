@@ -610,6 +610,168 @@ def lur_extra(c: Claims) -> None:
           ledger="F.61", note="the draft carried 636; the scored file says otherwise")
 
 
+def kandy_application(c: Claims) -> None:
+    """Everything section 7 quotes about the model's own output.
+
+    Numbers here come from the figure scripts themselves, via `figdata.emit`, or from the JSON
+    and CSV artefacts those scripts read. The figure and the sentence beside it therefore
+    resolve to one value, and the build breaks if they ever stop agreeing. Nothing in this
+    group is typed from a console log.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from figdata import load  # noqa: E402
+
+    # ── the field itself ──────────────────────────────────────────────────────────────────
+    if (d := load("F_field")):
+        c.add("kandy.background_annual", d["background_annual"], stat=f"annual mean of B, {d['year']}",
+              n=8760, source="decomp/B_background_hourly_2023_v2.parquet", ledger="F.43",
+              note="the POST-CAP background; the pre-cap file gives 15.3 and the retired ~25% split")
+        c.add("kandy.contrast_maxmin", d["annual_contrast_maxmin"],
+              stat="max/min of the annual-mean field", n=256,
+              source="decomp/kandy_decomp_predictions_2023_additive_v3.parquet",
+              ledger="production", note="the MODEL's contrast; its amplitude is section 6's subject")
+
+    if (d := load("F_spatiotemporal")):
+        for k in ("djf", "mam", "jja", "son"):
+            c.add(f"kandy.season_{k}", d[f"season_{k.upper()}"] if f"season_{k.upper()}" in d
+                  else d[f"season_{k}"], stat="basin mean over the season, 2023", n=1,
+                  source="figdata/F_spatiotemporal.json", ledger="production")
+        for k in ("night", "morning", "midday", "evening"):
+            c.add(f"kandy.phase_{k}", d[f"phase_{k}"],
+                  stat="basin mean over the diurnal window, 2023", n=1,
+                  source="figdata/F_spatiotemporal.json", ledger="production")
+        c.add("kandy.season_swing", d["season_swing"], stat="max/min of the seasonal means", n=4,
+              source="figdata/F_spatiotemporal.json", ledger="production")
+        c.add("kandy.phase_swing", d["phase_swing"], stat="max/min of the diurnal means", n=4,
+              source="figdata/F_spatiotemporal.json", ledger="production")
+        c.add("kandy.night_over_midday", d["night_over_midday"], stat="ratio of window means",
+              n=2, source="figdata/F_spatiotemporal.json", ledger="F.38 / gotcha #54",
+              note="deep night sits ABOVE the midday trough; the older 'night is the minimum' "
+                   "wording was wrong and made a correct behaviour look like a defect")
+
+    # ── temporal cycles, IN SAMPLE by construction ────────────────────────────────────────
+    if (d := load("F_cycles")):
+        c.add("kandy.cycles_seasonal_r", d["seasonal_r"], stat="Pearson r, monthly means",
+              n=12, source="figdata/F_cycles.json", ledger="gotcha #68",
+              note="IN SAMPLE: the anchor is sharpened to these sensors, so this measures the "
+                   "calibration and not skill. Never difference it against an out-of-sample r.")
+        c.add("kandy.cycles_diurnal_r", d["diurnal_r"], stat="Pearson r, hour-of-day means",
+              n=24, source="figdata/F_cycles.json", ledger="gotcha #68",
+              note="IN SAMPLE, as above")
+
+    # ── the December 2022 episode ─────────────────────────────────────────────────────────
+    if (d := load("F_episode")):
+        c.add("kandy.episode_mean", d["mean_ug"], stat="basin mean over the episode",
+              n=d["hours"], source="figdata/F_episode.json", ledger="production")
+        c.add("kandy.episode_peak", d["peak_ug"], stat="max hourly basin mean",
+              n=d["hours"], source="figdata/F_episode.json", ledger="production")
+
+    # ── interval calibration: WIDTH against CENTRING ──────────────────────────────────────
+    p = DEC / "kandy_interval_coverage.json"
+    if p.exists():
+        d = json.loads(p.read_text(encoding="utf-8"))
+        cen = d["centring"]
+        c.add("kandy.cov90", round(float(d["pooled_coverage"]) * 100, 1),
+              stat="pooled coverage of the nominal 90% interval", n=int(d.get("n", 0)) or None,
+              source="decomp/kandy_interval_coverage.json", ledger="F.25 / gotcha #75",
+              note="a ONE-SIDED miss, not a width failure -- see the re-centred value")
+        c.add("kandy.miss_below", round(float(cen["miss_below"]) * 100, 1),
+              stat="fraction of hours below the lower bound", n=int(d.get("n", 0)) or None,
+              source="decomp/kandy_interval_coverage.json", ledger="F.25")
+        c.add("kandy.miss_above", round(float(cen["miss_above"]) * 100, 1),
+              stat="fraction of hours above the upper bound", n=int(d.get("n", 0)) or None,
+              source="decomp/kandy_interval_coverage.json", ledger="F.25")
+        c.add("kandy.median_offset", round(float(cen["median_offset_ug"]), 2),
+              stat="median model-minus-sensor offset", n=int(d.get("n", 0)) or None,
+              source="decomp/kandy_interval_coverage.json", ledger="F.25")
+        c.add("kandy.cov90_recentred", round(float(cen["coverage_offset_removed"]) * 100, 1),
+              stat="coverage after removing each sensor's own median offset, SAME width",
+              n=int(d.get("n", 0)) or None, source="decomp/kandy_interval_coverage.json",
+              ledger="F.25 / gotcha #75",
+              note="separates centring from width: the width was right, the field is an areal "
+                   "mean and the sensors are points")
+
+    # ── the cross-city scorecard ──────────────────────────────────────────────────────────
+    p = REPO / "results/figures/multicity/validation_scorecard.csv"
+    if p.exists():
+        sc = pd.read_csv(p)
+        col = lambda *names: next((n for n in names if n in sc.columns), None)
+        cs, cd = col("seasonal", "seasonal_r"), col("diurnal", "diurnal_r")
+        csp, clv = col("spatial", "spatial_rho"), col("level", "level_bias_pct")
+        if cs:
+            c.add("scorecard.cities", len(sc), stat="count", n=len(sc),
+                  source="multicity/validation_scorecard.csv", ledger="F.9")
+            c.add("scorecard.seasonal_r_lo", round(float(sc[cs].min()), 3), stat="min across cities",
+                  n=len(sc), source="multicity/validation_scorecard.csv", ledger="F.9")
+            c.add("scorecard.seasonal_r_hi", round(float(sc[cs].max()), 3), stat="max across cities",
+                  n=len(sc), source="multicity/validation_scorecard.csv", ledger="F.9")
+        if cd:
+            c.add("scorecard.diurnal_r_lo", round(float(sc[cd].min()), 3), stat="min across cities",
+                  n=len(sc), source="multicity/validation_scorecard.csv", ledger="F.55",
+                  note="the diurnal shape transfers in the deep tropics and NOT elsewhere; the "
+                       "minimum here is the evidence for that, not a coding fault")
+            c.add("scorecard.diurnal_r_hi", round(float(sc[cd].max()), 3), stat="max across cities",
+                  n=len(sc), source="multicity/validation_scorecard.csv", ledger="F.55")
+        if csp:
+            est = sc[csp].dropna()
+            c.add("scorecard.spatial_estimable", len(est),
+                  stat="cities with enough withheld stations to estimate a rank", n=len(sc),
+                  source="multicity/validation_scorecard.csv", ledger="gotcha #69",
+                  note="the rest are NaN, which is an uncomputed metric and NOT a measured null")
+            c.add("scorecard.spatial_rho_hi", round(float(est.max()), 3), stat="max across cities",
+                  n=len(est), source="multicity/validation_scorecard.csv", ledger="F.56")
+            c.add("scorecard.spatial_rho_median", round(float(est.median()), 3),
+                  stat="median across cities with an estimable rank", n=len(est),
+                  source="multicity/validation_scorecard.csv", ledger="F.56")
+            k = sc[sc.city.str.contains("Kathmandu", case=False, na=False)]
+            if len(k):
+                c.add("scorecard.kathmandu_spatial_rho", round(float(k[csp].iloc[0]), 3),
+                      stat="Spearman rho, withheld stations", n=int(k["n"].iloc[0]),
+                      source="multicity/validation_scorecard.csv", ledger="F.56",
+                      note="the canonical value for this city. The figure script's own scoring "
+                           "of a slightly different station set gives 0.428; one paper reports "
+                           "one rank per city, and this is the panel-consistent one")
+        if clv:
+            c.add("scorecard.level_bias_median", round(float(sc[clv].median()), 1),
+                  stat="median across cities", n=len(sc),
+                  source="multicity/validation_scorecard.csv", ledger="F.9")
+            c.add("scorecard.level_bias_hi", round(float(sc[clv].max()), 1), stat="max across cities",
+                  n=len(sc), source="multicity/validation_scorecard.csv", ledger="F.9")
+
+    # ── Kathmandu, the out-of-sample application of the same construction ─────────────────
+    if (d := load("F8_kathmandu")):
+        c.add("ktm.stations", d["stations"], stat="count", n=d["stations"],
+              source="figdata/F8_kathmandu.json", ledger="F.9")
+        c.add("ktm.scored_stations", d["scored_stations"], stat="count of WITHHELD stations",
+              n=d["stations"], source="figdata/F8_kathmandu.json", ledger="F.9",
+              note="two stations given, the rest withheld -- out of sample, unlike the Kandy cycles")
+        c.add("ktm.seasonal_r", d["seasonal_r"], stat="Pearson r, monthly means", n=12,
+              source="figdata/F8_kathmandu.json", ledger="F.9")
+        c.add("ktm.diurnal_r", d["diurnal_r"], stat="Pearson r, hour-of-day means", n=24,
+              source="figdata/F8_kathmandu.json", ledger="F.9")
+        # NOT the spatial rank. The figure's own scoring gives 0.428 over 40 stations while the
+        # canonical panel scorecard gives 0.392 over 39, because the two use different station
+        # sets. Publishing both would put two ranks for one city in one paper, so the rank is
+        # sourced from the scorecard alone (below) and the figure carries none on its face.
+        c.add("ktm.level_bias_pct", d["level_bias_pct"], stat="percentage level bias",
+              n=d["hours"], source="figdata/F8_kathmandu.json", ledger="F.9")
+
+    # ── what the spatial nulls could have detected ────────────────────────────────────────
+    p = REPO / "results/figures/multicity/reviewer_response_stats.json"
+    if p.exists():
+        d = json.loads(p.read_text(encoding="utf-8"))
+        rows = d.get("embedding_power") or d.get("rows") or []
+        if rows:
+            mdr = [float(r["min_detectable_r"]) for r in rows]
+            c.add("null.min_detectable_lo", round(min(mdr), 2),
+                  stat="smallest detectable partial correlation at 80% power", n=len(rows),
+                  source="multicity/reviewer_response_stats.json", ledger="F.59",
+                  note="a null at this sample size is a statement about power, not about nature")
+            c.add("null.min_detectable_hi", round(max(mdr), 2),
+                  stat="largest detectable partial correlation at 80% power", n=len(rows),
+                  source="multicity/reviewer_response_stats.json", ledger="F.59")
+
+
 def confounds(c: Claims) -> None:
     """F.51-F.53. The three confounds the registered gates caught, computed from the scored file."""
     d = pd.read_csv(MOD / "ladder_revalidated.csv")
@@ -735,6 +897,7 @@ def build() -> dict:
     maiac_ladder(c)
     partition(c)
     kandy_field(c)
+    kandy_application(c)
     confounds(c)
     blh_confound(c)
     dilution(c)

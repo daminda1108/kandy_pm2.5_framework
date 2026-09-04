@@ -33,9 +33,19 @@ Support is held fixed; only location varies.
 | observed | 110 | 4 | **{{claim:spatial.paired_obs_ratio}}×** |
 | model, as shipped | — | — | **{{claim:spatial.paired_model_ratio}}×** |
 
-{{fig:paired}}a shows the pair. The model returns exactly unity because it is being asked about one pixel twice. This is the
-cleanest available statement of the limit: **the model's entire dynamic range across Kandy is
-smaller than the difference between two points 300 m apart in one garden.**
+This is the paper's most important figure and the one it would be most reasonable to disbelieve,
+so it is worth being explicit about what each of its three panels is for before reading any of
+them. {{fig:paired}}a puts the observed contrast between those two points beside the model's,
+first as shipped and then after re-running the physics ten times finer in area; the model
+returns exactly unity as shipped, for the unavoidable reason that it is being asked about one
+pixel twice. Panel (b) generalises that from a single refinement to a sweep across resolutions,
+which is what converts an anecdote about one pair of sites into a test of the hypothesis that
+resolution is the problem. Panel (c) then follows the contrast through each stage of the model
+build, and it is the panel that keeps the finding from being simply bad news: the contrast is
+not destroyed by the construction, it is *moved*. Taken together the three panels support one
+statement, which is the cleanest available version of the limit — **the model's entire dynamic
+range across Kandy is smaller than the difference between two points 300 m apart in one
+garden.**
 
 ⚠ Three limitations, stated before they are asked for. The observed values are PM10 and the
 model is PM2.5, so only *ratios* are meaningful. Of the survey's {{claim:spatial.transect_sites}}
@@ -101,6 +111,20 @@ earlier work. The undispersed emission surface achieves ρ = {{claim:r2.rho_emis
 on fields already through this machinery. It is a property of the *construction*, not a bound on
 what the emission proxy can support.
 
+The same limit shows up in three model classes that share almost nothing with each other, which
+is the strongest form this kind of argument can take: a limit that only one architecture sees is
+usually a property of that architecture. {{fig:bound}} puts the three together. A rigid physical
+ansatz, fitted jointly across cities, drives two of its six parameters hard onto their bounds —
+the data do not contain enough information to identify them, so they end up declared rather than
+estimated, which is the identifiability property P4 doing its work in public. A flexible neural
+spatial model, given progressively more structure, improves and then stops, in the same place
+and well short of what its capacity would allow. And a version of that model fine-tuned on the
+two Kandy sensors reproduces those two sensors almost exactly while degrading with distance from
+them: that is the signature of a model learning sensor identity rather than basin physics, and
+it is why a good score at a fitted location is not evidence about anywhere else. A structural
+constraint, a capacity plateau and a memorisation signature are three different instruments
+reading the same wall.
+
 ## 5.5 Five nulls that are not five confirmations
 
 The spatial limit has been probed five times in this programme — a learned-pattern test, a
@@ -118,8 +142,20 @@ attribution splits three ways and only the residual is an information limit:
 - **An information limit.** What remains after the first two, and smaller than the raw null
   count suggests.
 
-We report this because the alternative — presenting five nulls as five confirmations — would
-have been the stronger-sounding and less defensible claim.
+There is a second reason not to read these nulls as confirmations, and it is arithmetic rather
+than conceptual. A null result is a statement about the power of a test before it is a statement
+about nature, and none of the five reported one. {{fig:nullpower}} supplies the missing quantity
+for the embedding test: for each city it shows the measured partial correlation against the
+smallest effect that city's sample size could have detected at 80 per cent power. The detectable
+threshold runs from {{claim:null.min_detectable_lo}} to {{claim:null.min_detectable_hi}}, which
+is a severe limit — these tests could only ever have found very large residual structure. What
+they establish, therefore, is that no *large* residual spatial signal is present in these
+predictors. They establish nothing whatever about moderate structure, and a moderate residual
+signal is exactly what a denser network would be bought to find. Reporting the null without this
+figure would have converted a limit of the experiment into a property of the atmosphere.
+
+We report all of this because the alternative — presenting five nulls as five confirmations —
+would have been the stronger-sounding and less defensible claim.
 
 ## 5.6 What survives: the distribution, not the location
 
@@ -135,10 +171,16 @@ preserved exactly (drift {{claim:s2.cell_mean_drift}} µg m⁻³, against a gate
 | **between** cells, midday | {{claim:s2.between_pixel_p90p10}}× |
 | **within** a typical cell | **{{claim:s2.within_pixel_p90p10}}×** |
 
-{{fig:withinpixel}}a shows the comparison. **The spread inside a typical pixel exceeds the spread across the map.** Most of the city's
-midday spatial variation is sub-grid — which is simultaneously the explanation for §5.2, the
-reason a pointwise product is not available, and a quantity no shipped field of this kind
-currently reports.
+Those two numbers are the section's conclusion in its most compact form, and {{fig:withinpixel}}
+sets them against each other for a reason that the table alone does not make obvious. Panel (a)
+compares the spread *within* one typical cell to the spread *between* all the cells of the map —
+two quantities that are almost never plotted on the same axis, because a gridded product
+normally reports only the second and behaves as though the first were negligible. Here it is
+larger. **The spread inside a typical pixel exceeds the spread across the entire map.** Most of
+the city's midday spatial variation is therefore sub-grid, which is simultaneously the
+explanation for §5.2, the reason a pointwise product is not on offer, and a quantity that no
+shipped field of this kind currently reports. Panel (b) is the attempt to validate that
+distribution against observations, and it is included precisely because it does not work.
 
 ⚠ The between-pixel figure is midday-only and is not the annual {{claim:spatial.model_spread}}×
 quoted in §5.1; midday is ventilated and therefore flatter. ⚠ We tested whether observed sites

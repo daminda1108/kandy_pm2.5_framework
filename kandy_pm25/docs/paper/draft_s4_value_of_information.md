@@ -26,7 +26,15 @@ per city.
 | `Bud1 → Bud2` add 6 more sensors | **{{claim:step.bud1_bud2}}%** |
 | `Bud2 → Bud3` add a regional background | **{{claim:step.bud2_bud3}}%** |
 
-{{fig:ladder}}a shows the same ladder. Four things in that table are worth more than the ordering itself.
+That table is the paper's central measurement and it repays being looked at rather than read,
+because the interesting structure is in the sizes and not in the ranking. {{fig:ladder}}a plots
+the same rungs, coloured by what kind of thing each stream is — freely available everywhere, a
+local instrument, or a regional one — and the colouring is the point: the free streams and the
+purchased streams interleave rather than separating, which is not how a procurement decision is
+usually imagined. Panel (b) then breaks the two decisive rungs out by latitude band with the
+number of cities printed on the axis rather than hidden in a caption, because a reader who has
+to hunt for a sample size is entitled to assume it was hidden. Four features of the pooled
+ladder are worth more than its ordering.
 
 **Free data is not negligible.** Static geography — terrain, roads, land cover, night lights,
 population, all globally available — buys {{claim:step.geography}}%, which is comparable to what
@@ -91,7 +99,15 @@ Re-running the first rung across four learners [@Ke2017; @Chen2016; @Prokhorenko
 | random forest | {{claim:learner.randomforest.step_bud0c_bud1}}% |
 | ridge regression | **{{claim:learner.ridge_linear.step_bud0c_bud1}}%** |
 
-{{fig:streams}}a shows all four. Across the three non-linear learners the spread is
+Two results in this section are easy to state and hard to believe from prose alone, and they sit
+together in one figure for that reason. {{fig:streams}}a prices the same two monitors under four
+different estimators; {{fig:streams}}b swaps the satellite stream from a fused product to a raw
+retrieval and shows which rung moves. Read together they make the same point from opposite
+directions — that a value-of-information number is a joint property of the information, the
+estimator, and the provenance of everything else in the tier — and neither panel is
+interpretable without the other beside it.
+
+Panel (a) first. Across the three non-linear learners the spread is
 {{claim:learner.nonlinear_spread_bud0c_bud1}} percentage points. **Ridge collapses**, reporting
 {{claim:learner.ridge_linear.step_bud0c_bud1}}% — because on a 68-feature sensorless tier a
 linear model cannot exploit the free data, so the monitor appears to rescue it.
@@ -159,8 +175,16 @@ to {{claim:confound.blh.without_blh_step1}}% — a shift of {{claim:confound.blh
 percentage points, which bounds what the uneven coverage can be doing. The band ordering is
 unchanged.
 
-**Instrument class × band** ({{fig:confounds}}). The deep-tropical cell is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands — and this one **cannot be sampled away**. Worldwide, only five
-deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate.
+**Instrument class × band.** The third is different in kind from the first two, which is why it
+gets a figure and they do not. Both of those were design faults with repairs: one was amended
+before scoring, the other bounded by a re-run. This one has no repair available. The
+deep-tropical cell of the panel is {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost
+sensors against {{claim:confound.other_bands_lcs_pct}} per cent in the other bands, so latitude
+band and instrument class are entangled in the data and any band-stratified number carries a
+class effect inside it. The obvious fix is to sample a better-balanced panel, and
+{{fig:confounds}} exists to show why that fix is not available: worldwide, only five
+deep-tropical clusters have ten or more concurrent reference stations, against 32 temperate. The
+population of candidate cities does not contain a balanced draw.
 
 That last constraint is a finding in itself: **the regime that most needs a sensorless method is
 the regime where reference monitoring is scarcest.** We therefore report class-stratified results

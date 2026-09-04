@@ -28,6 +28,17 @@ from __future__ import annotations
 import argparse
 import re
 import subprocess
+import sys as _sys
+
+# The manuscript is full of non-Latin-1 characters and this gate prints excerpts of it. On a
+# Windows console defaulting to cp1252 that raises UnicodeEncodeError mid-run, which aborts the
+# gate AFTER it has printed several passes -- the failure looks like a content problem and is
+# not one. The same class of crash silently dropped a commit earlier in this project.
+try:
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError):
+    pass
 import sys
 from pathlib import Path
 

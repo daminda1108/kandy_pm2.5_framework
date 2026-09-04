@@ -124,6 +124,94 @@ FIGURES = {
                     "every high site saturates at the top quantile and every low one at the "
                     "bottom, so the test re-detects the amplitude gap rather than testing "
                     "ordering. The single non-saturated site runs the other way."),
+    "field": ("F_field",
+              "The delivered field and what it is made of. (a) The annual-mean surface for the "
+              "demonstration year, with terrain contours at 200 m intervals; the enclosed floor "
+              "and the ventilated ridge are visible as a smooth gradient rather than as sharp "
+              "structure, which is the honest appearance of a 1 km product in this terrain. (b) "
+              "The local increment alone -- what is left after the spatially uniform regional "
+              "background is removed. It is this component, not the total, that a local "
+              "intervention can act on. (c) The regional-local partition per year. The share is "
+              "read from the post-cap artefact: an earlier background that allowed the regional "
+              "term to exceed the total on some hours put this near 25 per cent, and imposing "
+              "the physical constraint that local sources cannot emit negatively moves it to "
+              "about half."),
+    "spatiotemporal": ("F_spatiotemporal",
+                       "The delivered field across its two well-supported axes, both rows drawn "
+                       "from the same hourly product. Top: seasonal composites, spanning a "
+                       "factor of {{claim:kandy.season_swing}} from the stagnant north-east "
+                       "monsoon to the ventilated south-west. Bottom: diurnal composites, "
+                       "spanning a factor of {{claim:kandy.phase_swing}}, with both traffic "
+                       "peaks resolved and a midday minimum. Each row carries one shared colour "
+                       "scale, so panels are comparable within a row; the near-uniform "
+                       "appearance of the ventilated panels is a property of the model and not "
+                       "of the rendering, because when the total falls to the background the "
+                       "increment that carries all spatial structure goes to zero with it. Note "
+                       "that deep night sits ABOVE the midday trough, by a factor of "
+                       "{{claim:kandy.night_over_midday}}: the minimum is at midday, not at "
+                       "night."),
+    "cycles": ("F_cycles",
+               "Seasonal and diurnal cycles against the two ground sensors. The agreement is "
+               "close and it is NOT evidence of skill: the temporal anchor is fitted to these "
+               "same sensors and then amplitude-sharpened to their observed swing, so this "
+               "figure measures the calibration and is in sample by construction. It is "
+               "included because a reader is entitled to see that the calibration took, and "
+               "because the out-of-sample version of the same comparison, at a city the model "
+               "was never fitted to, appears later in this section."),
+    "episode": ("F_episode",
+                "A stagnation episode, December 2022. (a) The field at the peak hour. (b) The "
+                "basin-mean trace across 48 hours, against the WHO 24-hour interim target. The "
+                "episode is reproduced without any local observation of it, because the "
+                "conditions that produce it -- a shallow boundary layer, weak flow and an "
+                "advected regional load -- are present in the reanalysis drivers. This is the "
+                "regime the model is most useful in and the one where its interval is widest."),
+    "scorecard": ("F7_scorecard",
+                  "The full validation panel: ten cities, each scored against monitors withheld "
+                  "from the fit, on four axes. The level and the seasonal cycle transfer "
+                  "everywhere. The diurnal cycle transfers in the deep tropics and fails "
+                  "outside it, which is a regime statement rather than an average one and is "
+                  "why no pooled diurnal number appears anywhere in this paper. The fine "
+                  "spatial rank is estimable in nine of the ten cities and is weak in most of "
+                  "them; the tenth is left blank because it could not be computed, which is not "
+                  "the same as a measured zero."),
+    "kathmandu": ("F8_kathmandu",
+                  "The same construction at a city it was not built for, and the out-of-sample "
+                  "counterpart to the in-sample cycles figure. The model is given two stations "
+                  "and scored against the {{claim:ktm.scored_stations}} withheld. (a) Seasonal "
+                  "and (b) diurnal cycles reproduce with a level bias of "
+                  "{{claim:ktm.level_bias_pct}} per cent; (c) the station-by-station spatial "
+                  "anomaly, the axis where agreement is weakest. This city is the panel's most "
+                  "favourable case and is shown as such, not as typical."),
+    "uncertainty": ("F11_uncertainty",
+                    "Why a coverage failure must be decomposed before it is diagnosed. (a) The "
+                    "nominal 90 per cent interval covers {{claim:kandy.cov90}} per cent of "
+                    "sensor hours, which reads as intervals that are too narrow. It is not: the "
+                    "misses are one-sided, {{claim:kandy.miss_below}} per cent below against "
+                    "{{claim:kandy.miss_above}} per cent above. (b) Removing each sensor's own "
+                    "median offset, and changing nothing about the width, restores coverage to "
+                    "{{claim:kandy.cov90_recentred}} per cent. The width was right and the "
+                    "centring was wrong, because the model reports an areal mean and the sensor "
+                    "samples a point inside it -- the term the observation operator carries "
+                    "explicitly."),
+    "bound": ("F3_information_bound",
+              "Three independent signatures of the same limit. (a) A rigid physical ansatz "
+              "fitted across cities drives two of its six parameters onto their bounds: the "
+              "data do not contain enough information to identify them, so they are declared "
+              "rather than estimated. (b) A flexible neural spatial model improves as more "
+              "structure is added and then stops, short of the ceiling, in the same place. (c) "
+              "The memorisation signature: error near a training sensor against error far from "
+              "one. A model fine-tuned on two sensors reproduces them almost exactly and "
+              "degrades with distance, which is what learning sensor identity looks like rather "
+              "than learning the basin."),
+    "nullpower": ("F12_null_power",
+                  "What the spatial nulls could have detected. For each city the measured "
+                  "partial correlation is shown against the smallest effect the test could have "
+                  "found at 80 per cent power given its sample size. The detectable range runs "
+                  "from {{claim:null.min_detectable_lo}} to "
+                  "{{claim:null.min_detectable_hi}}, so these nulls exclude large residual "
+                  "structure and say nothing about moderate structure. A null result is a "
+                  "statement about power before it is a statement about nature, and reporting "
+                  "one without its detection limit is how a null becomes a false confirmation."),
     "chemistry": ("F6_chemistry",
                   "A chemical check on the decomposition's load-bearing assumption, using "
                   "back-trajectory sector -- independent of the composition product -- to "

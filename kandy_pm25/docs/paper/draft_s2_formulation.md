@@ -31,6 +31,12 @@ The elementary form is the first line with `ε = 0`: a uniform background plus a
 redistributed by a unit-mean pattern — the additive urban-increment decomposition familiar from
 monitoring-network analyses [@Lenschow2001]. The additional terms are corrections, derived in §2.5.
 
+The whole construction, and everything the rest of this paper is able to measure, follows from
+three design decisions taken together, and they are easier to see drawn than written: what the
+decomposition is and what it conserves, what each information tier is permitted to use, and how
+a field defined over areas is compared to instruments that sample points. Those three are the
+three panels of {{fig:schematic}}, and a reader who takes only one thing from this section
+should take that figure, because §4 measures the second panel and §5 is about the third.
 {{fig:schematic}}a states the decomposition and its gauge. Because `P` integrates to unity,
 **the spatial average of the field returns `T(t)` exactly**.
 The pattern redistributes material within the basin without altering the total. This gauge

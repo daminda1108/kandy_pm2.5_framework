@@ -15,17 +15,32 @@ Kandy cannot validate this model: it has two low-cost sensors and no reference m
 the condition the model exists for. So the model is validated **where the observations exist**
 and demonstrated where they do not.
 
-{{fig:protocol}}a states the design. For each panel city we withhold most of the network, give
-the model only what a target city's budget would allow, and score against the stations withheld. A city with 30 monitors is treated
-as a city with two, and the other 28 become the test set. The design measures what the model
-would have produced had that city been as data-poor as the target — the counterfactual structure
-of an optimal-design problem [@Ryan2016; @Dehideniya2018] — which is the counterfactual
-a ministry actually faces.
+The design that follows from this is a borrowing operation, and it is worth setting out fully
+before any number is drawn from it, because whether it measures anything at all depends on one
+step. For each city in the panel we withhold most of the network, give the model only what the
+*target* city's budget would allow, and score it against every station withheld. A city with
+thirty monitors is treated as a city with two, and the other twenty-eight become the test set.
+What this measures is not the model's accuracy at that city; it is what the model would have
+produced had that city been as data-poor as the target — the counterfactual structure of an
+optimal-design problem [@Ryan2016; @Dehideniya2018], and the counterfactual a ministry actually
+faces.
+
+The essential feature is that the *budget* is matched and not merely the *city*, and it is easy
+to under-rate. A model that has seen thirty monitors and is scored on a thirty-first measures a
+capability the target city will never have, however scrupulously that thirty-first monitor was
+held out; the number it returns is perfectly real and answers a question nobody in an
+unmonitored city is in a position to ask. Matching the budget is what makes the borrowed ground
+truth transferable, and it is the difference between a held-out score and an informative one.
+{{fig:protocol}}a sets out the arrangement; panels (b) and (c) report how much was withheld at
+each city and over what period, both drawn from the scored files rather than recorded by hand,
+so they cannot drift away from the analysis they describe.
 
 Drivers are ERA5 meteorology [@Hersbach2020] with composition priors from GEOS-CF [@Keller2021]
-and CAMS [@Inness2019].
-
-{{fig:protocol}}b and c show how much was withheld and over how long.
+and CAMS [@Inness2019]. Precipitation is taken from satellite retrievals [@Huffman2020] rather
+than from the reanalysis, following a direct comparison against a gauge record in which the
+reanalysis over-stated accumulation by roughly a factor of two while the satellite product
+landed within a few per cent — a substitution that matters because wet removal is the largest
+single term in the day-to-day variance of the driver set.
 
 **The panel:** {{claim:frame.cities}} cities, 32 countries, four latitude bands,
 {{claim:frame.city_days}} city-days. A median of {{claim:frame.med_days_per_city}} days and
@@ -47,7 +62,7 @@ The scored sensorless tier used **one of the three streams its budget admits**. 
 specification, the pre-registration and the implementation all disagreed with one another, and
 nobody noticed for five days, because the defect is invisible in every pooled number: a rung that
 under-uses its budget simply makes every gain above it look larger. Correcting it moved the
-headline first rung from 25.6% to {{claim:step.bud0c_bud1}}%.
+headline first rung from a now-superseded 25.6% to {{claim:step.bud0c_bud1}}%.
 
 Three further checks were added after failures of the same family, each of which produced a
 clean, plausible, wrong number:
