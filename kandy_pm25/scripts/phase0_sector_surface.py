@@ -113,8 +113,8 @@ def common_support(stns, footprints):
 
 def main() -> int:
     print("PHASE 0 -- sector-weighted emission surface against held-out stations\n")
-    print(f"  {'city':<11}{'n':>3}{'ntl':>8}{'traffic':>9}{'sector':>8}"
-          f"{'ntl_dsp':>9}{'sec_dsp':>9}   provenance")
+    print(f"  {'city':<11}{'n':>3}{'ntl':>8}{'traffic':>9}{'sector':>8}{'indust':>8}"
+          f"{'ntl_dsp':>9}   provenance")
     print("  " + "-" * 84)
 
     rows = []
@@ -136,7 +136,8 @@ def main() -> int:
         grids, foot = {"ntl": S_ntl}, []
         for key, fname, arr in (("traffic", f"S_traffic_{slug}.npz", "S_traffic"),
                                 ("population", f"population_{slug}.npz", "pop"),
-                                ("fire", f"fire_{slug}.npz", "fire")):
+                                ("fire", f"fire_{slug}.npz", "fire"),
+                                ("industry", f"industry_{slug}.npz", "industry")):
             p = DEC / fname
             if p.exists():
                 z = np.load(p)
@@ -178,17 +179,35 @@ def main() -> int:
         r["ntl_disp"], _ = rank_at_stations(lats, lons, C_ntl, stns, bbox)
         r["sector_disp"], _ = rank_at_stations(lats, lons, C_sec, stns, bbox)
 
+        # ── industry ────────────────────────────────────────────────────────────────────
+        # Scored STANDALONE first, which needs no weight and is therefore the primary test:
+        # no city declares an industry share, so any weight would be invented. If industrial
+        # land use does not rank stations on its own, no weight on it can help.
+        r["industry"] = np.nan
+        ind_sweep = {}
+        if "industry" in grids and np.nanmax(grids["industry"]) > 0:
+            r["industry"], _ = rank_at_stations(lats, lons, grids["industry"], stns, bbox)
+            # A bounded sensitivity, reported IN FULL so no single value can be cherry-picked.
+            # This is an exploration of what an industry weight would do, not a fitted weight.
+            iu = grids["industry"] / max(float(np.nanmean(grids["industry"])), 1e-12)
+            for w in (0.1, 0.2, 0.3, 0.4):
+                blend = (1.0 - w) * surf.S + w * iu
+                ind_sweep[w], _ = rank_at_stations(lats, lons, blend, stns, bbox)
+
         prov = "; ".join(surf.provenance)
         short = ("PLACEHOLDER burn" if surf.is_placeholder_dependent else "observed")
         if surf.dropped:
             short += f"; dropped {sorted(surf.dropped)}"
+        ind_s = f"{r['industry']:>+8.3f}" if np.isfinite(r["industry"]) else f"{'--':>8}"
         print(f"  {name:<11}{n:>3}{r['ntl']:>+8.3f}{r['traffic']:>+9.3f}{r['sector']:>+8.3f}"
-              f"{r['ntl_disp']:>+9.3f}{r['sector_disp']:>+9.3f}   {short}")
+              f"{ind_s}{r['ntl_disp']:>+9.3f}   {short}")
         rows.append(dict(city=name, n=n, n_all=n_all, **{k: round(v, 4) for k, v in r.items()},
                          vehic=emix.get("vehic", 0.0), heat=emix.get("heat", 0.0),
                          burn=emix.get("burn", 0.0),
                          weights_used=str({k: round(v, 3) for k, v in surf.weights_used.items()}),
                          placeholder=bool(surf.is_placeholder_dependent),
+                         **{f"sector_ind_{int(w*100)}": (round(v, 4) if np.isfinite(v) else np.nan)
+                            for w, v in ind_sweep.items()},
                          dropped=";".join(sorted(surf.dropped)), provenance=prov))
 
     d = pd.DataFrame(rows)
@@ -198,10 +217,41 @@ def main() -> int:
     ok = d.dropna(subset=["ntl", "traffic", "sector"])
     med = {k: float(ok[k].median()) for k in
            ("ntl", "traffic", "sector", "ntl_disp", "sector_disp")}
+    med["industry"] = float(ok.industry.median()) if ok.industry.notna().any() else float("nan")
 
     print("  " + "-" * 84)
     print(f"  {'median':<11}{len(ok):>3}{med['ntl']:>+8.3f}{med['traffic']:>+9.3f}"
-          f"{med['sector']:>+8.3f}{med['ntl_disp']:>+9.3f}{med['sector_disp']:>+9.3f}")
+          f"{med['sector']:>+8.3f}{med['industry']:>+8.3f}{med['ntl_disp']:>+9.3f}")
+
+    sweep_cols = sorted([c for c in ok.columns if c.startswith("sector_ind_")],
+                        key=lambda c: int(c.split("_")[-1]))
+    if sweep_cols:
+        print("\n  industry-weight sensitivity (median rho; the FULL sweep, not its best)")
+        base = med["sector"]
+        for c in sweep_cols:
+            v = float(ok[c].median())
+            print(f"    sector + {int(c.split('_')[-1]):>2}% industry   {v:+.3f}"
+                  f"   ({v - base:+.3f} against sector alone)")
+
+    # Industry exists for only some cities, so its median above is not comparable with the
+    # others' -- different city subsets. The paired test is restricted to the cities that have
+    # it, which is the only like-for-like reading.
+    ind = ok.dropna(subset=["industry"])
+    if len(ind) >= 4:
+        print(f"\n  INDUSTRY, on the {len(ind)} cities that have a mapped industrial surface")
+        print(f"    {'industry':<12} {ind.industry.median():+.3f}")
+        print(f"    {'traffic':<12} {ind.traffic.median():+.3f}    "
+              f"industry better in {int((ind.industry > ind.traffic).sum())}/{len(ind)}")
+        print(f"    {'night lights':<12} {ind.ntl.median():+.3f}    "
+              f"industry better in {int((ind.industry > ind.ntl).sum())}/{len(ind)}")
+        print(f"    {'sector':<12} {ind.sector.median():+.3f}    "
+              f"industry better in {int((ind.industry > ind.sector).sum())}/{len(ind)}")
+    miss = ok[ok.industry.isna()].city.tolist()
+    if miss:
+        print(f"\n  ⚠ no usable industrial surface on the model grid for {miss} — their OSM "
+              f"polygons are\n    too few and too small to survive interpolation, which is a "
+              f"limit of the proxy's\n    resolution and NOT evidence that those cities have no "
+              f"industry.")
 
     print("\n  paired comparisons (Wilcoxon signed-rank, n = %d)" % len(ok))
     tests = {}
@@ -267,6 +317,13 @@ def main() -> int:
          dispersion_cost_delta=tests["ntl_disp_vs_ntl"]["delta"],
          dispersion_cost_wins=tests["ntl_disp_vs_ntl"]["wins"],
          min_detectable_delta=mde,
+         rho_industry=round(med["industry"], 3) if med["industry"] == med["industry"] else None,
+         industry_cities=int(ok.industry.notna().sum()),
+         industry_beats_traffic=int((ok.dropna(subset=["industry"]).industry
+                                     > ok.dropna(subset=["industry"]).traffic).sum()),
+         sector_plus_industry_best=round(max(float(ok[c].median())
+                                             for c in ok.columns
+                                             if c.startswith("sector_ind_")), 3),
          delta_sd=round(sd, 3),
          placeholder_cities=int(ok.placeholder.sum()))
     return 0

@@ -100,11 +100,50 @@ returned the fill value of zero — 21 of 33 stations at Chiang Mai, 7 of 24 at 
 traffic and sector arms were partly scored on padding. All arms are now restricted to stations
 inside every proxy's footprint. Same family as gotcha #43.
 
+### Industry — added 2026-09-04 after the first run
+
+The first Phase 0 run tested a **three-sector** composite, and the sector most likely to be
+spatially decoupled from roads was the one it did not contain. `emission.py` defines an
+`industry` proxy that deliberately raises, no city declares an industry share, and every mix
+sums to 1.00 over vehic/heat/burn — so industrial mass is implicitly placed on roads. Yichang is
+the measured consequence: the production traffic surface scores **−0.091** there, anti-correlated
+with its own stations.
+
+Industrial land use was therefore pulled from OpenStreetMap (`landuse=industrial`,
+`landuse=quarry`, `man_made=works`, `power=plant`), rasterised as fractional cell area, and
+scored as a **standalone arm** — weight-free, because no city declares an industry share and any
+weight would be invented.
+
+| city | traffic | industry |
+|---|---:|---:|
+| Tai'an | +0.543 | **+0.655** |
+| Medellín | +0.331 | **+0.625** |
+| Yichang | **−0.091** | **+0.177** |
+| Baoji | +0.647 | +0.381 |
+| Kathmandu | +0.307 | −0.141 |
+| Chiang Mai | −0.685 | −0.296 |
+
+🟢 **Industrial land use is a genuine spatial predictor.** It is the best single proxy at Tai'an
+and Medellín, and it rescues Yichang, where the production surface points the wrong way. On the
+six cities that have a mapped industrial surface it is better than traffic, night lights *and*
+the sector composite in **4 of 6** each.
+
+⚠ **But its median is not better** — +0.279 against traffic's +0.319 and night lights' +0.363 on
+those same six. Median and win-count disagree, which at n = 6 means the frame cannot separate
+them. Adding industry to the composite lifts it from +0.098 to +0.166 at a 30 % weight (full
+sweep reported, not its best), and that composite still loses to both simple proxies.
+
+⚠ Xichang and Bazhou have too few and too small OSM industrial polygons to survive interpolation
+onto the model grid. That is a limit of the proxy's resolution and of OSM completeness, **not**
+evidence that those cities have no industry.
+
 ### What this changes for Phases 1–3
 
 1. **The benchmark for a learned pattern is night lights at ρ ≈ 0.34**, not the production
-   traffic surface and not the dispersed field at 0.274. The simplest proxy is the strongest
-   one, which is itself a result worth reporting.
+   traffic surface and not the dispersed field at 0.274. **No engineered source surface tried
+   here beats a single free global raster** — not the congestion-weighted centrality surface,
+   not a three-sector composite, not a four-sector composite carrying OSM industrial land use.
+   That is itself a result worth reporting, and it sets the bar a learned pattern must clear.
 2. 🔴 **The frame is too small for the question.** If a paired test across 8 cities cannot see
    anything below Δρ = 0.35, Phase 3 will produce another uninterpretable null on the same
    frame. **Phase 1 must widen the frame before Phase 2 is worth starting** — more cities, or
