@@ -42,7 +42,7 @@ reanalysis over-stated accumulation by roughly a factor of two while the satelli
 landed within a few per cent — a substitution that matters because wet removal is the largest
 single term in the day-to-day variance of the driver set.
 
-**The panel:** {{claim:frame.cities}} cities, 32 countries, four latitude bands,
+**The panel:** {{claim:frame.cities}} cities, {{claim:frame.countries}} countries, four latitude bands,
 {{claim:frame.city_days}} city-days. A median of {{claim:frame.med_days_per_city}} days and
 {{claim:frame.med_held_stations}} withheld stations per city. {{claim:frame.bands}} cities carry
 a latitude-band label; the remainder are a single national network treated as one stratum.
@@ -123,7 +123,7 @@ against records that played no part in construction.
 
 - Figures: the protocol figure is placed. A study-area map for the demonstration city is still
   wanted in §6.
-- "32 countries", the 25.6% pre-correction figure, and the median-stations-per-city count need
+- The country count is tokenised (and was wrong at 32). The 25.6% pre-correction figure and the median-stations-per-city count still need
   claim tokens.
 - §3.3's "majority were refuted" should be replaced by an exact count once the registered-outcome
   table is assembled for §7.

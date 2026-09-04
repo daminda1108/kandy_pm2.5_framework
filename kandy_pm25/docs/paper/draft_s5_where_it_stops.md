@@ -72,12 +72,12 @@ at {{claim:subgrid.fine_res_m}} m would recover a material fraction of the obser
 **It does not.** Running the calibrated terrain solver at {{claim:subgrid.fine_res_m}} m, forced
 with the survey's own midday climatology and with nothing fitted:
 
-| | production, 238 m | fine, {{claim:subgrid.fine_res_m}} m |
+| | production, {{claim:subgrid.production_res_m}} m | fine, {{claim:subgrid.fine_res_m}} m |
 |---|---:|---:|
 | paired-site ratio | {{claim:s1.paired_production_238m}}× | **{{claim:s1.paired_fine_94m}}×** |
 | rank across the survey | {{claim:s1.rank_production_238m}} | {{claim:s1.rank_fine_94m}} |
 
-{{fig:paired}}b plots the same ratio against resolution. A tenfold refinement in area moves the paired ratio by 0.03 and the rank correlation by 0.002.
+{{fig:paired}}b plots the same ratio against resolution. A tenfold refinement in area moves the paired ratio by {{claim:s1.paired_delta_on_refinement}} and the rank correlation by {{claim:s1.rank_delta_on_refinement}}.
 Registered predictions {{claim:s1.predictions_refuted}} are refuted. Resolution is not the
 binding constraint, and per the registration **we treat the question as closed rather than
 re-scoping it**.
@@ -92,7 +92,7 @@ coarsening — it is **relocated**. Tracking the spread through the build ({{fig
 | raw emission surface at {{claim:subgrid.fine_res_m}} m | {{claim:s1.contrast.raw_E_fine_94_m}}× |
 | after tempering | {{claim:s1.contrast.log1p_tempering}}× |
 | after dispersion at {{claim:subgrid.fine_res_m}} m | {{claim:s1.contrast.dispersion_94_m}}× |
-| after solving at 238 m | {{claim:s1.contrast.solve_at_238_m_production}}× |
+| after solving at {{claim:subgrid.production_res_m}} m | {{claim:s1.contrast.solve_at_238_m_production}}× |
 | reported at {{claim:subgrid.coarse_res_m}} m | {{claim:s1.contrast.report_at_998_m}}× |
 
 The dispersed field still spans {{claim:s1.contrast.report_at_998_m}}× at the shipped
@@ -186,7 +186,7 @@ distribution against observations, and it is included precisely because it does 
 quoted in §5.1; midday is ventilated and therefore flatter. ⚠ We tested whether observed sites
 fall in the predicted quantiles of their own cell ({{fig:withinpixel}}b) and record the test as
 **uninformative**: the
-predicted within-cell spread is ~1.2× while observations span {{claim:spatial.obs_spread}}×, so
+predicted within-cell spread is {{claim:s2.within_pixel_p90p10}}× while observations span {{claim:spatial.obs_spread}}×, so
 every high site saturates at the top quantile and every low one at the bottom. It re-detects the
 amplitude gap rather than testing ordering, and the single non-saturated case runs the other way.
 
@@ -219,3 +219,4 @@ number is retained; what it is said to measure changes.
   The same applies to the 1.26–1.47 matched-support range until we recompute it ourselves.
 - The stations-per-city figure is now tokenised from `lur_r2.csv`.
 - §5.5's five nulls each need a citation to their ledger entry in the final reference pass.
+- Untokenised numbers in this section are inventoried in `TOKENISATION_BACKLOG.md`, which separates external values (correctly cited) from ones this project computed and still types by hand.

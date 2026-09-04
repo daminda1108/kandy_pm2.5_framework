@@ -71,7 +71,7 @@ one when a stream is withheld. Withholding information becomes a controlled oper
 than a refit. That property — not the physics, which is modest, nor the machine learning, which
 is standard — is the contribution, because it is what turns an ablation into a measurement.
 
-We then run the measurement (§3, §4) across {{claim:frame.cities}} cities in 32 countries and
+We then run the measurement (§3, §4) across {{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
 {{claim:frame.city_days}} city-days, with gates registered before scoring. The results are not
 what the field's intuition would suggest. Freely available static geography is worth
 {{claim:step.geography}}%, comparable to what the first local instrument buys. The second
@@ -121,7 +121,7 @@ increment of observation is worth.**
 
 ## Drafting notes, to remove before submission
 
-- "32 countries" still needs a claim token; it is currently hardcoded.
+- "32 countries" was wrong as well as untokenised: the panel spans 29. Now a token.
 - Citation weight is now front-loaded here as intended: the introduction carries the model-family
   survey, the complex-terrain case, and the Sri Lankan literature.
 - Check §1.3's forward references against final section numbering before build.

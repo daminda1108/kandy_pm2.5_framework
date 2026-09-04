@@ -81,9 +81,11 @@ well mixed.
 This level is not decoration. The field's predictive intervals are produced by split-conformal
 calibration [@Vovk2005; @Romano2019; @Angelopoulos2023], which guarantees marginal coverage
 *given* that the comparison is well posed — and the observation model is what makes it so. The
-shipped 90 per cent interval covers 72.4 per cent of observations at the two Kandy sensors — but observations fall *below* the lower bound in 25.7
-per cent of hours and above the upper in only 1.9 per cent. That is a one-sided offset, not a
-width failure: removing each sensor's own median offset restores coverage to 91.5 per cent. The
+shipped 90 per cent interval covers {{claim:kandy.cov90}} per cent of observations at the two
+Kandy sensors — but observations fall *below* the lower bound in {{claim:kandy.miss_below}}
+per cent of hours and above the upper in only {{claim:kandy.miss_above}} per cent. That is a
+one-sided offset, not a width failure: removing each sensor's own median offset restores
+coverage to {{claim:kandy.cov90_recentred}} per cent. The
 interval was correctly scaled and incorrectly centred, and only an explicit `b_k` makes that
 diagnosis available rather than leaving it as an apparent calibration failure.
 
@@ -258,3 +260,4 @@ Stated explicitly, because overclaiming here is the most attackable thing availa
   is rebuilt.
 - Decide with the supervisor whether §2.6's partition stays here or moves to the Kandy
   demonstration; it is formulation *and* result, and currently sits in both.
+- Untokenised numbers in this section are inventoried in `TOKENISATION_BACKLOG.md`, which separates external values (correctly cited) from ones this project computed and still types by hand.

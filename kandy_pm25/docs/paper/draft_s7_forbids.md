@@ -62,7 +62,7 @@ We list these because several are in the published record under our names.
 | "four guaranteed properties" | **two** guarantees, one enforced mechanism, one discharged (§2.4) |
 | reference networks gain nothing from added stations | **not supported**; the contrast is {{claim:class.w_bud2_contrast}}×, not infinite |
 | a linear model reproduces the ladder | **refuted**; Ridge reports {{claim:learner.ridge_linear.step_bud0c_bud1}}% (§4.4) |
-| the panel spans no coastal cities | stale; it spans 21 |
+| the panel spans no coastal cities | stale; it spans {{claim:coastal.coastal.n}} |
 | an undefined spatial statistic reported as a measured null | corrected to "—" (§3.4) |
 | the four-rung support-scaling ladder | **confounded**; support and siting design move together across its rungs |
 
@@ -72,7 +72,7 @@ The spatial nulls exclude only large effects. At 80% power the earth-observation
 detect partial correlations well above those actually measured, so the null constrains the
 effect to be small rather than establishing it is zero.
 
-The deep-tropical cell is 13 cities; the subtropical and temperate cells are 7 each. The
+The deep-tropical cell is {{claim:band.deep_tropical.n}} cities; the subtropical and temperate cells are {{claim:band.subtropical.n}} each. The
 instrument-class confound cannot be sampled away at all (§4.6). The demonstration city's external
 checks are four point records from three papers, two of which disagree with each other by more
 than either disagrees with the model.
@@ -98,3 +98,4 @@ than either disagrees with the model.
 - Still needing generating scripts: the 93 km / 0.604 / 0.923 donor figures and the
   80%-power bound.
 - Check that every "refuted" here is cross-referenced to the section that refutes it.
+- Untokenised numbers in this section are inventoried in `TOKENISATION_BACKLOG.md`, which separates external values (correctly cited) from ones this project computed and still types by hand.

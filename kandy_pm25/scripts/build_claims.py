@@ -98,6 +98,18 @@ def frame(c: Claims, d: pd.DataFrame) -> None:
           source="ladder_revalidated.csv", ledger="F.85",
           note="cities carrying a latitude band; the remainder are the CNEMC cluster")
 
+    # Countries, resolved by joining the scored cities to the frame that named them. The paper
+    # asserted 32 for a year; that was the pre-F.84 47-city frame and never re-derived (C4's
+    # third sibling). Every other frame statistic in this group was corrected in September and
+    # this one was missed because nothing computed it.
+    v = pd.read_csv(MOD / "validation_frame.csv", dtype={"slug": str})
+    m = v.drop_duplicates("slug").set_index("slug").country
+    hit = c0.city.astype(str).map(m)
+    if hit.notna().all():
+        c.add("frame.countries", int(hit.nunique()), stat="distinct countries", n=len(c0),
+              source="ladder_revalidated.csv + validation_frame.csv", ledger="F.85",
+              note="C4's third sibling: the retired figure was 32, from the 47-city frame")
+
 
 def bottom_rung(c: Claims, d: pd.DataFrame) -> None:
     """The decomposed sensorless rung. Each stream measured against a monitor's worth."""
@@ -138,6 +150,10 @@ def by_band(c: Claims, d: pd.DataFrame) -> None:
     x["g1"] = _gain(x.rmse_Bud0, x.rmse_Bud1)
     x["g3"] = _gain(x.rmse_Bud2, x.rmse_Bud3)
     for band, grp in x.groupby("band"):
+        # The per-cell n belongs in the figure and the table, not only in a caption: a reader
+        # who has to hunt for a sample size is entitled to assume it was hidden.
+        c.add(f"band.{band}.n", len(grp), stat="cities in the band", n=len(grp),
+              source="ladder_revalidated.csv", ledger="F.85")
         c.add(f"band.{band}.step_bud0c_bud1", round(float(grp.g1.median()), 1),
               stat="median of per-city ratios", n=len(grp),
               source="ladder_revalidated.csv", ledger="F.85")
@@ -157,6 +173,9 @@ def coastal(c: Claims, d: pd.DataFrame) -> None:
 
     for flag, lab in [(True, "coastal"), (False, "inland")]:
         grp = x[x.coastal == flag]
+        c.add(f"coastal.{lab}.n", len(grp), stat="cities", n=len(x),
+              source="ladder_revalidated.csv", ledger="F.85",
+              note="§7 asserted the panel spans 21 coastal cities; this is where that is counted")
         for col, tag in [("g_geo", "geography"), ("g_sat", "satellite"), ("g_both", "place_data")]:
             c.add(f"coastal.{lab}.{tag}", round(float(grp[col].median()), 1),
                   stat="median of per-city ratios", n=len(grp),
@@ -610,6 +629,44 @@ def lur_extra(c: Claims) -> None:
           ledger="F.61", note="the draft carried 636; the scored file says otherwise")
 
 
+def domain_and_resolution(c: Claims) -> None:
+    """Physical descriptors of the demonstration domain, and the resolutions §5 compares.
+
+    These were prose constants for a year. Each is cheap to derive and none of them had ever
+    been derived, which is the same shape as every other defect this file exists to prevent.
+    """
+    z = REPO / "data" / "processed" / "pinn_inputs" / "kandy_elev_grid_100m.npz"
+    if z.exists():
+        e = np.load(z)["elev"]
+        c.add("kandy.relief_m", int(round(float(e.max() - e.min()), -1)),
+              stat="max minus min elevation over the modelled domain, rounded to 10 m",
+              n=int(e.size), source="pinn_inputs/kandy_elev_grid_100m.npz", ledger="production",
+              note="the paper said '800 m of relief'; this is the value from the raster")
+
+    # The production solve resolution, against which the §5 refinement test is measured. The
+    # fine resolution is already a claim (subgrid.fine_res_m); its counterpart was hardcoded.
+    c.add("subgrid.production_res_m", 238, stat="declared production solve resolution", n=1,
+          source="src/stage1_satml/decomp/terrain_transport.py", ledger="S1 / F.89",
+          note="a configuration constant, not a measurement -- recorded here so the two "
+               "resolutions §5 compares are quoted from one place")
+
+    # The refinement deltas. §5 states these as bare numbers; they are differences between two
+    # claims that already exist, so they must be derived rather than typed.
+    if "s1.paired_production_238m" in c.rows and "s1.paired_fine_94m" in c.rows:
+        c.add("s1.paired_delta_on_refinement",
+              round(c.rows["s1.paired_production_238m"]["value"]
+                    - c.rows["s1.paired_fine_94m"]["value"], 3),
+              stat="paired ratio at 238 m minus at 94 m", n=2,
+              source="derived from s1.paired_* claims", ledger="F.89",
+              note="a TENFOLD refinement in area moves the paired ratio by this much")
+    if "s1.rank_production_238m" in c.rows and "s1.rank_fine_94m" in c.rows:
+        c.add("s1.rank_delta_on_refinement",
+              round(abs(c.rows["s1.rank_production_238m"]["value"]
+                        - c.rows["s1.rank_fine_94m"]["value"]), 3),
+              stat="absolute change in rank correlation on refinement", n=2,
+              source="derived from s1.rank_* claims", ledger="F.89")
+
+
 def kandy_application(c: Claims) -> None:
     """Everything section 7 quotes about the model's own output.
 
@@ -897,6 +954,7 @@ def build() -> dict:
     maiac_ladder(c)
     partition(c)
     kandy_field(c)
+    domain_and_resolution(c)
     kandy_application(c)
     confounds(c)
     blh_confound(c)

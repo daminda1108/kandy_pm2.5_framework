@@ -15,7 +15,7 @@ Kandy sits on the floor of a steep valley in the central highlands of Sri Lanka,
 400,000 in a basin closed to the south by the Hantana range and venting to the north-west along
 the Mahaweli corridor. The geometry matters to the formulation and not only to the narrative:
 the confinement term of §2.1 is a function of height above the local drainage floor, so a basin
-with 800 m of relief across 15 km gives that term something to act on, and the ventilation
+with {{claim:kandy.relief_m}} m of relief across 15 km gives that term something to act on, and the ventilation
 corridor gives the model a physical reason to place its minimum where it does. The city's
 monitoring record is two low-cost sensors and a single published year from a research campaign
 [@Senarathna2024; @Ileperuma2020], against a documented respiratory-health burden
@@ -238,7 +238,7 @@ here — the inverse of the pooled recommendation, because Kandy sits in the ban
 ordering flips (§4.2). A reference monitor in the city would additionally close §6.5's
 discrepancy and make the per-sensor offset `b_k` estimable for the first time (§2.2), moving the
 city from `Bud1` to `Bud2`. We state this as the paper's practical recommendation for this city,
-with the caveat that it rests on a 13-city band.
+with the caveat that it rests on a {{claim:band.deep_tropical.n}}-city band.
 
 ---
 
@@ -250,3 +250,4 @@ with the caveat that it rests on a 13-city band.
 - Still needing generating scripts: the 15.6% pixel lift, and the 800 m relief figure in §6.1.
 - Kathmandu's spatial rank is quoted from the panel scorecard, NOT from the figure script, which
   scores a slightly different station set and gives 0.428. One rank per city per paper.
+- Untokenised numbers in this section are inventoried in `TOKENISATION_BACKLOG.md`, which separates external values (correctly cited) from ones this project computed and still types by hand.

@@ -60,10 +60,10 @@ the finding.
 
 | band | n | `Bud0c → Bud1` | `Bud2 → Bud3` |
 |---|---:|---:|---:|
-| deep tropical | 13 | {{claim:band.deep_tropical.step_bud0c_bud1}}% | **{{claim:band.deep_tropical.step_bud2_bud3}}%** |
-| tropical | 10 | {{claim:band.tropical.step_bud0c_bud1}}% | {{claim:band.tropical.step_bud2_bud3}}% |
-| subtropical | 7 | {{claim:band.subtropical.step_bud0c_bud1}}% | {{claim:band.subtropical.step_bud2_bud3}}% |
-| temperate | 7 | {{claim:band.temperate.step_bud0c_bud1}}% | {{claim:band.temperate.step_bud2_bud3}}% |
+| deep tropical | {{claim:band.deep_tropical.n}} | {{claim:band.deep_tropical.step_bud0c_bud1}}% | **{{claim:band.deep_tropical.step_bud2_bud3}}%** |
+| tropical | {{claim:band.tropical.n}} | {{claim:band.tropical.step_bud0c_bud1}}% | {{claim:band.tropical.step_bud2_bud3}}% |
+| subtropical | {{claim:band.subtropical.n}} | {{claim:band.subtropical.step_bud0c_bud1}}% | {{claim:band.subtropical.step_bud2_bud3}}% |
+| temperate | {{claim:band.temperate.n}} | {{claim:band.temperate.step_bud0c_bud1}}% | {{claim:band.temperate.step_bud2_bud3}}% |
 
 {{fig:ladder}}b stratifies it. **In the deep tropics the ordering inverts.** Local sensors buy
 {{claim:band.deep_tropical.step_bud0c_bud1}}% and the regional background only
@@ -71,7 +71,7 @@ the finding.
 computed largely from bands the deep tropics is not in. A programme in Colombo or Kampala
 following the pooled recommendation would buy the wrong instrument.
 
-⚠ The subtropical and temperate cells are n = 7. We report them and do not build on them.
+⚠ The subtropical and temperate cells are n = {{claim:band.subtropical.n}} and n = {{claim:band.temperate.n}}. We report them and do not build on them.
 
 ## 4.3 What kind of instrument, not just how many
 
@@ -203,3 +203,4 @@ throughout rather than chasing a de-aliased sample that does not exist.
   network rather than of anything in this repository and may have to stay a cited figure.
 - Decide whether §4.5 stays here or becomes a standalone methods note; it generalises past this
   paper and may be diluted by sitting inside it.
+- Untokenised numbers in this section are inventoried in `TOKENISATION_BACKLOG.md`, which separates external values (correctly cited) from ones this project computed and still types by hand.

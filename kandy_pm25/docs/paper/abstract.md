@@ -9,7 +9,7 @@ with model change.
 We formulate an information-tiered decomposition in which the budget is declared per tier and a
 lower tier is recoverable **bit-exactly** from a higher one when a stream is withheld. Withholding
 becomes a controlled operation, and an ablation becomes a measurement. We then run that
-measurement across {{claim:frame.cities}} cities in 32 countries and
+measurement across {{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
 {{claim:frame.city_days|,}} city-days, with gates registered before scoring.
 
 Freely available static geography reduces daily RMSE by {{claim:step.geography}} per cent —
