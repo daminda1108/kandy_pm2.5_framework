@@ -335,12 +335,25 @@ Per the registration: the gain over the benchmark is **+0.022 against a detectio
 
 ### What is worth keeping
 
-🔴 **The transfer problem is now measured, not inferred.** Skill by band: temperate **+0.457**,
-deep tropical +0.236, subtropical +0.204, tropical +0.201. The learned pattern works roughly
-**twice as well in temperate cities as anywhere else** — and temperate is where the
-reference-dense cities are (65 clusters against 6 deep-tropical). A method learned from the
-world's monitored cities and applied to its unmonitored ones inherits exactly this gap, and this
-is the first direct measurement of it in the programme.
+🟡 **Skill is not uniform across bands — but the mechanism is NOT established.** Temperate
+**+0.457**, deep tropical +0.236, subtropical +0.204, tropical +0.201; temperate against the
+rest gives p = 0.006, and it survives de-confounding within the larger network (temperate +0.575
+against +0.155, p = 0.002, 35 cities, all four bands).
+
+⚠ **I overstated this on first reading and am correcting it.** I wrote that "the transfer
+problem is now measured". It is not. The second network runs the *other* way — its tropical
+cities score +0.546 against its temperate +0.323 — and while it is far too thin to adjudicate
+(11 cities, one country, cells of 3 and 4), it is enough to block the causal story that the gap
+is *because* tropical monitoring is sparse. Its tropical cities carry a dense reference network,
+unlike tropical monitoring generally, which is a plausible explanation and not a tested one.
+
+The defensible claim is narrower: **skill is lower outside the temperate band within the network
+that can test it**, and whether the driver is latitude or network character is unresolved. The
+practical consequence survives either way — a pattern learned from the world's monitored cities
+performs worst in the regime that most needs it — but that is a consequence, not a mechanism.
+
+⚠ The within-network test was **not pre-registered**; L4 registered only the band comparison.
+It is exploratory and must be labelled so.
 
 🟢 **The gauge is exact and survives abuse.** Worst |mean(P) − 1| is 3.3e-16 across seven cases
 including a saturated pattern where one cell takes 4096× the mean, an overflow-range logit field
