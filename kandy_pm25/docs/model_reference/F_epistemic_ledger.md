@@ -5166,3 +5166,67 @@ ceiling was a sampling artefact and the spatial chapters are a statement about n
    asserting a number the data contradicted** — the exact defect gotcha #86 describes.
 
 Claims: `net.*` (39). Figures: `sensor_design_kandy.png`, `sensor_design_justification.png`.
+
+
+## F.100 — 🔴 the campaign cannot answer its own headline question, and the power calculation said so BEFORE deployment
+
+`scripts/campaign_power.py` → `campaign_power.json`. Registered at
+`docs/prereg_kandy_campaign_2026-09-05.md`. **Genuinely blind**: no instrument bought, no site
+visited, no observation exists. Unlike the two registrations lodged earlier the same day, there
+was nothing to have peeked at.
+
+### 🔴 THE FINDING
+
+The campaign was conceived to settle **"is the spatial ceiling a sampling artefact?"** Six nulls,
+every network a convenience sample, a deliberately contrasted network to break the tie.
+
+With **18 sites available to fit a spatial pattern** (anchor + design + vertical; the paired
+offsets are within-cell replicates, the receptor stratum is held out), beating the benchmark
+**rho = 0.309** requires reaching **0.61 to 0.78** depending on how far the campaign pattern
+departs from the benchmark predictor. That is a required gain of **+0.30 to +0.47**.
+
+**The 46-city panel resolved 0.130.**
+
+| target | r_pp 0.50 | r_pp 0.70 | r_pp 0.85 |
+|---|---:|---:|---:|
+| sites needed to reach a 0.130 gain | **304** | **187** | **96** |
+
+**Matching the panel in ONE city needs 96 to 304 fitting sites**, against the 18 proposed and the
+12 at which the design's representativeness saturates. Those are different criteria answering
+different questions; the design satisfies the second and not the first.
+
+🔴 **H1 DEMOTED TO EXPLORATORY BEFORE DEPLOYMENT.** The campaign must not be proposed, funded or
+written up as resolving the spatial question. Doing so would repeat, with instruments and money,
+the exact error Chapter 5 documents: an experiment that cannot see the effect it seeks, reporting
+its silence as evidence.
+
+### 🟢 What the campaign IS well powered for — the new confirmatory set
+
+| test | power | limit |
+|---|---|---|
+| **C1 within-cell ratio** | 🟢 **decisive in weeks** | resolves a ratio to **1.044** after 7 days, **1.021** after 30. Competing predictions: model **1.58** vs the one Kandy observation **27.5**. Separated by an order of magnitude. Power comes from HOURS averaged, not sites. |
+| **C2 drainage sink** | 🟢 well powered | sign test, unit = **NIGHT** not site. 90 nights detects a sink exceeding the core on **63.1%**; 365 nights on **56.5%**. |
+| **C3 level anchor** | 🟢 one instrument | settles the W11 discrepancy on its own. **Registered in advance:** if the reference reads BELOW the model, the three low-cost records were right and the model reads high — not to be explained away by preferring the record that agrees. |
+
+⚠ **E2 vertical transect also demoted.** At 5 sites the detection limit is **|rho| >= 0.942**,
+close to a perfect monotone relationship. Adding transect sites is the cheapest route to making
+it confirmatory in a later campaign, noted so the option stays visible.
+
+### Why this matters beyond the campaign
+
+**Second time in this project that computing a detection limit in advance changed what was worth
+DOING rather than how it would be reported.** The first (Chapter 8 / OSF `2jyfg`) converted five
+uninformative nulls into one bounded claim. This one stopped a campaign being sold for something
+it could not deliver, **while the cost of changing course was still a paragraph.**
+
+### Corrections forced by this
+
+1. Thesis §9.7 rewritten: the falsification subsection previously said both outcomes were worth
+   the money and the ceiling question was answerable. It is not, at this size.
+2. §9.7's opening list: "testing whether the spatial ceiling is a sampling artefact" replaced by
+   "testing the flow physics the model imposes and has never validated".
+3. `sensor_placement_plan_2026-09-05.md` §6 rated this **"Probably"** and flagged that the limit
+   should be computed. Computing it moved it to **"NOT AT ALL"**. The reversal is left visible in
+   the document rather than silently edited.
+
+Claims: `camp.*` (8). Registration void conditions are stated in the prereg §5.

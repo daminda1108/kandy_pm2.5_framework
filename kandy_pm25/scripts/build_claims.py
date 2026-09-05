@@ -999,6 +999,60 @@ def sensor_design(c: Claims) -> None:
                   note="averaged over 5 seeds. A single seed invents a knee that is not there")
 
 
+def campaign_power(c: Claims) -> None:
+    """F.100. What the proposed campaign could detect, computed BEFORE deployment.
+
+    The uncomfortable result, and the reason this belongs in the thesis rather than only in a
+    plan: the campaign's HEADLINE question is the one it cannot answer. Matching the 46-city
+    panel's detection limit in a single city would need roughly a hundred to three hundred
+    fitting sites. The physics tests are the opposite, and they become the confirmatory set.
+    """
+    import json as _json
+    f = REPO / "data" / "processed" / "decomp" / "campaign_power.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        P = _json.load(fh)
+    src = "campaign_power.json"
+
+    c.add("camp.n_fit", P["n_fit"], stat="sites available to fit a spatial pattern",
+          n=P["n_fit"], source=src, ledger="F.100",
+          note="anchor plus design plus vertical. The paired offsets are within-cell replicates "
+               "rather than independent locations, and the receptor stratum is held out")
+    c.add("camp.n_heldout", P["n_receptor_heldout"], stat="receptor sites held out of fitting",
+          n=P["n_receptor_heldout"], source=src, ledger="F.100")
+
+    h1 = P["h1_spatial"][str(P["n_fit"])]
+    gains = [v - P["benchmark_rho"] for k, v in h1.items() if k.startswith("vs_benchmark")]
+    c.add("camp.h1_gain_lo", round(min(gains), 2),
+          stat="smallest detectable gain over the benchmark rank correlation, best case",
+          n=P["n_fit"], source=src, ledger="F.100")
+    c.add("camp.h1_gain_hi", round(max(gains), 2),
+          stat="smallest detectable gain over the benchmark, worst case", n=P["n_fit"],
+          source=src, ledger="F.100",
+          note="against the 46-city panel's 0.130. The campaign's headline question is the one "
+               "it cannot answer, and this was computed before any money was committed")
+    c.add("camp.panel_limit", P["panel_detection_limit_for_comparison"],
+          stat="detection limit the 46-city panel achieved, for comparison", n=46,
+          source=src, ledger="F.100")
+    c.add("camp.h3_vertical_mde", P["h3_vertical_mde"],
+          stat="minimum detectable correlation with height, 5 transect sites", n=5,
+          source=src, ledger="F.100",
+          note="only a nearly perfect monotone relationship is visible, so the vertical test is "
+               "registered as exploratory rather than as a test of the confinement term")
+    if "168" in P["h2_ratio_precision"]:
+        c.add("camp.h2_ratio_7d", P["h2_ratio_precision"]["168"],
+              stat="factor to which a within-cell ratio is resolved after 7 days", n=3,
+              source=src, ledger="F.100",
+              note="the competing hypotheses are 1.58 and 27.5, so this test is decisive in "
+                   "weeks and its power comes from HOURS averaged, not from the number of sites")
+    if "90" in P["h4_sign_test"]:
+        c.add("camp.h4_nights90", round(100 * P["h4_sign_test"]["90"], 1),
+              stat="per cent of nights the drainage sink must exceed the core, over 90 nights",
+              n=90, source=src, ledger="F.100",
+              note="the unit is the NIGHT, not the site, which is why this is well powered")
+
+
 def colombo_donor(c: Claims) -> None:
     """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
 
@@ -1674,6 +1728,7 @@ def build() -> dict:
     domain_and_resolution(c)
     colombo_donor(c)
     sensor_design(c)
+    campaign_power(c)
     chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)

@@ -190,11 +190,16 @@ moves the paired-site ratio by {{claim:s1.paired_delta_on_refinement}}, and Sect
 what a learned pattern adds over a single free raster. A campaign sold as increased resolution
 would be spending against results this thesis already has.
 
-It is for four things the evidence does support: anchoring the level, where three of four
-independent records sit below the model and one matches; measuring the within-cell distribution,
-which Chapter 8 argues is the well-posed quantity and the larger one; testing whether the spatial
-ceiling is a sampling artefact rather than an information limit; and establishing what
+It is for four things: anchoring the level, where three of four independent records sit below the
+model and one matches; measuring the within-cell distribution, which Chapter 8 argues is the
+well-posed quantity and the larger one; testing the flow physics the model imposes and has never
+validated, meaning the nocturnal drainage sink and the confinement term; and establishing what
 susceptible people actually breathe, which is a different question answered at different places.
+
+⚠ The campaign was conceived with a fifth purpose, testing whether the spatial ceiling is a
+sampling artefact, and that purpose does not survive its own power calculation. The subsection
+below the figures explains why, because the finding is more useful than the campaign would have
+been.
 
 ### The measurement that determines the design
 
@@ -283,21 +288,48 @@ not work would be buying the wrong thing.
 {{claim:net.saturation_threshold}}, averaged over five random restarts, and a single restart
 produces a curve with a knee that is not there.
 
-### What would falsify the premise
+### The campaign cannot answer the question it was designed around
 
-The design assumes deliberate siting can break a ceiling that convenience siting could not, and
-the campaign tests that assumption rather than presuming it.
+The design began from an assumption worth testing: that deliberate siting could break a ceiling
+convenience siting could not. Registering the analysis meant computing, in advance, what the
+campaign could actually see. **The answer disqualifies its own headline question.**
 
-If a deliberately contrasted network still yields a rank correlation near the
-{{claim:phase1.best_rho}} that a single free raster already achieves, then the information-limited
-reading of Chapter 8 is confirmed far more strongly than six convenience-sample nulls could
-confirm it, and the field gains a bounded statement about what kilometre-scale products can do.
-**That is a good outcome and should be registered as such before deployment**, so it cannot
-afterwards be presented as a failed campaign. If the correlation rises materially, the ceiling
-was a sampling artefact and this thesis's spatial chapters have to be reread as a statement about
-network design rather than about the atmosphere.
+Beating the benchmark rank correlation of {{claim:phase1.best_rho}} that a single free raster
+already achieves would require, with {{claim:camp.n_fit}} sites available to fit a spatial
+pattern, a gain of between {{claim:camp.h1_gain_lo}} and {{claim:camp.h1_gain_hi}} depending on
+how far the campaign pattern departs from the benchmark predictor. The panel study this campaign
+was meant to follow up resolved a gain of {{claim:camp.panel_limit}}. **Matching that in one city
+would need on the order of a hundred to three hundred fitting sites**, against the
+{{claim:camp.n_fit}} proposed.
 
-Both outcomes are worth the money, which is the test of whether a proposed experiment is one.
+That is not a shortfall to note in a limitations paragraph. It means a campaign of this size
+**cannot settle whether the spatial ceiling is a sampling artefact**, and proposing it on that
+basis would repeat, with instruments and public money, the error Chapter 5 documents: an
+experiment that cannot see the effect it seeks, reporting its silence as evidence.
+
+**The spatial test is therefore demoted to exploratory before deployment**, reported with its
+bound attached, and the campaign is not to be described as resolving the spatial question under
+any outcome.
+
+**What the campaign is well powered for is the physics and the level**, and those become what it
+is for. The paired triplets resolve a within-cell ratio to a factor of
+{{claim:camp.h2_ratio_7d}} after a single week, against competing predictions of 1.58 from the
+model and 27.5 from the one existing observation, so that test is decisive almost immediately and
+its power comes from hours averaged rather than from sites installed. The drainage prediction is
+a sign test whose unit is the night rather than the site, needing the down-valley sink to exceed
+the core on {{claim:camp.h4_nights90}} per cent of ninety nights. And one reference instrument
+settles the level discrepancy on its own.
+
+The vertical transect is demoted for the same reason as the spatial test: at five sites only a
+correlation of {{claim:camp.h3_vertical_mde}} or larger is visible, which is close to a perfect
+monotone relationship, so it is registered as exploratory and adding transect sites is the
+cheapest way to make it confirmatory later.
+
+This is what a pre-registration is for, and it is the second time in this thesis that computing a
+detection limit in advance changed what was worth doing rather than merely how it would be
+reported. The first time, in Chapter 8, it converted five uninformative nulls into one bounded
+claim. This time it stopped a campaign being sold for something it could not deliver, and it did
+so while the cost of changing course was still a paragraph.
 
 ### What this design cannot do
 

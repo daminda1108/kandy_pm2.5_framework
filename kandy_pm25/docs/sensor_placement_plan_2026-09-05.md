@@ -25,8 +25,10 @@ how well the evidence supports them:
 2. **Measuring the within-cell distribution.** Chapter 8 argues this is the well-posed quantity,
    the larger of the two, and unreported by any gridded product. Nothing but paired microsites
    can measure it.
-3. **Testing whether the spatial ceiling is a sampling artefact.** Every network scored so far is
-   a convenience sample. This design deliberately is not one, which makes it an experiment.
+3. **Testing the flow physics the model imposes and has never validated**, meaning the nocturnal
+   drainage sink it predicts down-valley of the core, and the confinement term. ⚠ This item
+   replaced an earlier one, "testing whether the spatial ceiling is a sampling artefact", which
+   **did not survive its own power calculation**. Section 6 gives the numbers.
 4. **Establishing what susceptible people actually breathe**, which is a different question from
    what a map says and is answered at different locations.
 
@@ -181,11 +183,18 @@ destroy exactly the structure that distinguishes local traffic from regional bac
 within-cell distribution at three locations, which needs the paired stratum and one month. What
 eight named institutions are exposed to, which needs the receptor stratum and a year.
 
-**Probably.** Whether the spatial ceiling is a sampling artefact or an information limit. With
-21 fitting sites deliberately spread across the covariate space, a rank correlation against
-held-out sites can be computed and compared against the benchmark of 0.309 that a single free
-raster achieves. ⚠ At 21 sites the detection limit is coarse and should be computed and
-registered before the campaign, not after.
+🔴 **NOT AT ALL, and this reverses what an earlier draft of this plan said.** Whether the spatial
+ceiling is a sampling artefact or an information limit **cannot be settled by a campaign of this
+size.** The detection limit was computed before deployment, as the registration required, and
+`scripts/campaign_power.py` gives the answer: with **18** sites available to fit a spatial
+pattern, beating the benchmark of 0.309 needs a gain of **+0.30 to +0.47**, against the **0.130**
+the 46-city panel resolved. **Matching the panel in one city would need roughly 96 to 304 fitting
+sites.**
+
+The earlier draft rated this "probably" and flagged that the limit should be computed. Computing
+it changed the answer. **The spatial test is demoted to exploratory before deployment**, reported
+with its bound attached, and the campaign must not be proposed or written up as resolving the
+spatial question. See `docs/prereg_kandy_campaign_2026-09-05.md` section 0.
 
 **Not at all.** Source apportionment, which needs filter sampling and chemical analysis rather
 than optical particle counters. The chemistry work of 2026-09-05 bounds the locally emitted
