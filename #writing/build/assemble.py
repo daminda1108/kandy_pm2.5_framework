@@ -254,6 +254,14 @@ VISUALS: dict[str, tuple[str, str]] = {
         "Every numeric claim is recomputed from its scored file at build time and compared "
         "against the stored value; a disagreement refuses the build rather than warning about "
         "it."),
+    "burden": (
+        "F_burden",
+        "Population-weighted exposure and the attributable burden that follows from it. The "
+        "unweighted basin mean under-states what people actually breathe, because population "
+        "concentrates in the higher-concentration core. The burden is a projection of the "
+        "delivered field through a published response function rather than an epidemiological "
+        "result of this work, and its interval reflects only the published uncertainty in that "
+        "function."),
     "prereg": (
         "D6_prereg_workflow",
         "Pre-registration as a procedure. The branch that matters is the one distinguishing a "

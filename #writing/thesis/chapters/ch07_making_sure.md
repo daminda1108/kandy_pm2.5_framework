@@ -274,7 +274,40 @@ the freshest, and it is not, because stagnation gives local precursors time to a
 consequence is that treating the local increment as fresh primary aerosol is too simple, and
 Chapter 9 lists the composition measurement that would settle it.
 
-## 7.11 What this chapter does and does not establish
+## 7.11 Exposure and attributable burden
+
+Chapter 2 gave health as one of the two stakes, and the delivered field supports an estimate.
+
+{{fig:burden}}
+
+**The area mean under-states exposure.** People are not distributed uniformly over the basin;
+they concentrate in the higher-concentration core. For {{claim:exposure.year}} the unweighted
+basin mean is {{claim:exposure.area}} micrograms per cubic metre, the residential-weighted mean
+is {{claim:exposure.residential}}, and the population-weighted mean is
+{{claim:exposure.dynamic}}. That is an uplift of {{claim:exposure.uplift_pct}} per cent over the
+area mean, and any health statement should use the weighted figure.
+
+**The attributable burden.** Projecting the population-weighted exposure through a published
+concentration-response function [@Burnett2018] against the national mortality baseline gives
+{{claim:burden.deaths}} attributable deaths per year, with an interval of
+{{claim:burden.ci_low}} to {{claim:burden.ci_high}}. That is an attributable fraction of
+{{claim:burden.fraction_pct}} per cent, of which {{claim:burden.avoidable}} would be avoidable
+if concentrations met the World Health Organization guideline [@WHO2021].
+
+⚠ **Three qualifications, and they are not small.** The response function and the mortality
+baseline are both taken from published work and neither was estimated here, so this is a
+projection of the delivered field through somebody else's epidemiology rather than an
+epidemiological result. The interval reflects only the published uncertainty in the response
+function and not uncertainty in the field, which would widen it. And the estimate inherits the
+level discrepancy of Section 7.8: if the three low point records are right and the model reads
+high, the burden is over-stated proportionally.
+
+The figures in this section were regenerated for this thesis, and doing so moved them. The
+exposure and burden files predated the field rebuild, so the previously reported uplift of seven
+per cent and burden of 427 were computed on a superseded field. This is recorded because it is
+the same failure mode Chapter 10 describes and it was found the same way.
+
+## 7.12 What this chapter does and does not establish
 
 It establishes that the level and the seasonal cycle transfer, across
 {{claim:frame.cities}} cities and four latitude bands, and that the value of each observation

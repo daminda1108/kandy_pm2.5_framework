@@ -918,6 +918,57 @@ def field_diagnostics(c: Claims) -> None:
               source="openaq/discovery/global_locations.csv", ledger="F.53")
 
 
+def exposure_burden(c: Claims) -> None:
+    """Population-weighted exposure and attributable burden, regenerated 2026-09-04.
+
+    🔴 WHY THESE ARE HERE. The exposure and burden files were dated 2026-07-25, which is before
+    both the coherence cap and the field rebuild, and the figure drawing them had been
+    regenerated in September while its inputs had not. That is gotcha #86 exactly: a figure is
+    a consumer like any other. Regenerating from the shipped field moved the exposure uplift
+    from 7 to 9 per cent and the attributable burden from 427 to 431.
+
+    ⚠ The burden rests on a published concentration-response function and a national mortality
+    baseline, neither of which this project estimated. The value is a projection of the
+    delivered field through somebody else's epidemiology, and the interval reflects only the
+    published uncertainty in that function.
+    """
+    e = pd.read_csv(DEC / "exposure_weighting.csv")
+    h = pd.read_csv(DEC / "health_burden.csv")
+    if e.empty or h.empty:
+        return
+    last = int(h.year.max())
+    er = e[e.year == last].iloc[0]
+    hr = h[h.year == last].iloc[0]
+
+    c.add("exposure.year", last, stat="most recent anchored year", n=1,
+          source="decomp/exposure_weighting.csv", ledger="production")
+    for col, tag, lab in [("area_mean", "area", "unweighted basin mean"),
+                          ("residential", "residential", "residential-weighted"),
+                          ("dynamic", "dynamic", "population-weighted, dynamic")]:
+        c.add(f"exposure.{tag}", round(float(er[col]), 1),
+              stat=f"{lab} concentration, micrograms per cubic metre", n=1,
+              source="decomp/exposure_weighting.csv", ledger="production")
+    c.add("exposure.uplift_pct", int(hr.exposure_uplift_pct),
+          stat="population-weighted exposure above the unweighted area mean, per cent", n=1,
+          source="decomp/health_burden.csv", ledger="production",
+          note="the area mean UNDER-states exposure because population concentrates in the "
+               "higher core; was 7 per cent on the pre-rebuild field")
+    c.add("burden.deaths", int(hr.attributable_deaths_per_yr),
+          stat="attributable deaths per year, dynamic exposure", n=1,
+          source="decomp/health_burden.csv", ledger="production",
+          note="projection of the delivered field through a published response function")
+    c.add("burden.ci_low", int(hr.ci_low), stat="lower bound", n=1,
+          source="decomp/health_burden.csv", ledger="production")
+    c.add("burden.ci_high", int(hr.ci_high), stat="upper bound", n=1,
+          source="decomp/health_burden.csv", ledger="production")
+    c.add("burden.avoidable", int(hr.avoidable_vs_WHO_AQG5),
+          stat="deaths per year avoidable against the WHO guideline", n=1,
+          source="decomp/health_burden.csv", ledger="production")
+    c.add("burden.fraction_pct", round(float(hr.attributable_fraction_pct), 1),
+          stat="attributable fraction, per cent", n=1,
+          source="decomp/health_burden.csv", ledger="production")
+
+
 def nbro_pixel(c: Claims) -> None:
     """F.65, re-derived 2026-09-04 by scripts/nbro_pixel_check.py.
 
@@ -1242,6 +1293,7 @@ def build() -> dict:
     colombo_donor(c)
     learned_pattern(c)
     field_diagnostics(c)
+    exposure_burden(c)
     nbro_pixel(c)
     kandy_application(c)
     confounds(c)
