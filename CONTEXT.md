@@ -3,7 +3,7 @@
 **Read this first.** One page of what is true, what is refuted, and what is open.
 Everything here is distilled from `CLAUDE.md`, `PROJECT.md`, the epistemic ledger
 (`kandy_pm25/docs/model_reference/F_epistemic_ledger.md`) and `memory/SESLOG.md` — those stay
-authoritative. **Keep this file under 250 lines.** Last updated **2026-08-22**.
+authoritative. **Keep this file under 250 lines.** Last updated **2026-09-05**.
 
 ---
 
@@ -26,8 +26,11 @@ PM(x,y,t) = B(t)  +  max(T(t)−B(t), 0)·P_local(x,y,t)  +  min(T(t)−B(t), 0)
 - **P_local** — unit-mean local pattern = normalised `S_emit · M` (`A_transport` = scenario).
 - **ε(t)** — bounded, mean-zero floor so ventilated hours are not perfectly flat.
 
-**Four guaranteed properties:** P1 conservation (T-lock) · P2 monotone skill under added data ·
-P3 exact/bit-exact nesting between tiers · P4 declared identifiability.
+**Two guarantees, one enforced mechanism, one discharged obligation.** ⚠ **Never write "four
+ guaranteed properties".** P1 conservation (T-lock) and P3 exact/bit-exact nesting are
+**guarantees**; P2 monotone skill under added data is an **enforced mechanism** (the estimator
+shrinks back, so it cannot discover a stream is *harmful*, only unusable — F.97); P4 declared
+identifiability is a **discharged obligation**.
 
 **Information budgets:** `Bud0` sensorless → `Bud1` (2 stations, Kandy's locked tier) →
 `Bud2` (+6) → `Bud3` (+regional background) → `Bud4` (spatial network).
@@ -44,13 +47,18 @@ above it. Fixed in code (`require_covers()`), re-registered at https://osf.io/g6
 re-running, rebuilt, and the bottom rung decomposed so each global stream is measured against a
 monitor's worth:
 
-| step | value |
-|---|---:|
-| `Bud0a→Bud0b` static geography | **10.8%** |
-| `Bud0b→Bud0c` satellite level | **7.6%** |
-| **`Bud0c→Bud1`** (+2 stations) | **17.8%** |
-| `Bud1→Bud2` (+6 stations) | **0.1%** |
-| `Bud2→Bud3` (+background) | **40.6%** |
+| step | value | 95% over CITIES (F.97) |
+|---|---:|---|
+| `Bud0a→Bud0b` static geography | **10.8%** | — |
+| `Bud0b→Bud0c` satellite level | **7.6%** | — |
+| **`Bud0c→Bud1`** (+2 stations) | **17.8%** | [4.6, 23.5] |
+| `Bud1→Bud2` (+6 stations) | **0.1%** | **[0.0, 0.9]** ← tightest |
+| `Bud2→Bud3` (+background) | **40.6%** | [26.7, 45.2] |
+
+⚠ **Intervals are over CITIES, not city-days** — 28,930 city-days is not n=28,930. ⚠ Every gain
+is a **path-dependent marginal**: reordering moves the background only 40.6→38.0% but moves
+monitors 3–8 from 0.13% to **2.81%** (F.97). ⚠ A background is **only priceable given some local
+observation** — the "background first" rung cannot be built.
 
 🟢 Geography beats satellite — an *annual* level cannot touch the day-to-day variance daily RMSE
 is made of. 🟢 A satellite level helps **coastal** cities **1.8×** more than inland (satellite
@@ -70,12 +78,12 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 
 | quantity | value | source |
 |---|---|---|
-| local fraction **f** | **0.4828** (≈0.48) | coherence cap, F.43 · `kandy_partition_v2.json` |
+| local fraction **f** | **0.4828** (≈0.48); honest range across constraint forms **0.482–0.547** | coherence cap, F.43. ⚠ **A constrained decomposition, NOT observed source apportionment**, and **local increment ≠ locally emitted primary material** (no chemistry). **Never say "removing local sources would remove half the problem".** |
 | ε-floor `eps0`, Kandy | **3.69** | F.57 (scales with mean accumulation) |
 | T-lock accuracy | field runs **+0.39 to +0.56%** above anchor → say *"to within 0.6 per cent"* | 2026-08-14 build |
 | basin annual means | 2019 **19.75** · 2020 **19.09** · 2021 **17.08** · 2022 **18.76** · 2023 **21.04** | `scalars_*.json` |
-| pop-weighted exposure uplift | **+7%** over the area mean | `exposure_weighting.csv` |
-| burden 2023 | **≈423/yr [231–616]**, 291 avoidable | `health_burden.py` |
+| pop-weighted exposure uplift | **+9%** over the area mean (21.0 → 23.0) | `exposure_weighting.csv`, regenerated 2026-09-04 (the retired figure was +7%, computed on a pre-rebuild field) |
+| burden 2023 | **431/yr**, **response-function-conditional** interval [237–632], 300 avoidable | `health_burden.py`. ⚠ The interval carries ONLY the published CRF uncertainty: **not** the field, the population weighting or the W11 level discrepancy. Never call it a total uncertainty interval. |
 | KOALA anchor | *"about 24.5"* — a valley-**FLOOR** point, never the basin mean | Senarathna 2024 |
 | diurnal (FECT, normalised) | morning **07 = 1.41** · evening **18–19 = 1.25** · **midday trough 14 = 0.725** · night 00–04 = 0.865 | F.38 |
 | exporter QA | reconstruction **0.0014** µg/m³ (tol 0.25) · wind parity **0.0005** m/s | 2026-08-22 |
@@ -103,6 +111,11 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 | B > T pre-cap **29.9% / 38.2%** | one quantity stated three ways in one document | **38.8%** of hours, **53.9%** of midday |
 | **5** deep-tropical vs **32** temperate reference clusters | never computed; fresh OpenAQ census | **6 vs 65** — the disparity is LARGER, 10.8x |
 | "night lights is the best spatial proxy, rho 0.34" | an 8-city figure | **built-up land cover at 2.4 km, rho 0.309** on 46 cities |
+| background gain **75%** reproduced independently | pre-F.84 rung; re-run on corrected `Bud0c` | **73%** (F.54 re-run) |
+| **F.92** deep-tropical inversion (21.9 vs 8.5, GHAP) | paired over cities it is **+3.6 pp [-14.3, +36.3]**, a coin flip at 54% of cities | **F.96/MAIAC only: +33.3 pp [+7.0, +50.1]**, 77% of cities |
+| "removing every local source removes half the problem" | no chemistry, so **local increment is not locally emitted primary material** | *the decomposition ASSIGNS ~0.48 to a local increment*; honest range **0.482-0.547** |
+| "a reference monitor is worth 43.7%" | the ladder measured **two LOW-COST sensors** | local > regional in this band; reference grade is a SEPARATE design argument |
+| monitors 3-8 buy **0.1%**, full stop | order-dependent: **2.81%** with a background present | small under both orders; **never a fixed quantity** |
 
 ---
 
@@ -110,7 +123,7 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 
 | axis | status | evidence |
 |---|---|---|
-| **level (daily)** | **strong** — but see §5 W11 | 47 cities, 32 countries, 4 bands; monotone under added data; background gain 75% reproduced by an independent network 89 km away (F.54) |
+| **level (daily)** | **strong** — but see §5 W11 | 48 cities, 29 countries, 4 bands; monotone under added data; background gain **73%** reproduced by an independent network at a median 89 km (F.54 re-run 2026-09-05; **bounds the same-network artefact from above, does not measure it**) |
 | **sub-daily shape** | **regime-limited** | transfers in the **deep tropics** (+25.8% vs flat, r 0.63, ~1 h phase error) — Kandy's regime — and **nowhere else**; pooled it is 5.5% *worse* than assuming no cycle (F.55) |
 | **spatial pattern** | **ceiling measured** | ρ ≈ 0.2–0.28, unmoved by four attempts **plus a full LUR predictor set** (636 stations, roads at 5 radii): pooled ρ **+0.273 → +0.275** (F.61) |
 
@@ -127,22 +140,14 @@ a change-of-support statement, not a data-quality complaint, and it is the stron
 the ceiling claim. ⚠ It does **not** resolve W6: 82% of roadside PM10 *spatial variance* and
 7.6% of ambient PM2.5 *mass* are different quantities.
 
-🔴 **Scored against the model (F.69) — the first within-Kandy spatial test ever run.**
-12 sites geocoded via OSM Overpass, model hours 11–13 LT to match the sampling window:
-
-| | spread across the 12 sites |
-|---|---|
-| **observed** | 4 → 340 µg/m³ = **85×** |
-| **model** | 20.72 → 25.43 µg/m³ = **1.23×** |
-
-Two sites are the *same place at two microsites*: the garden entrance vs 300 m inside is
-**27.5× observed, 1.000× modelled** (same pixel, 998 m); the school junction vs its grounds is
-**4.6× observed, 1.000× modelled**. Rank ρ = +0.44 (n=12, p=0.16), **not significant**.
-**The model's whole dynamic range across Kandy is smaller than the gap between two points
-300 m apart in one garden.** The coarse ordering is right (rural = minimum, Katugastota =
-near-maximum); the **amplitude is compressed ~70×**. State the limitation as a *definition*
-problem, not a *skill* problem — and note the model is **not thereby wrong**: a 1 km areal mean
-*should* sit mid-distribution against kerbside 3-h samples.
+🔴 **Scored against the model (F.69) — the first within-Kandy spatial test ever run.** 12 sites,
+model hours 11–13 LT to match the sampling window: observed spread **85×** (4 → 340), model
+**1.23×** (20.72 → 25.43). The garden entrance vs 300 m inside is **27.5× observed, 1.000×
+modelled** (same pixel). Rank ρ = +0.44 (n=12, p=0.16), **not significant**. ⚠ The second
+apparent pair carries **one coordinate for both sites** and is withdrawn. **The model's whole
+dynamic range across Kandy is smaller than the gap between two points 300 m apart in one
+garden.** Coarse ordering right, **amplitude compressed ~70×**. A *definition* problem, not a
+*skill* problem: a 1 km areal mean *should* sit mid-distribution against kerbside 3-h samples.
 
 🔴 **`Bud4` is an unsupported design assumption**, not a validated rung. A spatial network does
 NOT make `P` estimable: interpolation between a city's own stations is worse than assuming the
@@ -153,26 +158,21 @@ city is uniform (F.60), and a transferred LUR barely beats a population raster (
 
 ## 4b. 🟢 The spatial rung was TESTED under pre-registration (2026-09-04, OSF `2jyfg`)
 
-`Bud4` remains a **declared design assumption** — but it is now a tested one, which is a
-different epistemic object from an untested one.
+`Bud4` remains a **declared design assumption**, but a **tested** one, which is a different
+epistemic object. Benchmark = best single free predictor, built-up land cover at 2.4 km,
+**rho 0.309** (46 cities, 630 stations); detection limit **0.130**; **registered bar 0.44**.
+Learned pattern reached **0.286** (delta +0.022, 25/46, p = 0.94) — **L1 held**, reported as
+*undetectable at this power*, not as a modest success.
 
-- **Benchmark**: best single globally available predictor = built-up land cover at 2.4 km,
-  **rho 0.309** (46 cities, 630 stations).
-- **Detection limit**: **0.130** at 80% power on that frame. **Registered bar: rho >= 0.44.**
-- **Result**: learned pattern **0.286**; median paired delta **+0.022**, 25/46, p = 0.94.
-  **L1 held — the bar is not cleared**, and per the registration this is reported as
-  *undetectable at this power*, not as a modest success.
-- 🟢 **The sixth null on within-city spatial pattern, and the FIRST with a detection limit
-  stated in advance.** The previous five could only have detected effects of 0.65–0.96.
-- 🟢 The gauge (P = N·softmax over cells) holds to **3.3e-16** across saturated, overflow-range
-  and dead-constant fields. **A learned pattern can misplace material; it cannot create it.**
-- 🟡 Skill is lower outside the temperate band (temperate +0.457 vs +0.225, p = 0.006; survives
-  within-network de-confounding, p = 0.002) — but the **mechanism is not established** and that
-  test was **not pre-registered**. Exploratory.
-- ⚠ Also measured: **no engineered emission surface beats a single free raster** — not
-  congestion-weighted road centrality, not a sector-weighted composite, not one carrying OSM
-  industrial land use. Industrial land use IS a real predictor (it rescues Yichang, where the
-  production traffic surface scores **−0.091**) but does not win overall.
+- 🟢 **Sixth null on within-city spatial pattern, and the FIRST with a detection limit stated in
+  advance.** The previous five could only have detected effects of 0.65–0.96.
+- 🟢 Gauge (P = N·softmax over cells) exact to **3.3e-16**. **A learned pattern can misplace
+  material; it cannot create it.**
+- 🟡 Band difference real (temperate +0.457 vs +0.225, p = 0.006) but **mechanism not
+  established** and the test was **not pre-registered**. Exploratory.
+- ⚠ **No engineered emission surface beats a single free raster** — not road centrality, not a
+  sector composite, not one with OSM industrial land use (which IS a real predictor and rescues
+  Yichang, where the production traffic surface scores **−0.091**, but does not win overall).
 
 ---
 
@@ -189,22 +189,25 @@ different epistemic object from an untested one.
 
 ### 🔴 The support-scaling ladder is CONFOUNDED — do NOT quote it as a scaling law (F.76)
 
-Across its rungs, *support* and *siting design* moved together: Elangasinghe deliberately
-sampled bus-terminus-to-botanical-garden extremes, the later rungs progressively did not. A
-direct test on three dense networks finds temporal averaging collapses contrast by only
-**1.2–1.7×**, not 69×. **Most of the apparent ladder is siting contrast, not averaging.**
+Support and siting design moved together across its rungs. A direct test on three dense networks
+finds temporal averaging collapses contrast by only **1.2–1.7×**, not 69×. **Most of the apparent
+ladder is siting contrast, not averaging.** What survives is stronger: the **paired-site test is
+unconfounded** (two microsites 300 m apart, both 3-h samples, one 998 m pixel — **27.5× observed,
+1.000× modelled**); and **at matched support AND window the model is close to right** (F.77:
+monthly p90/p10 **1.175** modelled vs **1.26–1.51** observed; ⚠ observed spreads are across
+*stations*, the model's across *cells*). 🟢 **The amplitude question is CLOSED** — `s_exp` stays
+at 1.0. There is no amplitude crisis; what the model cannot do is *place* the contrast (§4b).
 
-🟢 **What survives is stronger.**
-- **The paired-site test is unconfounded**: two microsites **300 m apart, both 3-h samples, one
-  998 m pixel** — **27.5× observed, 1.000× modelled**. Support fixed, only location varies.
-- **At matched support AND matched window the model is close to right** (F.77, window-matched
-  2026-09-04): monthly p90/p10 **1.175** modelled against **1.26–1.51** observed across three
-  cities at the same window. ⚠ A residual mismatch remains — observed spreads are across
-  *stations*, the model's across *cells*.
-- 🟢 **The amplitude question is CLOSED (F.77).** `s_exp` does not transfer and points the
-  opposite way to expectation; the two candidate surfaces **bracket** observation. **`s_exp`
-  stays at 1.0.** There is no amplitude crisis — what the model cannot do is *place* the
-  contrast, which is the separate, now pre-registered and re-tested, ρ limit (§4b).
+### 🟡 Open scope decision — is chemistry a fourth pillar? (2026-09-05)
+
+Chemistry is currently a **supporting** discipline: composition checks (F.93), source-apportionment
+literature, aged-versus-fresh reasoning. It is **not** a core one — no chemical transport model,
+no aerosol thermodynamics, no gas-phase mechanism, no speciation modelling, no reaction kinetics,
+and `§6.7` says so explicitly. ⚠ **Do not bolt on a CTM** — that is a different thesis and it
+would be unvalidatable at Kandy for exactly the reasons Chapter 1 gives. The tractable route, if
+one is wanted, is **species-resolved testing of the decomposition's own chemical prediction**
+(`B` = aged and secondary-rich, increment = fresher and more primary) using speciated reanalysis
+already on disk. **Decision pending.**
 
 ---
 
@@ -214,18 +217,16 @@ The **first external checks on the Kandy field** in the project's history. Full 
 F.64–F.72.
 
 - 🟢 **NBRO Kandy (KAN)**, 24-h, N=360/yr: obs **19.6** (2021) / **22.7** (2022); model at that
-  pixel **19.74 / 22.11** → **+0.7% / −2.6%**. Genuinely out of sample because the *lift* above
-  the basin mean (**15.6%** in 2021, **17.9%** in 2022) is imposed physics never fitted to any
-  Kandy station. Station sits 0.33 km from its cell centre. ⚠ Instrument undocumented.
+  pixel **19.74 / 22.11** → **+0.7% / −2.6%**. Out of sample because the *lift* above the basin
+  mean (**15.6%** 2021, **17.9%** 2022) is imposed physics never fitted to a Kandy station.
+  0.33 km from its cell centre. ⚠ Instrument undocumented.
 - 🟢 **W5 corroborated** — FECT Akurana **17.8** vs a BAM-anchored **~18–19** (Dhammapala 2022).
 - ⚠ **BAM-calibrated LCS** (7.2731, 80.6117): **19.49** where the model says **25.01**. The two
   observation records disagree with each other by more than the model disagrees with either.
 - 🟢 **W2 externally corroborated (F.72)** — Abeyratne & Ileperuma 2006 bin three gases by
   monsoon and find the maximum in the **NE**, not the SW where Sri Lanka's sources are.
-  Long-range transport is **seasonal, not chronic**.
-- ⚠ **Nirmani's meteorology is reanalysis**, not station data → their CBPF attribution is weak.
-- ⚠ **Three sources say Kandy reads dirtier than Colombo** in the *gas* phase. A flag on **W11**,
-  not a measurement.
+- ⚠ **Nirmani's meteorology is reanalysis** → their CBPF attribution is weak. ⚠ Three sources say
+  Kandy reads dirtier than Colombo in the *gas* phase: a flag on **W11**, not a measurement.
 
 ---
 
@@ -234,7 +235,7 @@ F.64–F.72.
 | route | state |
 |---|---|
 | 🔴 **CEA Kandy AQMS** | **FIRST AND ONLY route to a Kandy reference monitor — and now also the highest-value acquisition by measurement (F.92), ahead of NBRO.** Granted in principle 2026-08-12: hourly 2019→2026-05, PM2.5/PM10/gases plus full met incl. rain gauge and wind. Needs a letter on university letterhead to the DG + a signed R&D agreement. Gap 2021-07→2022-10. |
-| ⚠ **NBRO regional background** | **DEMOTED for Kandy 2026-09-01 (F.92).** The "largest gain in the programme" is a POOLED number; in Kandy's own band local stations buy 21.9% and the background 8.5%. Still no free substitute (F.63) and the channel works — but second priority, not first. 🟢 **Confirmed on the honest satellite stream (F.96): local stations 43.7% vs background 10.3%, a 4.2× advantage.** |
+| ⚠ **NBRO regional background** | **DEMOTED for Kandy (F.92 → F.96 → F.97).** The "largest gain in the programme" is a POOLED number; in Kandy's band local stations win. 🔴 **F.97: quote the MAIAC version only.** Paired over cities the advantage is **+33.3 pp [+7.0, +50.1]**, 77% of cities, on raw MAIAC; on fused GHAP it is **+3.6 pp [−14.3, +36.3]**, a coin flip. **F.92's numbers alone did not support the recommendation.** Still no free substitute (F.63), the channel works, second priority. 🟢 A donor network at ~89 km recovers **73%** of the background rung (F.54 re-run), so the rung is real regional information. |
 | ⚫ **Torrington Park BAM-1020, Kandy** | **DEFUNCT (user, 2026-08-22).** The instrument that anchored the RF-CNN calibration and Dhammapala's correction is **no longer operating**. It is provenance for the published records, not a data route. |
 | ⚠ **NBRO domain moved** | `nbro.gov.lk` → **`nbri.gov.lk`** (301). Update every NBRO URL in notes and letters. |
 | **PDN Uni's own islandwide sensor network** | Unexploited, and it is the user's own institution. Chase internally. |
@@ -242,7 +243,7 @@ F.64–F.72.
 | **Mobile campaign** | 4–8 drive days per segment, and it still needs one fixed reference to anchor to. |
 
 **In hand:** FECT (2 low-cost sensors, 2018–2026) · KOALA/NIFS 2019 · OpenAQ + CNEMC archives
-(47-city panel) · GEE reanalysis and satellite stack · IMERG rain.
+(48-city panel) · GEE reanalysis and satellite stack · IMERG rain.
 
 ---
 
@@ -260,7 +261,9 @@ F.64–F.72.
 - **Check `n` before believing a comparison** — thin overlap windows produced two false alarms in
   one session (F.63, F.64).
 - **Never clip a field at 0 in a parquet** whose consumers derive anchors from it (gotcha #65).
-- **A fix to a derived artefact belongs inside the code that derives it** (gotcha #70).
+- **A fix to a derived artefact belongs inside the code that derives it** (#70), and **a
+  build that CONSUMES a derived artefact must REGENERATE it** — the claims gate checks the
+  numbers in a table, not that the table is current (#90).
 - **Verify outward-facing actions landed**: `git -C <path> rev-list --count origin/main..HEAD`
   must be 0 (gotcha #77).
 - **Anchor framing:** KOALA/Senarathna/MAIAC are calibration anchors → "consistency anchors",
@@ -272,17 +275,18 @@ F.64–F.72.
 
 | you want | read |
 |---|---|
-| session instructions, gotchas #1–81, current state | `CLAUDE.md` |
+| session instructions, gotchas #1–90, current state | `CLAUDE.md` |
 | **how** a component is built (maths, modules, invariants) | `PROJECT_ARCHITECTURE.md` |
 | **what** came out (stage results, data inventory) | `PROJECT.md` |
-| every finding, gate, prior and recorded error | `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (**F.1–F.67**) |
+| every finding, gate, prior and recorded error | `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (**F.1–F.97**) |
 | what happened when | `memory/SESLOG.md` (reverse-chronological) |
 | the formal model statement | `kandy_pm25/docs/MODEL_SPECIFICATION.md` |
 | doc index — current vs historical | `kandy_pm25/docs/README.md` |
 | the manuscript | `kandy_pm25/docs/paper/` — **edit `draft_s*.md`, never `manuscript_kandy.md`** |
+| **the thesis** | `#writing/` — **edit `thesis/chapters/ch*.md`, never `build/thesis.md`** |
 
 **Publication view:** two papers, not one. **(A)** the methods / value-of-information paper —
-47 cities, the budget ladder, three confounds caught by registered gates, two measured ceilings;
+48 cities, the budget ladder, three confounds caught by registered gates, two measured ceilings;
 needs no Sri Lankan data, and is the strong one. **(B)** the Kandy application — weaker alone,
 strong once A exists. The current 28-page manuscript sits between them and should be **split
 rather than defended**.

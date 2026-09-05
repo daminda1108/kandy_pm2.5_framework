@@ -70,6 +70,78 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-05, 🔬 **TWO REVIEW ROUNDS ANSWERED · A HIDDEN FINDING RECOVERED**)
+
+Two rounds of outside methodological review of the thesis, answered **by computation where
+possible rather than by rewording**. Narrative: SESLOG 2026-09-05. Ledger **F.97** + an F.54
+re-run block.
+
+### 🔴 THE ONE THAT CHANGED A CONCLUSION (F.97c)
+The deep-tropical inversion, **paired within city** and bootstrapped over cities, n=13:
+
+| stream | paired advantage of 2 sensors over background | favours sensors | excludes 0 |
+|---|---:|---:|---|
+| **GHAP (fused)** | **+3.6 pp [−14.3, +36.3]** | 54% | **NO** |
+| **MAIAC (raw)** | **+33.3 pp [+7.0, +50.1]** | 77% | **YES** |
+
+**F.92's inversion, measured on GHAP, was a coin flip.** Same 13 cities, same procedure, only the
+satellite stream differs. **The contaminated covariate did not merely shift the numbers — it
+destroyed the significance of the finding that matters most for Kandy.** Sharpest consequence of
+C1/F.95 in the programme. ⚠ Post-hoc, not registered. **Quote F.96/MAIAC, never F.92/GHAP alone.**
+
+### 🟢 The background rung was TESTED, not just caveated (F.54 re-run)
+`independent_background_revalidated.py`. An independent donor network 30–300 km out recovers
+**73%** of the `Bud3` gain on the corrected `Bud0c` rung, so the rung carries genuine regional
+information. 🔴 The published statistic **moved 79 → 73**. ⚠ It **bounds the artefact from above
+and does not measure it**: recovery is 84% at 62 km against 57% at 152 km, so independence is
+confounded with proximity. ⚠ **Kandy's own band is the weakest cell** — 37% at 221 km, n=4.
+
+### 🔬 Path dependence + city-level uncertainty (F.97a, F.97b)
+- **One reordering is impossible by construction and that IS the finding:** the background is a
+  regressor fitted against LOCAL station data, so **it is only ever priceable given some local
+  observation.** The ladder's order is partly forced, not chosen.
+- Permuting it against monitors 3–8 over 46 cities: background **40.56 vs 38.03%** (order-robust);
+  monitors 3–8 **0.13 vs 2.81%** — order-robust in conclusion, **21× in magnitude**. **Never
+  quote 0.1% as a fixed quantity.**
+- 🔴 The two orders reach the **same information set and NOT the same skill** (0.106 µg/m³ apart).
+- ⚠ Because the estimator shrinks back, **the ladder cannot discover a stream is HARMFUL**, only
+  that it is unusable. A ~0 rung means *no attainable improvement*, not *no information*.
+- **Bootstrap over CITIES** (28,930 city-days is not n=28,930): first two **17.9% [4.6, 23.5]**,
+  monitors 3–8 **0.1% [0.0, 0.9]**, background **40.6% [26.7, 45.2]**. 🟢 **The tightest result
+  is the null.**
+
+### 🟢 The "48 vs 37" table is NOT an error — and now says so on its face
+37 cities carry a band; **11 are CNEMC and carry none**. The country column reaches 32 because
+**4 countries span bands** and are counted once in each, while China appears in no band row.
+**A per-band distinct count is not additive.** New claims `frame.unbanded` ·
+`frame.band_country_sum` · `frame.countries_multiband`.
+
+### 🔴 Claims that were WEAKENED and must stay weakened
+- **"Removing every local source removes half the problem" is WITHDRAWN** (Ch2, Ch6, summary).
+  The partition is a **constrained decomposition, not observed source apportionment**, and
+  **local increment ≠ locally emitted primary material** because there is no chemistry.
+  Honest range including the 48-h constraint form: **0.482 to 0.547**.
+- **The ladder measured two LOW-COST sensors**, so it does **not** measure reference-monitor
+  value. The case for reference grade is a separate measurement-design argument (Ch9.1).
+- The estimand is **marginal predictive value using out-of-sample RMSE as the loss surrogate at
+  a fixed position**, not decision-theoretic VoI.
+- Monitors 3–8 are priced **as networks actually place them**; placement is its own problem.
+- The burden interval is **response-function-conditional**, not a total uncertainty interval.
+
+### 🟢 Literature positioning now exists (Ch3.4)
+Against Howard 1966 (VoI) · Chaloner 1995 (optimal design) · **Samrat 2025 (observing-system
+experiments)** · Verghese 2022 + **Choi & Hummel 2026** (the nearest neighbour: VoI on low-cost
+PM2.5 networks, but optimising *placement* in a monitored region). **The IDEA is conceded as not
+new** — measuring an observation by withholding it is standard OSE practice. Novelty split four
+ways: idea (not new) · application (close to new) · implementation (exact nesting) · two
+empirical results. **7 bib entries added, all Crossref-verified.**
+
+🟢 **Attanayake2025 CHECK discharged** — the recorded **title was wrong** (a paraphrase). Correct:
+*An RF-CNN pipeline for predicting PM2.5 concentration in Sri Lanka*, JHMA 19:100782.
+
+**Thesis state: 30,052 words · 33 figures · 9 tables · 302 claims · 0 lint errors.** Summary
+2 pages. Commits `7564d90`, `12ef445`, pushed.
+
 ## Current State (updated 2026-09-04, 🔬 **EVERY NUMBER GENERATED · A SIXTH NULL, REGISTERED**)
 
 Two strands. The manuscript's numbers are now **all generated by scripts and gate-checked** —
@@ -602,6 +674,18 @@ All paths are relative to `d:\ProjectCD\kandy_pm25\` unless stated otherwise.
   phase1_predictor_ranking,phase2_learned_pattern}.csv`, `decomp/{nbro_pixel_check,
   kandy_field_diagnostics,kandy_contrast_by_window}.csv`, `decomp/industry_{slug}.npz`,
   `external/openaq/discovery/global_locations.csv`.
+- **🆕 Review-response scripts (2026-09-05, `scripts/`, whitelisted):**
+  `independent_background_revalidated.py` (F.54 re-run on the corrected `Bud0c` rung; donor-city
+  background through an identical chain) · `ladder_order_and_bootstrap.py` (**F.97**: ladder
+  reordering + bootstrap over CITIES + the paired deep-tropical inversion test on both satellite
+  streams). Products: `modular/{independent_background_revalidated,ladder_order_variants,
+  ladder_bootstrap}.csv` + `ladder_order_summary.json`.
+- **🆕 Thesis (2026-09-04/05):** `D:\ProjectCD\#writing\` — `thesis/chapters/ch00..ch11.md` (edit
+  these, never `build/thesis.md`) · `src/{thesisviz,d_flowcharts,d_schematics,d05_validation_protocol,f_chapters,t_tables}.py`
+  · `build/{make_reference_docx,lint,assemble,build_docx}.py` · `summary/{summary.md,build_summary.py}`.
+  Build: `python build/build_docx.py` (regenerates tables → lint → assemble → pandoc; **refuses**
+  on claim drift or a lint ERROR). Bibliography is shared with the paper at
+  `kandy_pm25/docs/paper/references.bib`.
 - **🆕 Paper-2 docs (2026-09-04):** `docs/learned_pattern_plan_2026-09-04.md` (plan + Phase 0/1/2
   results) · `docs/prereg_learned_pattern_2026-09-04.md` (**OSF `2jyfg`**, project `dgtuq`) ·
   `docs/paper/note_spatial_pattern_2026-09-04.md` (the write-up) ·
@@ -799,6 +883,8 @@ python src/comparison/publication_figures.py --all
 
 88. **🔴 A DataFrame column named `T`, `first` or `last` is unreachable by attribute — and the wrong thing is returned SILENTLY (2026-09-04).** `df.T` is the transpose, `df.first`/`df.last` are methods. `j.T < j.Bpost` returns a transposed frame rather than a boolean mask and only fails several lines later inside an unrelated call; `d.first.notna()` raises `'function' object has no attribute`. Both were hit in one session. **Rename the column at load (`t_first`, `tot`) rather than reaching for `df["T"]`** — bracket access works but leaves the trap in place for the next edit. Same family as the pandas-method shadowing that makes `df.count`, `df.size`, `df.mean` unusable as column names.
 
+90. **🔴 A build that CONSUMES a derived artefact must REGENERATE it — the claims gate protects values, not structure (2026-09-05).** `build_docx.py` ran the claims gate, the linter and the assembler, and read the table `.md` files that `t_tables.py` writes **without ever running it**. So a structural edit to a table (its note, its columns, its caption) silently did not reach the document, while every `{{claim:}}` token inside that table still resolved correctly and **all six gates stayed green**. Caught only by editing a table note and watching the *old* note appear in the build. **The gate checks the numbers in the cells; nothing checks that the table itself is current.** Fix: the build now runs `t_tables.py` first and refuses to continue if it fails. Third instance of the same family: #70 (a correction written to a derived file that the builder regenerates), #86 (a figure script drawing a retired input). **Rule: for every artefact the build reads, ask which script writes it, and either run that script in the chain or fail loudly if its output is older than its source.**
+
 89. **🔴 An HTTP error is not evidence that nothing happened — verify the artifact, not the status code (2026-09-04).** Posting an OSF registration returned 500 twice, 502 twice, then 403 three times across eight attempts. **One of the 500s had succeeded.** The registration existed while the client reported failure, and the subsequent 403s were the already-consumed draft — so a naive retry loop would have been harmless here but a "create it again" fallback would have produced a duplicate registration with a later timestamp, destroying the only thing a pre-registration is for. **Query the collection (`/nodes/{id}/registrations/`) before concluding a POST failed.** Gotcha #77 for outward-facing writes, restated for APIs: the check is the artifact.
 
 ## Pending Tasks (updated 2026-08-22)
@@ -806,7 +892,21 @@ python src/comparison/publication_figures.py --all
 Narrative/history for everything below lives in `memory/SESLOG.md`.
 This section is the FORWARD list only.
 
-### 0. 🔴 IMMEDIATE (updated 2026-09-04)
+### 0. 🔴 IMMEDIATE (updated 2026-09-05)
+0. **THE THESIS NEEDS A HUMAN READ END TO END.** It is at 30,052 words, 302 claims, gates green,
+   and has now survived two rounds of outside methodological review. Every mechanical check runs
+   on every build; **none of them checks that a number is meaningful, only that it is current.**
+   User action, and the critical path for the thesis.
+0a. **Decide on the chemistry question.** The reviewer's remaining open item: chemistry is a
+   *supporting* discipline (composition checks, source-apportionment literature, aged-vs-fresh
+   reasoning) and not a *core* one (no CTM, no thermodynamics, no gas-phase mechanism, no
+   speciation modelling). Whether to deepen it into a fourth pillar is a scope decision.
+   ⚠ **Do not bolt on a CTM** — that is a different thesis. The tractable route is
+   **species-resolved testing of the decomposition's own chemical prediction**, using speciated
+   reanalysis already on disk. Assessment pending.
+0b. **Circulate the paper** to the four readers — user action, unchanged.
+
+### 0y. Superseded IMMEDIATE list (2026-09-04)
 0. **CIRCULATE THE PAPER.** It is built, gated and numerically complete: 13,799 words, 18
    figures, 62 references, 224 claims of which 183 resolve, gates 6/6, DOCX verified. **Every
    number it contains is now generated by a script** — `docs/paper/TOKENISATION_BACKLOG.md`
