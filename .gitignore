@@ -196,6 +196,13 @@ saf/
 !PROJECT.md
 !kandy_pm25/docs/
 kandy_pm25/docs/*
+# Pre-registrations are tracked by rule: a registration that is not versioned and
+# timestamped is not a registration. Previously each was force-added by hand, which meant a
+# new one silently stayed untracked until someone noticed.
+!kandy_pm25/docs/prereg_*.md
 !kandy_pm25/docs/model_reference/
 kandy_pm25/docs/model_reference/*
 !kandy_pm25/docs/model_reference/F_epistemic_ledger.md
+
+# Standalone app repos (own git repos, pushed separately)
+expertise_dashboard/
