@@ -47,10 +47,12 @@ Running that measurement across {{claim:frame.cities}} cities in {{claim:frame.c
 countries and {{claim:frame.city_days}} city days gives results that are not what the field's
 intuition suggests. Freely available static geography is worth {{claim:step.geography}} per cent
 in daily error, comparable to the first local instrument. The second monitor through the eighth
-are worth {{claim:step.bud1_bud2}} per cent. A regional background station is worth
-{{claim:step.bud2_bud3}} per cent, the largest single gain measured. The ordering reverses by
-latitude band, so the recommendation derived from the global average is the wrong recommendation
-for the tropics, including for the demonstration city.
+are worth {{claim:step.bud1_bud2}} per cent. A regional background series is worth
+{{claim:step.bud2_bud3}} per cent, the largest single gain measured, and rebuilding it from a
+donor city the target has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of
+that, which bounds how much of it could be an artefact of the proxy used. The ordering reverses
+between latitude bands, so the recommendation derived from the pooled panel is the wrong
+recommendation in the band the demonstration city belongs to.
 
 The model is demonstrated at Kandy, Sri Lanka, a valley city with two low-cost sensors and no
 operating reference monitor. The local share of concentration is {{claim:partition.f}}, derived
@@ -65,6 +67,14 @@ the gap. The reason is a change of support: spread within a cell exceeds spread 
 A pre-registered test of a learned spatial pattern, with its detection limit fixed in advance,
 reached {{claim:phase2.rho_learned}} against a registered bar of {{claim:phase2.bar}}, giving a
 bounded null where five earlier unregistered nulls gave none.
+
+What is established at Kandy is therefore narrower than the delivered field might suggest, and
+the distinction is stated here so that it cannot be missed. The city-mean level and its seasonal
+behaviour are checked against records the model played no part in producing. **The
+neighbourhood-scale map is not validated, and this thesis does not claim it is**, because the
+observations that would validate it do not exist in the city. What the work establishes is what
+the model is entitled to claim given the observations available, together with a measurement of
+what each further observation would be worth.
 
 ---
 

@@ -96,11 +96,17 @@ that makes withholding exact, and Chapter 7 reports what the measurement found.
 
 The results are not what the field's intuition suggests. Freely available geographic data is
 worth about as much as the first monitor a city buys. The second monitor through the eighth are
-worth nothing that can be measured. The largest single gain comes from a rural background
-station, which is the instrument that air quality programmes are least likely to fund because a
-rural monitor serves no constituency. And the ordering of those recommendations reverses between
-latitude bands, so the advice derived from the global average is the wrong advice for the
-tropics, including for the city this thesis is about.
+worth nothing that can be measured. The largest single gain comes from a background series drawn
+from outside the urban core, and the instrument that would supply one is the instrument air
+quality programmes are least likely to fund, because a rural monitor serves no constituency. And
+the ordering of those recommendations reverses between latitude bands, so the advice derived from
+the pooled panel is the wrong advice in the band the city this thesis is about belongs to.
+
+Each of those findings is bounded rather than general, and Chapter 7 states the bounds alongside
+the numbers. The panel is the set of cities that publish enough data to be scored, which is not a
+sample of the world's cities; the background result rests on a constructed proxy that a separate
+test can bound but not fully verify; and the latitude ordering is a difference between bands
+rather than an effect of latitude itself.
 
 ## 1.5 How the argument is arranged
 

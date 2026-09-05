@@ -74,6 +74,7 @@ them.
 | reference-dense cities, tropics against temperate | 5 and 32 | {{claim:census.deep_tropical}} and {{claim:census.temperate}} | pulled fresh from the global archive rather than recalled |
 | population-weighted exposure uplift | 7 per cent | {{claim:exposure.uplift_pct}} per cent | the exposure file predated the field rebuild |
 | attributable deaths per year | 427 | {{claim:burden.deaths}} | the same stale input |
+| share of the background gain an independent network recovers | 79 per cent | {{claim:donor.gain_reproduced_pct}} per cent | re-run on the corrected bottom rung, which leaves less headroom for any background to recover |
 
 <!-- lint:on -->
 
@@ -83,7 +84,11 @@ Two features of that table are worth stating.
 comparing, which is why the machinery of Chapter 10 exists and why it runs on every build rather
 than at the end.
 
-**Three of them made an argument weaker and were kept anyway.** The donor benchmark, the bound
-saturation and the countries count all made the surrounding claim less impressive once corrected.
-A number that strengthens an argument is the least likely number to be checked, and that is the
-argument for checking all of them mechanically rather than selectively.
+**Four of them made an argument weaker and were kept anyway.** The donor benchmark, the bound
+saturation, the countries count and the independent-background recovery all made the surrounding
+claim less impressive once corrected. The last of those was regenerated specifically because an
+external reader identified the background rung as the thesis's most vulnerable claim, so it is
+the clearest case of the pattern: the check was run in the place where the result was most wanted
+to hold, and it came back smaller. A number that strengthens an argument is the least likely
+number to be checked, and that is the argument for checking all of them mechanically rather than
+selectively.

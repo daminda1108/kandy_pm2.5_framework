@@ -1198,26 +1198,76 @@ def lur(c: Claims) -> None:
 
 
 def donor(c: Claims) -> None:
-    """F.54/F.63. The independent-background check and the donor benchmark."""
-    p = MOD / "independent_background.csv"
+    """F.54. The independent-background check, re-run 2026-09-05 on the corrected Bud0c rung.
+
+    SOURCE CHANGED. This read `independent_background.csv`, which was scored on the pre-F.84
+    bottom rung. Both of its arms shared that defect so its recovery FRACTION was largely
+    protected, but its absolute gains sat against an artificially weak baseline and could not be
+    quoted beside the current ladder. It now reads the re-run.
+
+    The recovery fraction moved 79 -> 73 on the corrected rung. So the ratio was PARTIALLY
+    protected, not fully: a stronger bottom rung leaves less headroom for any background to
+    recover, and the independent one loses more of it than the own-network one. The conclusion
+    is unchanged and the margin is smaller.
+
+    Only ONE recovery statistic is published, the median of per-city ratios, matching every
+    other ladder gain in this project. A ratio of medians gives 78 on the same file, and
+    publishing both would put two numbers for one quantity into one document.
+    """
+    p = MOD / "independent_background_revalidated.csv"
     if not p.exists():
         return
     d = pd.read_csv(p)
-    dd = d[d.donor.notna()]
+    dd = d[d.status == "ok"] if "status" in d.columns else d[d.donor.notna()]
     if not len(dd):
         return
-    c.add("donor.pairs", len(dd), stat="count", n=len(dd), source="independent_background.csv",
-          ledger="F.54", note="cities with an admissible independent donor in the 30-300 km window")
-    c.add("donor.median_km", round(float(dd.d_km.median()), 0), stat="median", n=len(dd),
-          source="independent_background.csv", ledger="F.54")
-    keep = 100.0 * (dd.rmse_Bud2 - dd.rmse_Bud3_indep) / (dd.rmse_Bud2 - dd.rmse_Bud3)
-    keep = keep.replace([np.inf, -np.inf], np.nan).dropna()
+    src = "independent_background_revalidated.csv"
+    c.add("donor.pairs", len(dd), stat="count", n=len(dd), source=src, ledger="F.54",
+          note="cities with an admissible independent donor in the 30-300 km window")
+    c.add("donor.no_donor", int((d.status == "no donor in range").sum()) if "status" in d.columns
+          else None, stat="count", n=int(d.city.nunique()), source=src, ledger="F.54",
+          note="reported rather than dropped: the usable subsample is biased toward regions "
+               "with dense city coverage, and the deep-tropical cell is the thinnest")
+    c.add("donor.median_km", int(round(float(dd.d_km.median()))), stat="median", n=len(dd),
+          source=src, ledger="F.54")
+
+    def frac(sub: pd.DataFrame) -> pd.Series:
+        k = 100.0 * (sub.rmse_Bud2 - sub.rmse_Bud3_indep) / (sub.rmse_Bud2 - sub.rmse_Bud3)
+        return k.replace([np.inf, -np.inf], np.nan).dropna()
+
+    keep = frac(dd)
     if len(keep):
-        c.add("donor.gain_reproduced_pct", round(float(keep.median()), 0),
-              stat="median of per-city ratios", n=len(keep),
-              source="independent_background.csv", ledger="F.54",
+        c.add("donor.gain_reproduced_pct", int(round(float(keep.median()))),
+              stat="median of per-city ratios", n=len(keep), source=src, ledger="F.54",
               note="share of the background rung's gain reproduced by a genuinely INDEPENDENT "
-                   "network -- the check that the rung is not just 'more of the same network'")
+                   "network. This BOUNDS the same-network artefact from above rather than "
+                   "measuring it: the donors sit 30-300 km out while the own-network ring sits "
+                   "5-15 km out, so independence is confounded with distance")
+
+    near, far = dd[dd.d_km <= dd.d_km.median()], dd[dd.d_km > dd.d_km.median()]
+    for lab, sub in (("near", near), ("far", far)):
+        k = frac(sub)
+        if len(k):
+            c.add(f"donor.reproduced_{lab}", int(round(float(k.median()))),
+                  stat="median of per-city ratios within the distance half", n=len(k),
+                  source=src, ledger="F.54",
+                  note="recovery falls with donor distance, which is the reason the residual "
+                       "gap cannot be attributed to same-network sharing")
+            c.add(f"donor.km_{lab}", int(round(float(sub.d_km.median()))),
+                  stat="median donor distance in the half", n=len(sub), source=src, ledger="F.54")
+
+    dt = dd[dd.band == "deep_tropical"] if "band" in dd.columns else dd.iloc[:0]
+    k = frac(dt)
+    if len(k):
+        c.add("donor.reproduced_deep_tropical", int(round(float(k.median()))),
+              stat="median of per-city ratios, deep-tropical band", n=len(k),
+              source=src, ledger="F.54",
+              note="Kandy's own band, and the weakest cell in the test: n is small and its "
+                   "donors are the furthest away, so the independent evidence for the "
+                   "background rung is thinnest exactly where the demonstration city sits")
+        c.add("donor.km_deep_tropical", int(round(float(dt.d_km.median()))),
+              stat="median donor distance, deep-tropical band", n=len(dt), source=src,
+              ledger="F.54")
 
 
 def identifiability(c: Claims) -> None:

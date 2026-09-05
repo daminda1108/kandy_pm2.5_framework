@@ -55,10 +55,25 @@ the frame available. That frame is a convenience sample: regulatory and low-cost
 sited for compliance and access. A campaign designed for the question would be a different
 experiment, and the registered null explicitly does not exclude it finding something.
 
-**A regional background station.** Even though it ranks second for Kandy, the background rung's
-measured gain is partly an artefact of the proxy used for it, as Section 7.2 stated. A genuine
-regional station is the only way to establish how much of that gain is regional information and
-how much is more of the same network.
+**A regional background station.** It ranks second for Kandy rather than first, and the reason to
+want one anyway is that it would close a question the panel can only bound. Section 7.2 rebuilt
+the background from a donor city the target never sees and recovered
+{{claim:donor.gain_reproduced_pct}} per cent of the gain, which establishes that the rung carries
+regional information rather than more of the same network. It does not divide the residual
+quarter, because donor distance is confounded with independence, and in Kandy's own band recovery
+falls to {{claim:donor.reproduced_deep_tropical}} per cent on
+{{claim:donor.km_deep_tropical}}-kilometre donors. A real station five to fifty kilometres out
+would separate the two in a way no re-analysis of the existing panel can.
+
+One further item belongs here even though it is an analysis rather than an observation, because
+it needs no new data and it would sharpen the thesis's most policy-relevant result. Section 7.3
+reports that the acquisition ordering differs between latitude bands and states that latitude is
+a label rather than a mechanism. The candidate mechanism is the amplitude of the regional
+seasonal cycle, which is high in the temperate bands and weak in the deep tropics, and which is
+computable for every city already on disk. Sorting the panel by that amplitude directly, and
+asking whether the ordering follows the amplitude or the latitude, would convert a stratified
+association into a tested explanation. It should be registered before it is run, for the reason
+Section 9.6 gives.
 
 ## 9.3 The construction step most worth revisiting
 
@@ -124,7 +139,9 @@ Two of the findings here are not about air quality.
 those observations.** Section 7.5 showed that such contamination deflates the rung above it
 rather than inflating its own, so a test that looks for excess skill in the contaminated stream
 finds nothing and reports the leakage as immaterial. Fused products are now the default covariate
-in this field, and this thesis is not aware of prior work that reports the effect.
+in this field. That such products leak is established and guarded against in evaluation practice
+[@Just2020]; what Section 3.4 argues is unreported is the displaced signature, which is what
+makes the obvious diagnostic the wrong one.
 
 **A null result without a stated detection limit converts a limitation of the experiment into a
 claim about the world.** Chapter 5 records five nulls that did this and one that did not, and the

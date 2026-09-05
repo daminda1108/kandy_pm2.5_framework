@@ -150,6 +150,34 @@ consequence the field does not generally acknowledge. A one kilometre product ca
 "which part of this cell is worst" for any city with this structure, however the product is
 built and however much data is used to build it.
 
+### Three things called resolution, and which of them this chapter measures
+
+The statement above is easy to over-read, and separating the concepts it touches shows what the
+evidence does and does not reach.
+
+**The scale at which the atmosphere actually varies.** This is a property of the city. Chapter 3
+establishes that it is fine and the variation is large, because a single instrument on a single
+protocol recorded a factor of {{claim:spatial.paired_obs_ratio}} over three hundred metres
+[@Elangasinghe2008]. Nothing in this chapter contradicts that, and nothing in it should be read
+as claiming that Kandy's air is uniform below a kilometre. The opposite is measured.
+
+**The scale at which the reporting grid is defined.** This is a choice, and Section 8.3 tested
+changing it. A tenfold refinement in cell area moved the paired-site ratio by
+{{claim:s1.paired_delta_on_refinement}}, so the choice is not what is binding.
+
+**The scale at which the available predictors carry information.** This is the constraint, and it
+is the only one of the three this chapter measures. Section 9.4 reports that predictor skill
+rises with the radius over which a predictor is averaged and peaks above the cell size, and
+Section 8.5 bounds what a learned pattern adds over the best single predictor. Both are
+statements about a predictor set, not about the atmosphere.
+
+Read together the three give a conditional rather than a universal claim, and the condition is
+worth carrying: **given the globally available covariates that a city with no monitors can
+obtain, sub-kilometre structure cannot be placed, even though it exists and is large.** A
+campaign that measured the structure directly would not be bound by this, which is why Chapter 9
+lists one. The claim is a limit on inference from a particular information set and not a
+statement about the ultimate predictability of urban air.
+
 ## 8.7 At matched support, the model is close to right
 
 The apparent catastrophe of Section 8.1 is a comparison between quantities defined at different

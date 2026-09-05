@@ -10,6 +10,30 @@ The last of those is the column that matters, and it varies enormously between t
 
 {{dia:timeline}}
 
+The eight are not of equal weight and the chapter does not present them as though they were. Four
+changed the design of the model that followed. Four established something narrower, either
+closing a question or exposing a defect in how the work was being checked. A reader who wants the
+argument rather than the record can take the first group and Section 5.9.
+
+**The four that changed the design.** Section 5.1 established that physics transfers between
+cities while a fitted parameterisation does not, which is why the final construction imposes its
+physics and learns only the temporal behaviour. Section 5.3 established that a learned spatial
+field trained across cities does not recover within-city structure. Section 5.4 established that
+a model given coordinates will memorise them, which produced the admissibility rule governing
+every tier in Chapter 6. Section 5.8 supplied the bounded spatial null that Chapter 8 is devoted
+to explaining.
+
+**The four that established something narrower, or nothing.** Section 5.2 is an identifiability
+diagnostic that closed a modelling direction. Section 5.6 records five reconstructions of the
+background, all rejected, which is the origin of the constraint in Section 6.6. Section 5.7
+records defects found by audit rather than by review, and is the reason Chapter 10 exists. None
+of the three produced a better model and each prevented a wrong claim.
+
+Section 5.5 belongs in this second group for a different reason, and it is the one section whose
+placement is itself an argument. It consumed the most time of any entry here and established the
+least, and Section 5.9 explains why. A reader short of patience should still read it, because the
+contrast with Section 5.8 is the chapter's conclusion.
+
 ## 5.1 A physics-informed network transferred between continents
 
 **What was expected.** A neural network constrained to obey an advection-diffusion-deposition

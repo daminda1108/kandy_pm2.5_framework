@@ -29,6 +29,41 @@ allows the measurement to be applied to it.
 
 {{tbl:T4_3}}
 
+### Why a panel measurement should apply to Kandy at all
+
+Independence is necessary for the transfer and it is not sufficient. A panel that Kandy is absent
+from is also a panel Kandy may not resemble, and the question of what licenses carrying a number
+from one to the other has to be answered rather than assumed.
+
+**The panel is not a sample of the world's cities.** It is the set of cities that publish enough
+concurrent monitoring to be scored, which selects for institutional capacity, income and
+monitoring history. Chapter 2 gives the reason this cannot be fixed by sampling harder: the
+regime with the least reference monitoring is the regime that most needs a sensorless method, so
+the cities that could best represent Kandy are the cities least able to appear. Where a claim
+depends on the panel being representative, it is not made.
+
+**What transfers is an ordering, not a magnitude.** The quantity carried to Kandy is which
+observation is worth more than which, and orderings survive shifts in level that would invalidate
+a transferred number. No statement in Chapter 9 depends on Kandy's own error falling by any
+particular percentage.
+
+**The transfer is made within a stratum, not from the pool.** Kandy is matched to the panel on
+the variables that plausibly govern the ordering rather than to the panel as a whole. It is read
+against the deep-tropical band, which Section 7.3 shows reverses the pooled result, and against
+the low-cost-sensor stratum, since Kandy's instruments are low-cost and Section 7.6 shows the
+class changes what added sensors are worth. A pooled number would be the wrong number twice over.
+
+**The panel matches Kandy on the one structural variable it was selected for and on no others by
+design.** Every panel city is a valley or basin, which is the feature the construction depends
+on, and this is a selection criterion rather than a finding. The panel contains no coastal city,
+so nothing here supports a coastal application.
+
+**What would break the transfer is stated so that it can be checked.** If Kandy's ordering is
+governed by something the band does not capture, the recommendation is wrong. Section 7.3 names
+the candidate, the amplitude of the regional seasonal cycle, and Chapter 9 gives the analysis that
+would test whether the band is standing in for it. Until that is run, the transfer rests on Kandy
+resembling its band, which is an assumption with evidence behind it and not a demonstration.
+
 ## 7.2 What each increment of information is worth
 
 The measurement is possible because the tiers are nested. A lower tier is not a different model,
@@ -56,14 +91,63 @@ made of.
 a small effect but an absent one, and Section 7.4 shows it is the most estimator-robust result in
 the study. A city with two sensors and a city with eight are, for this model, the same city.
 
-**The regional background is the largest single gain measured.** At {{claim:step.bud2_bud3}} per
-cent it exceeds every other rung, and it is the instrument air quality programmes are least
-likely to fund, because a rural monitor serves no constituency.
+**A background series is the largest single gain measured.** At {{claim:step.bud2_bud3}} per
+cent it exceeds every other rung, and the instrument that would supply it is the one air quality
+programmes are least likely to fund, because a rural monitor serves no constituency.
 
-One caveat belongs with that last row rather than in a footnote. The regional background used
-here is an outer-ring proxy drawn from the same network in every city, so its gain partly
-measures more of the same network rather than genuinely regional air. Only a true regional
-network settles it, and that is what a station of the kind Chapter 9 recommends would provide.
+That last row needs a qualification stated in its own right rather than in a footnote, because
+the row is the most quotable number in this thesis and the qualification changes what it means.
+
+**What was actually supplied to the model was not a rural station.** It was the tenth percentile
+of the target city's own outer-ring monitors, five to fifteen kilometres from the centre. Those
+monitors share the city's instruments, calibration, siting conventions and operator. The measured
+gain is therefore the gain from *a background series constructed this way*, and part of it could
+be more of the same network rather than regional air. Read without this paragraph, the row says
+that a rural monitor is worth {{claim:step.bud2_bud3}} per cent, and the experiment does not
+establish that.
+
+### Testing it with a network the city never sees
+
+The question is answerable without new instruments. The background can be rebuilt from **a
+different city entirely**, thirty to three hundred kilometres away, whose monitors the target
+never sees, and passed through an identical chain so that only the background differs. Below
+thirty kilometres a donor is really the same urban area; beyond three hundred it is a different
+air mass and should stop helping.
+
+| background supplied | median gain over the previous rung |
+|---|---:|
+| the city's own outer ring | {{claim:step.bud2_bud3}} per cent |
+| a donor city at a median of {{claim:donor.median_km}} km | {{claim:donor.gain_reproduced_pct}} per cent of it recovered |
+
+**A network the city has never seen recovers about three quarters of the effect.** The rung is
+carrying genuine regional information and is not mostly a same-network artefact.
+
+Three limits on that reassurance, and the first is the one that matters.
+
+**It bounds the artefact from above; it does not measure it.** Recovery falls with donor
+distance, from {{claim:donor.reproduced_near}} per cent at {{claim:donor.km_near}} kilometres to
+{{claim:donor.reproduced_far}} per cent at {{claim:donor.km_far}}. The donors sit far outside the
+city while the own-network ring sits just outside it, so the residual gap conflates *same
+network* with *much closer*. The honest statement is that the same-network component is **at
+most** the residual quarter, most likely less, and this test cannot divide it further.
+
+**The recovery fraction itself moved when the ladder was corrected**, from a recorded 79 per cent
+to {{claim:donor.gain_reproduced_pct}} on the rebuilt bottom rung [ledger F.54]. A stronger
+sensorless rung leaves less headroom for any background to recover, and the independent one loses
+more of that headroom than the city's own. The direction survives; the margin is smaller than the
+project previously recorded.
+
+**Coverage is partial and biased.** Only {{claim:donor.pairs}} of the panel's cities have a donor
+in range at all; {{claim:donor.no_donor}} have none. The cities that do are concentrated where
+urban monitoring is dense, and the deep-tropical cell is the thinnest. In that cell, which is
+Kandy's own, recovery falls to {{claim:donor.reproduced_deep_tropical}} per cent at a median
+donor distance of {{claim:donor.km_deep_tropical}} kilometres. **The independent evidence for
+this rung is weakest exactly where the demonstration city sits**, which is a reason to prefer the
+band-stratified recommendation of Section 7.3 over the pooled one, and not only for the reason
+Section 7.3 gives.
+
+A genuine rural background station remains the only thing that settles it, which is why
+Chapter 9 lists one even though it ranks second for Kandy.
 
 ## 7.3 The recommendation inverts in the tropics
 
@@ -86,6 +170,32 @@ which Section 7.5 describes. On the corrected stream the two local sensors buy
 The reversal is not a curiosity. It means the recommendation this thesis is most likely to be
 quoted for is the wrong recommendation for the city it was built for, and a reader who takes the
 pooled row without the band row will act on it.
+
+**Latitude is a label here, not a mechanism, and the distinction is not pedantic.** What the
+measurement establishes is that cities sorted into these bands differ in the ordering, which is a
+latitude-stratified empirical difference. It does not establish that latitude causes the
+difference, and nothing in this design could. Band travels with at least six other things:
+instrument class, which Section 7.6 shows differs by a factor of
+{{claim:confound.deep_tropical_lcs_pct}} against
+{{claim:confound.other_bands_lcs_pct}} per cent low-cost units; network density and design;
+driver completeness; the seasonal structure of the meteorology; the source mix; and the
+institutional history that determines which cities publish at all.
+
+A mechanism can be proposed, and the honest status of the proposal is that it is consistent with
+the data rather than tested by it. In the deep tropics the seasonal cycle of the regional
+background is weak, so a background series carries less information that a sensorless model has
+not already extracted from reanalysis and geography; in the temperate bands a strong winter
+accumulation regime makes the background series carry a great deal. If that is right, the
+operative variable is the amplitude of the regional seasonal cycle and latitude is standing in
+for it. Testing it would require sorting cities by that amplitude directly and checking whether
+the ordering follows the amplitude or the latitude, which is one of the analyses Chapter 9 lists
+and this thesis did not run.
+
+The practical consequence survives the uncertainty about mechanism, which is why the
+recommendation is stated as it is. A programme in Kandy should read the row for the band Kandy
+falls in, because that row is the closest available match to Kandy on every one of the correlated
+variables at once, whichever of them is doing the work. That is a weaker justification than a
+causal one and it is sufficient for the decision.
 
 ## 7.4 Is this a property of the information or of the model?
 
@@ -141,6 +251,14 @@ found none, and would have reported the leakage as immaterial had the ladder not
 This generalises past this thesis. Any analysis that prices observations against a covariate
 trained on those observations will under-price them, and fused products are now the default
 covariate in this field.
+
+The claim needs its boundary stated, and Section 3.4 states it. That such products leak is
+known, and evaluation practice already guards against it [@Just2020]. The addition here concerns
+the **signature** of the leak rather than its existence: when the quantity being estimated is the
+marginal value of an observation, the contamination surfaces in the neighbouring term, so the
+diagnostic that a careful analyst would reach for is the one that cannot see it. The
+pre-registered test in this study was that diagnostic, and it returned a clean result on
+contaminated data.
 
 ## 7.6 Three confounds the pooled numbers hid
 
@@ -309,13 +427,23 @@ the same failure mode Chapter 10 describes and it was found the same way.
 
 ## 7.12 What this chapter does and does not establish
 
-It establishes that the level and the seasonal cycle transfer, across
+It establishes that the level and the seasonal cycle transfer across the panel of
 {{claim:frame.cities}} cities and four latitude bands, and that the value of each observation
 stream can be measured rather than argued.
 
-It establishes that the ordering of that value is not uniform, and that the pooled recommendation
-is wrong for the tropics.
+It establishes that the ordering of that value differs between bands, and that the pooled
+recommendation is the wrong one in the band the demonstration city belongs to.
+
+**The scope of both statements is the panel, and the panel is not the world.** Every city in it
+is a valley or basin, so nothing here supports a coastal application. Every city in it publishes
+enough concurrent monitoring to be scored, which selects for exactly the institutional capacity
+that the cities this method exists for do not have. Two of the four bands rest on cells of seven
+cities. Where a result is quoted outside this thesis, the qualifier that belongs with it is
+across the monitored valley and basin cities that could be assembled, and not globally.
 
 It does not establish that the model is accurate at Kandy, because that cannot be established
-with the observations Kandy has. What it establishes is what the model is entitled to claim
-there, which is a weaker statement and the only honest one available.
+with the observations Kandy has. In particular it does not establish that the neighbourhood-scale
+field is correct, and Chapter 8 gives the measurement showing that it is not, together with the
+reason no product built from the available covariates would be. What this chapter establishes is
+what the model is entitled to claim, which is a weaker statement and the only honest one
+available.

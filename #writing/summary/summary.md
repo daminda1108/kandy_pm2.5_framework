@@ -42,28 +42,36 @@ information loss and nothing else, because it is the same model rather than a re
 
 Measured across **{{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
 {{claim:frame.city_days}} city-days**, scoring each city against monitors deliberately withheld
-from it.
+from it. Every panel city is a valley or basin, and every one publishes enough monitoring to be
+scored, so the results below are bounded by that panel and are not global claims.
 
 **1. Freely available geography is worth about as much as the first monitor a city buys.** Terrain,
 roads, land cover, night lights and population together buy {{claim:step.geography}} per cent in
 daily error. The second monitor through the eighth buy {{claim:step.bud1_bud2}} per cent, which
 is not a small effect but an absent one, and it is the most estimator-robust result in the study.
-A regional background station buys {{claim:step.bud2_bud3}} per cent, the largest single gain
-measured, and it is the instrument programmes are least likely to fund because a rural monitor
-serves no constituency.
+A background series from outside the urban core buys {{claim:step.bud2_bud3}} per cent, the
+largest single gain measured, and the instrument that would supply it is the one programmes are
+least likely to fund. Because that series was built from each city's own outer ring, it was
+rebuilt from a donor city the target never sees: an independent network recovers
+{{claim:donor.gain_reproduced_pct}} per cent of the gain, which bounds how much could be an
+artefact of the proxy.
 
-**2. The recommendation inverts by latitude band.** In the deep tropics, local sensors buy
+**2. The recommendation inverts between latitude bands.** In the deep tropics, local sensors buy
 {{claim:maiac.deep_tropical_first2}} per cent against {{claim:maiac.deep_tropical_background}}
 per cent for the regional background, reversing the pooled ordering. A programme in Colombo or
-Kampala following advice derived from the global average would buy the wrong instrument first.
+Kampala following advice derived from the pooled panel would buy the wrong instrument first. Band
+is a stratifying label rather than a demonstrated mechanism, and the candidate explanation, the
+amplitude of the regional seasonal cycle, is named and left untested.
 
 **3. A monitor-trained covariate under-prices monitors, and not in the way one would look for.**
 Replacing a published fused concentration product with a raw satellite retrieval left the
 satellite's own contribution essentially unchanged, at {{claim:c1.step_fused_ghap}} per cent
-against {{claim:c1.step_raw_aod}}. It roughly doubled the contribution of the rung above it. **Contamination does not inflate the contaminated
-term; it deflates the term above.** A pre-registered test that looked for excess skill in the
-contaminated stream found none and would have reported the leakage as immaterial. Fused products
-are now the default covariate in this field, and I am not aware of prior work reporting this.
+against {{claim:c1.step_raw_aod}}. It roughly doubled the contribution of the rung above it.
+**Contamination does not inflate the contaminated term; it deflates the term above.** A
+pre-registered test that looked for excess skill in the contaminated stream found none and would
+have reported the leakage as immaterial. That such products leak is known and guarded against in
+evaluation practice; what I have not found reported is the displaced signature, which is what
+makes the obvious diagnostic the wrong one.
 
 ## Where the model stops, and why that is a result
 
@@ -102,13 +110,15 @@ monitor. The local share of concentration is **{{claim:partition.f}}**, derived 
 constraint rather than assumed, so roughly half the burden is actionable locally. Against two
 published records that played no part in building the model, the field agrees to
 {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two independent years.
+Those checks cover the city-mean level. **The neighbourhood-scale map is not validated and is not
+claimed to be**, for the reason the previous section gives.
 
 ## How the work is done
 
 Every numeric claim in the thesis is regenerated from its source file at build time and the build
-refuses to complete if prose and data disagree. Writing the thesis moved ten previously recorded
-quantities, none of which was found by reading; three of them made the surrounding argument
-weaker and were kept. Chapter 5 is a five-thousand-word account of eight approaches that did not
+refuses to complete if prose and data disagree. Writing the thesis moved eleven previously
+recorded quantities, none of which was found by reading; four of them made the surrounding
+argument weaker and were kept. Chapter 5 is a five-thousand-word account of eight approaches that did not
 work, ordered so that the contrast is visible: an approach yielded about as much when it failed
 as it had declared before it started.
 

@@ -99,3 +99,4 @@ node_modules/
 !scripts/zone_contrast_corrected.py
 !scripts/kandy_activity_shocks.py
 !scripts/panel_reference_partition.py
+!scripts/independent_background_revalidated.py

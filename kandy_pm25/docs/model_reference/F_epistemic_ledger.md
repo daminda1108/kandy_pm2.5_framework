@@ -2315,6 +2315,47 @@ identical chain.
 recovers most of the single largest skill gain available to the model, and Kandy currently has
 none.
 
+### 🔄 RE-RUN 2026-09-05 on the CORRECTED (`Bud0c`) bottom rung
+
+`scripts/independent_background_revalidated.py` -> `data/processed/modular/independent_background_revalidated.csv`.
+
+The original ran on the **pre-F.84** ladder. Both of its arms shared that defect so the recovery
+FRACTION was largely protected, but its absolute gains sat against an artificially weak baseline
+and could not be quoted beside `ladder_revalidated.csv`. Re-run with the same `Bud0c` rung and
+the same seed (20260823):
+
+| | recorded (pre-F.84) | re-run (`Bud0c`) |
+|---|---:|---:|
+| recovery, **median of per-city ratios** | 79% | **73%** |
+| recovery, ratio of medians | 75% | 78% |
+| pairs scored / no donor | 20 / 26 | **20 / 27** |
+| median donor distance | 89 km | 89 km |
+
+🔴 **The published statistic moved 79 -> 73.** A stronger sensorless rung leaves less headroom
+for any background to recover and the independent arm loses more of it than the own-network arm,
+so the ratio was **partially** protected, not fully. **The conclusion is unchanged and the margin
+is smaller.** Only the per-city-ratio statistic is published, matching every other ladder gain;
+publishing both would put two numbers for one quantity in one document (gotcha #87).
+
+🟢 **The distance dependence is now quantified and it is the reason the residual cannot be
+attributed.** Recovery is **84%** in the nearer half (median 62 km) and **57%** in the farther
+half (median 152 km). The own-network ring sits 5-15 km out, so independence is confounded with
+proximity throughout. **This test bounds the same-network artefact from ABOVE at roughly a
+quarter; it does not measure it.**
+
+⚠ **Kandy's own band is the weakest cell**: deep-tropical recovery is **37%** at a median donor
+distance of **221 km**, on n=4. The independent evidence for the background rung is thinnest
+exactly where the demonstration city sits. This does not overturn F.92/F.96 (local stations
+outrank the background at Kandy) -- it points the same way.
+
+Claims: `donor.gain_reproduced_pct` `donor.reproduced_{near,far,deep_tropical}`
+`donor.km_{near,far,deep_tropical}` `donor.pairs` `donor.no_donor` `donor.median_km`.
+The `donor()` group in `build_claims.py` now reads the re-run, not the superseded file.
+
+**Why it was re-run:** an external reviewer identified this rung as the thesis's most vulnerable
+claim. The check was made in the place where the result was most wanted to hold and came back
+smaller, which is now Appendix D's clearest example of the pattern.
+
 
 ## F.55 — the diurnal cycle transfers in the DEEP TROPICS and nowhere else
 
