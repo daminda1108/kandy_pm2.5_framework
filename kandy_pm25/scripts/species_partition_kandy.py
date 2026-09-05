@@ -133,10 +133,39 @@ def main() -> None:
                                        method="spearman"))
 
     print(f"\n    PREDICTION: f(black_carbon) > f(sulphate).")
-    print(f"    RESULT    : {f_bc:.3f} vs {f_so4:.3f}, gap {gap:+.3f} -> "
-          f"{'HELD' if gap > 0 else 'REFUTED'}")
+    print(f"    RESULT    : {f_bc:.3f} vs {f_so4:.3f}, gap {gap:+.3f}")
     print(f"    Rank agreement with the predicted primary-to-secondary order "
           f"(5 species): rho = {conc:+.3f}")
+
+    # ── THE CONTROL THAT DECIDES WHETHER ANY OF THAT MEANS ANYTHING ───────────────────────
+    # Kandy is an inland valley. It has NO local source of sea salt and no dust source of
+    # consequence, so the true local fraction of both is essentially zero, by physical
+    # necessity and independently of anything this model asserts. They are therefore negative
+    # controls: an estimator that identifies local origin MUST place them at the bottom.
+    #
+    # ⚠ HONEST DISCLOSURE: these controls were NOT declared in the docstring above before the
+    # run. Reading them afterwards is weaker than declaring them, and the only reason it is not
+    # special pleading is that their expected value follows from geography rather than from the
+    # result. A future version of this test declares its controls in advance.
+    f_dust = float(r.loc[r.species == "dust", "f"].iloc[0])
+    f_salt = float(r.loc[r.species == "sea_salt", "f"].iloc[0])
+    n_above = int((r[r.species.isin(["dust", "sea_salt"])].f.values[:, None]
+                   > r[~r.species.isin(["dust", "sea_salt"])].f.values).sum())
+    controls_fail = (f_salt > f_bc) or (f_dust > f_bc)
+
+    print(f"\n    NEGATIVE CONTROLS (true local fraction ~ 0 for an inland valley):")
+    print(f"      dust      f = {f_dust:.3f}     sea_salt  f = {f_salt:.3f}")
+    if controls_fail:
+        print(f"      -> CONTROLS FAIL. The estimator ranks species with NO local source ABOVE")
+        print(f"         black carbon, which is the purest local tracer available.")
+        print(f"      -> THE TEST IS INVALID, not the hypothesis. `f = 1 - floor/mean` measures")
+        print(f"         EPISODIC TEMPORAL VARIABILITY, not local origin: dust and sea salt are")
+        print(f"         the most episodic species here because they arrive in transport events.")
+        print(f"      -> The species prediction is therefore NEITHER held NOR refuted. It is")
+        print(f"         untested, and reporting the reversal as a chemical refutation would be")
+        print(f"         reporting an instrument failure as a finding.")
+    else:
+        print(f"      -> controls pass; the ordering above may be read as origin-related.")
 
     # ── PART C ────────────────────────────────────────────────────────────────────────────
     sec_species = ["sulphate", "nitrate", "secondary_organic"]
@@ -158,7 +187,12 @@ def main() -> None:
         days=int(len(d)), window_days=WINDOW_DAYS, floor_q=FLOOR_Q,
         f_black_carbon=round(f_bc, 4), f_sulphate=round(f_so4, 4),
         f_gap_bc_minus_so4=round(gap, 4),
-        prediction_held=bool(gap > 0),
+        prediction_held=None,   # neither: the controls fail, so the test is invalid
+        controls_fail=bool(controls_fail),
+        f_dust=round(f_dust, 4), f_sea_salt=round(f_salt, 4),
+        verdict=("INVALID: negative controls (dust, sea salt) rank above black carbon, so the "
+                 "estimator measures episodic variability rather than local origin"
+                 if controls_fail else "controls pass"),
         rank_rho_vs_predicted=round(conc, 4) if np.isfinite(conc) else None,
         f_total_reference=round(local_fraction(d["total"]), 4),
         secondary_share=round(S, 4), f_production=round(f_prod, 4),
@@ -168,7 +202,10 @@ def main() -> None:
     with open(OUT_JSON, "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
     print(f"\n-> {OUT.name}, {OUT_JSON.name}")
-    print("\n⚠ GEOS-CF is a MODEL at ~25 km. These are modelled composition shares, never "
+    # ASCII only in printed output: the Windows console is cp1252 and a non-ASCII character
+    # here raised UnicodeEncodeError AFTER both output files had been written, which is the
+    # worst place for it -- the run looked failed while the results were already on disk.
+    print("\n[!] GEOS-CF is a MODEL at ~25 km. These are modelled composition shares, never "
           "measured speciation, and must not be presented as measurement.")
 
 

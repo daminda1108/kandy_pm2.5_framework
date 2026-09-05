@@ -54,12 +54,26 @@ contrast is a different proposition, recommended below for a different reason.
 Beyond the ranking, three specific observations would each close a question this thesis leaves
 open.
 
-**A composition measurement at Kandy.** Section 7.10 established that continental air is more
-secondary-rich than marine air, which is the ordering the decomposition requires, using a
-composition product that is itself a model. A speciated measurement at the city would convert
-that corroboration into a test. It would also settle whether the local increment can be treated
-as fresh primary aerosol, which Section 7.10 showed is too simple because stagnation ages local
-precursors in place.
+**A composition measurement at Kandy, and this is now the best-argued item on the list.**
+Section 7.10 established that continental air is more secondary-rich than marine air, which is
+the ordering the decomposition requires, using a composition product that is itself a model. A
+speciated measurement would convert that corroboration into a test. Three further things now
+depend on it specifically.
+
+It would narrow the intervention bound. The locally emitted primary share currently lies between
+{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per cent, and the width of that
+range is set entirely by not knowing how much of the local increment is secondary. This is the
+single number a city authority would most want and the one the model cannot supply.
+
+It would make the species-resolved test possible. Section 7.10 reports that test as untested
+rather than refuted, because a floor-based estimator on daily modelled composition measures
+episodic variability rather than origin, demonstrated by its own negative controls. Measured
+speciation at sub-daily resolution would let the same question be asked with an estimator that
+can answer it, since the model's background is defined as flat within a day and that is the
+structure a floor-based estimator needs in order to mean anything.
+
+And it would settle whether the local increment can be treated as fresh primary aerosol, which
+Section 7.10 showed is too simple because stagnation ages local precursors in place.
 
 **A campaign that sites monitors deliberately across land-use contrast.** Chapter 8 established
 that the spatial limit is a change of support rather than a data deficiency, and that a learned

@@ -774,6 +774,91 @@ def ladder_order(c: Claims) -> None:
                       n=int(r.n_cities), source="ladder_bootstrap.csv", ledger="F.97")
 
 
+def chemistry_deepening(c: Claims) -> None:
+    """F.98. Three chemistry strands run 2026-09-05, two of which returned nothing usable.
+
+    (a) Does composition explain what latitude band only labels? Pre-registered at
+        docs/prereg_chemistry_mechanism_2026-09-05.md. Answer: undetectable at this power, and
+        the exploratory correlation that motivated it dissolves into a between-network artefact.
+    (b) Is the local/regional split chemically coherent species by species? The test is INVALID:
+        its negative controls fail, so it is reported as untested rather than as a refutation.
+    (c) What can an intervention actually remove? Frechet bounds, and this one works.
+    """
+    import json as _json
+    mj = MOD / "chemistry_mechanism_summary.json"
+    sj = REPO / "data" / "processed" / "decomp" / "species_partition_summary.json"
+
+    if mj.exists():
+        with open(mj, encoding="utf-8") as fh:
+            m = _json.load(fh)
+        src = "chemistry_mechanism_summary.json"
+        c.add("chem.mech.n", m["n_cities"], stat="cities in the band-controlled analysis",
+              n=m["n_cities"], source=src, ledger="F.98",
+              note="the registration expected 46. Controlling for band DROPS the 11 cities of "
+                   "the single national network, which carry no band, and that deviation is "
+                   "what raised the detection limit and dissolved the exploratory signal")
+        c.add("chem.mech.registered_n", m["registered_n"], stat="cities expected at registration",
+              n=m["registered_n"], source=src, ledger="F.98")
+        c.add("chem.mech.mde", round(float(m["mde_confirmatory_nominal"]), 3),
+              stat="minimum detectable partial rho, 80% power, one-sided, band-controlled",
+              n=m["n_cities"], source=src, ledger="F.98",
+              note="computed from n and alpha before the analysis, never from the outcome")
+        c.add("chem.mech.largest_rho", round(float(m["largest_confirmatory_abs_rho"]), 3),
+              stat="largest absolute partial rho across the confirmatory family",
+              n=m["n_cities"], source=src, ledger="F.98",
+              note="against a detection limit of chem.mech.mde: an order of magnitude short")
+        c.add("chem.mech.undetectable", m["confirmatory_undetectable"],
+              stat="count of confirmatory hypotheses returning undetectable", n=3,
+              source=src, ledger="F.98")
+        cd = m.get("cluster_diagnostic", {})
+        for lab, tag in (("pooled", "pooled"), ("banded", "banded"),
+                         ("single_network", "single_network")):
+            if lab in cd:
+                c.add(f"chem.cluster.{tag}.rho", round(float(cd[lab]["rho"]), 3),
+                      stat="Spearman rho, OC/BC against the local-over-background advantage",
+                      n=int(cd[lab]["n"]), source=src, ledger="F.98",
+                      note="the pooled value survives in NEITHER group on its own: it is a "
+                           "between-cluster difference, a network effect wearing a chemical "
+                           "variable's name")
+                c.add(f"chem.cluster.{tag}.n", int(cd[lab]["n"]), stat="cities",
+                      n=int(cd[lab]["n"]), source=src, ledger="F.98")
+
+    if sj.exists():
+        with open(sj, encoding="utf-8") as fh:
+            s = _json.load(fh)
+        src = "species_partition_summary.json"
+        c.add("chem.species.f_black_carbon", round(float(s["f_black_carbon"]), 3),
+              stat="one common floor-based estimator applied per species", n=int(s["days"]),
+              source=src, ledger="F.98")
+        c.add("chem.species.f_sulphate", round(float(s["f_sulphate"]), 3),
+              stat="same estimator", n=int(s["days"]), source=src, ledger="F.98")
+        c.add("chem.species.f_dust", round(float(s["f_dust"]), 3), stat="same estimator",
+              n=int(s["days"]), source=src, ledger="F.98",
+              note="NEGATIVE CONTROL. An inland valley has no dust source of consequence, so "
+                   "the true value is near zero. The estimator returns the HIGHEST value of "
+                   "any species, which is what invalidates the test")
+        c.add("chem.species.f_sea_salt", round(float(s["f_sea_salt"]), 3), stat="same estimator",
+              n=int(s["days"]), source=src, ledger="F.98",
+              note="NEGATIVE CONTROL. Kandy has no local sea-salt source at all")
+        c.add("chem.species.verdict", "invalid, negative controls fail",
+              stat="declared outcome", n=int(s["days"]), source=src, ledger="F.98",
+              note="the species prediction is NEITHER held NOR refuted. Reporting the reversal "
+                   "as a chemical refutation would report an instrument failure as a finding")
+        c.add("chem.secondary_share", round(float(s["secondary_share"]), 3),
+              stat="sulphate + nitrate + secondary organic, share of modelled PM2.5",
+              n=int(s["days"]), source=src, ledger="F.98",
+              note="GEOS-CF, a MODEL at ~25 km. Never present as measured speciation")
+        c.add("chem.intervention_lo", round(100 * float(s["intervention_lo"]), 1),
+              stat="Frechet lower bound on the locally emitted primary share, per cent",
+              n=int(s["days"]), source=src, ledger="F.98",
+              note="responds IMMEDIATELY to local emission control")
+        c.add("chem.intervention_hi", round(100 * float(s["intervention_hi"]), 1),
+              stat="Frechet upper bound, per cent", n=int(s["days"]), source=src, ledger="F.98",
+              note="requires every locally formed secondary particle to disappear too. Equals "
+                   "the local share f, so the bound's upper end is the withdrawn claim and its "
+                   "lower end is what can actually be asserted")
+
+
 def colombo_donor(c: Claims) -> None:
     """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
 
@@ -1448,6 +1533,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)
     field_diagnostics(c)

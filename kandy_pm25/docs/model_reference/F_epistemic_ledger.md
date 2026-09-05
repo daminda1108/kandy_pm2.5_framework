@@ -4969,3 +4969,93 @@ the deep tropics it understated it enough to hide the inversion entirely.
 to +50 pp. **Quote F.96/MAIAC for the recommendation, never F.92/GHAP alone.**
 
 Claims: `order.*` `inv.{ghap,maiac}.*` `boot.{ghap,maiac}.{pooled,deep_tropical}.*`.
+
+
+## F.98 — chemistry, deepened: one usable result, one registered null, one invalid test
+
+Three strands run 2026-09-05 after an external reviewer characterised chemistry as a *supporting*
+discipline rather than a core one. Scripts `chemistry_mechanism.py` · `species_partition_kandy.py`.
+**Two of the three returned nothing usable, and the reasons differ instructively.**
+
+### (a) 🔴 REGISTERED NULL — does composition explain what latitude band only LABELS?
+
+Pre-registered at `docs/prereg_chemistry_mechanism_2026-09-05.md`, **lodged and pushed before the
+analysis was written** (commit `20c4d57`). The `sec_frac` direction was one-sided because it was
+committed in `pull_panel_speciation.py` on **2026-09-01** (`b9fd181`), four days before any
+correlation was computed. The `oc_bc` test was promoted after an exploratory probe and is
+therefore two-sided, corrected separately, and **may never be called pre-registered**.
+
+**All 3 confirmatory hypotheses: UNDETECTABLE at this power.** Largest partial rho **0.135**
+against a detection limit of **0.431**. Not a near miss — an order of magnitude short.
+
+🔴 **AND THE DEVIATION IS THE FINDING.** The registration expected n=46; the analysis scored
+**n=35**, because controlling for band **drops the 11 CNEMC cities, which carry no band**.
+Decomposing the exploratory signal that motivated the study:
+
+| group | n | rho(OC/BC, local-over-background advantage) | p |
+|---|---:|---:|---:|
+| pooled | 46 | **+0.388** | 0.0078 |
+| banded only | 35 | **+0.093** | 0.595 |
+| CNEMC only | 11 | **+0.036** | 0.916 |
+
+**A correlation significant at p=0.008 survives in NEITHER group on its own.** CNEMC sits at low
+OC/BC (5.69) and low advantage (−39.0); the banded cities at high (9.41) and high (+7.0). The
+"chemical relationship" is the line joining two clusters that differ in network, instrument class
+and country. **The F.52 class×band confound reappearing wearing a chemical variable's name.**
+Caught only because the registered design controlled for band instead of pooling.
+
+### (b) ⚠ INVALID TEST — is the split chemically coherent species by species?
+
+Prediction stated in the script docstring and **committed before running** (`9df352f`), the same
+device that made (a)'s direction citable: black carbon has no secondary source and is the purest
+local tracer; sulphate forms over hours to days and is the purest aged-regional tracer; so
+`f(BC) > f(sulphate)` under one common estimator.
+
+**Result: 0.387 vs 0.444, gap −0.057, rank agreement rho = −0.500.** The order is *reversed*.
+
+🔴 **NOT REPORTED AS A REFUTATION, because the negative controls fail.** Kandy is an inland
+valley with **no local sea-salt source at all** and no dust source of consequence, so both have a
+true local fraction near zero. The estimator returns **dust 0.806** and **sea salt 0.645** — the
+two HIGHEST values of any species. An estimator ranking material with no local source above the
+purest local tracer is measuring **episodic temporal variability**, not origin: dust and sea salt
+arrive in transport events and are the most episodic species present.
+
+**The species prediction is NEITHER held NOR refuted. It is untested.** Reporting the reversal as
+a chemical refutation would report an instrument failure as a finding. ⚠ The controls were read
+**after** the run, not declared before it; that is a design weakness, not a defence. Their
+expected value follows from geography rather than from the result, which is the only reason this
+is a control argument and not special pleading.
+
+**What would make it answerable:** measured speciation at sub-daily resolution. The model's `B`
+is flat *within a day*, and a floor-based estimator needs exactly that structure to mean anything.
+Daily modelled composition cannot supply it.
+
+### (c) 🟢 THE ONE THAT WORKS — bounding what an intervention could remove
+
+The thesis **withdrew** "removing every local source removes half the problem" (no chemistry, so
+local increment ≠ locally emitted primary material). Withdrawal leaves a policy reader with
+nothing. Fréchet bounds replace it, with no assumption beyond `f` and the secondary share `S`:
+
+```
+L <= min(f, 1-S)      L >= max(0, f-S)      f = 0.4828,  S = 0.392 (GEOS-CF)
+```
+
+🟢 **The locally emitted primary share at Kandy is between 9.1% and 48.3% of concentration.**
+The lower bound responds **immediately** to local emission control. The upper bound equals the
+whole local increment and requires every locally formed secondary particle to vanish too — **so
+the withdrawn claim sat at the TOP of a range, not in the middle of one.** The width is set
+entirely by not knowing how much of the increment is secondary, which makes a speciated Kandy
+measurement the item that would narrow it.
+
+⚠ GEOS-CF is a **model at ~25 km**. `S` is a modelled share and must never be presented as
+measured speciation.
+
+### Standing consequence
+
+**Chemistry remains a SUPPORTING discipline and the thesis says so.** These three strands add one
+usable bound, one bounded null and one honest non-result. They do not add a chemical mechanism,
+and `§6.7`'s statement that the model contains no chemistry is unchanged. ⚠ **Do not bolt on a
+CTM** — it would be unvalidatable at Kandy for exactly the reasons Chapter 1 gives.
+
+Claims: `chem.mech.*` `chem.cluster.*` `chem.species.*` `chem.secondary_share`
+`chem.intervention_{lo,hi}`.

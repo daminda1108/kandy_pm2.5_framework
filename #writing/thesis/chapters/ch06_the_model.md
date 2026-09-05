@@ -290,11 +290,20 @@ reading, that the local increment can be treated as fresh primary aerosol.
 **The intervention statement therefore has to be weaker than the arithmetic suggests.** It is not
 established that removing every local source would remove half the concentration, because a
 share of the increment is secondary material whose precursors are not all local and whose
-formation would not stop with the emissions this decomposition can see. What is established is
-that about half of modelled concentration is attributed to a component generated within the
-basin, which makes local action worth substantially more than the retired quarter implied. A
-speciated measurement is the experiment that would convert this into an apportionment, and
-Chapter 9 lists it.
+formation would not stop with the emissions this decomposition can see.
+
+Withdrawing the claim leaves a reader with nothing, so Section 7.10 replaces it with a bound. The
+locally emitted primary share is constrained from both directions by the local share and the
+secondary share together, with no further assumption, and at Kandy it lies between
+**{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per cent** of concentration.
+The lower figure responds immediately to local emission control. The upper figure equals the
+whole local increment and requires every locally formed secondary particle to vanish with it,
+which is why the withdrawn claim sat at the top of a range rather than in the middle of one.
+
+That is the honest form of the statement, and it is more useful than either the withdrawn
+version or silence: local action is worth substantially more than the retired quarter implied,
+and its immediate effect is bounded well below half. A speciated measurement in the city is the
+experiment that would narrow the range, and Chapter 9 lists it.
 
 ## 6.7 What this model is not
 
