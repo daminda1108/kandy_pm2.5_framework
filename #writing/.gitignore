@@ -12,3 +12,6 @@ __pycache__/
 build/thesis.md
 build/thesis.docx
 build/_pandoc_default.docx
+summary/summary.pdf
+summary/summary.docx
+summary/_summary_resolved.md
