@@ -113,6 +113,35 @@ def t3_1_literature():
 
 # ── Chapter 5: the attempts ───────────────────────────────────────────────────────────────
 
+def t3_2_point_records():
+    """The four independent point measurements at Kandy against the model.
+
+    ⚠ The observed column is other people's measurement and is typed with a citation. The
+    model column is generated. Mixing the two in one table is unavoidable and the note says
+    which is which, because a reader cannot otherwise tell.
+    """
+    write(
+        "T3_2_point_records",
+        "Independent point records at Kandy against the model at the same location",
+        ["record", "instrument", "observed", "model", "difference"],
+        [
+            [f"National research organisation, 2021 [@Nirmani2025]", "undocumented", "19.6",
+             tok("nbro.model_pixel_2021"), tok("nbro.diff_pct_2021") + " per cent"],
+            [f"National research organisation, 2022 [@Nirmani2025]", "undocumented", "22.7",
+             tok("nbro.model_pixel_2022"), tok("nbro.diff_pct_2022") + " per cent"],
+            ["Calibrated low-cost, 2022 to 2024 [@Attanayake2025]",
+             "low-cost, reference-anchored", "19.49", "25.01", "+28 per cent"],
+            ["Research sensor, full record [@Dhammapala2022]", "low-cost", "17.8", "--",
+             "corroborates a reference-anchored 18 to 19"],
+        ],
+        note="Observed values are published measurements and carry a citation each. Model "
+             "values are generated from the delivered field. Three of the four records sit "
+             "below the model and all three are low-cost sensors carrying a downward "
+             "calibration; the one that matches has an undocumented instrument. The "
+             "discrepancy is reported as open rather than resolved by preferring the record "
+             "that agrees.")
+
+
 def t5_1_attempts():
     """Chapter 5's spine table, and the one an examiner will read first."""
     write(
@@ -242,7 +271,7 @@ def t9_1_next():
 
 
 BUILDERS = {
-    "T3_1": t3_1_literature, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
+    "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,
 }

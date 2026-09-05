@@ -195,6 +195,59 @@ VISUALS: dict[str, tuple[str, str]] = {
         "Blue marks what the model is permitted to see; red marks what is held back. The "
         "budget match is what makes the test informative, because a model that has seen "
         "thirty monitors measures a capability the target city will never have."),
+    "ladder": (
+        "F2_ladder",
+        "What each increment of information buys, as the median across cities of the per-city "
+        "reduction in daily error. The pooled ladder is coloured by whether a stream is free "
+        "everywhere, a local instrument, or regional. Free static geography is worth about as "
+        "much as the first local instrument, and monitors three through eight are "
+        "indistinguishable from zero. The second panel stratifies the two decisive rungs by "
+        "latitude band with the number of cities on the axis, and the ordering inverts in the "
+        "deep tropics."),
+    "streams": (
+        "F3_streams",
+        "Two results about what is being measured rather than about the model. The same two "
+        "monitors priced by four estimators: the three non-linear learners agree closely while "
+        "ridge regression, unable to exploit sixty-eight sensorless predictors, reports the "
+        "monitor as worth far more. The second panel replaces a fused product with raw "
+        "satellite retrievals; the satellite rung itself barely moves, so the fused product was "
+        "not inflating its own score, but the rung above it roughly doubles."),
+    "confounds": (
+        "F4_confounds",
+        "The confound that cannot be sampled away. Instrument class is strongly associated with "
+        "latitude band, and the population of candidate cities does not contain a balanced "
+        "draw, so results are reported stratified by class throughout rather than corrected."),
+    "scorecard": (
+        "F7_scorecard",
+        "Ten cities scored on the same protocol. Seasonal agreement is high everywhere, diurnal "
+        "agreement is regime-dependent, and the fine spatial rank is estimable at nine of the "
+        "ten and significant at six. The three axes are reported separately because averaging "
+        "them would hide exactly the variation that matters."),
+    "kathmandu": (
+        "F8_kathmandu",
+        "The transfer at its most favourable: a city with a dense network, scored against "
+        "monitors withheld from the fit. It is shown because it is the best case and is "
+        "labelled as such, not because it is typical."),
+    "cycles": (
+        "F_cycles",
+        "Seasonal and diurnal cycles against the two Kandy sensors. This comparison is "
+        "reported for completeness and cannot be read as validation: the temporal anchor is "
+        "trained on the residual of these sensors and then amplitude-sharpened to their "
+        "observed swing, so agreement here measures the calibration rather than skill."),
+    "uncertainty": (
+        "F11_uncertainty",
+        "Interval calibration at the two Kandy sensors. Coverage falls below nominal, but the "
+        "misses are almost all on one side, which is a centring problem and not a width "
+        "problem. Removing each sensor's own median offset restores coverage, which is the "
+        "diagnosis an explicit observation operator makes available."),
+    "chemistry": (
+        "F6_chemistry",
+        "A chemical check on the decomposition's load-bearing assumption, using back-trajectory "
+        "sector to classify air-mass origin independently of the composition product. "
+        "Continental air is measurably more secondary-rich, and therefore more aged, than "
+        "marine air, which is the ordering the decomposition requires. The registered "
+        "prediction that recirculated local air would be freshest is refuted, because "
+        "stagnation gives local precursors time to age in place."),
     "prereg": (
         "D6_prereg_workflow",
         "Pre-registration as a procedure. The branch that matters is the one distinguishing a "
