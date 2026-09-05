@@ -852,6 +852,14 @@ def field_diagnostics(c: Claims) -> None:
           source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
     c.add("field.f_sweep_param_hi", d["f_sweep_param_hi"], stat="top of the parameter sweep",
           n=1, source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.f_form_calendar", d["f_form_calendar"],
+          stat="local fraction with a calendar-day minimum, the production form", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43")
+    c.add("field.f_form_roll24", d["f_form_roll24"],
+          stat="local fraction with a centred 24-hour rolling minimum", n=5,
+          source="decomp/kandy_field_diagnostics.csv", ledger="F.43",
+          note="quoting the value beats quoting a bound on the difference: a reader can see "
+               "how small it is without being told")
     c.add("field.f_form_roll48", d["f_form_roll48"],
           stat="local fraction with a 48-hour rolling minimum instead of a calendar day", n=5,
           source="decomp/kandy_field_diagnostics.csv", ledger="F.43",
