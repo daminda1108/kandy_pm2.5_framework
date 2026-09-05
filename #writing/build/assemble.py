@@ -248,6 +248,12 @@ VISUALS: dict[str, tuple[str, str]] = {
         "marine air, which is the ordering the decomposition requires. The registered "
         "prediction that recirculated local air would be freshest is refuted, because "
         "stagnation gives local precursors time to age in place."),
+    "claimsgate": (
+        "D7_claims_gate",
+        "How a number reaches the text, and what stops it reaching the text any other way. "
+        "Every numeric claim is recomputed from its scored file at build time and compared "
+        "against the stored value; a disagreement refuses the build rather than warning about "
+        "it."),
     "prereg": (
         "D6_prereg_workflow",
         "Pre-registration as a procedure. The branch that matters is the one distinguishing a "
@@ -298,7 +304,20 @@ def load_claims() -> dict:
 
 
 def resolve_claims(text: str, claims: dict) -> tuple[str, list[str]]:
+    """Resolve every claim token, EXCEPT one shown inside inline code.
+
+    Chapter 10 has to display the token syntax to describe it. Without this exemption the
+    assembler tries to resolve the example and fails on a tag that was never meant to exist,
+    which is the documentation describing the machinery being broken by the machinery.
+    """
     missing: list[str] = []
+    shields: list[str] = []
+
+    def hide(m):
+        shields.append(m.group(0))
+        return f"\x00SHIELD{len(shields) - 1}\x00"
+
+    text = re.sub(r"`[^`]*`", hide, text)
 
     def sub(m):
         tag = m.group(1)
@@ -307,7 +326,10 @@ def resolve_claims(text: str, claims: dict) -> tuple[str, list[str]]:
             return m.group(0)
         return str(claims[tag]["value"])
 
-    return CLAIM_TOKEN.sub(sub, text), missing
+    text = CLAIM_TOKEN.sub(sub, text)
+    for i, original in enumerate(shields):
+        text = text.replace(f"\x00SHIELD{i}\x00", original)
+    return text, missing
 
 
 def resolve_visuals(text: str) -> tuple[str, dict, list[str]]:
@@ -429,7 +451,9 @@ def main() -> int:
     text, missing = resolve_claims(text, claims)
     all_missing += missing
 
-    leftover = re.findall(r"\{\{[^}]+\}\}", text)
+    # Ignore inline code when hunting leftovers, for the same reason resolve_claims does:
+    # Chapter 10 displays the token syntax in order to explain it, and that is not a leftover.
+    leftover = re.findall(r"\{\{[^}]+\}\}", re.sub(r"`[^`]*`", " ", text))
     if all_missing or leftover:
         print("\nUNRESOLVED TOKENS. Not writing output.")
         for t in sorted(set(all_missing)):
