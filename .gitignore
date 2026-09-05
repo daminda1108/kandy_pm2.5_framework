@@ -206,3 +206,4 @@ kandy_pm25/docs/model_reference/*
 
 # Standalone app repos (own git repos, pushed separately)
 expertise_dashboard/
+!kandy_pm25/docs/sensor_placement_plan_*.md

@@ -103,3 +103,6 @@ node_modules/
 !scripts/ladder_order_and_bootstrap.py
 !scripts/chemistry_mechanism.py
 !scripts/species_partition_kandy.py
+!scripts/pull_kandy_receptors.py
+!scripts/design_sensor_network.py
+!scripts/plot_sensor_design.py
