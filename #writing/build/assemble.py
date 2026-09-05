@@ -105,6 +105,40 @@ VISUALS: dict[str, tuple[str, str]] = {
         "D12_timeline",
         "What was attempted and how each attempt ended, in the order the work was done. "
         "Dates are from the project's own dated record."),
+    # Chapter 8
+    "paired": (
+        "F1_paired",
+        "The spatial limit, measured rather than asserted. Two survey sites three hundred "
+        "metres apart, sampled by the same instrument over the same window, fall inside a "
+        "single model cell: support is held fixed and only location varies. The first panel "
+        "gives the observed contrast against the model as delivered and after the physics is "
+        "re-run ten times finer in area. The second sweeps resolution, which converts an "
+        "anecdote about one pair of sites into a test of the hypothesis that resolution is the "
+        "problem. The third follows the contrast through each stage of the build, and shows it "
+        "is relocated rather than destroyed."),
+    "withinpixel": (
+        "F5_withinpixel",
+        "What survives the limit. The spread inside a typical cell exceeds the spread between "
+        "cells across the whole map, so most within-city variation is sub-grid by the model's "
+        "own structure. This is simultaneously the explanation for the paired-site result and "
+        "the reason a pointwise product is not offered. The second panel reports a check that "
+        "was uninformative, and says so: because the predicted within-cell spread is far "
+        "smaller than the observed range, every high site saturates at the top quantile and "
+        "every low one at the bottom, so the test re-detects the amplitude gap rather than "
+        "testing ordering."),
+    "scales": (
+        "F9_scales",
+        "Contrast against the averaging window. The apparent collapse of spatial contrast with "
+        "coarser support is real but is confounded with siting design in the published record, "
+        "and the confound is why the paired-site test of this chapter carries the argument "
+        "instead."),
+    "nullpower": (
+        "F12_null_power",
+        "What the earlier spatial nulls could have detected. At the sample sizes available, "
+        "the smallest residual correlation each test could have found at eighty per cent power "
+        "is far above zero. They therefore excluded a large learnable signal and said nothing "
+        "about a moderate one, which is the defect the pre-registered test of Section 8.5 was "
+        "designed to remove."),
     "bound": (
         "F3_information_bound",
         "Three independent lines on the same limit. A rigid physical form fitted jointly across "
