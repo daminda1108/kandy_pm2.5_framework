@@ -101,3 +101,5 @@ node_modules/
 !scripts/panel_reference_partition.py
 !scripts/independent_background_revalidated.py
 !scripts/ladder_order_and_bootstrap.py
+!scripts/chemistry_mechanism.py
+!scripts/species_partition_kandy.py
