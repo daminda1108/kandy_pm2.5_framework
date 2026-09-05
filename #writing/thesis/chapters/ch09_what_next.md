@@ -25,14 +25,27 @@ sensors buy {{claim:maiac.deep_tropical_first2}} per cent against
 {{claim:maiac.deep_tropical_background}} per cent for the background, a local advantage of
 {{claim:maiac.deep_tropical_local_advantage}} times.
 
-For Kandy specifically, therefore, **the first purchase is a local reference monitor**, and it
-would settle two open questions at once: the level discrepancy of Section 7.8, where three of
-four independent records sit below the model, and the source-mix question that Chapter 5 records
-as having been asserted wrongly for most of this project's life.
+For Kandy specifically, therefore, **the first purchase is a local observation rather than a
+regional one**. Section 7.3 shows that conclusion survives a paired interval over cities on the
+clean satellite stream, favouring local sensors in {{claim:inv.maiac.frac_cities}} per cent of
+the band, and that it does **not** survive on the contaminated stream.
 
-**Do not buy the third through eighth monitors.** At {{claim:step.bud1_bud2}} per cent the gain
-is indistinguishable from zero, and it is the most estimator-robust result in the study. This is
-the acquisition most often proposed and the one the measurement does not support.
+**Two separate arguments then point at a reference-grade instrument, and they should not be
+merged.** The ladder measured two low-cost sensors, so it establishes that a local observation
+outranks a regional one in this band. It does not establish the value of a reference monitor,
+which was never a rung. The case for making that local observation reference-grade is a
+measurement-design argument standing on its own: a reference instrument would settle the level
+discrepancy of Section 7.8, where three of four independent records sit below the model and the
+one that matches carries an undocumented instrument, and it would anchor the calibration of any
+low-cost sensors deployed afterwards. That case is strong, and the
+{{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
+
+**Do not expand to a third through eighth monitor as a way of improving this model.** At
+{{claim:step.bud1_bud2}} per cent the gain is indistinguishable from zero, with an upper bound of
+{{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, and it is the most
+estimator-robust result in the study. The qualification of Section 7.2 travels with it: this
+concerns monitors as networks actually place them, and a campaign designed across land-use
+contrast is a different proposition, recommended below for a different reason.
 
 {{tbl:T9_1}}
 

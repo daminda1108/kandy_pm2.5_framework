@@ -100,3 +100,4 @@ node_modules/
 !scripts/kandy_activity_shocks.py
 !scripts/panel_reference_partition.py
 !scripts/independent_background_revalidated.py
+!scripts/ladder_order_and_bootstrap.py

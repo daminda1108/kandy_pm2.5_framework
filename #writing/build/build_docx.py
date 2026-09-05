@@ -53,6 +53,14 @@ def main() -> int:
         print("reference.docx missing. Run make_reference_docx.py first.")
         return 1
 
+    # Tables are a DERIVED artefact and the build consumes them, so the build regenerates them.
+    # Without this the chain reads whatever t_tables.py last wrote, which is the stale-artefact
+    # failure Chapter 10 is about: a structural edit to a table silently does not reach the
+    # document while every claim inside it still resolves and every gate stays green. Found
+    # exactly that way, by editing a table note and watching the old note build.
+    if not run([PY, str(ROOT / "src" / "t_tables.py")], "tables"):
+        return 1
+
     if not a.skip_lint:
         if not run([PY, str(HERE / "lint.py")], "lint"):
             return 1

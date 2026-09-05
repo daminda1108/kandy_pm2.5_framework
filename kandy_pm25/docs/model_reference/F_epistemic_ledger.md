@@ -4894,3 +4894,78 @@ clean provenance.
 learner, seed, folds and frame construction. ⚠ MAIAC is daily where GHAP was an annual scalar, so
 provenance and temporal resolution both differ — the comparison is "honest stream vs fused
 stream" as registered, not a controlled test of provenance alone.
+
+
+## F.97 — the ladder is PATH-DEPENDENT, and the tropical inversion survives an interval only on the clean stream
+
+`scripts/ladder_order_and_bootstrap.py` → `ladder_order_variants.csv` · `ladder_bootstrap.csv` ·
+`ladder_order_summary.json`. Both tests were prompted by an external methodological review, and
+neither needed new data.
+
+### (a) Does the ladder measure the information, or the ORDER it was added in?
+
+Every gain is a marginal at a POSITION, so the estimand is a path-dependent marginal. One
+reordering is **impossible by construction and that is itself the finding**: the background
+enters as a second regressor whose coefficient is fitted against LOCAL station data, so a
+"background before any local station" rung has no target and cannot be built. **A background is
+only ever priceable given some local observation.** The ladder's order is partly forced.
+
+Permuting where the background sits relative to stations 3–8, over **46 cities**, both routes
+ending at the same information set:
+
+| quantity | production order | background one step earlier |
+|---|---:|---:|
+| what a background buys | **40.56%** | **38.03%** |
+| what stations 3–8 buy | **0.13%** | **2.81%** |
+
+🟢 **The background result is ORDER-ROBUST** — largest step in either position, moving by ~2 pp.
+
+⚠ **The redundancy result is order-robust in CONCLUSION, not in MAGNITUDE.** Stations 3–8 buy
+**21× more** with a background present (2.81 vs 0.13) and are still small. Part of that is not
+local information: with 6 stations the fitted background COEFFICIENT is sharper, so some apparent
+gain is a better-estimated background. **Never quote 0.1% as a fixed quantity.**
+
+🔴 **The two orders reach the same information and NOT the same skill** — median final RMSE
+differs by **0.106 µg/m³**. The shrinkage estimator accumulates differently along different
+paths. Path dependence is a property of the measurement, not only of the presentation.
+
+⚠ Also note what the shrinkage does epistemically: because a tier retreats toward the tier below
+when a stream does not help, **the ladder cannot discover that a stream is HARMFUL**, only that
+it is not usable. A ~0 rung means *no attainable improvement*, not *no information present*.
+
+### (b) Uncertainty over CITIES, not city-days
+
+28,930 city-days is not n=28,930; days within a city are strongly correlated. Bootstrapping
+**cities** with replacement, 2000 resamples:
+
+| step | median | 95% over cities |
+|---|---:|---|
+| first two sensors | 17.85% | **[4.6, 23.5]** |
+| stations 3–8 | 0.10% | **[0.0, 0.9]** |
+| a background series | 40.56% | **[26.7, 45.2]** |
+
+🟢 **The tightest result is the NULL.** Stations 3–8 are bounded above at 0.9%. The two positive
+effects are pinned down to no better than roughly a factor of two.
+
+### (c) 🔴 THE DEEP-TROPICAL INVERSION DOES NOT SURVIVE ON THE FUSED STREAM
+
+Paired within city (the two gains are measured on the SAME city), bootstrapped over cities, n=13:
+
+| satellite stream | paired advantage of 2 sensors over background | favours sensors | excludes 0 |
+|---|---:|---:|---|
+| **GHAP (fused)** | **+3.6 pp [−14.3, +36.3]** | 54% | **NO** |
+| **MAIAC (raw)** | **+33.3 pp [+7.0, +50.1]** | 77% | **YES** |
+
+🔴 **F.92's inversion, measured on GHAP, is a coin flip at 54% of cities and its interval spans
+zero.** Stated as a procurement recommendation it was not supportable. **F.96's, on the honest
+MAIAC stream, is.** Same 13 cities, same procedure, differing only in the satellite stream.
+
+🟢 **This is the sharpest consequence of C1/F.95 anywhere in the programme.** The contaminated
+covariate did not merely shift the numbers — **it destroyed the significance of the finding that
+matters most for Kandy.** A monitor-trained product understates what a monitor is worth, and in
+the deep tropics it understated it enough to hide the inversion entirely.
+
+⚠ The pairing test was **not pre-registered**; report as post-hoc. ⚠ n=13 and the upper end runs
+to +50 pp. **Quote F.96/MAIAC for the recommendation, never F.92/GHAP alone.**
+
+Claims: `order.*` `inv.{ghap,maiac}.*` `boot.{ghap,maiac}.{pooled,deep_tropical}.*`.

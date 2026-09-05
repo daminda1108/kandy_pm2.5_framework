@@ -58,10 +58,13 @@ artefact of the proxy.
 
 **2. The recommendation inverts between latitude bands.** In the deep tropics, local sensors buy
 {{claim:maiac.deep_tropical_first2}} per cent against {{claim:maiac.deep_tropical_background}}
-per cent for the regional background, reversing the pooled ordering. A programme in Colombo or
-Kampala following advice derived from the pooled panel would buy the wrong instrument first. Band
-is a stratifying label rather than a demonstrated mechanism, and the candidate explanation, the
-amplitude of the regional seasonal cycle, is named and left untested.
+per cent for the regional background, reversing the pooled ordering. Paired within city and
+bootstrapped over cities, the advantage is {{claim:inv.maiac.median}} points
+[{{claim:inv.maiac.lo}}, {{claim:inv.maiac.hi}}], favouring sensors in
+{{claim:inv.maiac.frac_cities}} per cent of the band. A programme in Colombo or Kampala following
+advice derived from the pooled panel would buy the wrong instrument first. Band is a stratifying
+label rather than a demonstrated mechanism, and the candidate explanation, the amplitude of the
+regional seasonal cycle, is named and left untested.
 
 **3. A monitor-trained covariate under-prices monitors, and not in the way one would look for.**
 Replacing a published fused concentration product with a raw satellite retrieval left the
@@ -71,7 +74,9 @@ against {{claim:c1.step_raw_aod}}. It roughly doubled the contribution of the ru
 pre-registered test that looked for excess skill in the contaminated stream found none and would
 have reported the leakage as immaterial. That such products leak is known and guarded against in
 evaluation practice; what I have not found reported is the displaced signature, which is what
-makes the obvious diagnostic the wrong one.
+makes the obvious diagnostic the wrong one. It is not a cosmetic effect: on the fused product the
+deep-tropical inversion above is {{claim:inv.ghap.median}} points with an interval spanning zero,
+so the contamination did not merely shift that result, it removed it.
 
 ## Where the model stops, and why that is a result
 
@@ -106,8 +111,11 @@ which is why they said nothing.
 ## Demonstration
 
 Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no operating reference
-monitor. The local share of concentration is **{{claim:partition.f}}**, derived from a physical
-constraint rather than assumed, so roughly half the burden is actionable locally. Against two
+monitor. The constrained decomposition assigns **{{claim:partition.f}}** of modelled
+concentration to a locally generated increment, derived from a physical constraint rather than
+assumed, against a retired prior of about a quarter. That is a model-imposed split rather than a
+measured source apportionment, and because the model carries no chemistry it does not license the
+claim that removing local sources would remove half the concentration. Against two
 published records that played no part in building the model, the field agrees to
 {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two independent years.
 Those checks cover the city-mean level. **The neighbourhood-scale map is not validated and is not

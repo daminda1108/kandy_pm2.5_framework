@@ -81,11 +81,17 @@ accurate that total is.
 
 The decomposition described in Chapter 6 exists for this reason. It separates a regional
 background from a locally generated increment, and only the increment can be acted upon by a
-local authority. For Kandy the local share is {{claim:partition.f}}, which means that
-approximately half of the concentration over the basin is generated inside it and approximately
-half arrives from elsewhere. That number is derived in Chapter 6 from a physical constraint
-rather than assumed, and it has a direct consequence: an intervention that eliminated every
-local source in the city would remove about half of the problem.
+local authority. For Kandy the decomposition assigns {{claim:partition.f}} of modelled concentration to the local
+increment, so approximately half is attributed to a component generated inside the basin and
+approximately half to material arriving from elsewhere. That number is derived in Chapter 6 from
+a physical constraint rather than assumed.
+
+Its consequence has to be stated carefully, and Section 6.6 states it in full. The figure makes
+local action worth substantially more than the quarter this project previously assumed. It does
+not license the arithmetic that eliminating every local source would remove half the
+concentration, because the model contains no chemistry and part of the increment is material
+formed in the atmosphere rather than emitted into it. The decomposition is a constrained split
+rather than a measured source apportionment.
 
 ## 2.4 The question a ministry actually asks
 

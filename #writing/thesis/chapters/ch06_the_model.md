@@ -257,11 +257,44 @@ artefact. It reproduces the originally reported values closely enough that the c
 unchanged, and the text above quotes the reimplementation because it is the version that can be
 re-run.
 
-This replaces an earlier estimate of about a quarter taken from source apportionment. The
-constraint refutes that value rather than refining it, and the practical consequence for Kandy is
-substantial: approximately half of the concentration over the basin is generated inside it, so an
-intervention removing every local source would remove about half of the problem rather than a
-quarter of it.
+The forty-eight hour form is the one that moves, from {{claim:field.f_form_calendar}} to
+{{claim:field.f_form_roll48}}, and it is reported rather than excluded as an outlier. That is a
+change of about a tenth in relative terms and it is the honest upper end of the sensitivity. The
+reason it drifts is structural: a window longer than a day takes minima across days on which `B`
+itself differs, so it constrains a quantity the decomposition does not define. A reader who
+rejects that reasoning should read the partition as spanning roughly
+{{claim:field.f_sweep_lo}} to {{claim:field.f_form_roll48}} rather than as a point value.
+
+### What the partition is, and what it is not
+
+This replaces an earlier estimate of about a quarter taken from source apportionment, and the
+constraint refutes that value rather than refining it. Three statements about the new number have
+to be kept apart, because the strongest reading is not supported.
+
+**It is a constrained decomposition, not an observed apportionment.** The constraint rules out
+decompositions that are physically incoherent, given that local sources emit continuously. It
+does not measure how much material comes from where. Filter-based source apportionment at Kandy
+resolves soil, aged sea salt, vehicular, biomass-burning and industrial factors
+[@Seneviratne2017], and none of those maps onto a two-way split. The defensible form of the claim
+is that **under the stated background and minimum-increment assumptions, the constrained
+decomposition assigns {{claim:partition.f}} of modelled concentration to the local increment.**
+
+**Local increment is not the same as locally emitted primary material.** The model has no
+chemistry, as Section 6.7 states. Precursors emitted inside the basin can form particulate mass
+inside it, and material formed outside can arrive already aged. The increment is defined by
+spatial structure and timing rather than by origin, so it contains locally formed secondary
+aerosol and excludes regionally formed aerosol regardless of where the precursors came from.
+Section 7.10 supplies the one chemical check the thesis has, and it also refuted the simplest
+reading, that the local increment can be treated as fresh primary aerosol.
+
+**The intervention statement therefore has to be weaker than the arithmetic suggests.** It is not
+established that removing every local source would remove half the concentration, because a
+share of the increment is secondary material whose precursors are not all local and whose
+formation would not stop with the emissions this decomposition can see. What is established is
+that about half of modelled concentration is attributed to a component generated within the
+basin, which makes local action worth substantially more than the retired quarter implied. A
+speciated measurement is the experiment that would convert this into an apportionment, and
+Chapter 9 lists it.
 
 ## 6.7 What this model is not
 

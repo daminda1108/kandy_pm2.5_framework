@@ -97,6 +97,12 @@ def frame(c: Claims, d: pd.DataFrame) -> None:
     c.add("frame.bands", int(c0.band.notna().sum()), stat="count", n=len(c0),
           source="ladder_revalidated.csv", ledger="F.85",
           note="cities carrying a latitude band; the remainder are the CNEMC cluster")
+    c.add("frame.unbanded", int(c0.band.isna().sum()), stat="count", n=len(c0),
+          source="ladder_revalidated.csv", ledger="F.85",
+          note="the CNEMC cluster, which is scored in every POOLED result and carries no "
+               "latitude band, so a band-stratified table sums to frame.bands and not to "
+               "frame.cities. An external reader read that gap as an inconsistency, which is "
+               "the reason both counts are now published and the band table says so on its face")
 
     # Countries, resolved by joining the scored cities to the frame that named them. The paper
     # asserted 32 for a year; that was the pre-F.84 47-city frame and never re-derived (C4's
@@ -109,6 +115,26 @@ def frame(c: Claims, d: pd.DataFrame) -> None:
         c.add("frame.countries", int(hit.nunique()), stat="distinct countries", n=len(c0),
               source="ladder_revalidated.csv + validation_frame.csv", ledger="F.85",
               note="C4's third sibling: the retired figure was 32, from the 47-city frame")
+
+        # Why the band table's COUNTRY column does not sum to frame.countries. A per-band
+        # distinct count double-counts any country present in more than one band, and the
+        # unbanded cluster's country appears in no band row at all. Both numbers are generated
+        # so the table's note can state the arithmetic instead of asserting it.
+        cc = c0[["city", "band"]].copy()
+        cc["country"] = cc.city.astype(str).map(m)
+        banded = cc[cc.band.notna()]
+        per_band = banded.groupby("band").country.nunique()
+        spanning = banded.groupby("country").band.nunique()
+        c.add("frame.band_country_sum", int(per_band.sum()),
+              stat="sum of per-band distinct country counts", n=len(banded),
+              source="ladder_revalidated.csv + validation_frame.csv", ledger="F.85",
+              note="what the band table's country column adds up to. It exceeds "
+                   "frame.countries and is NOT an inconsistency: the column cannot be summed")
+        c.add("frame.countries_multiband", int((spanning > 1).sum()),
+              stat="countries present in more than one latitude band", n=len(banded),
+              source="ladder_revalidated.csv + validation_frame.csv", ledger="F.85",
+              note="each is counted once per band it appears in, which is the whole of the "
+                   "gap between frame.band_country_sum and the banded country total")
 
 
 def bottom_rung(c: Claims, d: pd.DataFrame) -> None:
@@ -665,6 +691,87 @@ def domain_and_resolution(c: Claims) -> None:
                         - c.rows["s1.rank_fine_94m"]["value"]), 3),
               stat="absolute change in rank correlation on refinement", n=2,
               source="derived from s1.rank_* claims", ledger="F.89")
+
+
+def ladder_order(c: Claims) -> None:
+    """F.97. Is the ladder measuring the information, or the order it was added in?
+
+    Every gain is a marginal at a POSITION in a fixed order, so the estimand is a path-dependent
+    marginal rather than an intrinsic property of a stream. `ladder_order_and_bootstrap.py`
+    re-runs the chain with the background moved one step earlier and reports both endpoints.
+
+    It also bootstraps over CITIES rather than city-days, because days within a city are not
+    independent and 28,930 city-days is not n=28,930.
+    """
+    import json as _json
+    f = MOD / "ladder_order_summary.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        s = _json.load(fh)
+    src = "ladder_order_summary.json"
+
+    c.add("order.cities", s["order_cities"], stat="count of cities scored in both orderings",
+          n=s["order_cities"], source=src, ledger="F.97")
+    c.add("order.bg_after_8stn", s["order_bg_after_8stn"],
+          stat="median per-city % RMSE reduction, production position", n=s["order_cities"],
+          source=src, ledger="F.97")
+    c.add("order.bg_after_2stn", s["order_bg_after_2stn"],
+          stat="median per-city % RMSE reduction, background moved one step earlier",
+          n=s["order_cities"], source=src, ledger="F.97",
+          note="the background is large in BOTH positions, so its rank on the ladder is not an "
+               "artefact of where it was placed")
+    c.add("order.stn3to8_no_bg", s["order_stn3to8_no_bg"],
+          stat="median per-city % RMSE reduction, production position", n=s["order_cities"],
+          source=src, ledger="F.97")
+    c.add("order.stn3to8_with_bg", s["order_stn3to8_with_bg"],
+          stat="median per-city % RMSE reduction, measured with a background already present",
+          n=s["order_cities"], source=src, ledger="F.97",
+          note="20x the production figure and still small. The redundancy of monitors 3-8 is "
+               "order-DEPENDENT in magnitude and order-robust in conclusion. Part of the "
+               "difference is that more stations sharpen the fitted background coefficient "
+               "rather than adding local information")
+    c.add("order.endpoint_gap", s["order_endpoint_gap"],
+          stat="absolute difference in median final RMSE, micrograms per cubic metre",
+          n=s["order_cities"], source=src, ledger="F.97",
+          note="both orderings end at the SAME information set and do not reach the same "
+               "skill, because the shrinkage estimator is itself path-dependent. This is the "
+               "size of that effect, and it is reported rather than assumed away")
+
+    for lad in ("ghap", "maiac"):
+        if f"inv_{lad}_median" not in s:
+            continue
+        # one decimal place throughout: a table mixing 3.6 with 33.34 and 7.0 reads as though
+        # the precision differed between rows, and it does not.
+        c.add(f"inv.{lad}.median", round(float(s[f"inv_{lad}_median"]), 1),
+              stat="paired median advantage, first two sensors minus background, percentage points",
+              n=s[f"inv_{lad}_n"], source=src, ledger="F.97")
+        c.add(f"inv.{lad}.lo", round(float(s[f"inv_{lad}_lo"]), 1),
+              stat="2.5th percentile, bootstrap over cities",
+              n=s[f"inv_{lad}_n"], source=src, ledger="F.97")
+        c.add(f"inv.{lad}.hi", round(float(s[f"inv_{lad}_hi"]), 1),
+              stat="97.5th percentile, bootstrap over cities",
+              n=s[f"inv_{lad}_n"], source=src, ledger="F.97")
+        c.add(f"inv.{lad}.frac_cities", s[f"inv_{lad}_frac_cities"],
+              stat="per cent of deep-tropical cities where sensors beat the background",
+              n=s[f"inv_{lad}_n"], source=src, ledger="F.97")
+
+    b = pd.read_csv(MOD / "ladder_bootstrap.csv")
+    for lad in ("ghap", "maiac"):
+        for step, tag in (("first two sensors", "first2"),
+                          ("sensors three to eight", "stn3to8"),
+                          ("a background series", "bg")):
+            for stratum, stag in (("pooled", "pooled"), ("deep_tropical", "deep_tropical")):
+                r = b[(b.ladder == lad) & (b.step == step) & (b.stratum == stratum)]
+                if r.empty:
+                    continue
+                r = r.iloc[0]
+                c.add(f"boot.{lad}.{stag}.{tag}.lo", round(float(r.lo95), 1),
+                      stat="2.5th percentile of the median, bootstrap over cities",
+                      n=int(r.n_cities), source="ladder_bootstrap.csv", ledger="F.97")
+                c.add(f"boot.{lad}.{stag}.{tag}.hi", round(float(r.hi95), 1),
+                      stat="97.5th percentile of the median, bootstrap over cities",
+                      n=int(r.n_cities), source="ladder_bootstrap.csv", ledger="F.97")
 
 
 def colombo_donor(c: Claims) -> None:
@@ -1341,6 +1448,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    ladder_order(c)
     learned_pattern(c)
     field_diagnostics(c)
     exposure_burden(c)

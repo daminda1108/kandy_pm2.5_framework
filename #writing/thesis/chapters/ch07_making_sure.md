@@ -70,13 +70,53 @@ The measurement is possible because the tiers are nested. A lower tier is not a 
 it is the same model with a stream removed, so the difference between two tiers is information
 loss and nothing else.
 
+**What is measured, stated precisely.** The phrase *value of information* has a formal meaning in
+decision theory, where it is the reduction in expected loss under a stated decision problem
+[@Howard1966]. No decision problem is specified here, and predictive error stands in for loss.
+The quantity reported throughout this chapter is therefore the **marginal predictive value of an
+observation stream, using the reduction in out-of-sample daily root mean square error as the loss
+surrogate, at a fixed position in a fixed ordering of streams**. The shorter phrase is used
+informally in the rest of the thesis, and it means this. Work that defines an explicit decision
+loss, weighting misclassified air quality categories by population and vulnerability, is
+measuring something related and not identical [@Choi2026].
+
+Two consequences follow from the surrogate and both bound what the chapter can conclude. A stream
+that would change a decision without much changing average error is under-valued here, which is
+plausible for episode warning, where the loss is concentrated in a few days a year. And because
+the estimator shrinks a tier back toward the tier below when the new stream does not help,
+**the ladder cannot find that a stream is harmful**, only that it is not usable. That is the
+right behaviour for measuring what a rational user could obtain from optional information, and it
+means a rung of approximately zero should be read as no attainable improvement rather than as no
+information present.
+
 {{tbl:T7_1}}
 
 {{fig:ladder}}
 
 Reported as the median across cities of the per-city percentage reduction in daily root mean
-square error, never as a ratio of medians and never averaged across metrics. Four features of
-that table matter more than its ordering.
+square error, never as a ratio of medians and never averaged across metrics.
+
+**The unit of uncertainty here is the city, not the city-day.** The panel holds
+{{claim:frame.city_days}} city-days, and quoting that as a sample size would be wrong by a wide
+margin, because days within a city are strongly correlated and a long record would then count as
+independent evidence many thousands of times over. Taking the median of per-city values already
+stops long records dominating the point estimate. Intervals are obtained by resampling **cities**
+with replacement:
+
+| step | median | interval over cities |
+|---|---:|---:|
+| the first two sensors | {{claim:step.bud0c_bud1}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} |
+| monitors three to eight | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} |
+| a background series | {{claim:step.bud2_bud3}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} |
+
+Those intervals are wide, and they should be. **The one that is not wide is the one the thesis
+leans on hardest**: monitors three to eight are bounded above by
+{{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, so the absence of
+that effect is established far more tightly than the presence of either other effect. The first
+two sensors and the background are both real and neither is pinned down to better than roughly a
+factor of two.
+
+Four features of the table matter more than its ordering.
 
 **Free data is not negligible.** Static geography, which is terrain, roads, land cover, night
 lights and population, and which is available for every city on Earth at no cost, buys
@@ -87,9 +127,21 @@ lights and population, and which is available for every city on Earth at no cost
 seen: an annual level cannot touch day-to-day variance, and daily error is what daily variance is
 made of.
 
-**The second monitor through the eighth buys nothing.** {{claim:step.bud1_bud2}} per cent is not
-a small effect but an absent one, and Section 7.4 shows it is the most estimator-robust result in
-the study. A city with two sensors and a city with eight are, for this model, the same city.
+**Monitors three to eight add almost nothing this model can use.** At
+{{claim:step.bud1_bud2}} per cent the effect is not small but absent, and Section 7.4 shows it is
+the most estimator-robust result in the study.
+
+Two qualifications belong with that row, because it is the row most likely to be quoted as
+procurement advice. It concerns **attainable predictive improvement in a daily city-mean**, so it
+says those monitors add little that this model can exploit for that quantity, and not that they
+carry no information. A monitor also serves compliance, public reporting and calibration, none of
+which this measurement addresses. And the monitors in question were **not sited for this
+purpose**: they are the networks each panel city happens to operate, so what is measured is the
+marginal value of additional monitors *as actually placed*. Where a sensor is placed is itself
+part of the information problem and a developed research question in its own right
+[@Verghese2022; @Choi2026]. Nothing here shows that six monitors placed deliberately across a
+city's land-use contrast would be worth as little, and Chapter 9 recommends exactly such a
+campaign for a different purpose.
 
 **A background series is the largest single gain measured.** At {{claim:step.bud2_bud3}} per
 cent it exceeds every other rung, and the instrument that would supply it is the one air quality
@@ -153,6 +205,15 @@ Chapter 9 lists one even though it ranks second for Kandy.
 
 The pooled table is misleading if read as advice, and {{tbl:T7_2}} is the finding.
 
+One feature of that table has to be read before its numbers, because it looks like an error and
+is not. **Its city column sums to {{claim:frame.bands}} and the panel has
+{{claim:frame.cities}}.** The difference is {{claim:frame.unbanded}} cities drawn from a single
+national network, which are scored in every pooled result in this chapter and carry no latitude
+band, so they cannot appear in a band-stratified row. Excluding them from the stratification is
+deliberate. Assigning them a band would place a large block of cities from one country and one
+network into one cell, which is the confound a registered amendment was written to remove, and
+Section 7.6 gives that history.
+
 {{tbl:T7_2}}
 
 Stratified by latitude band, the ordering reverses in the band Kandy belongs to: local sensors
@@ -166,6 +227,37 @@ which Section 7.5 describes. On the corrected stream the two local sensors buy
 {{claim:maiac.deep_tropical_first2}} per cent in Kandy's band against
 {{claim:maiac.deep_tropical_background}} for the background, a local advantage of
 {{claim:maiac.deep_tropical_local_advantage}} times.
+
+### Does the inversion survive an interval?
+
+A median of thirteen cities is a thin basis for a procurement recommendation, and the difference
+between two medians hides whether the same cities drive both. The comparison was therefore made
+**paired within each city** and bootstrapped over cities, since days within a city are not
+independent and the panel's true unit here is the city.
+
+| satellite stream | advantage of two sensors over a background | cities favouring sensors |
+|---|---:|---:|
+| the fused product | {{claim:inv.ghap.median}} points, from {{claim:inv.ghap.lo}} to {{claim:inv.ghap.hi}} | {{claim:inv.ghap.frac_cities}} per cent |
+| the raw retrieval | {{claim:inv.maiac.median}} points, from {{claim:inv.maiac.lo}} to {{claim:inv.maiac.hi}} | {{claim:inv.maiac.frac_cities}} per cent |
+
+**On the fused product the inversion does not survive.** The interval spans zero and the sensors
+win in barely half the cities, which is a coin flip. Read alone, that version of the result would
+not support a recommendation, and an earlier version of this work stated it as though it did.
+
+**On the raw retrieval it does.** The interval excludes zero and the sensors win in
+{{claim:inv.maiac.frac_cities}} per cent of the band. This is the version the recommendation
+rests on.
+
+The two rows are the same thirteen cities and the same procedure, differing only in the satellite
+stream, which makes this the sharpest consequence of Section 7.5 anywhere in the thesis. **The
+contaminated covariate did not merely shift the numbers; it destroyed the significance of the
+finding that matters most for the demonstration city.** A monitor-trained product understates
+what a monitor is worth, and in the deep tropics it understated it enough to hide the inversion
+entirely.
+
+Two limits stay attached. The band holds thirteen cities and the interval is correspondingly
+wide, running to {{claim:inv.maiac.hi}} points at the upper end. And the pairing test was not
+pre-registered, so it is reported as an analysis performed after the result was known.
 
 The reversal is not a curiosity. It means the recommendation this thesis is most likely to be
 quoted for is the wrong recommendation for the city it was built for, and a reader who takes the
@@ -221,6 +313,47 @@ claim.
 One result survives every learner including ridge: the second-through-eighth monitor rung stays
 at approximately zero, with a spread of {{claim:learner.all_spread_bud1_bud2}} percentage points.
 The redundancy of those monitors is the most robust finding in the study.
+
+### And is it a property of the information, or of the order it was added in?
+
+Every number in {{tbl:T7_1}} is a marginal gain at a position in a fixed sequence. What the table
+reports is therefore the value of a stream **given the streams below it and before the streams
+above it**, which is not the same as an intrinsic property of that stream. Information interacts:
+a stream that looks redundant when added late may have carried a great deal when added early.
+The estimand is a path-dependent marginal, and this thesis names it that way.
+
+One reordering cannot be run, and saying why is more informative than the reordering would have
+been. The background enters as a second regressor whose coefficient is fitted against local
+station data, so a rung that added a background before any local station has nothing to fit
+against and cannot be constructed. **A background series is only ever priceable given some local
+observation.** That is a property of the decomposition rather than a limitation of the
+implementation, and it means the ladder's order is partly forced rather than chosen.
+
+What can be permuted is where the background sits relative to the later monitors. Running the
+chain both ways across {{claim:order.cities}} cities, so that both routes end at the same
+information set and only the interior order differs:
+
+| quantity | in the production order | with the background moved one step earlier |
+|---|---:|---:|
+| what a background series buys | {{claim:order.bg_after_8stn}} per cent | {{claim:order.bg_after_2stn}} per cent |
+| what monitors three to eight buy | {{claim:order.stn3to8_no_bg}} per cent | {{claim:order.stn3to8_with_bg}} per cent |
+
+**The background result is order-robust.** It is the largest step in either position, and moving
+it changes it by about two percentage points.
+
+**The redundancy result is order-robust in its conclusion and not in its magnitude.** Monitors
+three to eight buy {{claim:order.stn3to8_with_bg}} per cent once a background is present, which
+is more than twenty times the production figure and still small. Part of that difference is not
+extra local information at all: with more stations the fitted background coefficient is estimated
+more sharply, so some of the apparent gain is a better-estimated background rather than a
+better-observed city. The defensible statement is that the rung is small under both orders, and
+not that it is a fixed quantity.
+
+**And the two orders do not reach the same skill despite reaching the same information.** Median
+final error differs by {{claim:order.endpoint_gap}} micrograms per cubic metre between the
+routes. The shrinkage estimator accumulates differently along different paths, so path dependence
+is a property of this measurement and not only of the presentation. It is reported here rather
+than left for a reader to discover.
 
 ## 7.5 What a fused product does to a measurement of this kind
 
@@ -281,6 +414,20 @@ can be doing. The band ordering is unchanged.
 {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against
 {{claim:confound.other_bands_lcs_pct}} per cent in the other bands, and this one cannot be
 sampled away for the reason Chapter 2 gave.
+
+This is the confound that most limits the band result, and it deserves more than a note. Low-cost
+sensor response depends on humidity, aerosol composition, sensor age and the duration and design
+of the calibration, and there is no universal calibration procedure that removes this
+[@Zhang2025]. A band that is mostly low-cost is therefore not only a different climate regime, it
+is a different measurement regime, with a different error structure in both the fitting data and
+the held-out target. Some part of what the band contrast measures is instrument behaviour rather
+than atmosphere, and no analysis in this thesis can separate the two.
+
+The consequence is carried into the recommendation rather than left here. Kandy's own instruments
+are low-cost, so the low-cost stratum is the right analogue for it, and reading Kandy against a
+band that happens to share its instrument class is a better match than reading it against the
+pool. That is a defence of the recommendation and not of the mechanism: it makes the advice
+appropriate for Kandy while leaving open what the band contrast is actually made of.
 
 {{fig:confounds}}
 
@@ -407,10 +554,16 @@ area mean, and any health statement should use the weighted figure.
 
 **The attributable burden.** Projecting the population-weighted exposure through a published
 concentration-response function [@Burnett2018] against the national mortality baseline gives
-{{claim:burden.deaths}} attributable deaths per year, with an interval of
-{{claim:burden.ci_low}} to {{claim:burden.ci_high}}. That is an attributable fraction of
-{{claim:burden.fraction_pct}} per cent, of which {{claim:burden.avoidable}} would be avoidable
-if concentrations met the World Health Organization guideline [@WHO2021].
+{{claim:burden.deaths}} attributable deaths per year, with a **response-function-conditional
+interval** of {{claim:burden.ci_low}} to {{claim:burden.ci_high}}. That is an attributable
+fraction of {{claim:burden.fraction_pct}} per cent, of which {{claim:burden.avoidable}} would be
+avoidable if concentrations met the World Health Organization guideline [@WHO2021].
+
+The interval is named that way because of what it does not contain. It propagates the published
+uncertainty in the response function and nothing else. It carries no uncertainty from the
+concentration field, from the population weighting, or from the level discrepancy of Section 7.8,
+and a full interval would be wider than this one by an amount this thesis has not estimated.
+**It should not be read as a total uncertainty interval on the burden.**
 
 ⚠ **Three qualifications, and they are not small.** The response function and the mortality
 baseline are both taken from published work and neither was estimated here, so this is a

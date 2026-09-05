@@ -261,11 +261,21 @@ def t4_3_panel():
         rows.append([band.replace("_", " "), len(g), g.country.nunique(),
                      f"{g.n_held.median():.0f}", f"{g.n_days.median():.0f}",
                      f"{100 * g.frac_reference.mean():.0f}"])
+    # NEITHER COLUMN SUMS TO THE PANEL TOTAL, and both reasons are stated on the table's face.
+    # An external reader read the gap as an internal inconsistency, which in a thesis about
+    # numerical provenance is the most expensive kind of misreading available.
     write("T4_3_panel", "The validation panel by latitude band",
           ["band", "cities", "countries", "median withheld monitors",
            "median scored days", "reference stations (per cent)"], rows,
           note=f"{tok('frame.cities')} cities, {tok('frame.countries')} countries, "
-               f"{tok('frame.city_days')} city days in total. The deep-tropical cell is "
+               f"{tok('frame.city_days')} city days in total. Neither of the first two columns "
+               f"sums to those totals, for two different reasons. The cities column reaches "
+               f"{tok('frame.bands')} because {tok('frame.unbanded')} cities come from a single "
+               f"national network that is scored in every pooled result and carries no latitude "
+               f"band. The countries column reaches {tok('frame.band_country_sum')} because "
+               f"{tok('frame.countries_multiband')} countries span more than one band and are "
+               f"counted once in each, while the unbanded network's country appears in no row. "
+               f"A per-band distinct count is not additive. The deep-tropical cell is "
                f"dominated by low-cost sensors and the temperate cell by reference monitors, "
                f"which is a confound that cannot be sampled away.")
 
@@ -292,7 +302,10 @@ def t7_2_bands():
           ["band", "cities", "two local sensors (per cent)",
            "a regional background (per cent)"], rows,
           note="The ordering reverses in the deep tropics, which is the band the "
-               "demonstration city belongs to.")
+               "demonstration city belongs to. The city column sums to " + tok("frame.bands")
+               + " and not to the panel's " + tok("frame.cities") + ", because "
+               + tok("frame.unbanded") + " cities come from a single national network that "
+               "is scored in every pooled result and carries no latitude band.")
 
 
 def t9_1_next():
