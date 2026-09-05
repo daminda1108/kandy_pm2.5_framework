@@ -140,3 +140,8 @@ It does not check figures for their content, only for their currency and their p
 And it does not remove the need for a reader. The most serious errors in this project were found
 by a person deciding to check something, and the machinery's contribution is that it makes the
 checking cheap enough to do repeatedly rather than once.
+
+# References
+
+::: {#refs}
+:::

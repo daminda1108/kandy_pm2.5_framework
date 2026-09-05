@@ -101,6 +101,22 @@ def blank_exempt(text: str) -> str:
     return text
 
 
+# A block may be exempted, but only with a stated reason, so that an exemption is a decision
+# somebody made and can be argued with rather than a silent hole. The only legitimate use so
+# far is a table whose entire purpose is to list values this project has retired.
+BLOCK_OFF = re.compile(r"<!--\s*lint:off\s+([^>]+?)\s*-->(.*?)<!--\s*lint:on\s*-->", re.S)
+
+
+def blank_exempt_blocks(text: str) -> tuple[str, list[str]]:
+    reasons = []
+
+    def sub(m):
+        reasons.append(m.group(1))
+        return " " * len(m.group())
+
+    return BLOCK_OFF.sub(sub, text), reasons
+
+
 def cited_spans(raw: str) -> list[tuple[int, int]]:
     """Character ranges of sentences that carry a citation.
 
@@ -132,7 +148,11 @@ def cited_spans(raw: str) -> list[tuple[int, int]]:
 def lint(path: Path) -> list[tuple[str, int, str, str, str]]:
     raw = io.open(path, encoding="utf-8", errors="replace").read()
     cited = cited_spans(raw)
+    raw, block_reasons = blank_exempt_blocks(raw)
     text = blank_exempt(raw)
+    if block_reasons:
+        print(f"  note: {len(block_reasons)} exempted block(s) in {path.name}: "
+              + "; ".join(block_reasons))
     lines = text.splitlines()
     starts, pos = [], 0
     for ln in lines:

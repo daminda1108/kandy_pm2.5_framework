@@ -461,6 +461,41 @@ def main() -> int:
 
     # Ignore inline code when hunting leftovers, for the same reason resolve_claims does:
     # Chapter 10 displays the token syntax in order to explain it, and that is not a leftover.
+    # Lists of figures and tables, built from what was actually placed rather than typed.
+    # A hand-maintained list is wrong the moment a figure moves, and it is exactly the kind of
+    # front matter nobody re-checks before submitting.
+    def _list(kind: str) -> str:
+        rows = []
+        for key, label in assigned.items():
+            k, tag = key.split(":", 1)
+            if k != kind:
+                continue
+            if kind == "fig":
+                cap = VISUALS.get(tag, ("", ""))[1]
+            else:
+                frag = next(iter(sorted(TABLES.glob(f"{tag}*.md"))), None)
+                cap = ""
+                if frag:
+                    first = io.open(frag, encoding="utf-8").readline().strip()
+                    cap = first[len("Table:"):].strip() if first.startswith("Table:") else ""
+            short = cap.split(".")[0].strip()
+            if len(short) > 95:
+                short = short[:92].rsplit(" ", 1)[0] + "..."
+            rows.append((label, short))
+
+        def order(r):
+            m = re.search(r"(\d+)\.(\d+)", r[0])
+            return (int(m.group(1)), int(m.group(2))) if m else (99, 99)
+
+        rows.sort(key=order)
+        return "\n".join(f"| {lab} | {cap} |" for lab, cap in rows)
+
+    for token, kind, head in (("{{listoffigures}}", "fig", "| Figure | |\n|---|---|"),
+                              ("{{listoftables}}", "tbl", "| Table | |\n|---|---|")):
+        if token in text:
+            body = _list(kind)
+            text = text.replace(token, head + "\n" + body if body else "None.", 1)
+
     leftover = re.findall(r"\{\{[^}]+\}\}", re.sub(r"`[^`]*`", " ", text))
     if all_missing or leftover:
         print("\nUNRESOLVED TOKENS. Not writing output.")
