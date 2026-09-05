@@ -859,6 +859,146 @@ def chemistry_deepening(c: Claims) -> None:
                    "lower end is what can actually be asserted")
 
 
+def sensor_design(c: Claims) -> None:
+    """F.99. The proposed Kandy network, and why it beats the designs a programme would pick.
+
+    `design_sensor_network.py` builds it; `design_comparison.py` scores it against the
+    alternatives. The comparison is here because proposing a design and asserting it is good is
+    not an argument, and because the comparison produced the most useful result: the textbook
+    criterion ranks the two designs already known to produce nulls ABOVE the proposed one.
+    """
+    import json as _json
+    js = REPO / "data" / "processed" / "decomp" / "sensor_design_summary.json"
+    cmp_f = REPO / "data" / "processed" / "decomp" / "design_comparison.csv"
+    sat_f = REPO / "data" / "processed" / "decomp" / "design_saturation.csv"
+    if not js.exists():
+        return
+    with open(js, encoding="utf-8") as fh:
+        S = _json.load(fh)
+    src = "sensor_design_summary.json"
+
+    c.add("net.total", S["n_total"], stat="count of proposed sites", n=S["n_total"],
+          source=src, ledger="F.99")
+    for k, tag in (("n_anchor", "anchor"), ("n_design", "design"), ("n_paired", "paired"),
+                   ("n_vertical", "vertical"), ("n_receptor", "receptor")):
+        if k in S:
+            c.add(f"net.{tag}", S[k], stat="sites in the stratum", n=S["n_total"],
+                  source=src, ledger="F.99")
+    c.add("net.cells_total", S["cells_total"], stat="candidate cells at 94 m",
+          n=S["cells_total"], source=src, ledger="F.99")
+    c.add("net.cells_feasible", S["cells_feasible"],
+          stat="cells within the servicing distance of a road", n=S["cells_total"],
+          source=src, ledger="F.99",
+          note="logistics enters as a CONSTRAINT on the candidate set, never as an objective: "
+               "making access an objective is how convenience sampling happens")
+    c.add("net.feasible_pct", int(round(100 * S["cells_feasible"] / S["cells_total"])),
+          stat="per cent of the domain that is serviceable", n=S["cells_total"],
+          source=src, ledger="F.99")
+    c.add("net.existing_pct_lo", int(S["existing_pct_lo"]),
+          stat="lowest emission percentile any existing in-domain record samples", n=2,
+          source=src, ledger="F.99",
+          note="the entire range below this is unsampled, and one of the two low-cost sensors "
+               "sits outside the modelled domain altogether")
+    c.add("net.design_pct_lo", round(S["design_pct_lo"], 1),
+          stat="lowest emission percentile the design stratum reaches", n=S["n_design"],
+          source=src, ledger="F.99")
+    c.add("net.design_pct_hi", round(S["design_pct_hi"], 1),
+          stat="highest emission percentile the design stratum reaches", n=S["n_design"],
+          source=src, ledger="F.99")
+    c.add("net.design_below_61", S["design_below_61"],
+          stat="design sites in the previously unsampled range", n=S["n_design"],
+          source=src, ledger="F.99")
+    c.add("net.vertical_lo", int(round(S["vertical_zaf_lo"])),
+          stat="metres above the local valley floor, lowest transect site", n=S["n_vertical"],
+          source=src, ledger="F.99")
+    c.add("net.vertical_hi", int(round(S["vertical_zaf_hi"])),
+          stat="metres above the local valley floor, highest transect site", n=S["n_vertical"],
+          source=src, ledger="F.99",
+          note="the axis no monitoring network samples: stations worldwide sit on the valley "
+               "floor, which is why the dynamic-transport null could not be interpreted")
+    c.add("net.pair_contrast_hi", S["pair_contrast_hi"],
+          stat="modelled within-cell emission contrast across a paired triplet",
+          n=S["n_paired"], source=src, ledger="F.99",
+          note="the model predicts this; the one Kandy observation at 300 m suggests 27.5x, so "
+               "the paired stratum has the largest expected effect in the design")
+    # TWO BASES, both published and both named, because they differ and a reader who meets one
+    # number in the prose and the other on the figure would be right to distrust both. The
+    # design file counts receptors AFTER collapsing institutions within 150 m, since two schools
+    # on one street are one site for a sensor. The map counts every mapped receptor.
+    rank_f = REPO / "data" / "processed" / "decomp" / "kandy_receptors_ranked.csv"
+    if rank_f.exists():
+        rk = pd.read_csv(rank_f)
+        rk = rk[rk.E_pct.notna()]
+        c.add("net.receptors_mapped", int(len(rk)), stat="receptors mapped in the domain",
+              n=int(len(rk)), source="kandy_receptors_ranked.csv", ledger="F.99",
+              note="OpenStreetMap; completeness is not measurable from the data, so this is a "
+                   "LOWER BOUND. A missing school is invisible here")
+        n90 = int((rk.E_pct >= 90).sum())
+        c.add("net.receptors_above_p90", n90,
+              stat="mapped receptors above the 90th percentile of the emission proxy",
+              n=int(len(rk)), source="kandy_receptors_ranked.csv", ledger="F.99")
+        c.add("net.receptors_above_p90_pct", int(round(100 * n90 / len(rk))),
+              stat="per cent of mapped receptors", n=int(len(rk)),
+              source="kandy_receptors_ranked.csv", ledger="F.99",
+              note="susceptible groups are concentrated where the model's least validated axis "
+                   "matters most. A statement about a PROXY, which is the argument for "
+                   "measuring rather than asserting it")
+        c.add("net.receptors_median_pct", round(float(rk[rk.group == "school"].E_pct.median()), 1)
+              if (rk.group == "school").any() else None,
+              stat="median emission percentile of a mapped school", n=int((rk.group == "school").sum()),
+              source="kandy_receptors_ranked.csv", ledger="F.99")
+    c.add("net.receptors_distinct", S["receptors_total"],
+          stat="distinct receptor LOCATIONS after collapsing institutions within 150 m",
+          n=S["receptors_total"], source=src, ledger="F.99",
+          note="the selection pool for the receptor stratum. Lower than net.receptors_mapped "
+               "by construction: two institutions on one street are one site for a sensor")
+
+    if cmp_f.exists():
+        d = pd.read_csv(cmp_f)
+        for name, tag in (("clhs", "proposed"), ("d_optimal", "doptimal"),
+                          ("road_proximity", "road"), ("existing", "existing"),
+                          ("population", "population"), ("random_mean", "random")):
+            r = d[d.design == name]
+            if r.empty:
+                continue
+            r = r.iloc[0]
+            c.add(f"net.deff.{tag}", round(float(r.D_eff_rel), 2),
+                  stat="relative D-efficiency for a land-use regression", n=int(r.n),
+                  source="design_comparison.csv", ledger="F.99")
+            if np.isfinite(r.cover_pct):
+                c.add(f"net.cover.{tag}", int(round(float(r.cover_pct))),
+                      stat="percentiles of the emission gradient sampled", n=int(r.n),
+                      source="design_comparison.csv", ledger="F.99")
+            c.add(f"net.ks.{tag}", round(float(r.ks_mean), 3),
+                  stat="mean KS distance from the domain covariate distribution, lower better",
+                  n=int(r.n), source="design_comparison.csv", ledger="F.99")
+        cl = d[d.design == "clhs"]
+        if not cl.empty:
+            c.add("net.deff_cost_pct", int(round(100 * (1 - float(cl.D_eff_rel.iloc[0])))),
+                  stat="per cent of D-efficiency given up against the D-optimal design",
+                  n=int(cl.n.iloc[0]), source="design_comparison.csv", ledger="F.99",
+                  note="the price paid for coverage and representativeness. The criterion that "
+                       "would reject this design is the one that endorses the networks already "
+                       "known to produce nulls")
+
+    if sat_f.exists():
+        s = pd.read_csv(sat_f)
+        s = s.assign(gain=-s.ks_mean.diff())
+        thresh = 0.01
+        small = s[(s.gain.notna()) & (s.gain < thresh)]
+        c.add("net.saturation_threshold", thresh,
+              stat="improvement in representativeness below which a further site is not bought",
+              n=len(s), source="design_saturation.csv", ledger="F.99",
+              note="an analysis parameter, not a measurement. Published as a claim so the "
+                   "number in the prose is the number the selection actually used")
+        if len(small):
+            c.add("net.saturation_n", int(small.n.iloc[0]),
+                  stat="site count beyond which representativeness improves by less than the "
+                       "threshold",
+                  n=len(s), source="design_saturation.csv", ledger="F.99",
+                  note="averaged over 5 seeds. A single seed invents a knee that is not there")
+
+
 def colombo_donor(c: Claims) -> None:
     """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
 
@@ -1533,6 +1673,7 @@ def build() -> dict:
     kandy_field(c)
     domain_and_resolution(c)
     colombo_donor(c)
+    sensor_design(c)
     chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)

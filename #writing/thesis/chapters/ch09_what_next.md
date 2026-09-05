@@ -80,7 +80,9 @@ that the spatial limit is a change of support rather than a data deficiency, and
 pattern does not beat the best single predictor by more than {{claim:phase1.min_detectable}} on
 the frame available. That frame is a convenience sample: regulatory and low-cost networks are
 sited for compliance and access. A campaign designed for the question would be a different
-experiment, and the registered null explicitly does not exclude it finding something.
+experiment, and the registered null explicitly does not exclude it finding something. Section 9.7
+sets that campaign out in full, because it is the recommendation this thesis is most likely to be
+acted on and the one that most needs to be defensible.
 
 **A regional background station.** It ranks second for Kandy rather than first, and the reason to
 want one anyway is that it would close a question the panel can only bound. Section 7.2 rebuilt
@@ -176,7 +178,148 @@ difference between them is the difference between a belief and a bounded claim. 
 stating a detection limit in advance is a power calculation. The cost of not stating one, in this
 project, was four months.
 
-## 9.7 What would not help
+## 9.7 A network for Kandy, and why these sites rather than the obvious ones
+
+Everything above says what to buy. This says where to put it, because the two questions have
+different answers and the second is where a recommendation usually becomes unfalsifiable.
+
+### What the campaign is for, and what it is deliberately not for
+
+**It is not for making the map finer.** Chapter 8 measured that a tenfold refinement of the grid
+moves the paired-site ratio by {{claim:s1.paired_delta_on_refinement}}, and Section 8.5 bounds
+what a learned pattern adds over a single free raster. A campaign sold as increased resolution
+would be spending against results this thesis already has.
+
+It is for four things the evidence does support: anchoring the level, where three of four
+independent records sit below the model and one matches; measuring the within-cell distribution,
+which Chapter 8 argues is the well-posed quantity and the larger one; testing whether the spatial
+ceiling is a sampling artefact rather than an information limit; and establishing what
+susceptible people actually breathe, which is a different question answered at different places.
+
+### The measurement that determines the design
+
+The fine emission surface spans a factor of sixty-five from its tenth to its ninetieth percentile
+across the domain. **The existing fixed records sit between the
+{{claim:net.existing_pct_lo}}st and hundredth percentile of that range.** The entire lower
+{{claim:net.existing_pct_lo}} per cent is unsampled, and one of the two low-cost sensors lies
+outside the modelled domain altogether. A network cannot recover a gradient it never straddles,
+and this is the most likely reason six searches for spatial structure found none.
+
+### Sampling the physics, not only the sources
+
+A design stratified on emissions samples where the sources are and learns nothing about what the
+atmosphere does with them. The sites are therefore selected to span flow as well as emission.
+
+{{fig:network}}
+
+**Nocturnal drainage.** Cold air runs downslope after sunset and pools. The diagnostic wind field
+varies threefold in nocturnal speed across this domain, and its convergence marks where that air
+accumulates. The model predicts a sink down-valley of the core and no instrument has ever tested
+that prediction.
+
+**Confinement and inversion.** The depth of a cell below its surroundings is what traps a
+nocturnal inversion, and the model's confinement term is built from it and has never been
+validated. Sky view factor would be the natural second covariate for the radiative cooling that
+forms an inversion; measured on this domain it is very nearly constant, so it is dropped rather
+than carried as a covariate that would dilute the others.
+
+**The vertical gradient, which is the axis nobody samples.** Section 5.5 records that the
+dynamic-transport null was diagnosed as a data problem rather than a physics problem: monitored
+stations worldwide sit on the valley floor and never straddle the floor-to-ridge gradient, and
+the one panel city with several hundred metres of station relief showed the expected signs. Kandy
+has {{claim:kandy.relief_m}} metres of relief inside the domain. A deliberate transect from
+{{claim:net.vertical_lo}} to {{claim:net.vertical_hi}} metres above the local valley floor is the
+single most valuable physical addition available here, and it is a stratum of its own rather than
+something left to chance.
+
+**Logistics enters as a constraint and never as an objective.** Only
+{{claim:net.cells_feasible}} of the domain's {{claim:net.cells_total}} cells,
+{{claim:net.feasible_pct}} per cent, are close enough to a road to be serviced, and candidates
+outside that set are removed before the design is optimised. Making access an objective rather
+than a constraint is precisely how convenience sampling happens, and it is what this design
+exists to avoid.
+
+### The five strata
+
+{{tbl:T9_2}}
+
+They are separate because they answer different questions, and because **a site used to fit a
+model cannot honestly validate it.** The receptor stratum in particular is chosen for who is
+present rather than for what it would teach a model, and is held out of all fitting.
+
+### Why these sites and not the ones a programme would otherwise choose
+
+Proposing a design and asserting it is good is not an argument. Five designs were built on the
+same candidate grid with the same covariates and scored on the same measures, including the two
+a programme would most plausibly choose instead.
+
+{{fig:networkwhy}}
+
+**The textbook criterion endorses the convenience sample.** D-efficiency, the standard measure of
+how precisely a design estimates a regression's coefficients, rates the conventionally road-sited
+network at {{claim:net.deff.road}} and the existing Kandy network at {{claim:net.deff.existing}},
+against {{claim:net.deff.proposed}} for the proposed design. **It ranks the two networks already
+known to produce nulls above the one built to break them.** The road-sited design earns that
+score while sampling {{claim:net.cover.road}} percentile of the emission gradient, because
+D-efficiency rewards spread on the remaining covariates and is indifferent to collapse on the one
+that matters.
+
+The proposed design wins the measures that match the campaign's purpose. It spans
+{{claim:net.cover.proposed}} percentiles of the gradient against {{claim:net.cover.existing}} for
+the existing network, and its covariate distribution sits {{claim:net.ks.proposed}} from the
+domain's against {{claim:net.ks.random}} for a random draw and {{claim:net.ks.road}} for the
+conventional one.
+
+**The cost is real and is stated rather than buried.** The design gives up
+{{claim:net.deff_cost_pct}} per cent of D-efficiency against a D-optimal alternative, which puts
+it below a random draw on that measure alone. The justification is not that the criterion is
+wrong in general. It is that D-efficiency is defined relative to an assumed model, this thesis is
+a record of that assumption failing six times, and the campaign exists to find out whether the
+assumption can be rescued by better sampling. Buying coefficient precision for a model that does
+not work would be buying the wrong thing.
+
+**The number of sites is set by where the design stops paying**, not by a budget. Beyond
+{{claim:net.saturation_n}} sites a further site improves representativeness by less than
+{{claim:net.saturation_threshold}}, averaged over five random restarts, and a single restart
+produces a curve with a knee that is not there.
+
+### What would falsify the premise
+
+The design assumes deliberate siting can break a ceiling that convenience siting could not, and
+the campaign tests that assumption rather than presuming it.
+
+If a deliberately contrasted network still yields a rank correlation near the
+{{claim:phase1.best_rho}} that a single free raster already achieves, then the information-limited
+reading of Chapter 8 is confirmed far more strongly than six convenience-sample nulls could
+confirm it, and the field gains a bounded statement about what kilometre-scale products can do.
+**That is a good outcome and should be registered as such before deployment**, so it cannot
+afterwards be presented as a failed campaign. If the correlation rises materially, the ceiling
+was a sampling artefact and this thesis's spatial chapters have to be reread as a statement about
+network design rather than about the atmosphere.
+
+Both outcomes are worth the money, which is the test of whether a proposed experiment is one.
+
+### What this design cannot do
+
+It cannot narrow the intervention bound of Section 7.10, which runs from
+{{claim:chem.intervention_lo}} to {{claim:chem.intervention_hi}} per cent and needs filter
+sampling and chemical analysis rather than optical particle counters.
+
+It under-samples residential biomass burning. The design stratifies on a surface built from road
+network centrality, and the source apportionment of Chapter 3 attributes 14.1 per cent of mass to
+biomass burning against 7.6 per cent to traffic [@Seneviratne2017]. A source that is spatially
+decoupled from roads is under-represented by construction, and the honest response is to add
+residential sites on that ground rather than to pretend the proxy covers them.
+
+The receptor layer is drawn from a volunteer map whose completeness cannot be measured from
+itself, so {{claim:net.receptors_mapped}} is a lower bound and a missing school is invisible.
+
+And outdoor workers, who are among the most exposed people in the city, are not in the design at
+all, because they have no fixed location. Reaching them needs personal or mobile sampling, which
+is a different instrument and a different protocol. Their absence is a gap in this plan rather
+than a judgement that they matter less.
+
+## 9.8 What would not help
 
 Stated because these are the proposals most likely to be made.
 

@@ -308,6 +308,33 @@ def t7_2_bands():
                "is scored in every pooled result and carries no latitude band.")
 
 
+def t9_2_network():
+    """The five strata of the proposed Kandy network.
+
+    Counts are claim tokens rather than typed numbers, so a change to --n-design in the design
+    script reaches this table instead of quietly contradicting it.
+    """
+    write("T9_2_network", "The proposed Kandy network, by stratum",
+          ["stratum", "sites", "instrument", "what it answers"],
+          [["A  anchor", tok("net.anchor"), "reference grade",
+            "the level discrepancy; and it calibrates every other unit in the network"],
+           ["B  design", tok("net.design"), "low cost",
+            "spans emission and flow physics together, so the model's gradients are straddled"],
+           ["C  paired", tok("net.paired"), "low cost",
+            "the within-cell distribution, at separations one model cell wide"],
+           ["E  vertical", tok("net.vertical"), "low cost",
+            "the floor-to-ridge gradient, which no monitoring network anywhere samples"],
+           ["D  receptor", tok("net.receptor"), "low cost",
+            "what susceptible people breathe; held out of all model fitting"]],
+          note=f"{tok('net.total')} sites in total. Candidates were screened to the "
+               f"{tok('net.cells_feasible')} of {tok('net.cells_total')} cells within servicing "
+               f"distance of a road before the design was optimised, so logistics constrains the "
+               f"candidate set and never scores a site. The design stratum spans the "
+               f"{tok('net.design_pct_lo')}th to {tok('net.design_pct_hi')}th percentile of the "
+               f"emission gradient, against the {tok('net.existing_pct_lo')}st to 100th that the "
+               f"existing records occupy.")
+
+
 def t9_1_next():
     write("T9_1_next", "What to do next, ranked by measured value rather than by appeal",
           ["action", "what it would settle", "evidence for the ranking"],
@@ -332,7 +359,7 @@ def t9_1_next():
 BUILDERS = {
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
-    "T9_1": t9_1_next,
+    "T9_1": t9_1_next, "T9_2": t9_2_network,
 }
 
 

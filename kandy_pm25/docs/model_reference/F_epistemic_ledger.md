@@ -5059,3 +5059,110 @@ CTM** — it would be unvalidatable at Kandy for exactly the reasons Chapter 1 g
 
 Claims: `chem.mech.*` `chem.cluster.*` `chem.species.*` `chem.secondary_share`
 `chem.intervention_{lo,hi}`.
+
+
+## F.99 — a sensor network for Kandy, designed as an experiment, and the criterion that would have rejected it
+
+`scripts/{design_sensor_network,design_comparison,pull_kandy_receptors,plot_sensor_design,plot_design_justification}.py`.
+Plan `docs/sensor_placement_plan_2026-09-05.md`; thesis §9.7.
+
+### 🔴 THE NUMBER THE DESIGN TURNS ON
+
+The fine emission surface spans **65x** from p10 to p90 at 94 m across the 15x15 km domain.
+**The existing in-domain records sit between the 61st and 100th percentile.** The entire lower
+**61%** is unsampled, and one of the two FECT sensors is **outside the domain altogether**.
+**A network cannot recover a gradient it never straddles** — the most likely reason six searches
+for spatial structure found none.
+
+### The design: 35 sites, 5 strata, stratified on PHYSICS as well as emissions
+
+| stratum | n | answers |
+|---|---:|---|
+| **A** anchor | 1 | the level discrepancy; calibrates every other unit |
+| **B** design | 12 | cLHS over **7 covariates**: emission, population, height above valley floor, `delta_z`, nocturnal ventilation, nocturnal convergence, day/night ventilation ratio |
+| **C** paired | 9 | 3 triplets at 0/100/300 m **along the gradient**, all inside one cell |
+| **E** vertical | 5 | **8 to 291 m above the local valley floor** |
+| **D** receptor | 8 | named schools/clinics, **held out of all fitting** |
+
+🟢 **The vertical stratum exists because of this project's own null.** The dynamic-transport
+diagnostic was diagnosed as a DATA problem: monitored stations worldwide sit on the valley floor
+and never straddle the floor-to-ridge gradient. Kandy has 846 m of relief. This is the axis no
+network on Earth samples.
+
+⚠ **SVF measured and DROPPED.** CV **0.023**, IQR **0.021** on a 0-1 scale — very nearly a
+constant, because the ridges sit 5-10 km out. Independently reproduces gotcha #21. A near-constant
+covariate in cLHS consumes an optimiser dimension and dilutes the rest. Dropping it moved design
+coverage from the 33rd-97th percentile to the **12th-98th**.
+
+⚠ **Nocturnal convergence smoothed at source.** The wind library is 64x64 (~230 m); a finite
+difference on it is dominated by numerical noise, and regridding that to 94 m would have cLHS
+chasing artefacts of the differencing scheme while advertising resolution the flow field lacks.
+
+🟢 **Logistics is a CONSTRAINT, never an objective.** Only **19,467 of 25,600 cells (76%)** lie
+within 400 m of a road and are serviceable; the rest are removed **before** optimisation.
+**Making access an objective is precisely how convenience sampling happens.**
+
+### 🔴 THE FINDING: the textbook criterion endorses the convenience sample
+
+Five designs, same grid, same 7 covariates, same metrics:
+
+| design | rel D-efficiency | gradient covered | KS from domain (lower better) |
+|---|---:|---:|---:|
+| D-optimal | 1.00 | 90 | 0.344 |
+| **existing network** | **0.88** | 37 | 0.556 |
+| **road-sited (the convention)** | **0.70** | **1** | 0.509 |
+| hybrid | 0.48 | 78 | 0.205 |
+| random | 0.42 | — | 0.238 |
+| **proposed (cLHS)** | **0.35** | **94** | **0.127** |
+| population-weighted | 0.31 | 52 | 0.396 |
+
+🔴 **D-efficiency ranks the two designs ALREADY KNOWN TO PRODUCE NULLS above the one built to
+break them.** Road-siting earns 0.70 while sampling **ONE percentile** of the emission gradient,
+because D-efficiency rewards spread on the remaining covariates and is **indifferent to collapse
+on the one that matters**. D-optimal also stacks two sensors **211 m apart**.
+
+⚠ **The cost is real and stated:** the proposed design gives up **65%** of D-efficiency and sits
+**below a random draw** on that measure. The defence is not that the criterion is wrong in
+general — it is that D-efficiency is defined relative to an ASSUMED model, this project's six
+nulls are the record of that assumption failing, and the campaign exists to test whether better
+sampling rescues it. **Buying coefficient precision for a model that does not work is buying the
+wrong thing.**
+
+🟢 **n = 12 is set by SATURATION, not budget.** Beyond 12 design sites a further site improves
+representativeness by <0.01, averaged over **5 seeds**. ⚠ A single seed produced a D-efficiency
+curve reading 0.46, 0.34, 0.68, 0.78, 0.65 with n — pure sampling noise that invents a knee.
+
+### 🟢 Susceptible groups sit where the model is weakest
+
+**150 receptors mapped** (OSM, a LOWER BOUND — a missing school is invisible). **78 (52%) sit
+above the 90th percentile** of the emission proxy; the **median school is at the 90.8th**.
+⚠ A statement about a PROXY, which is the argument for measuring rather than asserting it.
+⚠ Two bases published and named: `net.receptors_mapped` (150) vs `net.receptors_distinct` (111,
+after collapsing institutions within 150 m). They differ and both appear, so neither is a
+surprise.
+
+### What it CANNOT do, stated in the plan
+
+Cannot narrow the **9.1-48.3%** intervention bound (needs filter sampling). **Under-samples
+residential biomass burning** — 14.1% of mass vs traffic's 7.6% — because it stratifies on a
+road-centrality surface. **Outdoor workers are not in it at all**: no fixed location, so they
+need personal or mobile sampling.
+
+### 🔴 The premise is FALSIFIABLE and that is the point
+
+If a deliberately contrasted network still yields rank correlation near the **0.309** a single
+free raster achieves, the information-limited reading is confirmed **far more strongly than six
+convenience-sample nulls could confirm it**. **Register that outcome as a success before
+deployment**, so it cannot afterwards be called a failed campaign. If it rises materially, the
+ceiling was a sampling artefact and the spatial chapters are a statement about network design.
+**A design that can only succeed is not an experiment.**
+
+### Defects caught while building
+1. Both members of each pair initially carried the **SAME coordinate** — the artefact the
+   Elangasinghe re-analysis already had to withdraw once (F.69). Offsets now real and asserted.
+2. Two receptors **30 m apart** counted as two sites. Thinned at 150 m.
+3. `plot_design_justification.py` carried a **hardcoded 0.92** that went stale when the covariate
+   set changed; the real value is 0.70. Now read from the comparison file. **The figure was
+   asserting a number the data contradicted** — the exact defect gotcha #86 describes.
+
+Claims: `net.*` (39). Figures: `sensor_design_kandy.png`, `sensor_design_justification.png`.

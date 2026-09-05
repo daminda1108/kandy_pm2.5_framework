@@ -41,6 +41,7 @@ SEARCH = [
     FIGURES,
     _ANALYSIS / "paper2026",
     _ANALYSIS / "paper_figures_v2",
+    _ANALYSIS / "kandy_decomp",
 ]
 OUT = ROOT / "build" / "thesis.md"
 
@@ -286,6 +287,20 @@ VISUALS: dict[str, tuple[str, str]] = {
         "the two strongest families skill rises with radius and peaks coarser than the cell "
         "the model reports on. Read together with the within-cell result of Chapter 8, the "
         "band of usable spatial information is bounded from both directions at once."),
+    "network": (
+        "sensor_design_kandy",
+        "The proposed network, on the three surfaces that selected it. Emissions set the "
+        "gradient the design must straddle; nocturnal drainage convergence sets where air "
+        "pools after sunset, which a design stratified on sources alone would ignore; and "
+        "population with susceptible receptors is a third objective that selects different "
+        "sites again, which is why it is a separate stratum rather than a weighting."),
+    "networkwhy": (
+        "sensor_design_justification",
+        "Why this design rather than the ones a programme would otherwise choose. The textbook "
+        "optimal-design criterion ranks the two networks already known to produce nulls above "
+        "the proposed one, while the conventionally road-sited network samples a single "
+        "percentile of the emission gradient. The right panel fixes the number of sites at the "
+        "point where a further site stops improving representativeness."),
     "decisiontree": (
         "D9_acquisition",
         "The acquisition decision as a procedure, with the branch that inverts between "
