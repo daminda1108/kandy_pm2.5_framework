@@ -13,6 +13,8 @@ the Hantana range, which rises to more than 1,200 metres within a few kilometres
 centre, and it drains to the north-west along the Mahaweli valley. Relief across the modelled
 domain is {{claim:kandy.relief_m}} metres over fifteen kilometres.
 
+{{dia:valley}}
+
 That geometry is the reason Kandy is a harder problem than a city of the same size on a plain,
 and the difficulty has three parts.
 

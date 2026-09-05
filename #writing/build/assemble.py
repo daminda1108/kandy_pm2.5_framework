@@ -395,6 +395,17 @@ def main() -> int:
     # Report where each figure came from and how old it is. A figure older than the field it
     # draws is the one failure mode no prose gate can see.
     import datetime as _dt
+    # A label assigned but never placed leaves the reader hunting for a figure that is not
+    # in the document. Inline references are legitimate, but only if the figure is placed
+    # somewhere, so the two counts must agree.
+    placed_tags = set(sources)
+    labelled = {k.split(":", 1)[1] for k in assigned if k.startswith("fig:")}
+    orphans = sorted(labelled - placed_tags)
+    if orphans:
+        print(f"  WARNING: {len(orphans)} figure(s) referenced but never placed:")
+        for t in orphans:
+            print(f"    {t:<14} {assigned.get('fig:' + t, '?')} has no image in the document")
+
     stale = [(t, p) for t, p in sources.items()
              if _dt.date.fromtimestamp(p.stat().st_mtime) < _dt.date(2026, 8, 18)]
     if stale:

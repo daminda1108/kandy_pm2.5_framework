@@ -45,6 +45,8 @@ and it thins towards the equator. The deficit is not random. It falls hardest on
 where concentrations are highest and where the population exposed per instrument is largest, so
 the places with the most to learn from a measurement are the places least likely to have one.
 
+{{fig:obsdensity}}
+
 **The physics is not closed, because emission is a boundary condition that nobody measures.**
 The atmosphere transports and removes particulate matter according to equations that are as well
 understood as those governing the weather. What enters the atmosphere is a different matter. A

@@ -106,6 +106,8 @@ advance what it could detect. {{fig:nullpower}} gives the retrospective answer: 
 sizes they could only have found residual correlations between
 {{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}.
 
+{{fig:nullpower}}
+
 The sixth was done differently. Before any model was written, the benchmark, the detection limit
 and the bar were registered [OSF 2jyfg]. The benchmark is the best single globally available
 predictor, built-up land-cover fraction within 2.4 kilometres, at {{claim:phase1.best_rho}}
