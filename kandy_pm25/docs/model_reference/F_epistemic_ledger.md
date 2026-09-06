@@ -5397,3 +5397,82 @@ CURRENT; none checks that a number is DESCRIBED correctly. **Found by a user ask
 number was two.**
 
 Claims: `stn.*` (7).
+
+
+## F.103 — 🔴 deliberate siting does NOT beat convenience siting, tested on 43 dense-network cities
+
+`scripts/siting_experiment.py` → `siting_experiment{,_fixed}.{csv,json}`. Prompted by the user
+pointing out the obvious: F.100 said ONE city cannot test the campaign's premise, but the panel
+is full of cities with dense networks, and **each of them can be made into both designs by
+choosing which of its own stations to fit on**.
+
+### The design
+
+43 cities, 601 stations, 7 covariates. Half of each city fitted, half held out, 40 repeats.
+Four fitting subsets, same RidgeCV model on each, Spearman against the held-out stations.
+
+* `clhs` — conditioned Latin hypercube over station covariates. **The proposed design.**
+* `convenience` — most road nearby. **What compliance networks actually do**, and what produced
+  every frame this project has measured a null on.
+* `spread` — maximin geographic separation.
+* `random` — the baseline.
+
+⚠ The model MUST be multi-covariate. A monotone function of one covariate cannot have its
+held-out RANKING changed by the fitting set, so the experiment would be vacuous by construction.
+
+### 🔴 THE RESULT, and the trap inside it
+
+| method | median rho | best in |
+|---|---:|---:|
+| **clhs** | **0.257** | 16 |
+| spread | 0.200 | 8 |
+| **convenience** | **0.143** | 12 |
+| random | 0.143 | 7 |
+
+That table says deliberate siting nearly DOUBLES convenience siting. **It is wrong.**
+
+**Paired within city: −0.044 [−0.095, +0.118], winning in 19/43 — FEWER THAN HALF.**
+
+🔴 **Difference of medians +0.114 against a paired median of −0.044.** They point opposite ways,
+and the difference of medians is the flattering one. **SECOND TIME IN ONE SESSION** — F.102's
+temperate band did exactly this (+12.91 vs +0.14). Both times the project's standing rule,
+*median of ratios and never a ratio of medians*, is what catches it. Had the median table been
+reported, the claim would have been that deliberate siting doubles spatial skill.
+
+⚠ **UNDETECTABLE, not refuted.** The interval spans zero and does not exclude a +0.118 advantage.
+
+### ⚠ The promised robustness check RETURNED NOTHING, and the reason is arithmetic
+
+Each method picks its own fitting set, so each is scored on a DIFFERENT held-out set — a method
+could win by leaving an easier remainder. The docstring promised a fixed-holdout re-check before
+any winner was believed. It was run (`--fixed-holdout`, `_fixed` outputs).
+
+🔴 **It is uninformative by construction on this panel.** Median city = 12 stations, so a
+held-out third = **4**, and a Spearman on 4 points is **quantised to steps of 0.1** (observed
+commonest values: exactly 0.4, 0.8, −0.4). Every paired median collapsed to **exactly 0.0000 with
+a zero-width interval**, and clhs/convenience/random all showed median rho 0.200. Settling it
+needs cities of 24+ stations to leave 8 held out; about **five** exist. **Reported as a limit of
+the panel, NOT as a confirmation.**
+
+### 🔴 CONSEQUENCE: the campaign's spatial ambition is dead TWICE OVER
+
+* **F.100**: a campaign of this size cannot DETECT a siting effect at Kandy (needs 96–304 sites).
+* **F.103**: there is probably no siting effect TO detect.
+
+The exploratory spatial test that survived F.100 does not survive F.103. **The campaign must no
+longer be described as testing the spatial ceiling in any form.** And the gap between published
+LUR (R² 0.43–0.83) and this project's convenience frames (rho ~0.3) is **NOT explained by
+siting** — it is information.
+
+**Design stratum:** its founding justification is gone. Two thin ones remain — making the
+exposure field checkable beyond the three paired locations, and making Kandy the only
+deliberately sited city in a 48-city convenience panel (itself weakened by this very result).
+⚠ Per F.101 the cost either way is <3% of the instrument budget, so **this is a question about
+what the campaign CLAIMS, not what it costs.**
+
+### Minor
+`--tag` wrote `_fixed` outputs correctly but the final `print` still named the defaults, which
+for several minutes looked like the primary result had been overwritten. Fixed to print what was
+written.
+
+Claims: `site.*` (13).

@@ -1250,6 +1250,76 @@ def station_count(c: Claims) -> None:
                "several places, which is a rung two stations wider than the one that was run")
 
 
+def siting(c: Claims) -> None:
+    """F.103. Does deliberate siting beat convenience siting? Tested on 43 dense-network cities.
+
+    The campaign's premise, which one city could not test, IS testable on the panel: every city
+    with a dense network can be made into both designs by choosing which of its own stations to
+    fit on. The answer is that deliberate siting does not measurably beat convenience siting,
+    and the apparent advantage in the medians is the difference-of-medians trap again.
+    """
+    import json as _json
+    f = MOD / "siting_experiment.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = _json.load(fh)
+    src = "siting_experiment.json"
+    mr = S.get("median_rho", {})
+    pv = S.get("paired_vs_convenience", {}).get("clhs", {})
+
+    c.add("site.cities", S["cities"], stat="cities with a dense enough network to test on",
+          n=S["cities"], source=src, ledger="F.103")
+    c.add("site.stations", S["stations"], stat="stations across those cities", n=S["cities"],
+          source=src, ledger="F.103")
+    for m, tag in (("clhs", "deliberate"), ("convenience", "convenience"),
+                   ("spread", "spread"), ("random", "random")):
+        if m in mr:
+            c.add(f"site.rho_{tag}", round(float(mr[m]), 3),
+                  stat="median across cities of held-out rank correlation", n=S["cities"],
+                  source=src, ledger="F.103")
+    if pv:
+        c.add("site.paired_median", pv["median"],
+              stat="paired median advantage of deliberate over convenience siting",
+              n=pv["n"], source=src, ledger="F.103",
+              note="NEGATIVE, while the difference of the two medians is positive. The paired "
+                   "value is the effect; the difference of medians is not")
+        c.add("site.paired_lo", pv["lo"], stat="2.5th percentile, bootstrap over cities",
+              n=pv["n"], source=src, ledger="F.103")
+        c.add("site.paired_hi", pv["hi"], stat="97.5th percentile, bootstrap over cities",
+              n=pv["n"], source=src, ledger="F.103",
+              note="the interval spans zero, so this is UNDETECTABLE rather than refuted, and "
+                   "it does not exclude an advantage of this size")
+        c.add("site.wins", pv["wins"],
+              stat="cities where deliberate siting beats convenience siting", n=pv["n"],
+              source=src, ledger="F.103",
+              note="fewer than half, which is what makes the positive difference of medians a "
+                   "compositional artefact rather than an effect")
+    # The promised robustness check, and it returned nothing usable. Recorded as a claim so the
+    # thesis can say so with a number rather than describing it vaguely.
+    ff = MOD / "siting_experiment_fixed.csv"
+    if ff.exists():
+        fx = pd.read_csv(ff)
+        c.add("site.fixed_median_held", int(fx.n_held.median()),
+              stat="median held-out stations in the fixed-holdout robustness check",
+              n=int(fx.city.nunique()), source="siting_experiment_fixed.csv", ledger="F.103",
+              note="a Spearman correlation on this many points is quantised to steps of about "
+                   "0.1, so every paired median collapsed to exactly zero. The check is "
+                   "UNINFORMATIVE on this panel and is reported as such, not as a confirmation")
+        c.add("site.fixed_quantisation", round(6 / (4 * (4 ** 2 - 1)), 2),
+              stat="smallest possible step between two Spearman values at n=4", n=1,
+              source="siting_experiment_fixed.csv", ledger="F.103",
+              note="why the robustness check could not resolve a difference of 0.04")
+
+    if "clhs" in mr and "convenience" in mr:
+        c.add("site.diff_of_medians", round(float(mr["clhs"]) - float(mr["convenience"]), 3),
+              stat="difference of medians, deliberate minus convenience", n=S["cities"],
+              source=src, ledger="F.103",
+              note="published ONLY so the gap against site.paired_median is visible. This is "
+                   "the second time in one session that a difference of medians pointed the "
+                   "opposite way to the paired median")
+
+
 def colombo_donor(c: Claims) -> None:
     """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
 
@@ -1938,6 +2008,7 @@ def build() -> dict:
     campaign_power(c)
     campaign_cost(c)
     station_count(c)
+    siting(c)
     chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)

@@ -373,19 +373,63 @@ twelve sites to ten saves {{claim:cost.design_saving_usd}} dollars, under three 
 low-end subtotal. At this unit price no plausible re-scoping of a low-cost network changes the
 shape of the budget. The effort belongs on the agreement, not on trimming sensors.
 
-### What survives of the design stratum's justification
+### The premise tested directly, and it does not hold
 
-Its main purpose is gone and two smaller ones remain, one of which was not the original
-intention and is stated as such rather than presented as foresight.
+The power calculation showed that one city cannot test whether deliberate siting breaks the
+spatial ceiling. **The panel can.** Every city with a dense network can be made into both designs
+by choosing which of its own stations to fit on, so the question that eighteen sites in Kandy
+could never answer is answerable on {{claim:site.cities}} cities and
+{{claim:site.stations}} stations at no cost beyond computation.
 
-It still serves the exploratory spatial test, reported with its bound.
+Four fitting subsets were drawn from each city, the same model fitted on each, and every one
+scored against stations held out of it. A subset chosen across the covariate space reaches a
+median rank correlation of {{claim:site.rho_deliberate}} against
+{{claim:site.rho_convenience}} for one chosen the way compliance networks are sited, which looks
+decisive and is not.
+
+**Paired within city, deliberate siting scores {{claim:site.paired_median}} against convenience
+siting**, with an interval of {{claim:site.paired_lo}} to {{claim:site.paired_hi}}, and it wins
+in {{claim:site.wins}} of {{claim:site.cities}} cities. Fewer than half.
+
+⚠ **The apparent advantage is the difference-of-medians artefact again.** The gap between the two
+medians is {{claim:site.diff_of_medians}} while the paired median is negative, because the city
+sitting at the median is not the same city in the two arms. This is the second time in this
+chapter's supporting work that the two disagreed in sign, and on both occasions the difference of
+medians was the flattering one. Reporting it would have claimed that deliberate siting nearly
+doubles spatial skill.
+
+⚠ **The robustness check could not be run.** Scoring every method against one common held-out set
+would remove the confound that each design leaves a different remainder. On this panel it is
+arithmetically impossible: the median city has twelve stations, so a held-out third is
+{{claim:site.fixed_median_held}}, and a rank correlation on that many points can only take values
+{{claim:site.fixed_quantisation}} apart. Every paired median collapsed to exactly zero. The check
+was promised, run, and returned nothing, and that is a limit of the panel rather than a
+confirmation.
+
+### What this leaves of the design stratum
+
+**Its founding justification is now gone twice over.** The power calculation said a campaign of
+this size could not detect a siting effect at Kandy; the panel says there is probably no siting
+effect to detect. The exploratory spatial test that survived the first finding does not survive
+the second, and **the campaign should no longer be described as testing the spatial ceiling in
+any form**.
+
+Two justifications remain and neither was the original intention.
+
+The stratum makes the delivered exposure field checkable at more than the three locations the
+paired triplets provide, which matters because Section 7.11 projects a health burden through it.
 
 **And it would make Kandy the only deliberately sited city in a panel of
-{{claim:frame.cities}} convenience samples.** Every city in the frame that produced this
-thesis's spatial nulls was sited for compliance and access. One city sited for contrast is a
-different kind of observation, and it is worth more to the multi-city frame than to Kandy itself.
-That justification was arrived at after the original one failed, which is the honest way to
-describe it.
+{{claim:frame.cities}} convenience samples.** That is now a weaker argument than it was an hour
+ago, since the experiment above suggests deliberate siting does not produce better spatial
+prediction. What it would produce is a city whose network was not selected by the same process as
+every other city in the frame, which is worth something for future work on siting itself and is
+worth admitting is a thin reason to buy twelve instruments.
+
+**The honest recommendation is therefore to keep the stratum only if the exposure objective
+justifies it, and to stop justifying it by the spatial one.** Section 8.4 of the plan shows the
+cost either way is under three per cent of the instrument budget, so this is a question about
+what the campaign claims rather than about what it costs.
 
 ### What this design cannot do
 

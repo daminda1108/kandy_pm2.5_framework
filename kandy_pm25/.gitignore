@@ -111,3 +111,4 @@ node_modules/
 !scripts/osf_lodge.py
 !scripts/campaign_costing.py
 !scripts/station_count_curve.py
+!scripts/siting_experiment.py
