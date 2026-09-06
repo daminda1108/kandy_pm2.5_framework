@@ -8,7 +8,7 @@ mainfont: "Times New Roman"
 colorlinks: false
 ---
 
-**Undergraduate thesis, 2026. Two-page summary.** Full thesis: 33,000 words, 35 figures, 10
+**Undergraduate thesis, 2026. Two-page summary.** Full thesis: 35,000 words, 35 figures, 10
 chapters. Six pre-registrations lodged on OSF before the corresponding analyses ran.
 
 ## The problem
@@ -47,8 +47,12 @@ scored, so the results below are bounded by that panel and are not global claims
 
 **1. Freely available geography is worth about as much as the first monitor a city buys.** Terrain,
 roads, land cover, night lights and population together buy {{claim:step.geography}} per cent in
-daily error. The second monitor through the eighth buy {{claim:step.bud1_bud2}} per cent, which
-is not a small effect but an absent one, and it is the most estimator-robust result in the study.
+daily error. Monitors three to six buy {{claim:step.bud1_bud2}} per cent, which is not a small
+effect but an absent one, and it is the most estimator-robust result in the study. Sweeping the
+count from one station to eight puts the saturation one rung lower than the tier structure could
+express: the first station buys {{claim:stn.one_gain}} per cent, the second adds
+{{claim:stn.second_adds}} points, and no count up to eight beats one station by more than
+{{claim:stn.max_extra}} points.
 A background series from outside the urban core buys {{claim:step.bud2_bud3}} per cent, the
 largest single gain measured, and the instrument that would supply it is the one programmes are
 least likely to fund. Because that series was built from each city's own outer ring, it was

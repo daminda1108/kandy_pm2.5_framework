@@ -70,6 +70,93 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-06, 🔬 **A CAMPAIGN DESIGNED, COSTED, REGISTERED — AND ITS OWN PREMISE REFUTED**)
+
+An optimal sensor network for Kandy was designed, justified against physics and siting law,
+costed, and pre-registered. **Two of its purposes were then killed by its own analysis, both
+before any money was committed.** Narrative: SESLOG 2026-09-06. Ledger **F.98–F.103**.
+Plan [`kandy_pm25/docs/sensor_placement_plan_2026-09-05.md`](kandy_pm25/docs/sensor_placement_plan_2026-09-05.md);
+registration `docs/prereg_kandy_campaign_2026-09-05.md` (**OSF [`ad3py`](https://osf.io/ad3py/)**).
+
+### 🔴 TWO SENSORS WAS KANDY'S BUDGET, NOT A MEASURED OPTIMUM (F.102) — and the truth is stronger
+The user asked whether the ladder's `Bud1` = 2 stations was a finding or a constraint. **It was a
+constraint, and the spec says so outright:** `SENSOR_PAIR = "<= 2 local low-cost sensors (the
+Kandy budget)"`. Sweeping k = 1..8:
+
+| k | median RMSE reduction vs `Bud0c` | paired gain over k−1 |
+|---:|---:|---:|
+| **1** | **17.02% [4.57, 21.83]** | — |
+| 2 | 17.03% | **+0.01 pp** |
+| 3–8 | 17.0–17.2% | ≤ +0.15 pp |
+
+**Saturation is at ONE station, not two.** The redundancy the thesis reported as beginning at the
+third monitor actually begins at the **second**. Band-stratified agrees (deep tropical: one
+station **20.01%**, second **+0.22 pp [0.00, +2.90]**, 6/13 cities improving) ⚠ **but both bands
+are underpowered rather than null.** 🔴 **A prose error found with it:** the code is
+`b2 = pool[:6]`, so the second rung is stations **3–6**, described as "three to eight" in **nine
+places** — and the two ranges have **opposite signs** (+0.75 vs −0.49). All corrected; the
+`stn3to8` claim keys are kept as historical with notes.
+
+### 🔴 DELIBERATE SITING DOES NOT BEAT CONVENIENCE SITING (F.103) — 43 cities, 601 stations
+The user's question: *we have cities with robust monitoring networks; can't we test this on
+them?* Yes — each dense city can be made into **both** designs by choosing which of its own
+stations to fit on. Four fitting strategies, same RidgeCV, scored on held-out stations.
+
+| | median ρ | best in |
+|---|---:|---:|
+| cLHS (the proposed design) | 0.257 | 16 |
+| **convenience (what networks do)** | **0.143** | 12 |
+
+**That table is wrong. Paired within city: −0.044 [−0.095, +0.118], winning 19/43.**
+🔴 **Difference of medians +0.114 against a paired median of −0.044 — the SECOND time in one
+session** (F.102's temperate band: +12.91 vs +0.14). ⚠ **Undetectable, not refuted** — the
+interval does not exclude a +0.118 advantage. ⚠ The promised fixed-holdout re-check **returned
+nothing usable**: median city 12 stations → held-out 4 → Spearman quantised to steps of 0.1.
+A limit of the panel, **not** a confirmation.
+
+🔴 **CONSEQUENCE — the campaign's spatial ambition is dead twice over.** F.100 says a campaign
+this size cannot *detect* a siting effect (needs 96–304 sites); F.103 says there is probably
+none *to* detect. **The gap between published LUR (R² 0.43–0.83) and this project's convenience
+frames (ρ ≈ 0.3) is NOT siting — it is information.** The campaign must **no longer be described
+as testing the spatial ceiling in any form.**
+
+### 🟢 The network that survives (F.99, F.100, F.101)
+**35 sites, 5 strata**, over a fine emission surface spanning **65×** p10→p90 of which the
+existing records occupy only the **61st–100th percentile**: anchor 1 · design 12 (cLHS over 7
+covariates incl. **nocturnal ventilation, drainage convergence, day/night ventilation ratio**) ·
+paired 9 · vertical 5 (**8–291 m above the local floor** — the axis no network samples) ·
+receptor 8 (held out). **Logistics is a hard constraint, screened BEFORE optimisation**: 19,467
+of 25,600 cells serviceable within 400 m of a road.
+- 🔴 **D-efficiency ranks the wrong designs first** — road-sited 0.70, existing 0.88, proposal
+  0.35 — i.e. it endorses the two designs already known to produce nulls, while road-siting
+  samples **one percentile** of the gradient. Reported as a limitation of the criterion.
+- **What IS well powered:** within-cell ratio resolves to **1.044 in 7 days** against competing
+  predictions of 1.58 and 27.5; drainage is a sign test on **nights** (63.1% over 90); the anchor
+  settles the level alone. **H1 (beat ρ 0.309) demoted to exploratory BEFORE funding.**
+- **Cost: instruments 9,900 USD** (38 units + 6 spares at a published 225) **+ reference anchor
+  10,000–40,000** = **19,900–49,900**. Mounting, power, duty, labour, servicing carry **empty
+  unit prices** — none published for Sri Lanka. 🔴 **The re-scope is not worth doing:** trimming
+  the design stratum 12→10 saves **450 USD**, under 3%. 🔴 **The largest line may be a letter.**
+- ⚠ SVF measured and dropped (CV 0.023) — reproduces gotcha #21.
+
+### 🔬 Chemistry deepened on reviewer request (F.98) — one bound, one null, one invalid
+- 🟢 **USABLE:** **Fréchet bounds** put the locally emitted primary share at Kandy between
+  **9.1% and 48.3%** — this replaces the withdrawn "removing local sources removes half the
+  problem", and shows that claim sat at the **top** of the admissible range.
+- 🔴 **REGISTERED NULL:** does composition explain what latitude band only labels? All three
+  confirmatory hypotheses **undetectable** (largest partial ρ **0.135** vs MDE **0.431**). The
+  deviation is the finding: the exploratory signal that motivated it (pooled 46 cities +0.388,
+  p = 0.008) **survives in neither group** — banded 35 cities **+0.093**, CNEMC 11 **+0.036**.
+  **A network effect wearing a chemical variable's name.**
+- ⚠ **INVALID, neither held nor refuted:** the species-resolved partition ranks **dust 0.806 and
+  sea salt 0.645 above black carbon 0.387**. An inland valley has no local sea-salt source, so
+  the estimator measures episodic variability, not origin. **Reporting the reversal would report
+  an instrument failure as a finding.**
+
+**Thesis state: 34,949 words · 35 figures · 10 tables · 417 claims · 0 lint errors.**
+Figures 9.4/9.5 rebuilt portrait with **hillshade and elevation contours** (three maps had none).
+Six OSF registrations. All pushed.
+
 ## Current State (updated 2026-09-05, 🔬 **TWO REVIEW ROUNDS ANSWERED · A HIDDEN FINDING RECOVERED**)
 
 Two rounds of outside methodological review of the thesis, answered **by computation where
@@ -686,6 +773,28 @@ All paths are relative to `d:\ProjectCD\kandy_pm25\` unless stated otherwise.
   Build: `python build/build_docx.py` (regenerates tables → lint → assemble → pandoc; **refuses**
   on claim drift or a lint ERROR). Bibliography is shared with the paper at
   `kandy_pm25/docs/paper/references.bib`.
+- **🆕 Campaign-design + chemistry scripts (2026-09-05/06, `scripts/`, whitelisted):**
+  `pull_kandy_receptors.py` (150 vulnerable-group receptors from OSM) ·
+  `design_sensor_network.py` (35 sites, 5 strata, cLHS over 7 physics covariates, 400 m access
+  screen) · `design_comparison.py` (5 designs, D-efficiency + coverage) ·
+  `plot_sensor_design.py` + `plot_design_justification.py` (Figs 9.4/9.5, portrait, hillshade +
+  contours) · `campaign_power.py` (F.100 detection limits) · `campaign_costing.py` (F.101) ·
+  `station_count_curve.py` (F.102, k = 1..8 pooled + band-stratified) ·
+  `siting_experiment.py` (F.103, `--fixed-holdout`, `--tag`) · `osf_lodge.py` ·
+  `chemistry_mechanism.py` (F.98a) · `species_partition_kandy.py` (F.98b, Fréchet bounds) ·
+  `independent_background_revalidated.py` (F.54 re-run) · `ladder_order_and_bootstrap.py` (F.97).
+  Products — in `decomp/`: `sensor_design_kandy.csv` + `sensor_design_summary.json` ·
+  `design_comparison.csv` · `design_saturation.csv` · `kandy_receptors{,_ranked}.csv` ·
+  `campaign_power.json` · `campaign_costing.{csv,json}` · `species_partition_kandy.csv` +
+  `species_partition_summary.json`. In `modular/`: `station_count_curve.{csv,json}` ·
+  `siting_experiment{,_fixed}.{csv,json}` · `chemistry_mechanism.csv` +
+  `chemistry_mechanism_summary.json` · `chemistry_origin_test.csv`.
+- **🆕 Campaign docs (2026-09-05/06):** `docs/sensor_placement_plan_2026-09-05.md`
+  (12 sections; §4 written against **40 CFR Part 58 App E** + **EPA/600/R-20/280**, which
+  corrected my own protocol from 2 weeks of co-location to EPA's **30-day minimum**) ·
+  `docs/prereg_kandy_campaign_2026-09-05.md` (**OSF [`ad3py`](https://osf.io/ad3py/)**, project
+  `r7a3w`, lodged blind before deployment) · `docs/prereg_chemistry_mechanism_2026-09-05.md`
+  (not lodged — user's call). Thesis §9.7 carries the design, the costing and both refutations.
 - **🆕 Paper-2 docs (2026-09-04):** `docs/learned_pattern_plan_2026-09-04.md` (plan + Phase 0/1/2
   results) · `docs/prereg_learned_pattern_2026-09-04.md` (**OSF `2jyfg`**, project `dgtuq`) ·
   `docs/paper/note_spatial_pattern_2026-09-04.md` (the write-up) ·
@@ -887,24 +996,41 @@ python src/comparison/publication_figures.py --all
 
 89. **🔴 An HTTP error is not evidence that nothing happened — verify the artifact, not the status code (2026-09-04).** Posting an OSF registration returned 500 twice, 502 twice, then 403 three times across eight attempts. **One of the 500s had succeeded.** The registration existed while the client reported failure, and the subsequent 403s were the already-consumed draft — so a naive retry loop would have been harmless here but a "create it again" fallback would have produced a duplicate registration with a later timestamp, destroying the only thing a pre-registration is for. **Query the collection (`/nodes/{id}/registrations/`) before concluding a POST failed.** Gotcha #77 for outward-facing writes, restated for APIs: the check is the artifact.
 
+91. **🔴 A DIFFERENCE OF MEDIANS IS NOT AN EFFECT — pair within unit, always (2026-09-06, twice in one session).** The siting experiment's median table read cLHS **0.257** against convenience **0.143**, apparently a doubling; **paired within city it is −0.044 [−0.095, +0.118], winning 19 of 43.** They point OPPOSITE ways and the unpaired one is the flattering one. The station-count sweep did the same thing hours earlier: the temperate band showed **+12.91 pp** as a difference of medians and **+0.14 pp** paired. Both times what caught it was the project's own standing rule, *median of ratios and never a ratio of medians*. **Why it happens:** cities differ enormously in baseline skill, so an unpaired comparison is dominated by WHICH cities each arm happened to score well on. **Rule: any A-vs-B comparison across a panel is computed as the median of the within-unit difference, bootstrapped over units; a difference of medians may be shown for description but never quoted as the effect.** Sibling of #74 (never average a percentile across metrics).
+
+92. **A tier's station range must be read out of the CODE before it is written in prose (2026-09-06, F.102).** The second ladder rung is `b2 = pool[:6]` — stations **3 to 6** — and it was described as "three to eight" in **nine places** across the thesis, the claim generator and the spec. The two ranges are not interchangeable: their paired gains have **opposite signs** (+0.75 vs −0.49 pp). Same session, the same file's `SENSOR_PAIR` docstring revealed that `Bud1 = 2` was **the Kandy budget, not a measured optimum** — saturation is at ONE station. **Third instance of spec, pre-registration and implementation disagreeing** (F.84, gotcha #85). **Rule: before tokenising any tier's size, print the slice the code actually takes.**
+
 ## Pending Tasks (updated 2026-08-22)
 
 Narrative/history for everything below lives in `memory/SESLOG.md`.
 This section is the FORWARD list only.
 
-### 0. 🔴 IMMEDIATE (updated 2026-09-05)
-0. **THE THESIS NEEDS A HUMAN READ END TO END.** It is at 30,052 words, 302 claims, gates green,
-   and has now survived two rounds of outside methodological review. Every mechanical check runs
-   on every build; **none of them checks that a number is meaningful, only that it is current.**
-   User action, and the critical path for the thesis.
-0a. **Decide on the chemistry question.** The reviewer's remaining open item: chemistry is a
-   *supporting* discipline (composition checks, source-apportionment literature, aged-vs-fresh
-   reasoning) and not a *core* one (no CTM, no thermodynamics, no gas-phase mechanism, no
-   speciation modelling). Whether to deepen it into a fourth pillar is a scope decision.
-   ⚠ **Do not bolt on a CTM** — that is a different thesis. The tractable route is
-   **species-resolved testing of the decomposition's own chemical prediction**, using speciated
-   reanalysis already on disk. Assessment pending.
-0b. **Circulate the paper** to the four readers — user action, unchanged.
+### 0. 🔴 IMMEDIATE (updated 2026-09-06)
+0. **THE THESIS NEEDS A HUMAN READ END TO END.** 34,949 words, 417 claims, gates green, two
+   rounds of outside methodological review answered. Every mechanical check runs on every build;
+   **none of them checks that a number is meaningful, only that it is current.** User action,
+   and the critical path for the thesis.
+0a. **Decide what the campaign CLAIMS, now that F.103 removed its spatial justification.** The
+   design stratum's founding argument — that deliberate siting recovers pattern a convenience
+   network cannot — **does not survive 43 dense-network cities**. Two thin justifications remain:
+   making the exposure field checkable beyond the three paired locations, and making Kandy the
+   only deliberately sited city in a 48-city convenience panel (itself weakened by F.103).
+   ⚠ Per F.101 the cost either way is **under 3% of the instrument budget**, so this is a
+   question about **what the campaign claims, not what it costs.**
+0b. **Send the CEA letter** — now both the first scientific step (F.96: local stations worth
+   **4.2×** the background in Kandy's band) **and the largest cost decision** (F.101: a reference
+   anchor is 10,000–40,000 USD to buy, or a letter to borrow).
+0c. **Get a local quote in rupees.** Every non-instrument line in the costing carries an empty
+   unit price — mounting, power, import duty, labour, servicing — because none is published for
+   Sri Lanka. **Import duty is the single largest unknown.**
+0d. **Circulate the paper** to the four readers — user action, unchanged.
+
+### 0x. Superseded IMMEDIATE list (2026-09-05)
+0. **THE THESIS NEEDS A HUMAN READ END TO END.** ~~30,052 words, 302 claims.~~
+0a. **Decide on the chemistry question.** ✅ **DONE 2026-09-06 (F.98)** — deepened without a CTM,
+   exactly by the route named here (species-resolved testing against reanalysis already on disk).
+   Outcome: one usable Fréchet bound, one registered null, one invalid test. **Chemistry is a
+   supporting discipline with a measured bound, not a fourth pillar, and the thesis says so.**
 
 ### 0y. Superseded IMMEDIATE list (2026-09-04)
 0. **CIRCULATE THE PAPER.** It is built, gated and numerically complete: 13,799 words, 18

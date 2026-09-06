@@ -58,8 +58,10 @@ context that led here.
 | **Spatial amplitude — at matched support** | Model annual p90/p10 **1.232** vs observed **1.26–1.47**; the apparent 85× vs 1.23× gap was a change-of-support artefact. Paired microsites 300 m apart in one pixel: **27.5× observed vs 1.000× modelled** | `scripts/{elangasinghe_spatial_test,support_collapse_test,fit_s_exp}.py` (F.69/F.76/F.77) |
 | **P4 identifiability — RUN** | `kappa`, `eps0`, `w_evening` unidentifiable at Kandy's budget; **`s_exp` is the only identifiable parameter and had never been fitted** (fitted → non-transferable, held at 1.0) | `scripts/{p4_identifiability,fit_s_exp}.py` (F.75/F.77) |
 | **Background gain is REAL** | independent network at a median 89 km recovers **73%** of it on the corrected `Bud0c` rung (was 75%/79% pre-F.84). ⚠ **Bounds the same-network artefact from above, does not measure it**: 84% at 62 km vs 57% at 152 km. ⚠ Kandy's own band recovers only **37%** at 221 km, n=4 | `scripts/independent_background_revalidated.py` (F.54 re-run 2026-09-05) |
-| **The ladder is PATH-DEPENDENT** | a "background first" rung is **impossible by construction** (its coefficient is fitted against local stations). Permuted: background 40.6→38.0% (robust), monitors 3–8 **0.13→2.81%** (21×, still small). Same information set, **different skill** (0.106 µg/m³) | `scripts/ladder_order_and_bootstrap.py` (F.97) |
-| **Uncertainty over CITIES** | first two **17.9% [4.6, 23.5]** · monitors 3–8 **0.1% [0.0, 0.9]** · background **40.6% [26.7, 45.2]**. 🟢 **The tightest result is the null** | same (F.97) |
+| **The ladder is PATH-DEPENDENT** | a "background first" rung is **impossible by construction** (its coefficient is fitted against local stations). Permuted: background 40.6→38.0% (robust), monitors 3–6 **0.13→2.81%** (21×, still small). Same information set, **different skill** (0.106 µg/m³) | `scripts/ladder_order_and_bootstrap.py` (F.97) |
+| **Uncertainty over CITIES** | first two **17.9% [4.6, 23.5]** · monitors 3–6 **0.1% [0.0, 0.9]** · background **40.6% [26.7, 45.2]**. 🟢 **The tightest result is the null** | same (F.97) |
+| 🔴 **The first rung's SIZE was Kandy's budget, not a measured optimum** | `SENSOR_PAIR` = *"<= 2 local low-cost sensors (the Kandy budget)"*. **One station buys 17.02% [4.57, 21.83]; the second adds 0.01 pp** paired, and no count 2–8 beats one by more than 0.15 pp. **Saturation is at ONE.** Deep tropical agrees (+0.22 pp [0.00, +2.90], 6/13) ⚠ but both bands are underpowered rather than null. 🔴 The second rung is `pool[:6]`, i.e. stations **3–6**, written "three to eight" in nine places with **opposite signs** (+0.75 vs −0.49 pp) | `scripts/station_count_curve.py` (F.102) |
+| 🔴 **Deliberate siting does NOT beat convenience siting** | 43 dense-network cities, 601 stations, each made into both designs from its own stations: **paired −0.044 [−0.095, +0.118]**, winning 19/43. ⚠ The difference of medians (+0.114) points the OTHER way. ⚠ The fixed-holdout re-check is uninformative on this panel (median held-out = 4, Spearman quantised to 0.1) | `scripts/siting_experiment.py` (F.103) |
 | 🔴 **The tropical inversion depends on the satellite stream** | paired over cities, n=13: raw MAIAC **+33.3 pp [+7.0, +50.1]**, 77% of cities; fused GHAP **+3.6 pp [−14.3, +36.3]**, 54% — **a coin flip**. **F.92 alone did not support the recommendation; quote F.96/MAIAC** | same (F.97) |
 | **Diurnal transfer** | works in the **deep tropics** (+25.8% vs flat, r 0.63, ~1 h phase); pooled 5.5% **worse** than flat | `scripts/diurnal_transfer_test.py` (F.55) |
 | **Kandy product** | basin **21.0** µg/m³, pop-weighted **23.0** (uplift **+9%**); local share **0.483** (⚠ a constrained decomposition, **not** source apportionment; honest range 0.482–0.547); **431 deaths/yr**, response-function-conditional interval **[237–632]**, 300 avoidable. ⚠ The interval carries ONLY the CRF uncertainty | additive_v3 field + `health_burden.py`, regenerated 2026-09-04 |
@@ -173,6 +175,80 @@ was not pre-registered. ⚠ **No engineered emission surface beats a single free
 congestion-weighted road centrality, not a sector-weighted composite, not one carrying OSM
 industrial land use (which is a real predictor, and rescues Yichang where the traffic surface
 scores −0.091, but does not win overall).
+
+## 2c. The Kandy campaign, and what it can no longer claim (2026-09-06, OSF `ad3py`)
+
+A 35-site network was designed for Kandy, justified against the physics of the basin and against
+United States siting law, costed, and pre-registered before deployment. Two of its purposes were
+then removed by its own analysis, and both removals happened before any money was committed.
+
+**The design.** Five strata over an emission surface spanning 65× between its tenth and ninetieth
+percentiles, of which the two existing records occupy only the 61st to 100th: one anchor, twelve
+design sites chosen by conditioned Latin hypercube over seven covariates (including nocturnal
+ventilation, drainage convergence and the day-to-night ventilation ratio), nine paired sites at
+100 and 300 m, five vertical sites spanning 8 to 291 m above the local valley floor, and eight
+receptor sites near vulnerable-group facilities, held out of fitting. Serviceability was a
+constraint rather than an afterthought: 19,467 of 25,600 cells lie within 400 m of a road, and the
+screen ran before the optimisation rather than after it.
+
+**What it cannot do.** Beating the 0.309 benchmark with eighteen fitting sites would require a
+gain of +0.30 to +0.47 in rank correlation, while the 46-city panel resolves 0.130; matching the
+benchmark in a single city needs between 96 and 304 sites. The headline spatial hypothesis was
+demoted to exploratory before funding. It was then removed altogether: on 43 cities with dense
+networks and 601 stations, each city made into both a deliberately sited and a convenience-sited
+design by choosing which of its own stations to fit on, deliberate siting does not measurably beat
+convenience siting (paired median −0.044, interval −0.095 to +0.118, winning in 19 of 43). The
+result is undetectable rather than refuted, but it removes the last available explanation for the
+gap between published land-use regression (R² 0.43 to 0.83) and this project's convenience frames
+(ρ near 0.3). That gap is information, not sampling.
+
+**What it can do, and is well powered for.** The anchor settles the level on its own. The
+within-cell ratio resolves to 1.044 within seven days, against competing predictions of 1.58 and
+27.5. The drainage sign test takes the night as its unit and reaches 63.1 per cent over ninety
+nights.
+
+**Cost.** Instruments come to 9,900 US dollars for 38 units and 6 spares at a published unit
+price of 225; a reference anchor is 10,000 to 40,000. Mounting, power, import duty, labour and
+servicing carry empty unit prices, because none is published for Sri Lanka, and import duty is the
+largest single unknown. The reference anchor may instead be a letter: the Central Environmental
+Authority has granted access in principle. Trimming the design stratum from twelve sites to ten
+saves 450 dollars, under three per cent of the instrument budget, so the remaining decision is
+about what the campaign claims rather than what it costs.
+
+**A limitation of the criterion, stated.** D-efficiency ranks the road-sited network at 0.70 and
+the existing two-sensor network at 0.88 against 0.35 for the proposal. It therefore prefers the
+two designs already known to produce spatial nulls, while road-siting samples a single percentile
+of the emission gradient. The criterion is reported with the design and is not used to choose it.
+
+---
+
+## 2d. Chemistry: one bound, one registered null, one invalid test (2026-09-06)
+
+Chemistry was deepened on reviewer request without adding a chemical transport model, by
+species-resolved testing against reanalysis already held on disk.
+
+The usable result is a pair of Fréchet bounds placing the locally emitted primary share of Kandy's
+PM2.5 between 9.1 and 48.3 per cent. This is what replaces the withdrawn statement that removing
+every local source would remove half the problem, and it shows that the withdrawn statement sat at
+the top of the admissible range rather than in the middle of it.
+
+The registered test asked whether composition explains what latitude band only labels. All three
+confirmatory hypotheses were undetectable, the largest partial correlation reaching 0.135 against
+a minimum detectable effect of 0.431. The deviation is the finding: controlling for band drops the
+eleven CNEMC cities, and the exploratory signal that motivated the study, a pooled correlation of
++0.388 across 46 cities, survives in neither resulting group (banded 35 cities +0.093, CNEMC
+eleven +0.036). The apparent chemical relationship is a network effect wearing a chemical
+variable's name.
+
+The species-resolved partition is invalid and is reported as untested rather than as either held
+or refuted. It ranks dust at 0.806 and sea salt at 0.645 above black carbon at 0.387. An inland
+valley has no local sea-salt source, so the estimator is measuring episodic variability rather
+than origin, and reporting the reversal would report an instrument failure as a finding.
+
+Chemistry remains a supporting discipline with one measured bound. It is not a fourth pillar, and
+the thesis says so.
+
+---
 
 ---
 

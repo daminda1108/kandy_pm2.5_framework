@@ -46,8 +46,10 @@ measurement of information.
 Running that measurement across {{claim:frame.cities}} cities in {{claim:frame.countries}}
 countries and {{claim:frame.city_days}} city days gives results that are not what the field's
 intuition suggests. Freely available static geography is worth {{claim:step.geography}} per cent
-in daily error, comparable to the first local instrument. The second monitor through the eighth
-are worth {{claim:step.bud1_bud2}} per cent. A regional background series is worth
+in daily error, comparable to the first local instrument. Monitors three to six are worth
+{{claim:step.bud1_bud2}} per cent, and a sweep from one station to eight locates the saturation
+one rung lower still: the first station buys {{claim:stn.one_gain}} per cent and the second adds
+{{claim:stn.second_adds}} points. A regional background series is worth
 {{claim:step.bud2_bud3}} per cent, the largest single gain measured, and rebuilding it from a
 donor city the target has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of
 that, which bounds how much of it could be an artefact of the proxy used. The ordering reverses
