@@ -11,10 +11,10 @@ than by how appealing it is, and the two orderings differ.
 **Take the free data first.** Terrain, roads, land cover, vegetation, night lights, population,
 reanalysis meteorology and satellite retrievals cost nothing and are available for every city.
 Together they buy {{claim:step.geography}} per cent on the ladder, comparable to the first
-instrument a city could purchase. A programme that has not exhausted them has not yet earned the
-right to complain about lacking monitors.
+instrument a city could purchase. A programme that has not exhausted them is leaving the cheapest
+available improvement unused.
 
-**Then buy according to latitude band, not according to the global average.**
+**Then buy according to the stratum the city belongs to, not according to the global average.**
 
 {{fig:acquisition}}
 
@@ -29,6 +29,16 @@ For Kandy specifically, therefore, **the first purchase is a local observation r
 regional one**. Section 7.3 shows that conclusion survives a paired interval over cities on the
 clean satellite stream, favouring local sensors in {{claim:inv.maiac.frac_cities}} per cent of
 the band, and that it does **not** survive on the contaminated stream.
+
+The scope of that recommendation should be stated exactly, because it is the sentence most likely
+to be lifted out of this thesis. What is established is that **within this panel, the
+deep-tropical stratum is the closest available empirical analogue to Kandy, and in that stratum a
+local observation outranks the background proxy.** It is not established that tropical cities in
+general should buy local monitors first. The stratum contains thirteen cities, band travels with
+instrument class and five other things, and Section 7.3 sets out why a latitude label is not a
+mechanism. A city that resembles Kandy in the ways this panel can measure should read the band
+row; a city that does not has been given a method for pricing its own options, which is the more
+transferable product of the two.
 
 **Two separate arguments then point at a reference-grade instrument, and they should not be
 merged.** The ladder measured two low-cost sensors, so it establishes that a local observation
@@ -101,6 +111,16 @@ quarter, because donor distance is confounded with independence, and in Kandy's 
 falls to {{claim:donor.reproduced_deep_tropical}} per cent on
 {{claim:donor.km_deep_tropical}}-kilometre donors. A real station five to fifty kilometres out
 would separate the two in a way no re-analysis of the existing panel can.
+
+The nearest candidate donor was tested and refused. Colombo lies {{claim:donor.colombo_km}}
+kilometres away, is reference grade, and its record was already held; daily correlation with Kandy
+is {{claim:donor.colombo_r}} against a benchmark of {{claim:donor.benchmark_median_matched}} at comparable
+separation, which is the weakest pairing available. The central highlands decouple the coastal
+plain from the interior. That conclusion has since been reached independently, from a different
+quantity, by [@Senarathna2026]: sensor calibration models fitted in Colombo lose effectiveness when
+applied at Kandy, and the authors attribute it to the two cities lying in different climatic
+zones. Two unrelated measurements, one conclusion, and Colombo does not become a Kandy donor by
+being close.
 
 One further item belongs here even though it is an analysis rather than an observation, because
 it needs no new data and it would sharpen the thesis's most policy-relevant result. Section 7.3

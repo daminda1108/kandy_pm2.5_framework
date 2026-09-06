@@ -116,6 +116,55 @@ that effect is established far more tightly than the presence of either other ef
 two sensors and the background are both real and neither is pinned down to better than roughly a
 factor of two.
 
+### Cities are not independent of each other either
+
+Resampling cities is an improvement on resampling city-days, but it still assumes that one city
+tells you nothing about another, and that assumption is false here. Cities share national
+monitoring programmes, instrument procurement, siting conventions, calibration practice, operators
+and processing chains. {{claim:clust.largest_n}} of the panel's cities belong to a single national
+network. A resample that happens to draw many of them is not the diverse sample its size suggests.
+
+The panel's {{claim:frame.cities}} cities fall into {{claim:clust.n_clusters}} clusters when a
+cluster is defined as a network within a country. Resampling clusters with replacement, and then
+cities within each drawn cluster, propagates both levels of variation instead of only the lower
+one.
+
+| step | median | over cities | over clusters | wider by |
+|---|---:|---:|---:|---:|
+| the first two sensors | {{claim:clust.first2.median}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} | {{claim:clust.first2.lo}} to {{claim:clust.first2.hi}} | {{claim:clust.first2.widening}} |
+| monitors three to six | {{claim:clust.stn3to6.median}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} | {{claim:clust.stn3to6.lo}} to {{claim:clust.stn3to6.hi}} | {{claim:clust.stn3to6.widening}} |
+| a background series | {{claim:clust.bg.median}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} | {{claim:clust.bg.lo}} to {{claim:clust.bg.hi}} | {{claim:clust.bg.widening}} |
+
+Every interval widens, by about half again. The city count therefore overstates the effective
+sample size, and an interval quoted over cities is optimistic. That correction is owed to the
+reader whichever way it points.
+
+It does not move any conclusion, and it strengthens one. The background remains the largest gain
+with a lower bound of {{claim:clust.bg.lo}} per cent. The first two sensors keep a lower bound of
+{{claim:clust.first2.lo}} per cent. Monitors three to six remain bounded above by
+{{claim:clust.stn3to6.hi}} per cent, and a null that survives a wider interval is strictly stronger
+than one that does not, so the redundancy result is improved by the objection rather than damaged
+by it.
+
+The clustering also has an asymmetry worth naming, because it falls in a useful place. The
+deep-tropical cities of Section 7.3 occupy {{claim:clust.inv.maiac.n_clusters}} clusters between
+{{claim:clust.inv.maiac.n_cities}} cities, so that band is almost entirely singletons and there is nothing to
+correct: its paired interval is
+{{claim:clust.inv.maiac.lo}} to {{claim:clust.inv.maiac.hi}} points under clustering, unchanged to
+four decimal places. **The dependence problem belongs to the pooled numbers, which one national
+network dominates, and not to the band-stratified result that the recommendation for Kandy rests
+on.**
+
+One statistic had to be withdrawn from this analysis after it was computed. An intra-class
+correlation over all cities returned values between 0.82 and 0.99 [ledger F.104], which reads as
+overwhelming network dependence and is an artefact of the grouping: {{claim:clust.singletons}} of the
+{{claim:clust.n_clusters}} clusters hold one city, a single-city cluster has no internal variance
+by construction, and its whole deviation is therefore booked as between-cluster variance. Computed
+only over cities that have a cluster sibling the figure is {{claim:clust.bg.icc}} for the
+background rung and {{claim:clust.stn3to6.icc}} for the redundancy rung. Those are substantial and
+they are meaningful. The width ratio in the table above is the diagnostic that carries no such
+artefact, and it is the one to read.
+
 Four features of the table matter more than its ordering.
 
 **Free data is not negligible.** Static geography, which is terrain, roads, land cover, night
@@ -475,6 +524,18 @@ band that happens to share its instrument class is a better match than reading i
 pool. That is a defence of the recommendation and not of the mechanism: it makes the advice
 appropriate for Kandy while leaving open what the band contrast is actually made of.
 
+There is now a named route by which the confound could operate, which is more than this thesis
+could offer when the confound was first recorded. [@Senarathna2026] calibrated low-cost sensors
+against reference monitors in two Sri Lankan climatic zones and found that a calibration fitted in
+the wet season, applied to dry-season data, produces a mean absolute percentage error of 26.57 per
+cent. Seasonal calibration drift of that size in a stratum that is
+{{claim:confound.deep_tropical_lcs_pct}} per cent low-cost, against
+{{claim:confound.other_bands_lcs_pct}} per cent elsewhere, is a concrete mechanism by which part of a
+band difference could be instrument behaviour rather than atmospheric behaviour. It does not
+overturn the inversion, and it is not evidence that the inversion is spurious. It converts the
+confound from something this thesis could only label into something a future study can measure,
+which is the more useful state for it to be in.
+
 {{fig:confounds}}
 
 The gain from additional sensors depends on what they are, and the class matters. Median
@@ -566,6 +627,43 @@ restores coverage to {{claim:kandy.cov90_recentred}} per cent.
 The width was right and the centring was wrong, and the cause is the change of support of
 Chapter 8 rather than a failure of the calibration procedure.
 
+### What identifies the representativeness error, other than the model itself
+
+That answer is complete for the delivered interval and incomplete for the observation model that
+Section 6.2 specifies. The specification writes a point measurement as the areal field plus an
+instrument offset plus an error with two parts, a measurement term and a representativeness term
+covering sub-grid variability the model cannot resolve. The implementation estimates the second
+from the local variability of the field itself. That is elegant, and it is circular: the model is
+being asked how wrong its own unresolved spatial structure is, and a model that understates
+sub-grid variability would understate this term in the same proportion.
+
+The quantity can be identified without the model. Wherever two or more instruments fall inside a
+single model cell, the spread between them measures the point-versus-area error directly, with no
+field consulted and no pattern assumed. The panel contains {{claim:srep.panel_cells}} such cells
+holding {{claim:srep.panel_stations}} instruments across {{claim:srep.panel_cities}} cities, and
+the Kandy transect of Chapter 8 contributes {{claim:srep.kandy_cells}} more.
+
+| source | within-cell coefficient of variation | times the model |
+|---|---:|---:|
+| panel instruments sharing a cell | {{claim:srep.panel_cv}} | {{claim:srep.ratio_panel}} |
+| Kandy transect sites sharing a cell | {{claim:srep.kandy_cv}} | {{claim:srep.ratio_kandy}} |
+| the model estimator at the same places | {{claim:srep.model_cv}} | 1.0 |
+
+The estimator is too small by a factor of {{claim:srep.ratio_panel}} on the panel and by at least
+{{claim:srep.ratio_kandy}} at Kandy. The Kandy figure is a lower bound, because three of its seven
+sites were censored at an upper sampling limit and censoring can only shrink an observed spread,
+so the bias runs toward the model and cannot have produced the result.
+
+Two things follow, and they are different. The delivered interval is unaffected, because its width
+comes from the temporal anchor's conformal quantiles rather than from this term, and the coverage
+figures above already show that width to be right for an areal quantity. What is affected is the
+observation model, which the specification requires to exist before any regulatory record is
+ingested. Had this term been used as written, the first point-level interval built against a real
+Kandy measurement would have been too narrow by a factor of three or more, and the resulting
+apparent over-confidence would have looked like an error in the field rather than an error in the
+comparison. The term must be taken from co-located instruments. The delivered interval is
+calibrated for an areal quantity, and it understates point-level uncertainty.
+
 ## 7.10 An independent chemical check
 
 The decomposition assumes that the regional background is aged air arriving from outside the
@@ -651,9 +749,21 @@ responds immediately to local emission control. The upper figure is the whole lo
 and requires every locally formed secondary particle to disappear as well. The gap between them
 is precisely what cannot be resolved without speciated measurement in the city.
 
-## 7.11 Exposure and attributable burden
+## 7.11 Exposure and attributable burden, as an illustrative projection
 
 Chapter 2 gave health as one of the two stakes, and the delivered field supports an estimate.
+
+This section is deliberately the least load-bearing in the chapter, and it is placed last for
+that reason. Everything before it measures something and reports what the measurement can carry.
+What follows takes the delivered field, which has unresolved level uncertainty, unresolved spatial
+uncertainty and an open discrepancy against three of its four independent point records, and
+projects it through a published concentration-response function that was estimated elsewhere. The
+arithmetic then returns a single confident-looking number of deaths. That mismatch between the
+discipline of the measurement and the apparent precision of the output is a property of burden
+estimation rather than of this field, and the honest label for the result is an **illustrative
+projection**, not a finding. It is included because a thesis that names health as a stake and then
+declines to quantify it has ducked its own framing, and excluded from every summary of what the
+work establishes.
 
 {{fig:burden}}
 

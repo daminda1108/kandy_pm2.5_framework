@@ -5476,3 +5476,212 @@ for several minutes looked like the primary result had been overwritten. Fixed t
 written.
 
 Claims: `site.*` (13).
+
+
+## F.104 — 🟢 cities are NOT independent units, the intervals were too narrow, and every conclusion survives anyway
+
+`scripts/cluster_bootstrap.py` → `cluster_bootstrap.{csv,json}`. Raised by an external reviewer
+and correct as stated: the ladder's intervals resample cities independently, but cities share
+national programmes, instrument fleets, siting conventions, calibration practice and processing
+chains. **Eleven of the forty-eight belong to one national network.**
+
+### The construction
+
+A two-level bootstrap: clusters resampled with replacement, then cities resampled within each
+drawn cluster. The cluster is (network × country); CNEMC is one cluster of 11, OpenAQ cities
+cluster by country. **48 cities fall into 29 clusters, 23 of them singletons.**
+
+### 🔴 The reviewer is right about the width
+
+| step | median | city 95% | **cluster 95%** | wider by |
+|---|---:|---|---|---:|
+| first two sensors | 17.85 | [4.57, 23.49] | **[4.53, 31.94]** | **1.45×** |
+| stations three to six | 0.10 | [0.03, 0.89] | **[0.02, 1.37]** | **1.56×** |
+| a background series | 40.55 | [27.89, 45.31] | **[22.30, 49.93]** | **1.59×** |
+
+On the MAIAC ladder the background rung widens by **1.97×**. So the city count overstates the
+effective sample size everywhere, and **an interval quoted over cities is optimistic by roughly
+half again.**
+
+### 🟢 And every conclusion survives, the null most of all
+
+- The background remains the largest gain, with a lower bound of **22.3%**.
+- **Stations three to six remain bounded above by 1.37%** (0.54% on MAIAC). *A null that
+  survives a wider interval is strictly stronger than one that does not*, so the redundancy
+  result is **improved** by the objection rather than damaged by it.
+- The first two sensors keep a lower bound of 4.5%.
+
+### 🟢 THE DEEP-TROPICAL INVERSION IS COMPLETELY UNAFFECTED — and the reason matters
+
+| stream | paired | city 95% | cluster 95% |
+|---|---:|---|---|
+| GHAP | +3.60 pp | [−14.34, +36.27] | **[−14.34, +36.27]** |
+| **MAIAC** | **+33.34 pp** | [+7.00, +50.07] | **[+7.00, +50.07]** |
+
+Identical to four decimal places. **The 13 deep-tropical cities fall into 12 clusters**, so that
+band is almost entirely singletons and there is no clustering to correct for. The reviewer's
+objection therefore bites on the **pooled** numbers, which are dominated by CNEMC, and **not on
+the band-stratified recommendation that Kandy actually depends on.** That is a useful and
+slightly surprising asymmetry: the pooled result is the one with the dependence problem.
+
+### 🔴 A statistic that had to be withdrawn from its own output
+
+The first run reported an intra-class correlation of **0.82 to 0.99**, which reads as
+overwhelming network dependence. **It is an artefact of the grouping.** Twenty-three of the
+twenty-nine clusters hold a single city, and a singleton has zero within-cluster variance by
+construction, so its entire deviation is booked as between-cluster variance and the statistic is
+dragged toward one regardless of the truth. Restricted to cities that have a cluster sibling the
+ICC is **0.23 to 0.65** — still substantial, and now meaningful. **The honest headline diagnostic
+is the interval width ratio**, which comes from resampling and carries no such artefact.
+
+Claims: `clust.*` (23).
+
+---
+
+## F.105 — 🟢 the spatial null is a property of the DATA, not of one model family — seven families, none wins
+
+`scripts/spatial_tournament.py` → `spatial_tournament.{csv,json}`. The external reviewer's
+methodological omission, fairly identified: the registered null compared one learned family
+against one raster, and never tried the conventional spatial toolkit.
+
+### 🔴 A distinction the objection does not make, and it decides half the answer
+
+Two of the four families named — **kriging and geographically weighted regression** — estimate a
+surface *from observations at the target*. Kriging interpolates between measured points; GWR fits
+a local regression around each location from nearby measured points. **A city with no monitors has
+no nearby measured points.** They are `Bud4` methods proposed for a `Bud0` problem. Rather than
+exclude them by argument the tournament runs twice, admissible and oracle.
+
+### The admissible arm — leave-one-CITY-out, 47 cities, 636 stations, 60 predictors
+
+| family | median ρ | paired vs benchmark | 95% over cities | beats |
+|---|---:|---:|---|---:|
+| **benchmark** (built-up 2.4 km) | **0.301** | — | — | — |
+| GP on covariates | 0.301 | **+0.018** | [−0.012, +0.056] | 25/47 |
+| random forest | 0.280 | −0.026 | [−0.091, +0.047] | 20/47 |
+| **stepwise LUR** (as published) | 0.266 | **+0.010** | [−0.049, +0.070] | 26/47 |
+| ridge / mixed effects | 0.250 | −0.000 | [−0.091, +0.073] | 23/47 |
+| elastic net | 0.212 | −0.012 | [−0.057, +0.062] | 22/47 |
+| gradient boosting | 0.196 | −0.081 | [−0.119, +0.091] | 19/47 |
+
+**Not one admissible family beats the benchmark by more than the registered detection limit of
+0.130.** The best is +0.018. **Conventional stepwise land-use regression — the exact class the
+reviewer named, and the class that reaches R² 0.43–0.83 in published campaigns — buys +0.010.**
+A linear mixed model with a city random intercept, the hierarchical structure asked for
+separately, is indistinguishable from ridge.
+
+### The oracle arm — the target city's OWN stations visible, and it is WORSE
+
+| family | median ρ |
+|---|---:|
+| IDW | 0.190 |
+| GWR | 0.073 |
+| kriging | 0.048 |
+
+🔴 **All three sit below the admissible benchmark of 0.301.** A city that HAS a network, using the
+methods designed for that case, ranks its own stations worse than a single free raster ranks a
+city it has never seen. This independently reproduces **F.60** and extends it from IDW to kriging
+and GWR.
+
+### 🔴 A BROKEN FIRST RUN, and the mechanism is worth keeping
+
+The oracle arm first reported kriging at **−0.833** — not poor but near-perfect *anti*-correlation,
+which is a signature of an artefact rather than a result. Cause: the target was standardised within
+city using **every** station, so it sums to zero; hold one out and the mean of the remainder is
+exactly −z_i/(n−1), a strictly decreasing function of the held-out value. **Measured directly, the
+leave-one-out training mean correlates with the held-out value at exactly −1.000 in all 46
+cities.** Any model reverting toward its training mean is dragged toward −1 whatever its skill.
+The fix is the standard rule that was broken: **fit the normalisation on training points only.**
+Corrected, kriging is 0.048. The admissible arm never had the problem, because the whole target
+city is withheld.
+
+Claims: `tour.*` (21).
+
+---
+
+## F.106 — 🔴 the representativeness error IS externally identifiable, and it is 2.6 to 17 times too small
+
+`scripts/srep_external_check.py` → `srep_external_check.{csv,json}`. The reviewer's sharpest
+technical point, quoted in the script: *"you are effectively asking the model to help estimate how
+wrong its own unresolved spatial representation is. What external information identifies `s_rep`?"*
+
+### The external identification
+
+Wherever two or more instruments fall **inside one model cell**, the spread between them measures
+the point-versus-area error directly, with no field consulted and no pattern assumed. The panel
+contains **14 such cells holding 36 instruments across 12 cities**; Kandy's 2004–06 transect
+contains **3 more holding 7 sites**.
+
+| source | within-cell CV | × the model |
+|---|---:|---:|
+| **panel instruments** | **0.140** | **2.6** |
+| **Kandy transect** (lower bound) | **0.911** | **16.9** |
+| model `s_rep` proxy | 0.054 | 1.0 |
+
+🔴 **The estimator is too small by a factor of at least 2.6, and at Kandy by at least 17.** The
+Kandy figure is a *lower* bound because three of its seven sites are censored at an upper sampling
+limit, and censoring can only shrink an observed spread — so the bias runs toward the model and
+cannot have manufactured the conclusion.
+
+### ⚠ WHAT THIS DOES AND DOES NOT AFFECT — the distinction decides the consequence
+
+`representativeness_sigma` appears **only** in `src/modular/observation.py` and its tests. It is
+**not wired into production**, and the shipped 90% interval's width comes from the conformal
+`T05–T95` propagation instead. So this does **not** overturn gotcha #75: the shipped width is
+right for the **areal** quantity, and de-biasing each sensor's own offset still restores coverage
+to 92.2%.
+
+What it does is **catch a defect in the target architecture before it did any damage.** The
+specification requires the observation model to exist *before* any CEA or NBRO record is ingested,
+precisely so the first comparison is not another naive co-location. Had `s_rep` been wired in as
+written, the first point-level interval built against real Kandy data would have been **too narrow
+by a factor of three or more**, and the resulting apparent over-confidence would have looked like
+a field error rather than an operator error.
+
+**The honest statement, now with a number:** the interval is calibrated for an areal quantity and
+understates point-level uncertainty; the observation model must take `s_rep` from co-located
+instruments, not from the field's own neighbourhood gradient.
+
+Claims: `srep.*` (8).
+
+---
+
+## F.107 — 🟢 an independent Sri Lankan calibration study corroborates F.63 and prices the instrument-class confound
+
+Senarathna, Attanayake, Bergin, Bhave, Vithanage, Harischandra & Bowatte (2026), *Environmental
+Monitoring and Assessment* **198**(7):786, DOI `10.1007/s10661-026-15623-4`, published 2026-06-30.
+Verified through Crossref and Europe PMC. Flagged by an external reviewer as absent from the
+bibliography; it was published after the literature sweep.
+
+**Three of its authors are already load-bearing in this project** — Senarathna supplies the
+diurnal reference, Attanayake the RF-CNN record (F.65), and Bowatte is the supervising author.
+
+### What it supplies
+
+- 🟢 **INDEPENDENT CORROBORATION OF F.63.** *"The effectiveness of calibration models developed in
+  Colombo decreased when they were applied to PM2.5 data from Kandy, suggesting limited
+  transferability across different climatic zones."* F.63 reached the same conclusion from a
+  different quantity — daily concentration correlation **r = 0.604** against a **0.846** benchmark
+  — and concluded the central highlands decouple coastal Colombo from inland Kandy. **Two
+  unrelated measurements, one conclusion. Colombo stays refuted as a Kandy donor.**
+- 🔴 **A MECHANISM FOR THE INSTRUMENT-CLASS CONFOUND.** Applying a wet-season calibration to
+  dry-season data produces a mean absolute percentage error of **26.57%**. The deep-tropical cell
+  of this project's panel is **69–77% low-cost**, against 25% elsewhere, so a season-dependent
+  calibration error is a concrete route by which part of the band difference could be **measurement
+  behaviour rather than atmospheric behaviour**. This does not overturn the inversion — it names
+  the confound the thesis had only been able to label.
+- 🟢 **A BOUND ON DEVICE-TO-DEVICE NOISE.** Harmonised sensors agree to **10% variability**, which
+  is the quantity behind `w_Bud2` differing between reference (0.000) and low-cost (0.900) strata:
+  averaging more low-cost devices cuts noise, averaging more reference monitors does not.
+- ⚠ **A LIVE QUESTION ABOUT THE TORRINGTON PARK BAM.** The study's Kandy reference is a **BAM-1020
+  at Torrington Park**, the instrument this project recorded as **defunct** on the user's report
+  (2026-08-22). Either the record is historical or the instrument was operating during their
+  campaign. **This is worth resolving**, because F.101 prices a reference anchor at 10,000–40,000
+  USD and a working or recoverable BAM in Kandy changes the largest line in the campaign budget.
+  Recorded as an open question, not a correction.
+- 🟢 Kandy-specific models incorporating temperature and relative humidity reach **R² 0.84 wet /
+  0.92 dry**, so a well-calibrated low-cost sensor at Kandy is achievable — relevant to the
+  campaign's co-location protocol.
+
+⚠ Different sensor type from FECT's (TSI BlueSky against PurpleAir), so this does not directly
+re-validate W5; it corroborates the *practice*, not the specific slopes.

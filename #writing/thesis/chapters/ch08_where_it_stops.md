@@ -128,6 +128,64 @@ The resulting statement is bounded, and none of the previous five produced anyth
 That is a claim which can be disputed, and which a better experiment can supersede. "No spatial
 signal was found" is not.
 
+### Was it the data, or was it one model family?
+
+The registered test compared one learned family against one raster, and a reader is entitled to
+ask whether the conventional spatial toolkit would have done better. Land-use regression,
+geostatistics, geographically weighted regression and mixed-effects models are the standard tools
+for this problem, and none of them was in the comparison. So all of them were run, on
+{{claim:tour.cities}} cities and {{claim:tour.stations}} stations with
+{{claim:lur.predictors}} predictors, each fitted with the target city entirely withheld and scored
+on the ranking of that city's stations.
+
+Two of those families cannot be run in the setting this thesis is about, and the reason is not a
+technicality. Kriging interpolates between measured points, and geographically weighted regression
+fits a local regression around each location from nearby measured points. A city with no monitors
+has no nearby measured points. They estimate a surface from observations at the target, which is
+the spatial tier this section exists to question, applied to a problem defined by its absence.
+Rather than exclude them by argument they were run anyway, with the target city's own stations
+made visible, and reported separately as an upper bound on what a city with a network could
+obtain.
+
+| family | median rank correlation | paired against the benchmark | interval over cities |
+|---|---:|---:|---:|
+| the benchmark raster | {{claim:tour.benchmark}} | reference | reference |
+| Gaussian process on covariates | {{claim:tour.gp.rho}} | {{claim:tour.gp.paired}} | {{claim:tour.gp.lo}} to {{claim:tour.gp.hi}} |
+| random forest | {{claim:tour.rf.rho}} | {{claim:tour.rf.paired}} | {{claim:tour.rf.lo}} to {{claim:tour.rf.hi}} |
+| stepwise land-use regression | {{claim:tour.lur.rho}} | {{claim:tour.lur.paired}} | {{claim:tour.lur.lo}} to {{claim:tour.lur.hi}} |
+| linear mixed model, city random intercept | {{claim:tour.mixed.rho}} | {{claim:tour.mixed.paired}} | {{claim:tour.mixed.lo}} to {{claim:tour.mixed.hi}} |
+
+Not one of the {{claim:tour.families}} admissible families beats the benchmark by more than the
+registered detection limit of {{claim:phase1.min_detectable}}. The best of them improves on a
+single free raster by {{claim:tour.gp.paired}} in rank correlation. Conventional stepwise land-use
+regression, built the way the literature builds it and the class that reaches the published
+coefficients of determination quoted in Section 3.2 [@Hoek2008], buys {{claim:tour.lur.paired}}. A
+linear mixed model with a city random intercept is indistinguishable from ridge regression.
+
+The oracle families are the more interesting result. With the target city's own stations visible,
+inverse distance weighting reaches {{claim:tour.oracle_idw}}, geographically weighted regression
+{{claim:tour.oracle_gwr}} and kriging {{claim:tour.oracle_krige}}. All three sit below the
+benchmark's {{claim:tour.benchmark}}, which is obtained with no local observation at all. A city
+that has a network, using the methods designed for exactly that case, ranks its own stations worse
+than a single free raster ranks a city it has never seen. Section 5.5 reported the same thing for
+inverse distance weighting alone; it holds for the geostatistical and locally weighted families
+too.
+
+The null is therefore a property of the information available on this frame, and not of the one
+model family the registered test happened to use. That is a stronger statement than the
+registration was able to make, and it is the one this thesis defends.
+
+The first run of the oracle arm reported kriging at −0.833 [ledger F.105], which is not a poor
+score but a near-perfect inversion, and near-perfect inversions are almost always artefacts. It was one. The
+target had been standardised using every station in the city, so it summed to zero; holding one
+station out then makes the mean of the remainder a strictly decreasing function of the held-out
+value, and any model reverting toward its training mean is dragged toward a rank correlation of
+minus one whatever its skill. Measured directly, the leave-one-out training mean correlates with
+the held-out value at exactly minus one in every city of the panel. The fix was the standard rule that
+had been broken, which is to fit the normalisation on the training points only. The values above
+are the corrected ones. The admissible arm never had the problem, because there the whole city is
+withheld and no such constraint exists.
+
 ## 8.6 The reason, which is a change of support
 
 The deeper explanation is not about method at all.

@@ -49,18 +49,29 @@ intuition suggests. Freely available static geography is worth {{claim:step.geog
 in daily error, comparable to the first local instrument. Monitors three to six are worth
 {{claim:step.bud1_bud2}} per cent, and a sweep from one station to eight locates the saturation
 one rung lower still: the first station buys {{claim:stn.one_gain}} per cent and the second adds
-{{claim:stn.second_adds}} points. A regional background series is worth
-{{claim:step.bud2_bud3}} per cent, the largest single gain measured, and rebuilding it from a
-donor city the target has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of
-that, which bounds how much of it could be an artefact of the proxy used. The ordering reverses
-between latitude bands, so the recommendation derived from the pooled panel is the wrong
-recommendation in the band the demonstration city belongs to.
+{{claim:stn.second_adds}} points. A background series drawn from outside the urban core is worth
+{{claim:step.bud2_bud3}} per cent, the largest single gain measured; it is a proxy built from each
+city's own outer ring rather than a rural monitor, and rebuilding it from a donor city the target
+has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, which bounds
+from above how much of it could be an artefact of that proxy. Every figure here is a marginal
+value at a position in one feasible ordering rather than an intrinsic property of a stream, and
+Section 7.2 shows that reordering leaves the conclusions standing but moves one of the magnitudes
+by a factor of twenty. The ordering also reverses between latitude bands, so the recommendation
+derived from the pooled panel is the wrong recommendation in the band the demonstration city
+belongs to.
 
 The model is demonstrated at Kandy, Sri Lanka, a valley city with two low-cost sensors and no
-operating reference monitor. The local share of concentration is {{claim:partition.f}}, derived
-from a physical constraint rather than assumed. The field is checked against records that played
-no part in building it, agreeing at {{claim:nbro.diff_pct_2021}} and
-{{claim:nbro.diff_pct_2022}} per cent in two independent years.
+operating reference monitor. The decomposition assigns {{claim:partition.f}} of modelled
+concentration to the locally generated increment, a figure fixed by a physical coherence
+constraint rather than assumed, and sensitive to the definition of the background window across
+the range {{claim:partition.f_lo}} to {{claim:partition.f_hi}}. It is a constrained decomposition
+and not an observed source apportionment: the increment is the spatially structured component
+within the model domain, which is not the same quantity as material physically emitted in Kandy,
+and the model carries no chemistry with which to separate them. The city-mean level is checked
+against two published records that played no part in producing the spatial pattern, agreeing at
+{{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two independent years;
+because the temporal anchor is calibrated against Kandy's own low-cost sensors, those checks test
+the modelled lift above an already anchored mean rather than the field as a whole.
 
 The thesis also reports where the model stops. Two sites three hundred metres apart inside one
 model cell differ by a factor of {{claim:spatial.paired_obs_ratio}} observationally while the

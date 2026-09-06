@@ -75,7 +75,12 @@ def main() -> int:
            "--to", "docx",
            "--reference-doc", str(REF),
            "--toc", "--toc-depth", "3",
-           "--number-sections",
+           # NOT --number-sections. Every heading already carries its own number, because
+           # assemble.py reads the chapter number out of the heading text to number figures and
+           # tables by chapter. Letting pandoc number them as well produced headings like
+           # "8.3 7.3 The recommendation inverts in the tropics" -- pandoc's count, which treats
+           # the front matter as chapter one and is therefore offset by one, followed by the real
+           # section number. An external reviewer saw it in the built document.
            "--resource-path", f"{ROOT / 'thesis'}",
            "-o", str(OUT)]
     if BIB.exists():

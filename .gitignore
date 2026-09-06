@@ -207,3 +207,6 @@ kandy_pm25/docs/model_reference/*
 # Standalone app repos (own git repos, pushed separately)
 expertise_dashboard/
 !kandy_pm25/docs/sensor_placement_plan_*.md
+!kandy_pm25/scripts/cluster_bootstrap.py
+!kandy_pm25/scripts/spatial_tournament.py
+!kandy_pm25/scripts/srep_external_check.py

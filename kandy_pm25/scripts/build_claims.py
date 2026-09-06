@@ -1981,6 +1981,160 @@ def identifiability(c: Claims) -> None:
 
 # ── driver ────────────────────────────────────────────────────────────────────────────────
 
+
+def cluster_bootstrap(c: Claims) -> None:
+    """F.104 -- cities are not independent units, so resample CLUSTERS."""
+    f = MOD / "cluster_bootstrap.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "cluster_bootstrap.json"
+    c.add("clust.n_clusters", S["n_clusters"],
+          stat="network by country clusters holding the panel's cities",
+          n=S["n_cities"], source=src, ledger="F.104")
+    c.add("clust.largest_n", S["largest_cluster_n"],
+          stat="cities in the largest cluster", n=S["n_cities"], source=src, ledger="F.104",
+          note="one national network; resampling cities independently treats these as "
+               "independent draws when they share an operator, a fleet and a pipeline")
+    c.add("clust.singletons", S["singleton_clusters"],
+          stat="clusters containing a single city", n=S["n_clusters"], source=src,
+          ledger="F.104",
+          note="why a naive intra-class correlation is inflated on this panel: a singleton has "
+               "no within-cluster variance, so the statistic is quoted only over multi-city "
+               "clusters")
+    for key, tag in (("ghap.first two sensors", "first2"),
+                     ("ghap.sensors three to six", "stn3to6"),
+                     ("ghap.a background series", "bg")):
+        p = S["pooled"].get(key)
+        if not p:
+            continue
+        c.add("clust." + tag + ".median", p["median"],
+              stat="median percentage RMSE reduction across cities",
+              n=S["n_cities"], source=src, ledger="F.104")
+        c.add("clust." + tag + ".lo", p["cluster"][0],
+              stat="2.5th percentile, hierarchical bootstrap over clusters then cities",
+              n=S["n_clusters"], source=src, ledger="F.104")
+        c.add("clust." + tag + ".hi", p["cluster"][1],
+              stat="97.5th percentile, hierarchical bootstrap over clusters then cities",
+              n=S["n_clusters"], source=src, ledger="F.104")
+        c.add("clust." + tag + ".widening", p["width_ratio"],
+              stat="cluster interval width divided by city interval width",
+              n=S["n_clusters"], source=src, ledger="F.104",
+              note="above one means the city count overstates the effective sample size")
+        c.add("clust." + tag + ".icc", p["icc_multi"],
+              stat="fraction of between-city variance lying between clusters, computed only "
+                   "over cities that have a cluster sibling",
+              n=S["n_cities"], source=src, ledger="F.104")
+    for lad in ("ghap", "maiac"):
+        inv = S.get("inversion", {}).get(lad)
+        if not inv:
+            continue
+        c.add("clust.inv." + lad + ".n_cities", inv["n_cities"],
+              stat="deep-tropical cities carrying the inversion", n=inv["n_cities"],
+              source=src, ledger="F.104")
+        c.add("clust.inv." + lad + ".n_clusters", inv["n_clusters"],
+              stat="clusters holding the deep-tropical cities", n=inv["n_cities"],
+              source=src, ledger="F.104",
+              note="the band that carries the Kandy recommendation is almost all singletons, "
+                   "so clustering costs it nothing")
+        c.add("clust.inv." + lad + ".lo", inv["clust_lo"],
+              stat="2.5th percentile of the paired inversion, cluster bootstrap",
+              n=inv["n_cities"], source=src, ledger="F.104")
+        c.add("clust.inv." + lad + ".hi", inv["clust_hi"],
+              stat="97.5th percentile of the paired inversion, cluster bootstrap",
+              n=inv["n_cities"], source=src, ledger="F.104")
+
+
+def spatial_tournament(c: Claims) -> None:
+    """F.105 -- is the spatial null a property of the data, or of one model family?"""
+    f = MOD / "spatial_tournament.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "spatial_tournament.json"
+    fam = S["families"]
+    c.add("tour.cities", S["cities"], stat="cities in the tournament", n=S["cities"],
+          source=src, ledger="F.105")
+    c.add("tour.stations", S["stations"], stat="stations in the tournament", n=S["cities"],
+          source=src, ledger="F.105")
+    c.add("tour.families", sum(1 for v in fam.values() if v.get("setting") != "oracle") - 1,
+          stat="admissible model families tested against the benchmark", n=S["cities"],
+          source=src, ledger="F.105")
+    c.add("tour.benchmark", fam["benchmark"]["median_rho"],
+          stat="median held-out rank correlation of the single best free raster",
+          n=S["cities"], source=src, ledger="F.105")
+    for k, tag in (("lur_stepwise", "lur"), ("gp_covariates", "gp"),
+                   ("random_forest", "rf"), ("mixed_effects", "mixed")):
+        v = fam.get(k)
+        if not v:
+            continue
+        c.add("tour." + tag + ".rho", v["median_rho"],
+              stat="median held-out rank correlation, leave-one-city-out", n=v.get("n"),
+              source=src, ledger="F.105")
+        c.add("tour." + tag + ".paired", v["paired"],
+              stat="paired median advantage over the benchmark, within city", n=v["n"],
+              source=src, ledger="F.105")
+        c.add("tour." + tag + ".lo", v["lo"], stat="2.5th percentile, bootstrap over cities",
+              n=v["n"], source=src, ledger="F.105")
+        c.add("tour." + tag + ".hi", v["hi"], stat="97.5th percentile, bootstrap over cities",
+              n=v["n"], source=src, ledger="F.105")
+    c.add("tour.best_rho", S["best_admissible_rho"],
+          stat="best median rank correlation among admissible families", n=S["cities"],
+          source=src, ledger="F.105",
+          note="no admissible family beats the benchmark by more than the registered "
+               "detection limit of 0.130")
+    for k, tag in (("kriging", "krige"), ("idw", "idw"), ("gwr_oracle", "gwr")):
+        v = fam.get(k)
+        if v:
+            c.add("tour.oracle_" + tag, v["median_rho"],
+                  stat="median rank correlation with the city's own stations visible, "
+                       "leave-one-station-out",
+                  n=v["n"], source=src, ledger="F.105",
+                  note="ORACLE and inadmissible for a city with no monitors; reported as an "
+                       "upper bound and never compared with the benchmark")
+
+
+def srep_external(c: Claims) -> None:
+    """F.106 -- representativeness error identified from instruments rather than from the field."""
+    f = MOD / "srep_external_check.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "srep_external_check.json"
+    c.add("srep.panel_cells", S["panel_cells"],
+          stat="model cells holding two or more panel instruments", n=S["panel_cities"],
+          source=src, ledger="F.106")
+    c.add("srep.panel_stations", S["panel_stations"],
+          stat="instruments in those cells", n=S["panel_cities"], source=src, ledger="F.106")
+    c.add("srep.panel_cities", S["panel_cities"], stat="cities contributing such a cell",
+          n=S["panel_cities"], source=src, ledger="F.106")
+    c.add("srep.kandy_cells", S["kandy_cells"],
+          stat="model cells at Kandy holding two or more transect sites", n=S["kandy_sites"],
+          source=src, ledger="F.106")
+    c.add("srep.kandy_sites", S["kandy_sites"],
+          stat="transect sites falling in those cells", n=S["kandy_cells"],
+          source=src, ledger="F.106")
+    c.add("srep.panel_cv", S["panel_cv"],
+          stat="observed within-cell coefficient of variation, median over cells",
+          n=S["panel_cells"], source=src, ledger="F.106")
+    c.add("srep.kandy_cv", S["kandy_cv"],
+          stat="observed within-cell coefficient of variation at Kandy, median over cells",
+          n=S["kandy_cells"], source=src, ledger="F.106",
+          note="a LOWER bound: three of the seven sites are censored at an upper sampling limit")
+    c.add("srep.model_cv", S["model_cv"],
+          stat="the model estimator's implied coefficient of variation at the same locations",
+          n=S["kandy_cells"], source=src, ledger="F.106")
+    c.add("srep.ratio_panel", S["ratio_panel"],
+          stat="observed over modelled within-cell variability, panel", n=S["panel_cells"],
+          source=src, ledger="F.106")
+    c.add("srep.ratio_kandy", S["ratio_kandy"],
+          stat="observed over modelled within-cell variability, Kandy", n=S["kandy_cells"],
+          source=src, ledger="F.106",
+          note="a lower bound because of censoring")
+
 def build() -> dict:
     d = _ladder()
     c = Claims()
@@ -2023,6 +2177,9 @@ def build() -> dict:
     lur(c)
     donor(c)
     identifiability(c)
+    cluster_bootstrap(c)
+    spatial_tournament(c)
+    srep_external(c)
     return dict(
         generated=str(date.today()),
         gate="Phase 1 of docs/improvement_plan_2026-09-01.md",

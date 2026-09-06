@@ -112,3 +112,6 @@ node_modules/
 !scripts/campaign_costing.py
 !scripts/station_count_curve.py
 !scripts/siting_experiment.py
+!scripts/cluster_bootstrap.py
+!scripts/spatial_tournament.py
+!scripts/srep_external_check.py

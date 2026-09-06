@@ -190,7 +190,16 @@ def main(argv: list[str]) -> int:
         for level, ln, name, msg, frag in issues[:40]:
             print(f"  {level:<5} line {ln:>4}  {name:<18} {msg}")
             if frag:
-                print(f"                        | {frag}")
+                # The console is cp1252 on this machine, so a fragment holding any glyph outside
+                # that codepage crashed the linter mid-report: it could not describe the very
+                # lines most likely to need describing. The report is best-effort; the CHECK is
+                # not, and an unprintable fragment must never suppress the error it belongs to.
+                try:
+                    print(f"                        | {frag}")
+                except UnicodeEncodeError:
+                    enc = sys.stdout.encoding or "ascii"
+                    print("                        | "
+                          + frag.encode(enc, "replace").decode(enc, "replace"))
         if len(issues) > 40:
             print(f"  ... and {len(issues) - 40} more")
 

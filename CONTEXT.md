@@ -121,6 +121,9 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 | **"monitors three to eight"** | the code is `pool[:6]`; the two ranges have OPPOSITE signs (+0.75 vs -0.49 pp) | **stations three to six** (F.102) |
 | **"two sensors is where the ladder saturates"** | 2 was the Kandy BUDGET; the second station adds **0.01 pp** | **saturation is at ONE station** (F.102) |
 | **"deliberate siting recovers pattern a convenience network cannot"** | 43 cities, 601 stations, **paired -0.044 [-0.095, +0.118]**, winning 19/43. The +0.114 difference-of-medians points the other way | **undetectable**; the LUR gap is INFORMATION, not siting (F.103) |
+| **intervals bootstrapped over CITIES** | cities share networks; 11 of 48 are one — clustering widens every interval by 1.34-1.97x | **cluster-bootstrap intervals** (F.104); no conclusion changes |
+| **the model's own `s_rep`** | estimated from the FIELD's neighbourhood gradient; instruments sharing a cell disagree **2.6x** more on the panel and **17x** more at Kandy | take it from **co-located instruments** (F.106) |
+| **"a learned pattern did not beat the benchmark"** (one family) | 7 admissible families tested; best is **+0.018** vs a 0.130 limit | **no admissible family beats it** (F.105) |
 | **"the campaign will test the spatial ceiling"** | dead twice over: it cannot DETECT a siting effect (F.100, needs 96-304 sites) and there is probably none TO detect (F.103) | the campaign settles the **level**, the **within-cell ratio** and the **drainage sign** |
 
 ---

@@ -70,6 +70,77 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-07, 🔬 **AN OUTSIDE REVIEW ANSWERED BY COMPUTATION — THREE OBJECTIONS, THREE MEASUREMENTS**)
+
+A full external review (~8.5–9/10 as an undergraduate thesis; weakest on statistical inference and
+Kandy-specific validation). **Its three computational objections were answered by running the
+experiments rather than by rewording.** All three found something. Narrative: SESLOG 2026-09-07.
+Ledger **F.104–F.107**.
+
+### 🟢 F.104 — cities are NOT independent, intervals were too narrow, nothing flips
+48 cities fall into **29 clusters** (network × country); **11 are one national network**. A
+two-level bootstrap (clusters, then cities within clusters) **widens every interval by 1.34–1.97×**.
+The reviewer is right about the width. **Every conclusion survives:** background 40.55% with a
+lower bound of **22.3%**; first two sensors lower bound **4.5%**; **stations 3–6 bounded above by
+1.37%** — and a null surviving a WIDER interval is strictly stronger, so the redundancy result is
+*improved* by the objection.
+🟢 **The deep-tropical inversion is unchanged to four decimals** — 13 cities in **12 clusters**,
+so Kandy's own band is almost all singletons. **The dependence problem belongs to the POOLED
+numbers, not to the band-stratified recommendation Kandy rests on.**
+🔴 **A statistic withdrawn from its own output:** naive ICC read 0.82–0.99, an artefact of 23
+singleton clusters having zero within-cluster variance. Over cities with a sibling it is
+**0.23–0.65**. **Quote the width ratio, never the ICC.**
+
+### 🟢 F.105 — the spatial null is a property of the DATA, not of one model family
+Seven admissible families on 47 cities / 636 stations / 60 predictors, leave-one-CITY-out:
+**none beats the benchmark (0.301) by more than the registered 0.130 limit.** Best is a GP on
+covariates at **+0.018**. **Conventional stepwise LUR — the class the reviewer named, and the one
+reaching R² 0.43–0.83 in published campaigns — buys +0.010.** A mixed model with a city random
+intercept is indistinguishable from ridge.
+🔴 **Kriging and GWR are INADMISSIBLE** — both estimate a surface *from observations at the
+target*, which a city with no monitors does not have. Run anyway as an **oracle** with the city's
+own stations visible: IDW **0.190**, GWR **0.073**, kriging **0.048** — **all BELOW the admissible
+benchmark**. Extends F.60 from IDW to the geostatistical and locally weighted families.
+⚠ **The first oracle run reported kriging at −0.833** — an artefact: within-city standardisation
+makes Σz=0, so the leave-one-out training mean is exactly −zᵢ/(n−1) and correlates with the
+held-out value at **exactly −1.000 in all 46 cities**. Fixed by fitting the normalisation on
+training points only.
+
+### 🔴 F.106 — `s_rep` IS externally identifiable, and it is 2.6 to 17× too small
+The reviewer's sharpest point: the representativeness error is estimated from the field's own
+neighbourhood gradient, so the model prices its own unresolved structure. **It can be identified
+without the model**: instruments sharing one cell measure it directly. Panel **14 cells / 36
+instruments / 12 cities** → within-cell CV **0.140**; Kandy transect **0.911** (a LOWER bound,
+3 of 7 sites censored); model proxy **0.054**.
+⚠ **What it does NOT affect:** `representativeness_sigma` lives only in `src/modular/observation.py`
+and is **not wired into production**; the shipped interval's width comes from the conformal
+`T05–T95` propagation, so gotcha #75 stands (width right for an AREAL quantity, 92.2% after
+de-biasing). **What it does:** catches the defect *before* CEA/NBRO data arrives — exactly when the
+spec says the observation model must exist. Take `s_rep` from **co-located instruments**.
+
+### 🟢 F.107 — a 2026 Sri Lankan calibration paper the sweep missed
+**Senarathna, Attanayake, Bergin, Bhave, Vithanage, Harischandra & Bowatte (2026)**, *Env. Monit.
+Assess.* **198**(7):786 — **three authors already load-bearing here, including the supervisor**.
+🟢 **Independently corroborates F.63**: Colombo-fitted calibrations lose effectiveness at Kandy,
+across climatic zones. *Two unrelated quantities, one conclusion — Colombo stays refuted as a donor.*
+🔴 **Names a mechanism for the instrument-class confound**: wet-season calibration applied to dry
+season gives **26.57% MAPE**, in a band that is 77% low-cost against 25% elsewhere.
+⚠ **Its Kandy reference is the Torrington Park BAM-1020**, recorded here as defunct. **Worth
+resolving** — F.101 prices a reference anchor at 10–40k USD.
+
+### Wording the review forced, and it stays
+Abstract now says a background **proxy** built from each city's outer ring, not a rural monitor;
+states the partition's **0.482–0.547** sensitivity and that the increment is *the spatially
+structured component in the domain, not material emitted in Kandy*; and says the Kandy checks test
+**the lift above an already anchored mean**. §9.1 bounds the recommendation to *"within this panel,
+the deep-tropical stratum is the closest available analogue to Kandy"* — **never "tropical cities
+should buy local monitors first"**. §7.11 is retitled **an illustrative projection**.
+🔴 **A real defect fixed:** `--number-sections` was double-numbering headings (*"8.3 7.3 The
+recommendation inverts"*) because pandoc counted the front matter as chapter one. Removed. The
+linter also crashed on any line holding a non-cp1252 glyph; the reporter is now best-effort.
+
+**Thesis: 37,284 words · 35 figures · 10 tables · 477 claims · 0 lint errors.** Summary 2 pages.
+
 ## Current State (updated 2026-09-06, 🔬 **A CAMPAIGN DESIGNED, COSTED, REGISTERED — AND ITS OWN PREMISE REFUTED**)
 
 An optimal sensor network for Kandy was designed, justified against physics and siting law,
