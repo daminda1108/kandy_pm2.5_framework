@@ -991,12 +991,42 @@ def sensor_design(c: Claims) -> None:
               n=len(s), source="design_saturation.csv", ledger="F.99",
               note="an analysis parameter, not a measurement. Published as a claim so the "
                    "number in the prose is the number the selection actually used")
+        # The threshold lands ON the boundary between two site counts whose measured
+        # representativeness is INDISTINGUISHABLE, so quoting a single n is over-precise. The
+        # saturation point is reported as the range whose members sit within one seed standard
+        # deviation of the best value.
+        sd = float(s.ks_mean.std()) if "ks_sd" not in s else float(s.ks_sd.mean())
+        best = float(s.ks_mean.min())
+        tied = s[s.ks_mean <= best + sd]
         if len(small):
             c.add("net.saturation_n", int(small.n.iloc[0]),
                   stat="site count beyond which representativeness improves by less than the "
                        "threshold",
                   n=len(s), source="design_saturation.csv", ledger="F.99",
-                  note="averaged over 5 seeds. A single seed invents a knee that is not there")
+                  note="averaged over 5 seeds. A single seed invents a knee that is not there. "
+                       "⚠ The threshold falls on a boundary: see net.saturation_lo/hi, which "
+                       "report the range of site counts that are statistically indistinguishable")
+        # Which site counts are INDISTINGUISHABLE FROM THE DESIGN POINT, not from the range
+        # minimum. Anchoring on the minimum returns only the largest n, which answers a
+        # question nobody asked and reads as though 16 were the recommendation.
+        design_n = 12
+        if design_n in set(s.n):
+            ref = float(s.loc[s.n == design_n, "ks_mean"].iloc[0])
+            near = s[(s.ks_mean - ref).abs() <= sd]
+            c.add("net.saturation_lo", int(near.n.min()),
+                  stat="smallest site count whose representativeness is within one seed SD of "
+                       "the 12-site design",
+                  n=len(s), source="design_saturation.csv", ledger="F.99",
+                  note="10 and 12 differ by 0.0005 against a seed standard deviation of about "
+                       "0.009. Specifying one rather than the other is not supported by the "
+                       "curve, and the figure's single dashed line at 12 is over-precise")
+            c.add("net.saturation_hi", int(near.n.max()),
+                  stat="largest such site count", n=len(s),
+                  source="design_saturation.csv", ledger="F.99")
+        c.add("net.saturation_seed_sd", round(sd, 4),
+              stat="seed-to-seed standard deviation of the representativeness measure",
+              n=len(s), source="design_saturation.csv", ledger="F.99",
+              note="the reason a single site count cannot be specified from this curve")
 
 
 def campaign_power(c: Claims) -> None:
@@ -1051,6 +1081,65 @@ def campaign_power(c: Claims) -> None:
               stat="per cent of nights the drainage sink must exceed the core, over 90 nights",
               n=90, source=src, ledger="F.100",
               note="the unit is the NIGHT, not the site, which is why this is well powered")
+
+
+def campaign_cost(c: Claims) -> None:
+    """F.101. What the campaign costs, and the re-scope that turns out not to be worth doing.
+
+    The useful result is a negative one: the design stratum, whose justification the power
+    calculation removed, costs 450 dollars to halve. The dominant line is one reference
+    instrument that may not need buying at all.
+    """
+    import json as _json
+    f = REPO / "data" / "processed" / "decomp" / "campaign_costing.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        K = _json.load(fh)
+    src = "campaign_costing.json"
+
+    c.add("cost.lcs_unit_usd", int(K["lcs_unit_usd"]),
+          stat="published vendor price, one assembled low-cost outdoor monitor, USD", n=1,
+          source=src, ledger="F.101",
+          note="AirGradient Open Air O-1PST. Chosen because this project already holds "
+               "per-device calibration coefficients for AirGradient units, not because it is "
+               "cheapest: a different vendor means re-deriving a calibration already in hand")
+    c.add("cost.lcs_kit_usd", int(K["lcs_kit_usd"]),
+          stat="same unit as a self-assembly kit, USD", n=1, source=src, ledger="F.101")
+    c.add("cost.n_lcs", K["n_lcs"], stat="low-cost units the full design requires",
+          n=K["n_lcs"], source=src, ledger="F.101")
+    c.add("cost.spares", K["spares"],
+          stat="spare units for attrition and co-location rotation", n=K["n_lcs"],
+          source=src, ledger="F.101")
+    c.add("cost.lcs_total_usd", K["lcs_total_usd"],
+          stat="all low-cost units including spares, assembled, USD", n=K["n_lcs"],
+          source=src, ledger="F.101")
+    c.add("cost.ref_lo_usd", int(K["ref_lo_usd"]),
+          stat="lower end of the published range for a regulatory-grade monitor, USD", n=1,
+          source=src, ledger="F.101",
+          note="the US EPA describes regulatory monitors as costing tens of thousands of "
+               "dollars. A RANGE from a public statement, never a quote")
+    c.add("cost.ref_hi_usd", int(K["ref_hi_usd"]), stat="upper end of that range, USD", n=1,
+          source=src, ledger="F.101")
+    c.add("cost.total_lo_usd", K["instrument_total_lo"],
+          stat="instrument subtotal at the low end, USD", n=1, source=src, ledger="F.101",
+          note="INSTRUMENTS ONLY. Mounting, power, connectivity, import duty, labour and "
+               "servicing are line items with no unit price here, because none is published "
+               "for Sri Lanka and a typed number would be a guess wearing a budget's clothes")
+    c.add("cost.total_hi_usd", K["instrument_total_hi"],
+          stat="instrument subtotal at the high end, USD", n=1, source=src, ledger="F.101")
+    c.add("cost.design_saving_usd", K["design_saving_usd"],
+          stat="saved by cutting the design stratum to the recommended size, USD",
+          n=1, source=src, ledger="F.101",
+          note="the re-scope is not worth doing on cost grounds: this is under three per cent "
+               "of the low-end instrument subtotal, and the stratum it cuts is the one whose "
+               "hypothesis was demoted. The dominant line is the anchor")
+    c.add("cost.ks_loss_pct_8", K["ks_loss_pct_8"],
+          stat="per cent of representativeness lost cutting the design stratum to 8", n=1,
+          source=src, ledger="F.101")
+    c.add("cost.ks_loss_pct_6", K["ks_loss_pct_6"],
+          stat="per cent lost cutting it to 6", n=1, source=src, ledger="F.101",
+          note="a cliff. The stratum can be trimmed but not gutted")
 
 
 def colombo_donor(c: Claims) -> None:
@@ -1729,6 +1818,7 @@ def build() -> dict:
     colombo_donor(c)
     sensor_design(c)
     campaign_power(c)
+    campaign_cost(c)
     chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)

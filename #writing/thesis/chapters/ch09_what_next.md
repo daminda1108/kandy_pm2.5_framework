@@ -283,10 +283,14 @@ a record of that assumption failing six times, and the campaign exists to find o
 assumption can be rescued by better sampling. Buying coefficient precision for a model that does
 not work would be buying the wrong thing.
 
-**The number of sites is set by where the design stops paying**, not by a budget. Beyond
-{{claim:net.saturation_n}} sites a further site improves representativeness by less than
-{{claim:net.saturation_threshold}}, averaged over five random restarts, and a single restart
-produces a curve with a knee that is not there.
+**The number of sites is set by where the design stops paying**, not by a budget, and the
+saturation point is a range rather than a value. Between {{claim:net.saturation_lo}} and
+{{claim:net.saturation_hi}} sites the representativeness measure moves by less than its own
+seed-to-seed standard deviation of {{claim:net.saturation_seed_sd}}, so specifying one of those
+counts rather than the other is not supported by the curve. Below that range the loss is real:
+cutting to eight costs {{claim:cost.ks_loss_pct_8}} per cent and cutting to six costs
+{{claim:cost.ks_loss_pct_6}} per cent. Averaging over five random restarts is what makes this
+readable, because a single restart produces a curve with a knee that is not there.
 
 ### The campaign cannot answer the question it was designed around
 
@@ -330,6 +334,48 @@ detection limit in advance changed what was worth doing rather than merely how i
 reported. The first time, in Chapter 8, it converted five uninformative nulls into one bounded
 claim. This time it stopped a campaign being sold for something it could not deliver, and it did
 so while the cost of changing course was still a paragraph.
+
+### What it costs, and where the cost actually sits
+
+A recommendation without a price is not a recommendation, and the price here has a shape worth
+knowing.
+
+The low-cost network is **{{claim:cost.n_lcs}} units plus {{claim:cost.spares}} spares**, at a
+published vendor price of {{claim:cost.lcs_unit_usd}} US dollars each, so
+**{{claim:cost.lcs_total_usd}} dollars** in total. The reference anchor is the other line, and
+public statements put a regulatory-grade instrument at {{claim:cost.ref_lo_usd}} to
+{{claim:cost.ref_hi_usd}} dollars, which is a range from a published position rather than a
+quote. The instrument subtotal is therefore **{{claim:cost.total_lo_usd}} to
+{{claim:cost.total_hi_usd}} dollars**, and everything else, meaning mounting, power,
+connectivity, import duty, labour and a year of servicing, is left as a line item with no unit
+price, because none is published for Sri Lanka and a number typed there would be a guess.
+
+Two consequences follow, and the second is the useful one.
+
+**The anchor dominates, and it may not be a purchase.** It costs between one and four times the
+entire low-cost network. The national environmental authority has granted this project access in
+principle to a Kandy regulatory station carrying hourly concentration and full meteorology,
+subject to a formal agreement. If that completes, the largest line in the budget becomes a letter.
+
+**And the obvious economy is not worth making.** The design stratum lost most of its
+justification when the spatial hypothesis was demoted, which invites cutting it. Cutting it from
+twelve sites to ten saves {{claim:cost.design_saving_usd}} dollars, under three per cent of the
+low-end subtotal. At this unit price no plausible re-scoping of a low-cost network changes the
+shape of the budget. The effort belongs on the agreement, not on trimming sensors.
+
+### What survives of the design stratum's justification
+
+Its main purpose is gone and two smaller ones remain, one of which was not the original
+intention and is stated as such rather than presented as foresight.
+
+It still serves the exploratory spatial test, reported with its bound.
+
+**And it would make Kandy the only deliberately sited city in a panel of
+{{claim:frame.cities}} convenience samples.** Every city in the frame that produced this
+thesis's spatial nulls was sited for compliance and access. One city sited for contrast is a
+different kind of observation, and it is worth more to the multi-city frame than to Kandy itself.
+That justification was arrived at after the original one failed, which is the honest way to
+describe it.
 
 ### What this design cannot do
 

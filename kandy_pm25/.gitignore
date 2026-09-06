@@ -109,3 +109,4 @@ node_modules/
 !scripts/design_comparison.py
 !scripts/campaign_power.py
 !scripts/osf_lodge.py
+!scripts/campaign_costing.py

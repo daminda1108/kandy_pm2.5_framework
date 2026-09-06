@@ -5242,3 +5242,78 @@ leaves the refusal in place while naming the node, which misdirects. Both are no
 refuses to lodge a second registration with the same title (gotcha #89).
 
 Claims: `camp.*` (8). Registration void conditions are stated in the prereg §5.
+
+
+## F.101 — costing the campaign, and a re-scope that is not worth doing
+
+`scripts/campaign_costing.py` → `campaign_costing.{csv,json}`. Plan §8 and §9; thesis §9.7.
+
+### The budget has a shape, and it is not the one the re-scope question assumed
+
+| line | n | unit USD | USD | provenance |
+|---|---:|---:|---:|---|
+| low-cost outdoor monitors | 38 | **225** | 8,550 | **vendor published**, AirGradient Open Air O-1PST |
+| spares, 15% | 6 | 225 | 1,350 | design choice, not a citation |
+| **low-cost subtotal** | 44 | | **9,900** | (kit build: **5,500**, saves 4,400 + assembly labour) |
+| reference anchor | 1 | 10,000–40,000 | 10,000–40,000 | **US EPA: regulatory monitors cost "tens of thousands". A RANGE from a public statement, NOT a quote** |
+| **INSTRUMENT SUBTOTAL** | | | **19,900–49,900** | |
+
+⚠ **NOT costed, deliberately:** mounting, enclosures, power, connectivity, import duty,
+installation labour, 12 months servicing, co-location space. None is published for Sri Lanka.
+Each is a line item with an empty unit price. **A number typed there would be a guess wearing a
+budget's clothes.**
+
+🟢 **AirGradient chosen for CONTINUITY, not price.** The project already holds per-device
+calibration coefficients for AirGradient units (gotcha #37) and the ingest already classifies
+them (gotcha #38). A different vendor means re-deriving a calibration that is in hand.
+
+### 🔴 The largest line may not be a purchase
+
+The anchor is **1× to 4× the entire low-cost network**. CEA has granted access in principle to a
+Kandy regulatory station with hourly PM2.5/PM10/gases and full met including a rain gauge. **If
+that agreement completes, C3 is answered by a letter and the subtotal falls to ~9,900.** A
+campaign costed without pursuing that route first **overstates its own price by more than the
+rest of the budget combined.**
+
+### 🔴 THE RE-SCOPE IS NOT WORTH DOING, and that is the finding
+
+F.100 demoted H1, which was the design stratum's main justification. Cutting the stratum:
+
+| design sites | ks_mean | vs 12 | saved USD | verdict |
+|---:|---:|---:|---:|---|
+| 12 | 0.1297 | — | — | registered design |
+| **10** | 0.1292 | **−0.0005** | **450** | **indistinguishable** |
+| 8 | 0.1401 | +0.0104 | 900 | real but small, **+8%** |
+| 6 | 0.1673 | +0.0376 | 1,350 | **cliff, +29%. Do not.** |
+
+**Cutting 12→10 saves 450 dollars — under 3% of the low-end subtotal.** At 225/unit **no
+plausible re-scoping of a low-cost network changes the shape of this budget.** The anchor does.
+**Recommendation: keep the stratum at 10 or 12 indifferently; spend the effort on the CEA
+agreement.**
+
+⚠ Does **not** void `ad3py`: the stratum serves E1, already exploratory, and the void conditions
+(§5) concern the paired triplets, the nights and the anchor. Reported as a dated deviation.
+
+### The three tensions, resolved
+
+**(1) The stratum lost its justification.** Partly true. Two survive: the exploratory spatial
+test, and — newly — **it would make Kandy the only deliberately sited city in a 48-city panel of
+convenience samples**, which is worth more to the multi-city frame than to Kandy. 🟢 That
+justification was arrived at AFTER the original failed and is labelled as such, not presented as
+foresight. And §8.4 makes it moot on cost.
+
+**(2) Saturation is not a power criterion.** True, and **the number was over-precise.** 10 and 12
+sites differ by **0.0005** against a seed s.d. of **0.0092**. 🔴 **The saturation point is a RANGE
+of 10–12, not a value of 12**, and the figure's single dashed line is corrected to a band. New
+claims `net.saturation_{lo,hi,seed_sd}`. ⚠ Caught a second defect while fixing it: the first
+implementation anchored "indistinguishable" on the range MINIMUM rather than on the design point,
+returning lo = hi = 16, which answers a question nobody asked.
+
+**(3) C1 rests on one 2008 PM10 measurement.** True, **and the test is robust to it**, which is
+what matters. The decision rule uses **the model's own 1.58 prediction**, not the 27.5 figure:
+C1 holds if the observed ratio exceeds 1.58 by more than the resolution (**1.044** at 7 days).
+If the truth is 3, or 5, or 10, C1 still resolves it. It becomes marginal only if the truth sits
+within ~0.04 of 1.58 — **which would itself be the finding**, since it would mean the model's
+fine surface is right about within-cell contrast.
+
+Claims: `cost.*` (12), `net.saturation_{lo,hi,seed_sd}`.
