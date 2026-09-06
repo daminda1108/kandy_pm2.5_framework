@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -1228,6 +1229,16 @@ def learned_pattern(c: Claims) -> None:
               stat="median per-city Spearman rho", n=p1["cities"],
               source="phase1_predictor_ranking.csv", ledger="paper 2",
               note="the benchmark a learned pattern has to beat")
+        # The buffer radius is encoded in the winning predictor's own name, so it is derived
+        # rather than typed. It appeared as a literal "2.4 kilometres" in three places across
+        # two chapters, which is three chances for it to go stale against the ranking file.
+        m = re.search(r"_(\d+)$", str(p1.get("best_predictor", "")))
+        if m:
+            c.add("phase1.best_radius_km", round(int(m.group(1)) / 1000.0, 1),
+                  stat="buffer radius of the best single predictor, km", n=p1["cities"],
+                  source="phase1_predictor_ranking.csv", ledger="paper 2",
+                  note="parsed from the winning predictor's name. COARSER than the 1 km cell "
+                       "the model reports on, which is the point of quoting it")
         c.add("phase1.cities", p1["cities"], stat="cities with at least 8 stations",
               n=p1["cities"], source="lur_predictors.csv", ledger="paper 2")
         c.add("phase1.stations", p1["stations"], stat="stations in the frame", n=1,

@@ -128,7 +128,8 @@ limit that the information allows.
 {{fig:radius}}
 
 Predictor skill rises with the radius of the buffer over which a predictor is measured, and peaks
-at 2.4 kilometres, which is coarser than the kilometre cell the model reports on. Read with
+at {{claim:phase1.best_radius_km}} kilometres, which is coarser than the kilometre cell the model
+reports on. Read with
 Chapter 8's finding that within-cell spread exceeds between-cell spread, the band of usable
 spatial information is bounded from both sides.
 
@@ -317,8 +318,9 @@ any outcome.
 
 **What the campaign is well powered for is the physics and the level**, and those become what it
 is for. The paired triplets resolve a within-cell ratio to a factor of
-{{claim:camp.h2_ratio_7d}} after a single week, against competing predictions of 1.58 from the
-model and 27.5 from the one existing observation, so that test is decisive almost immediately and
+{{claim:camp.h2_ratio_7d}} after a single week, against competing predictions of
+{{claim:net.pair_contrast_hi}} from the model and {{claim:spatial.paired_obs_ratio}} from the one
+existing observation, so that test is decisive almost immediately and
 its power comes from hours averaged rather than from sites installed. The drainage prediction is
 a sign test whose unit is the night rather than the site, needing the down-valley sink to exceed
 the core on {{claim:camp.h4_nights90}} per cent of ninety nights. And one reference instrument
@@ -406,7 +408,11 @@ which recovered information that was not in the inputs.
 
 **A finer grid**, for the reason given in Section 9.4.
 
-**More monitors in the same city**, for the reason given in Section 9.1.
+**More monitors in the same city, sited as networks conventionally site them**, for the reason
+given in Section 9.1. ⚠ This is not an argument against the campaign of Section 9.7. That
+campaign is a different proposition precisely because its sites are chosen for contrast rather
+than for compliance and access, and the measured redundancy of monitors three to eight says
+nothing about it.
 
 **More cities in the panel**, unless they are chosen to break the class-band association, which
 Chapter 2 established cannot be done with the cities that currently publish data.

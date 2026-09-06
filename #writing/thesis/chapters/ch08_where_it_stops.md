@@ -110,7 +110,8 @@ sizes they could only have found residual correlations between
 
 The sixth was done differently. Before any model was written, the benchmark, the detection limit
 and the bar were registered [OSF 2jyfg]. The benchmark is the best single globally available
-predictor, built-up land-cover fraction within 2.4 kilometres, at {{claim:phase1.best_rho}}
+predictor, built-up land-cover fraction within {{claim:phase1.best_radius_km}} kilometres, at
+{{claim:phase1.best_rho}}
 across {{claim:phase1.cities}} cities. The detection limit on that frame is
 {{claim:phase1.min_detectable}}. The bar was their sum, {{claim:phase2.bar}}.
 
@@ -140,7 +141,8 @@ comparison to {{claim:s2.cell_mean_drift}}, so this is a statement about the fie
 and not about a numerical artefact.
 
 A second line points the same way from the opposite end. Chapter 9 reports that predictor skill
-rises with the radius of the buffer the predictor is measured over, and peaks at 2.4 kilometres,
+rises with the radius of the buffer the predictor is measured over, and peaks at
+{{claim:phase1.best_radius_km}} kilometres,
 which is coarser than the cell the model reports on. Taken together the two results bracket the
 usable band from both sides: finer than a cell is unrecoverable, and what remains informative is
 coarser than a cell.
