@@ -181,7 +181,84 @@ def main() -> None:
         print(f"    stations 3 to 8  (what the prose says): {eight - two:+.2f} percentage points")
         print(f"    -> the prose describes a rung two stations wider than the one that was run")
 
+    # ── BY BAND, because the pooled answer could hide a band where two stations do pay ──────
+    #
+    # ⚠ THE TRAP THIS SECTION EXISTS TO AVOID. A difference of medians is NOT the median
+    # difference, and here they disagree violently: in the temperate band the median gain rises
+    # 20.6 -> 33.5 with a second station, which looks like a large effect and is not one. It is
+    # produced by ONE city moving 0.0 -> 33.5 while another falls 17.0 -> 0.1, so the city
+    # sitting at the median changes. Paired within city the median gain is +0.14. The project's
+    # standing rule, median of ratios and never a ratio of medians, is what catches this.
+    L = pd.read_csv(MOD / "ladder_revalidated.csv", dtype={"city": str})
+    bands = L[L.bottom == "Bud0c"][["city", "band"]].drop_duplicates()
+    db = d.merge(bands, on="city", how="left")
+    w = db[db.k > 0].pivot_table(index=["band", "city"], columns="k", values="gain")
+    rng = np.random.default_rng(0)
+    by_band = {}
+    print("\n=== does a SECOND station beat one, WITHIN band? paired, 2000 bootstrap ===")
+    print(f"    {'band':<15}{'n':>4}{'k=1':>9}{'2nd adds':>11}{'95% interval':>20}  improving")
+    for band, sub in w.groupby(level=0):
+        s = sub[[1, 2]].dropna()
+        if len(s) < 4:
+            continue
+        v = (s[2] - s[1]).to_numpy()
+        idx = rng.integers(0, len(v), (2000, len(v)))
+        m = np.median(v[idx], axis=1)
+        lo, hi = np.percentile(m, [2.5, 97.5])
+        imp = int((v > 0.5).sum())
+        by_band[str(band)] = dict(
+            n=int(len(v)), k1=round(float(s[1].median()), 2),
+            second_adds=round(float(np.median(v)), 2),
+            lo=round(float(lo), 2), hi=round(float(hi), 2),
+            improving=imp, diff_of_medians=round(float(s[2].median() - s[1].median()), 2))
+        print(f"    {band:<15}{len(v):>4}{s[1].median():>8.1f}%{np.median(v):>+10.2f}"
+              f"   [{lo:>+6.2f},{hi:>+6.2f}]   {imp}/{len(v)}")
+    dt = by_band.get("deep_tropical")
+    if dt:
+        print(f"\n    Kandy's band: a second station adds {dt['second_adds']:+.2f} points paired "
+              f"[{dt['lo']:+.2f}, {dt['hi']:+.2f}], improving {dt['improving']} of {dt['n']}.")
+        print(f"    The DIFFERENCE OF MEDIANS is {dt['diff_of_medians']:+.2f}, which is not the "
+              f"effect and must not be quoted as one.")
+    # ASCII only in printed output: the Windows console is cp1252 (gotcha from the species run).
+    print("    No band shows a measurable second-station gain. [!] The temperate interval runs to "
+          f"{by_band.get('temperate', {}).get('hi', float('nan')):+.2f} on n="
+          f"{by_band.get('temperate', {}).get('n', 0)}, so that band is UNDERPOWERED rather "
+          "than null.")
+
+    # Pooled paired bootstrap, computed HERE rather than in a side script. An earlier version
+    # patched these keys into the JSON afterwards, and the next run of this script silently
+    # dropped them, which is gotcha #70: a correction written to a derived file is discarded by
+    # whatever regenerates that file.
+    wp = d[d.k > 0].pivot_table(index="city", columns="k", values="gain")
+    s1 = wp[[1]].dropna()
+    v1 = s1[1].to_numpy()
+    i1 = rng.integers(0, len(v1), (2000, len(v1)))
+    m1 = np.median(v1[i1], axis=1)
+    paired = {}
+    best_k, best_d = None, -9.0
+    for k in sorted([c for c in wp.columns if c > 1]):
+        sk = wp[[1, k]].dropna()
+        if len(sk) < 5:
+            continue
+        vk = (sk[k] - sk[1]).to_numpy()
+        ik = rng.integers(0, len(vk), (2000, len(vk)))
+        mk = np.median(vk[ik], axis=1)
+        paired[int(k)] = dict(median=round(float(np.median(vk)), 2),
+                              lo=round(float(np.percentile(mk, 2.5)), 2),
+                              hi=round(float(np.percentile(mk, 97.5)), 2), n=int(len(vk)))
+        if np.median(vk) > best_d:
+            best_k, best_d = int(k), float(np.median(vk))
+
     summary = dict(
+        by_band=by_band,
+        k1_gain=round(float(np.median(v1)), 2),
+        k1_lo=round(float(np.percentile(m1, 2.5)), 2),
+        k1_hi=round(float(np.percentile(m1, 97.5)), 2),
+        k1_cities=int(len(v1)),
+        paired_vs_one=paired,
+        d2_median=paired.get(2, {}).get("median"),
+        max_extra_over_one=round(best_d, 2), max_extra_at_k=best_k,
+        bud2_stations_in_code=6, prose_said_stations=8,
         cities=int(d[d.k > 0].city.nunique()),
         gain_by_k={int(k): round(float(v), 3) for k, v in g.items()},
         step_by_k={int(k): round(v, 3) for k, v in steps.items()},
@@ -191,7 +268,6 @@ def main() -> None:
         second_station_share=round(100 * (two - one) / two, 1) if two else None,
         gain_3to6=round(six - two, 2) if np.isfinite(six) else None,
         gain_3to8=round(eight - two, 2) if np.isfinite(eight) else None,
-        bud2_stations_in_code=6,
     )
     with open(OUT_JSON, "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)

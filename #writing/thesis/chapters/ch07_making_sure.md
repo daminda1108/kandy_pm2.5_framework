@@ -153,12 +153,29 @@ reports therefore begins at the **second** monitor rather than the third, which 
 stronger than the ladder's own rungs can express: one local observation captures essentially
 everything a city-mean model can extract from local observation.
 
-⚠ Two limits on that. The sweep is pooled rather than band-stratified, so it does not establish
-that a single station suffices within the deep-tropical band specifically, where Section 7.3's
-inversion is measured. And it prices stations for a **daily city-mean**; a second station is what
-makes a between-sensor comparison possible at all, which is how the calibration of Section 7.9 and
-the reliability figure of Section 7.2 were obtained. A pair buys quality assurance that the model
-does not score.
+**The band Kandy belongs to gives the same answer.** In the deep tropics a single station buys
+{{claim:stn.dt_one_gain}} per cent and a second adds {{claim:stn.dt_second_adds}} percentage
+points paired within city, improving {{claim:stn.dt_improving}} of {{claim:stn.dt_n}} cities. No
+band shows a measurable second-station gain, so the recommendation does not depend on reading the
+pooled result across a band boundary.
+
+⚠ **One number in that analysis is a trap, and it is worth showing rather than hiding.** In the
+temperate band the *median gain* rises by {{claim:stn.temp_diff_of_medians}} percentage points
+when a second station is added, which looks like a large effect and is not one. Paired within
+city the median is {{claim:stn.temp_second_adds}}, and only {{claim:stn.temp_improving}} of
+{{claim:stn.temp_n}} cities improve at all. The apparent jump is produced by one city moving from
+no gain to a third of its error while another loses almost as much, so the city sitting at the
+median changes. **A difference of medians is not the median difference**, and this project's
+standing rule of taking the median of per-city ratios rather than a ratio of medians exists
+precisely to stop that number being reported as an effect.
+
+⚠ Three further limits. The temperate interval runs to {{claim:stn.temp_hi}} on
+{{claim:stn.temp_n}} cities, so that band is **underpowered rather than null**, and the same is
+true of the deep-tropical upper bound at {{claim:stn.dt_hi}}. The sweep prices stations for a
+**daily city-mean**, and a second station is what makes a between-sensor comparison possible at
+all, which is how the calibration of Section 7.9 and the sensor reliability figure were obtained.
+**A pair buys quality assurance that the model does not score**, and the finding is that a second
+station does not improve the model, not that it is worthless.
 
 Two further qualifications belong with the row, because it is the one most likely to be quoted as
 procurement advice. It concerns **attainable predictive improvement in a daily city-mean**, so it

@@ -50,6 +50,34 @@ EXISTING = [(7.265, 80.625, "FECT Hantana"), (7.2731, 80.6117, "BAM-cal LCS")]
 TITLE_FS, LAB_FS, TICK_FS = 15, 13, 12
 
 
+def hillshade(Z, az=315.0, alt=45.0):
+    """Standard hillshade, for terrain context under each map.
+
+    The domain is a valley and the design stratifies on height above the local floor, on depth
+    below the surroundings and on drainage. A reader cannot judge a site without seeing the
+    relief, and three maps with no terrain on any of them was the single largest omission in
+    the first version of this figure.
+    """
+    gy, gx = np.gradient(Z)
+    slope = np.pi / 2.0 - np.arctan(np.hypot(gx, gy))
+    aspect = np.arctan2(-gx, gy)
+    a, z = np.radians(az), np.radians(alt)
+    hs = (np.sin(z) * np.sin(slope)
+          + np.cos(z) * np.cos(slope) * np.cos(a - np.pi / 2.0 - aspect))
+    return (hs - np.nanmin(hs)) / (np.nanmax(hs) - np.nanmin(hs) + 1e-12)
+
+
+def terrain_under(ax, Z, ext):
+    """Hillshade plus a few elevation contours, drawn beneath the data layer."""
+    ax.imshow(hillshade(Z), origin="lower", extent=ext, cmap="gray",
+              vmin=-0.2, vmax=1.25, zorder=0)
+    lv = np.nanpercentile(Z, [20, 40, 60, 80, 95])
+    cs = ax.contour(np.linspace(ext[0], ext[1], Z.shape[1]),
+                    np.linspace(ext[2], ext[3], Z.shape[0]), Z,
+                    levels=lv, colors="#3a3a3a", linewidths=0.6, alpha=0.55, zorder=2)
+    ax.clabel(cs, inline=True, fmt="%.0f", fontsize=8)
+
+
 def strata(ax, d, only=None):
     for key, k in STY.items():
         if only and key not in only:
@@ -80,8 +108,9 @@ def main() -> None:
     Ef = E[np.isfinite(E)]
     pctg = np.full(E.shape, np.nan)
     pctg[np.isfinite(E)] = 100.0 * np.searchsorted(np.sort(Ef), Ef) / len(Ef)
+    terrain_under(A, L["Z"], ext)
     im = A.imshow(pctg, origin="lower", extent=ext, cmap="YlOrRd", aspect="equal",
-                  vmin=0, vmax=100)
+                  vmin=0, vmax=100, alpha=0.74, zorder=1)
     cb = fig.colorbar(im, ax=A, fraction=0.046, pad=0.02)
     cb.set_label("percentile of the emission proxy", fontsize=LAB_FS - 1)
     cb.ax.axhline(61, color="#1f6fb4", linewidth=3.0)
@@ -103,8 +132,9 @@ def main() -> None:
     # ── (b) flow physics ──────────────────────────────────────────────────────────────────
     cv = L["conv_night"]
     lim = float(np.nanpercentile(np.abs(cv), 97))
+    terrain_under(B, L["Z"], ext)
     im = B.imshow(cv, origin="lower", extent=ext, cmap="RdBu_r", aspect="equal",
-                  vmin=-lim, vmax=lim)
+                  vmin=-lim, vmax=lim, alpha=0.72, zorder=1)
     cb = fig.colorbar(im, ax=B, fraction=0.046, pad=0.02)
     cb.set_label("nocturnal flow convergence\n(red: cold air pools here)", fontsize=LAB_FS - 1)
     strata(B, d, only=["B_design", "E_vertical", "A_anchor"])

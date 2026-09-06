@@ -1197,6 +1197,52 @@ def station_count(c: Claims) -> None:
     c.add("stn.max_extra_k", S["max_extra_at_k"],
           stat="the station count at which that largest gain occurs", n=S["k1_cities"],
           source=src, ledger="F.102")
+    bb = S.get("by_band", {})
+    dt = bb.get("deep_tropical")
+    if dt:
+        c.add("stn.dt_one_gain", dt["k1"],
+              stat="median per-city % RMSE reduction from one station, deep-tropical band",
+              n=dt["n"], source=src, ledger="F.102",
+              note="Kandy's own band, so this is the number the recommendation rests on")
+        c.add("stn.dt_second_adds", dt["second_adds"],
+              stat="paired median gain of a second station, deep-tropical, percentage points",
+              n=dt["n"], source=src, ledger="F.102")
+        c.add("stn.dt_hi", dt["hi"], stat="upper 95% bound on that paired gain", n=dt["n"],
+              source=src, ledger="F.102",
+              note="the interval does not exclude a gain of this size, so the band result is "
+                   "consistent with the pooled one rather than an independent confirmation")
+        c.add("stn.dt_improving", dt["improving"],
+              stat="deep-tropical cities where a second station gains more than 0.5 points",
+              n=dt["n"], source=src, ledger="F.102")
+        c.add("stn.dt_n", dt["n"], stat="deep-tropical cities in the sweep", n=dt["n"],
+              source=src, ledger="F.102")
+        c.add("stn.dt_diff_of_medians", dt["diff_of_medians"],
+              stat="difference of medians, deep-tropical, percentage points", n=dt["n"],
+              source=src, ledger="F.102",
+              note="NOT the effect. Published only so the gap against the paired median is "
+                   "visible: a difference of medians changes which city sits at the median "
+                   "and is not what any city experienced")
+    tm = bb.get("temperate")
+    if tm:
+        c.add("stn.temp_diff_of_medians", tm["diff_of_medians"],
+              stat="difference of medians, temperate band, percentage points", n=tm["n"],
+              source=src, ledger="F.102",
+              note="the trap in one number. It looks like a large second-station effect and is "
+                   "produced by ONE city moving 0.0 to 33.5 while another falls 17.0 to 0.1. "
+                   "Paired within city the median is stn.temp_second_adds")
+        c.add("stn.temp_second_adds", tm["second_adds"],
+              stat="paired median gain of a second station, temperate, percentage points",
+              n=tm["n"], source=src, ledger="F.102")
+        c.add("stn.temp_hi", tm["hi"], stat="upper 95% bound, temperate", n=tm["n"],
+              source=src, ledger="F.102",
+              note="wide on n=7. The temperate band is UNDERPOWERED rather than null, and this "
+                   "is the bound that says so")
+        c.add("stn.temp_improving", tm["improving"],
+              stat="temperate cities where a second station gains more than 0.5 points",
+              n=tm["n"], source=src, ledger="F.102")
+        c.add("stn.temp_n", tm["n"], stat="temperate cities in the sweep", n=tm["n"],
+              source=src, ledger="F.102")
+
     c.add("stn.bud2_stations", S["bud2_stations_in_code"],
           stat="stations the second ground rung actually uses, from the code", n=1,
           source="modular_validation_all.py", ledger="F.102",

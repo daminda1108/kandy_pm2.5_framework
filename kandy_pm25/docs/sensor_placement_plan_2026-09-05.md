@@ -139,25 +139,70 @@ thing.
 sites a further site improves representativeness by less than 0.01, averaged over five random
 restarts. A single restart produces a curve with a knee that is not there.
 
-## 4. Instrumentation and the calibration protocol
+## 4. Siting and calibration, against the published standards
 
-**Co-locate before deploying and after recovering.** Every low-cost unit spends at least two
-weeks alongside the reference instrument before it goes out and at least one week on return.
-This gives a per-device calibration and, from the difference between the two, a measured drift
-rate. Without the closing co-location the drift is unbounded and the record cannot be corrected
-retrospectively.
+An earlier version of this section set its own numbers. They are replaced here by the two
+standards that already govern this kind of measurement, because a recommendation that invents its
+own tolerances is not an engineering recommendation.
 
-**Rotate one unit through the anchor continuously.** A single unit permanently at the reference
-site provides an ongoing transfer standard, so a network-wide drift can be distinguished from a
-change in the air.
+### 4.1 Physical siting, from 40 CFR Part 58 Appendix E
 
-**Log humidity with every measurement.** Low-cost optical sensors respond to hygroscopic growth,
-and Kandy is humid for much of the year. A record without co-located humidity cannot be corrected
-for it.
+The United States federal siting criteria for ambient particulate monitors are the most widely
+used specification of their kind, and every site in this design is to meet them. The numbers are
+quoted from the regulation, not from a summary of it.
 
-**Record mounting height, inlet exposure and distance to the nearest road edge at every site**,
-because these are the variables the eventual analysis will need and they cannot be recovered
-later from a photograph.
+| requirement | value | applies to |
+|---|---|---|
+| inlet height above ground | **2.0 to 15 m** | neighbourhood and larger scale, which is strata A, B, D and E |
+| inlet height above ground | **2.0 to 7.0 m** | microscale, which is the paired stratum C |
+| unrestricted airflow | **arc of at least 270 degrees**, 180 degrees permitted in a street canyon | every site |
+| clearance from supporting structures, walls and parapets | **at least 2.0 m horizontally** | every site |
+| clearance from the drip line of trees | **at least 10 m, 20 m preferred** | every site |
+| separation between two collocated samplers | **within 4.0 m of each other, at least 1.0 m apart** below 200 L/min | the anchor co-location bench |
+
+⚠ **The paired stratum is deliberately microscale and must be sited as such.** Its three members
+sit inside one model cell at 0, 100 and 300 m, which places them in the microscale category and
+caps their inlet height at 7.0 m rather than 15. Mixing heights within a triplet would confound
+the very contrast the triplet exists to measure, so **all three members of a triplet take the
+same inlet height**, recorded to the nearest half metre.
+
+⚠ **Roadway separation is a function of average daily traffic** and is specified by Figure E-1 of
+the regulation rather than by a single distance. Sri Lanka publishes no per-road traffic counts
+for Kandy, so **the separation for each site must be set from a manual count at the ground visit**
+rather than assumed. This is a real gap in what can be planned from a desk, and it is stated
+rather than papered over.
+
+### 4.2 Calibration, from the EPA sensor performance targets report
+
+**Co-locate every low-cost unit with the reference instrument for at least 30 days before
+deployment.** An earlier version of this plan specified two weeks. That is below the published
+minimum, which is 30 days against a reference or equivalent monitor, and the plan is corrected to
+the standard rather than to what was convenient.
+
+**Deploy at least three identical units** of the same make, model and firmware, which the design
+satisfies many times over, and which matters because a single unit's calibration cannot be
+distinguished from that unit being faulty.
+
+**Co-locate again for at least 30 days on recovery.** The published protocol covers
+pre-deployment characterisation; the closing period is this campaign's own addition and it is
+what makes drift measurable rather than assumed. A unit recovered without it has its record
+flagged, not corrected.
+
+**Rotate one unit permanently at the anchor** as a transfer standard, so a network-wide drift can
+be told apart from a change in the air.
+
+**Log relative humidity with every measurement.** Low-cost optical counters respond to hygroscopic
+growth, Kandy is humid for most of the year, and a record without co-located humidity cannot be
+corrected for it afterwards.
+
+### 4.3 What must be recorded at every site, once, at installation
+
+Inlet height to the nearest half metre. The airflow arc, as the obstructed bearings. Distance and
+bearing to the nearest road edge, with a manual traffic count. Distance to the nearest tree drip
+line. Mounting substrate and power source. A photograph in each cardinal direction.
+
+None of these can be recovered later from a photograph alone, and all of them are needed by the
+analysis that the campaign exists to support.
 
 ---
 
