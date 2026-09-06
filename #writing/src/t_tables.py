@@ -286,12 +286,12 @@ def t4_3_panel():
 
 
 def t7_1_ladder():
-    write("T7_1_ladder", "What each increment of information is worth",
+    write("T7_1_ladder", "Marginal predictive value of each increment of information",
           ["step", "what is added", "median reduction in daily RMSE (per cent)"],
           [["Bud0a to Bud0b", "static geography, free everywhere", tok("step.geography")],
            ["Bud0b to Bud0c", "an annual satellite level", tok("step.satellite")],
            ["Bud0c to Bud1", "two local low-cost sensors", tok("step.bud0c_bud1")],
-           ["Bud1 to Bud2", "six further sensors", tok("step.bud1_bud2")],
+           ["Bud1 to Bud2", "stations three to six", tok("step.bud1_bud2")],
            ["Bud2 to Bud3", "a regional background station", tok("step.bud2_bud3")]],
           note="Median across cities of the per-city percentage reduction, never a ratio of "
                "medians.")

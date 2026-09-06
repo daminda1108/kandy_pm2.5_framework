@@ -64,7 +64,7 @@ the candidate, the amplitude of the regional seasonal cycle, and Chapter 9 gives
 would test whether the band is standing in for it. Until that is run, the transfer rests on Kandy
 resembling its band, which is an assumption with evidence behind it and not a demonstration.
 
-## 7.2 What each increment of information is worth
+## 7.2 The marginal predictive value of each information stream
 
 The measurement is possible because the tiers are nested. A lower tier is not a different model,
 it is the same model with a stream removed, so the difference between two tiers is information
@@ -358,8 +358,11 @@ The reversal is not a curiosity. It means the recommendation this thesis is most
 quoted for is the wrong recommendation for the city it was built for, and a reader who takes the
 pooled row without the band row will act on it.
 
-**Latitude is a label here, not a mechanism, and the distinction is not pedantic.** What the
-measurement establishes is that cities sorted into these bands differ in the ordering, which is a
+**Latitude is a label here, not a mechanism, and the distinction is not pedantic.** The statement
+the evidence supports is this one: *the available panel supports a deep-tropical ordering in which
+local observations outperform the background proxy; the extent to which that difference reflects
+an atmospheric regime rather than a measurement regime remains unresolved.* What the measurement
+establishes is that cities sorted into these bands differ in the ordering, which is a
 latitude-stratified empirical difference. It does not establish that latitude causes the
 difference, and nothing in this design could. Band travels with at least six other things:
 instrument class, which Section 7.6 shows differs by a factor of
@@ -386,7 +389,7 @@ causal one and it is sufficient for the decision.
 
 ## 7.4 Is this a property of the information or of the model?
 
-A value-of-information result is worthless if it is really a statement about one estimator. The
+A measurement of this kind is worthless if it is really a statement about one estimator. The
 first rung was therefore re-run across four [@Ke2017; @Chen2016; @Prokhorenkova2018].
 
 {{fig:streams}}

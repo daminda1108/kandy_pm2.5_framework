@@ -5685,3 +5685,50 @@ diurnal reference, Attanayake the RF-CNN record (F.65), and Bowatte is the super
 
 ⚠ Different sensor type from FECT's (TSI BlueSky against PurpleAir), so this does not directly
 re-validate W5; it corroborates the *practice*, not the specific slopes.
+
+
+## F.108 — 🔴 an abstract sentence that mislabelled which sensitivity axis it was quoting
+
+Caught by the external reviewer on the rebuilt document. The abstract read *"sensitive to the
+definition of the background window across the range 0.466 to 0.501"*. **Those numbers are the
+min and max over ANCHORED YEARS** (`partition.f_lo`/`f_hi`), not over window definitions. The
+partition has **three separate sensitivity axes** and the body reports all three correctly:
+
+| axis | range |
+|---|---|
+| anchored years | **0.466 – 0.501** |
+| `F_min` parameter sweep, fourfold | 0.482 – 0.509 |
+| **background-window form** (calendar-day → 24 h → 48 h) | **0.489 – 0.547** |
+
+The abstract attached the right numbers to the wrong descriptor, which understated the
+window-form sensitivity by excluding its largest member — the 48-hour form at 0.547, which the
+body already flags as drifting because the window exceeds the timescale on which `B` is defined.
+**Introduced 2026-09-07 while tightening the abstract in response to the same reviewer's earlier
+round**, so it is a defect created by a correction. Now reads: *across the anchored years the
+fraction ranges 0.466 to 0.501; alternative background-window definitions give 0.489 to 0.547,
+the upper end belonging to a window longer than the timescale on which the background is defined.*
+
+⚠ **The claims gate could not have caught this.** Every token resolved correctly; what was wrong
+was the English clause naming what the tokens measured. **The gate protects values, not the
+sentences that describe them** — the third distinct instance of that limit after gotchas #86
+(a figure drawing a retired input) and #90 (a build reading a stale table).
+
+### The rest of the round was claim calibration, not repair
+The reviewer's own framing, and it is the right one: *"the core experimental architecture works;
+some individual estimands need narrower interpretation."* Four wordings tightened, none of them a
+model change.
+- **The deep-tropical ordering** now carries its own bounding sentence: *the available panel
+  supports a deep-tropical ordering in which local observations outperform the background proxy;
+  the extent to which that reflects an atmospheric regime rather than a measurement regime remains
+  unresolved.* Abstract and §7.3 both.
+- **The background rung's conditionality reaches the abstract**, including the fall to
+  **37%** donor recovery in Kandy's own stratum, so the abstract states transferable information
+  rather than a figure a rural station would deliver at Kandy.
+- **The partition's first appearance** (§2.3, where a reader meets it before Chapter 6) now
+  carries the assumptions and the "not a source apportionment" qualifier, which previously lived
+  only in §6.6.
+- **"Marginal predictive value" is now the dominant term in results**: §7.2's heading, Table 7.1's
+  caption, and the abstract's statement of the estimand. *Value of information* is reserved for
+  the conceptual frame in Chapter 3. Table 7.1's `Bud1 → Bud2` row also had "six further sensors"
+  where the code takes `pool[:6]`; corrected to **stations three to six** (gotcha #92 again, a
+  tenth site).

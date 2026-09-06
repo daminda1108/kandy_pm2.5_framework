@@ -14,14 +14,16 @@ chapters. Six pre-registrations lodged on OSF before the corresponding analyses 
 ## The problem
 
 Most of the world's population breathes air that nobody measures, and the deficit is worst where
-concentrations are highest. Models supply a field where instruments do not, and they are good.
-But they are validated where monitors are dense and used where monitors are absent, so **the
-transfer that matters is the one transfer that cannot be scored**. The usual response to doubt,
-testing more thoroughly, needs exactly the observations whose absence created the doubt.
+concentrations are highest. Models supply a field where instruments do not, and they are good. But
+they are validated where monitors are dense and used where monitors are absent, so **the transfer
+that matters is the one transfer that cannot be scored**, and the usual response to doubt needs
+exactly the observations whose absence created it.
 
 This thesis changes the question. Rather than asking how accurate a model is where accuracy
 cannot be measured, it asks what a model is entitled to claim given the observations it has, and
-then measures what each further observation would be worth.
+measures the marginal predictive value of each further observation stream: the reduction in
+out-of-sample daily error at a fixed position in a fixed ordering, which stands in for loss rather
+than being decision-theoretic value of information.
 
 ## The construction
 
@@ -30,49 +32,49 @@ increment redistributed by a pattern normalised to unit spatial mean. Two proper
 measurement possible.
 
 **Conservation.** The spatial mean of the field returns the temporal anchor exactly, so an error
-in the pattern misplaces material without creating it. The consequence of being wrong is bounded
-and legible.
+in the pattern misplaces material without creating it.
 
 **Exact degradation.** The model declares which observation streams each tier may use, and
-withholding one reproduces the lower tier bit-for-bit rather than approximately. That is what
-converts an ablation into a measurement of information: the difference between two tiers is
-information loss and nothing else, because it is the same model rather than a refitted one.
+withholding one reproduces the lower tier bit-for-bit rather than approximately. That converts an
+ablation into a measurement of information: the difference between two tiers is information loss
+and nothing else, because it is the same model rather than a refitted one.
 
 ## Three results
 
 Measured across **{{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
-{{claim:frame.city_days}} city-days**, scoring each city against monitors deliberately withheld
-from it. Every panel city is a valley or basin, and every one publishes enough monitoring to be
-scored, so the results below are bounded by that panel and are not global claims.
+{{claim:frame.city_days}} city-days**, scoring each city against monitors withheld from it. Every
+panel city is a valley or basin and publishes enough monitoring to be scored, so what follows is
+bounded by that panel.
 
 **1. Freely available geography is worth about as much as the first monitor a city buys.** Terrain,
 roads, land cover, night lights and population together buy {{claim:step.geography}} per cent in
-daily error. Monitors three to six buy {{claim:step.bud1_bud2}} per cent, which is not a small
-effect but an absent one, and it is the most estimator-robust result in the study. Sweeping the
-count from one station to eight puts the saturation one rung lower than the tier structure could
-express: the first station buys {{claim:stn.one_gain}} per cent, the second adds
-{{claim:stn.second_adds}} points, and no count up to eight beats one station by more than
-{{claim:stn.max_extra}} points.
+daily error. Monitors three to six buy {{claim:step.bud1_bud2}} per cent, an absent effect rather
+than a small one, and the most estimator-robust result in the study. Sweeping from one station to
+eight puts the saturation one rung lower than the tier structure could express: the first station
+buys {{claim:stn.one_gain}} per cent and the second adds {{claim:stn.second_adds}} points.
 A background series from outside the urban core buys {{claim:step.bud2_bud3}} per cent, the
 largest single gain measured, and the instrument that would supply it is the one programmes are
 least likely to fund. That series is a proxy built from each city's own outer ring rather than a
 rural monitor, so it was rebuilt from a donor city the target never sees: an independent network
-recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, which bounds from above how
-much could be an artefact of the proxy. Every figure here is a marginal value at a position in one
-feasible ordering, not an intrinsic property of a stream. Cities are also not independent of one
-another, since {{claim:clust.largest_n}} of them share a national network; resampling clusters
-rather than cities widens every interval by about half again and overturns none of them, and the
-tightest result stays the null.
+recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, falling to
+{{claim:donor.reproduced_deep_tropical}} per cent in Kandy's own stratum. That establishes
+transferable information in a background-like observation, not that a rural station would deliver
+this figure at Kandy. Every figure is a marginal value at a position in one ordering. Cities are
+not independent either, since {{claim:clust.largest_n}} share a national network; resampling
+clusters widens every interval by about half again and overturns none, and the tightest result
+stays the null.
 
-**2. The recommendation inverts between latitude bands.** In the deep tropics, local sensors buy
+**2. The recommendation inverts between strata.** In the deep tropics, local sensors buy
 {{claim:maiac.deep_tropical_first2}} per cent against {{claim:maiac.deep_tropical_background}}
-per cent for the regional background, reversing the pooled ordering. Paired within city and
-bootstrapped over cities, the advantage is {{claim:inv.maiac.median}} points
+per cent for the background proxy, reversing the pooled ordering. Paired within city and
+bootstrapped over cities the advantage is {{claim:inv.maiac.median}} points
 [{{claim:inv.maiac.lo}}, {{claim:inv.maiac.hi}}], favouring sensors in
-{{claim:inv.maiac.frac_cities}} per cent of the band. A programme in Colombo or Kampala following
-advice derived from the pooled panel would buy the wrong instrument first. Band is a stratifying
-label rather than a demonstrated mechanism, and the candidate explanation, the amplitude of the
-regional seasonal cycle, is named and left untested.
+{{claim:inv.maiac.frac_cities}} per cent of the band, and a programme following pooled advice
+would buy the wrong instrument first. The defensible form is narrow: the panel supports a
+deep-tropical ordering in which local observations outperform the background proxy, and how far
+that reflects an atmospheric regime rather than a measurement regime is unresolved. The stratum
+holds thirteen cities, instrument class is strongly associated
+with latitude, and the paired test was not pre-registered.
 
 **3. A monitor-trained covariate under-prices monitors, and not in the way one would look for.**
 Replacing a published fused concentration product with a raw satellite retrieval left the
@@ -105,21 +107,24 @@ fixed before the model was written. Benchmark {{claim:phase1.best_rho}}, detecti
 {{claim:phase1.min_detectable}}, bar {{claim:phase2.bar}}. The learned pattern reached
 {{claim:phase2.rho_learned}}.
 
-This is the sixth null on this question and the first with a detection limit stated in advance,
-so it yields a bounded claim where the previous five, which could only have detected effects
-between {{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}, yielded none.
-{{claim:tour.families}} further model families were then run on the same frame, including
-conventional stepwise land-use regression, a Gaussian process and a mixed model: none beats the
-benchmark by more than the detection limit, and kriging and geographically weighted regression,
-which need observations at the target, score below it even when given the city's own stations.
-The null is a property of the information, not of one model family.
+This is the sixth null on this question and the first with a detection limit fixed in advance, so
+it yields a bounded claim where the previous five, which could only have detected effects between
+{{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}, yielded none.
+{{claim:tour.families}} further families were then run on the same frame, including stepwise
+land-use regression, a Gaussian process and a mixed model: none beats the benchmark by more than
+the detection limit, and kriging and geographically weighted regression, which need observations
+at the target, fall below it even when given the city's own stations. The null is a property of
+the information, not of one model family.
 
 ## Demonstration
 
-Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no operating reference
-monitor. The constrained decomposition assigns **{{claim:partition.f}}** of modelled
-concentration to a locally generated increment, derived from a physical constraint rather than
-assumed, against a retired prior of about a quarter. That is a model-imposed split rather than a
+Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no reference monitor.
+Under the stated background and minimum-increment assumptions the constrained
+decomposition assigns **{{claim:partition.f}}** of modelled concentration to a locally generated
+increment, derived from a physical constraint rather than assumed, against a retired prior of
+about a quarter; it ranges {{claim:partition.f_lo}} to {{claim:partition.f_hi}} across anchored
+years and {{claim:field.f_form_calendar}} to {{claim:field.f_form_roll48}} across background-window
+definitions. That is a model-imposed split rather than a
 measured source apportionment: the increment is the spatially structured component inside the
 model domain, which is not the same quantity as material emitted in Kandy, and the model carries
 no chemistry with which to separate them. Against two published records that played no part in

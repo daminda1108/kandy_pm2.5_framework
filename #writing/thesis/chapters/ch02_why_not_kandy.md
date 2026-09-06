@@ -81,10 +81,14 @@ accurate that total is.
 
 The decomposition described in Chapter 6 exists for this reason. It separates a regional
 background from a locally generated increment, and only the increment can be acted upon by a
-local authority. For Kandy the decomposition assigns {{claim:partition.f}} of modelled concentration to the local
-increment, so approximately half is attributed to a component generated inside the basin and
-approximately half to material arriving from elsewhere. That number is derived in Chapter 6 from
-a physical constraint rather than assumed.
+local authority. For Kandy, **under the background and minimum-increment assumptions set out in
+Section 6.6**, the constrained decomposition assigns {{claim:partition.f}} of modelled
+concentration to the local increment and the remainder to the regional background. That number is
+derived in Chapter 6 from a physical constraint rather than assumed. It is a property of the
+decomposition rather than a measurement of where material was emitted: the increment is defined by
+spatial structure and timing, so it contains particulate mass formed inside the basin from any
+precursors and excludes regionally formed mass whatever its origin. Section 6.6 states in full
+what the figure does and does not license, and it should not be read as a source apportionment.
 
 Its consequence has to be stated carefully, and Section 6.6 states it in full. The figure makes
 local action worth substantially more than the quarter this project previously assumed. It does

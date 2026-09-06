@@ -32,8 +32,10 @@ in the regions where concentrations are highest. Models supply a field where ins
 but they are validated where monitors are dense and applied where monitors are absent, so the
 transfer that matters cannot be scored. This thesis addresses that problem by changing the
 question. Rather than asking how accurate a model is where accuracy cannot be measured, it asks
-what a model is entitled to claim given the observations it has, and measures what each further
-observation would be worth.
+what a model is entitled to claim given the observations it has, and measures the marginal
+predictive value of each further observation stream. That estimand is the reduction in
+out-of-sample daily error at a fixed position in a fixed ordering, which stands in for loss; it is
+not decision-theoretic value of information, since no decision problem is specified.
 
 The model is an additive decomposition of fine particulate concentration into a spatially uniform
 regional background and a locally generated increment redistributed by a unit-mean pattern. Two
@@ -53,18 +55,27 @@ one rung lower still: the first station buys {{claim:stn.one_gain}} per cent and
 {{claim:step.bud2_bud3}} per cent, the largest single gain measured; it is a proxy built from each
 city's own outer ring rather than a rural monitor, and rebuilding it from a donor city the target
 has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, which bounds
-from above how much of it could be an artefact of that proxy. Every figure here is a marginal
+from above how much of it could be an artefact of that proxy; recovery falls to
+{{claim:donor.reproduced_deep_tropical}} per cent in the stratum the demonstration city belongs
+to, so what the panel establishes is that a background-like observation carries substantial
+transferable information, and not that a rural station would deliver this figure at Kandy. Every figure here is a marginal
 value at a position in one feasible ordering rather than an intrinsic property of a stream, and
 Section 7.2 shows that reordering leaves the conclusions standing but moves one of the magnitudes
-by a factor of twenty. The ordering also reverses between latitude bands, so the recommendation
-derived from the pooled panel is the wrong recommendation in the band the demonstration city
-belongs to.
+by a factor of twenty. The ordering also reverses between strata: the panel supports a deep-tropical
+ordering in which local observations outperform the background proxy, so the recommendation
+derived from the pooled panel is the wrong recommendation in the stratum the demonstration city
+belongs to. That stratum holds thirteen cities and its instrument class is strongly associated
+with its latitude, so how far the reversal reflects an atmospheric regime rather than a
+measurement regime is unresolved.
 
 The model is demonstrated at Kandy, Sri Lanka, a valley city with two low-cost sensors and no
 operating reference monitor. The decomposition assigns {{claim:partition.f}} of modelled
 concentration to the locally generated increment, a figure fixed by a physical coherence
-constraint rather than assumed, and sensitive to the definition of the background window across
-the range {{claim:partition.f_lo}} to {{claim:partition.f_hi}}. It is a constrained decomposition
+constraint rather than assumed. Across the anchored years that fraction ranges from
+{{claim:partition.f_lo}} to {{claim:partition.f_hi}}; alternative definitions of the background
+window give {{claim:field.f_form_calendar}} to {{claim:field.f_form_roll48}}, the upper end
+belonging to a window longer than the timescale on which the background is defined. It is a
+constrained decomposition
 and not an observed source apportionment: the increment is the spatially structured component
 within the model domain, which is not the same quantity as material physically emitted in Kandy,
 and the model carries no chemistry with which to separate them. The city-mean level is checked

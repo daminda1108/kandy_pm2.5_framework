@@ -139,7 +139,30 @@ should buy local monitors first"**. §7.11 is retitled **an illustrative project
 recommendation inverts"*) because pandoc counted the front matter as chapter one. Removed. The
 linter also crashed on any line holding a non-cp1252 glyph; the reporter is now best-effort.
 
-**Thesis: 37,284 words · 35 figures · 10 tables · 477 claims · 0 lint errors.** Summary 2 pages.
+### 🔴 F.108 — A CORRECTION THAT INTRODUCED A DEFECT (2026-09-07, second review round)
+The abstract read *"sensitive to the definition of the background window across 0.466 to 0.501"*.
+**Those are the min/max over ANCHORED YEARS, not window definitions.** The partition has **three**
+sensitivity axes: anchored years **0.466–0.501** · `F_min` sweep **0.482–0.509** · **window form
+0.489–0.547**. The abstract attached the right numbers to the wrong descriptor and so understated
+the window sensitivity by dropping its largest member. **Introduced while tightening the abstract
+for the SAME reviewer's earlier round.** ⚠ **The claims gate cannot catch this** — every token
+resolved; the English clause naming what they measured was wrong. Third instance of that limit
+after gotchas #86 and #90.
+
+### The rest was claim calibration, not repair (reviewer's own framing)
+- **Deep-tropical ordering** now carries its bounding sentence in abstract and §7.3: *the panel
+  supports a deep-tropical ordering in which local observations outperform the background proxy;
+  how far that reflects an atmospheric rather than a measurement regime is unresolved.*
+- **Background conditionality reaches the abstract**, including donor recovery falling to **37%**
+  in Kandy's own stratum — transferable information, **not** a figure a rural station delivers.
+- **The partition's FIRST appearance (§2.3)** now carries the assumptions and the
+  not-a-source-apportionment qualifier, which had lived only in §6.6.
+- **"Marginal predictive value" is dominant in results** (§7.2 heading, Table 7.1 caption, the
+  abstract's estimand); *value of information* is reserved for Chapter 3's conceptual frame.
+  Table 7.1's `Bud1→Bud2` row said "six further sensors" against `pool[:6]` → **stations three to
+  six** (gotcha #92, tenth site).
+
+**Thesis: 37,550 words · 35 figures · 10 tables · 477 claims · 0 lint errors.** Summary 2 pages.
 
 ## Current State (updated 2026-09-06, 🔬 **A CAMPAIGN DESIGNED, COSTED, REGISTERED — AND ITS OWN PREMISE REFUTED**)
 
