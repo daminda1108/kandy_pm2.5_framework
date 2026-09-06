@@ -108,3 +108,4 @@ node_modules/
 !scripts/plot_sensor_design.py
 !scripts/design_comparison.py
 !scripts/campaign_power.py
+!scripts/osf_lodge.py

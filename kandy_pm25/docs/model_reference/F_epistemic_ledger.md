@@ -5229,4 +5229,16 @@ it could not deliver, **while the cost of changing course was still a paragraph.
    should be computed. Computing it moved it to **"NOT AT ALL"**. The reversal is left visible in
    the document rather than silently edited.
 
+🟢 **LODGED ON OSF 2026-09-06T02:10:05Z as [`ad3py`](https://osf.io/ad3py/)**, project
+[`r7a3w`](https://osf.io/r7a3w/), Open-Ended Registration, full text in the project wiki.
+**Genuinely prospective**: no instrument bought, no site visited, no observation exists.
+
+⚠ **Two OSF API traps, recorded because they cost three failed POSTs.** A registration is
+refused without a subject, and the two endpoints demand DIFFERENT shapes for the same
+information: `/nodes/{id}/` wants `subjects` as a list of full hierarchical PATHS from the
+taxonomy root, `/draft_registrations/{id}/` wants a FLAT list of leaf ids. Setting only the node
+leaves the refusal in place while naming the node, which misdirects. Both are now set by
+`scripts/osf_lodge.py`, which also queries the collection **before** creating anything and
+refuses to lodge a second registration with the same title (gotcha #89).
+
 Claims: `camp.*` (8). Registration void conditions are stated in the prereg §5.

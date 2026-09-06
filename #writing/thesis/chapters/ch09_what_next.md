@@ -291,8 +291,8 @@ produces a curve with a knee that is not there.
 ### The campaign cannot answer the question it was designed around
 
 The design began from an assumption worth testing: that deliberate siting could break a ceiling
-convenience siting could not. Registering the analysis meant computing, in advance, what the
-campaign could actually see. **The answer disqualifies its own headline question.**
+convenience siting could not. Registering the analysis [OSF ad3py] meant computing, in advance,
+what the campaign could actually see. **The answer disqualifies its own headline question.**
 
 Beating the benchmark rank correlation of {{claim:phase1.best_rho}} that a single free raster
 already achieves would require, with {{claim:camp.n_fit}} sites available to fit a spatial

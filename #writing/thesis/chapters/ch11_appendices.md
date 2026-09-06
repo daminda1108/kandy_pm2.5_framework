@@ -16,8 +16,9 @@ in which case the code changes with them.
 
 # Appendix B. Registered predictions and their outcomes
 
-Five pre-registrations were lodged before the corresponding analyses ran. Each stated its
-predictions and the condition under which each would be abandoned.
+Six pre-registrations were lodged before the corresponding analyses ran. Each stated its
+predictions and the condition under which each would be abandoned. The sixth registers a campaign
+that has not yet been deployed, so it has predictions and no outcomes.
 
 {{tbl:T7_5}}
 

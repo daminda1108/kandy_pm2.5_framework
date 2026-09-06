@@ -1,8 +1,15 @@
 # Pre-registration — the Kandy measurement campaign
 
-**Registered 2026-09-05, before deployment and before any campaign observation exists.**
+**Written 2026-09-05, before deployment and before any campaign observation exists.**
 
-Unlike the two registrations lodged earlier today, **this one is genuinely blind**: the
+**OSF: [`ad3py`](https://osf.io/ad3py/)** — lodged 2026-09-06T02:10:05Z, Open-Ended Registration,
+project [`r7a3w`](https://osf.io/r7a3w/), which carries this full text in its wiki. Pending the
+standard approval window.
+
+Prior registrations in this programme: `nxqgb` (Colombo, superseded), `g6hqb` (re-validation),
+`bkpyr` (sub-grid and streams), `kx23c` (chemistry at Kandy), `2jyfg` (learned spatial pattern).
+
+Unlike the two registrations written earlier the same day, **this one is genuinely blind**: the
 instruments have not been bought, the sites have not been visited, and there is no data to have
 peeked at. The design is fixed in
 `data/processed/decomp/sensor_design_kandy.csv`; the power calculation is

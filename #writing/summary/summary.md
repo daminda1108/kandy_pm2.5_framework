@@ -8,8 +8,8 @@ mainfont: "Times New Roman"
 colorlinks: false
 ---
 
-**Undergraduate thesis, 2026. Two-page summary.** Full thesis: 23,000 words, 33 figures, 10
-chapters. Five pre-registrations lodged on OSF before the corresponding analyses ran.
+**Undergraduate thesis, 2026. Two-page summary.** Full thesis: 33,000 words, 35 figures, 10
+chapters. Six pre-registrations lodged on OSF before the corresponding analyses ran.
 
 ## The problem
 
@@ -133,7 +133,8 @@ as it had declared before it started.
 ## Status
 
 Manuscript drafted (13,800 words, 18 figures, 62 references) and targeted at a methods venue.
-Thesis complete. Five OSF pre-registrations, fourteen of thirty predictions refuted. Code, claim
+Thesis complete. Six OSF pre-registrations, fourteen of thirty predictions refuted across the
+five that have run. Code, claim
 generators and pre-registrations are version-controlled and available.
 
 **Contact:** 11daminda08@gmail.com

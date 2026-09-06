@@ -74,8 +74,11 @@ prose but never placed leaves a reader hunting for something that is not there. 
 
 {{dia:prereg}}
 
-Five pre-registrations were lodged during this work, each stating its predictions and the
-condition under which each would be abandoned, before the corresponding analysis ran.
+Six pre-registrations were lodged during this work, each stating its predictions and the
+condition under which each would be abandoned, before the corresponding analysis ran. The sixth
+is prospective: it registers a measurement campaign that has not been deployed, and its
+detection limits demoted that campaign's original headline hypothesis before any money was
+committed.
 
 {{tbl:T7_5}}
 
