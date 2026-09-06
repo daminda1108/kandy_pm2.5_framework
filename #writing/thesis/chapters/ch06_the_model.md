@@ -33,10 +33,20 @@ condition does three things at once, and they are the reason the decomposition w
 a multiplicative alternative.
 
 It prevents an imposed spatial pattern from displacing the level, which is the quantity the
-observations actually constrain. It makes level and pattern separately identifiable, so each can
-be validated independently, which is what Chapter 7 exploits. And it bounds the consequence of
-being wrong: an error in `P` is an error in **where** material sits, never in **how much** of it
-there is.
+observations actually constrain. It separates the temporal anchor from the spatial redistribution,
+so the two can be evaluated independently, which is what Chapter 7 exploits. And it bounds the
+consequence of being wrong: an error in `P` is an error in **where** material sits, never in
+**how much** of it there is.
+
+**What the unit-mean condition does not do is identify `B`.** It is worth being exact, because the
+stronger statement is easy to make and is false. Taking the spatial mean of the field gives
+`T` whatever the background happens to be: for any admissible alternative `B'`, setting
+`P' = (C − B') / (T − B')` yields a pattern that also has unit spatial mean, and reproduces the
+same field. The gauge therefore identifies the anchor and pins the normalisation of the pattern;
+it says nothing about how the anchor divides into a background and an increment. That division is
+identified by the constraints of Section 6.6 and by the construction of `B` in Section 6.3, not by
+the gauge, and the sensitivity of the resulting fraction to those choices is reported there rather
+than assumed away.
 
 One qualification belongs here rather than in a limitations list. The satellite anchor is exact,
 in that the annual mean of `T` matches the reference product to four decimal places every year.
@@ -121,7 +131,11 @@ is estimated from the local spatial variability of the field itself, so it grows
 hours and shrinks when the basin is well mixed.
 
 This level of description is not decoration, and the clearest demonstration is a diagnosis it
-makes available. The delivered ninety per cent interval covers {{claim:kandy.cov90}} per cent of
+makes available. The interval is nominal at ninety per cent by construction and empirically
+checked here, which is the distinction that matters: conformal calibration earns its coverage
+under exchangeability, and hourly air quality in a monsoon climate is not exchangeable, so the
+nominal level is a design target and the measured coverage is the evidence. It covers
+{{claim:kandy.cov90}} per cent of
 observations at the two Kandy sensors. Read alone, that suggests the interval is too narrow. It
 is not. Observations fall below the lower bound in {{claim:kandy.miss_below}} per cent of hours
 and above the upper bound in {{claim:kandy.miss_above}} per cent, which is a one-sided failure
@@ -222,12 +236,22 @@ The decomposition is only useful to a decision if the split between local and re
 credible, and for most of this project's history it was not. The value was taken from source
 apportionment literature and sat near a quarter.
 
-The argument that replaced it is short. Local sources emit continuously. Rain changes removal,
-not emission. Therefore at an emitting location the local increment is strictly positive at every
-hour, the background can never reach the total, and **a background at or above the total is not
-an unusual hour but an over-estimated background**. Since `B` is flat within a day, the
-constraint has a closed form: cap each day at `(1 - F_min)` times that day's minimum hourly
-total.
+The argument that replaced it is short. Local sources emit continuously, and rain changes removal
+rather than emission, so at an emitting location some locally generated material is present at
+every hour. The decomposition's increment is then required to be non-negative, the background can
+never reach the total, and **a background at or above the total is not an unusual hour but an
+over-estimated background**. Since `B` is flat within a day, the constraint has a closed form: cap
+each day at `(1 - F_min)` times that day's minimum hourly total.
+
+**This is a non-negative local-contribution constraint, and it should be called that rather than a
+physical theorem.** Continuous emission is a statement about sources; `T - B` is a statement about
+a constructed decomposition, and the two are not the same object. Transport, mixing, deposition,
+secondary formation and a background that is itself built rather than measured all sit between
+them, so continuous emission does not by itself prove that this particular residual must be
+positive in every hour. What it does is make a negative residual far more readily explained by an
+over-estimated background than by a real state of the atmosphere, which is enough to justify the
+constraint as a modelling choice. It is imposed on those grounds, and Section 6.6 reports how much
+the resulting fraction moves when the choice is varied.
 
 Before the constraint, the background exceeded the total in
 {{claim:field.precap_excess_lo}} to {{claim:field.precap_excess_hi}} per cent of hours, averaging

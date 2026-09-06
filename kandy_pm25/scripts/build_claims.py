@@ -2135,6 +2135,53 @@ def srep_external(c: Claims) -> None:
           source=src, ledger="F.106",
           note="a lower bound because of censoring")
 
+
+def loss_sensitivity(c: Claims) -> None:
+    """F.109 -- does the ladder's ordering survive a change of loss function?"""
+    f = MOD / "loss_sensitivity.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "loss_sensitivity.json"
+    c.add("loss.cities", S["cities"], stat="cities scored under all four losses",
+          n=S["cities"], source=src, ledger="F.109")
+    c.add("loss.stream", S.get("stream", "maiac"),
+          stat="satellite stream feeding the sensorless rung", n=S["cities"],
+          source=src, ledger="F.109",
+          note="MAIAC, the raw retrieval the thesis quotes, not the fused product")
+    c.add("loss.who_threshold", S["who_24h"],
+          stat="WHO 2021 24-hour guideline used as the exceedance threshold, ug/m3",
+          n=S["cities"], source=src, ledger="F.109")
+    names = {"first two sensors": "first2", "stations three to six": "stn3to6",
+             "a background series": "bg"}
+    for step, tag in names.items():
+        for L in ("rmse", "mae", "tail", "exceedance"):
+            v = S["steps"].get(step + "|" + L)
+            if not v or v.get("median") is None:
+                continue
+            c.add("loss." + tag + "." + L, v["median"],
+                  stat="median percentage reduction in " + L + " across cities",
+                  n=v["n"], source=src, ledger="F.109")
+            c.add("loss." + tag + "." + L + ".lo", v["lo"],
+                  stat="2.5th percentile, bootstrap over cities", n=v["n"],
+                  source=src, ledger="F.109")
+            c.add("loss." + tag + "." + L + ".hi", v["hi"],
+                  stat="97.5th percentile, bootstrap over cities", n=v["n"],
+                  source=src, ledger="F.109")
+    for L, v in S.get("inversion", {}).items():
+        c.add("loss.inv." + L, v["median"],
+              stat="deep-tropical local minus background advantage under " + L
+                   + ", paired within city",
+              n=v["n"], source=src, ledger="F.109",
+              note="positive favours local observation, negative favours the background proxy")
+        c.add("loss.inv." + L + ".lo", v["lo"],
+              stat="2.5th percentile, bootstrap over cities", n=v["n"], source=src,
+              ledger="F.109")
+        c.add("loss.inv." + L + ".hi", v["hi"],
+              stat="97.5th percentile, bootstrap over cities", n=v["n"], source=src,
+              ledger="F.109")
+
 def build() -> dict:
     d = _ladder()
     c = Claims()
@@ -2180,6 +2227,7 @@ def build() -> dict:
     cluster_bootstrap(c)
     spatial_tournament(c)
     srep_external(c)
+    loss_sensitivity(c)
     return dict(
         generated=str(date.today()),
         gate="Phase 1 of docs/improvement_plan_2026-09-01.md",

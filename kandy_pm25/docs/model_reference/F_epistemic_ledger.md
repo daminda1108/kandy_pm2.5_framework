@@ -5732,3 +5732,65 @@ model change.
   the conceptual frame in Chapter 3. Table 7.1's `Bud1 → Bud2` row also had "six further sensors"
   where the code takes `pool[:6]`; corrected to **stations three to six** (gotcha #92 again, a
   tenth site).
+
+
+## F.109 — 🔴 THE KANDY RECOMMENDATION IS A STATEMENT ABOUT AVERAGE DAYS; ON EPISODES THE ORDERING REVERSES
+
+`scripts/loss_sensitivity.py --stream maiac` → `loss_sensitivity.{csv,json}`. The external
+reviewer's largest surviving methodological point: *"your entire observation-value framework uses
+daily RMSE... a station that contributes almost nothing to ordinary daily RMSE might be extremely
+valuable for high-PM episodes."* The thesis had conceded this in prose. **Conceding is weaker than
+measuring, so the ladder was re-scored.** Nothing about the construction requires RMSE: the tiers
+are nested and the shrinkage is fitted identically whatever the scoring rule.
+
+Four losses, on the **honest MAIAC stream** (scoring this on the retired fused product would not
+answer the question asked): `rmse` · `mae` · **`tail`**, RMSE on days in the city's observed top
+decile · **`exceedance`**, one minus balanced accuracy at the WHO 24-hour guideline of 15 µg/m³.
+
+### 🟢 Two results are LOSS-ROBUST, and one of them is strengthened
+
+| step | rmse | mae | tail | exceedance |
+|---|---:|---:|---:|---:|
+| first two sensors | 22.88 | 23.13 | **5.22 [−3.3, 15.6]** | **0.00 [−1.3, 4.8]** |
+| **stations three to six** | **0.13** | **0.00** | **0.00** | **0.00** |
+| **a background series** | 33.13 | 34.08 | **39.47** | **33.42** |
+
+🟢 **The redundancy null survives every loss.** The natural counter-argument — that extra stations
+earn their keep on episodes rather than on average days — is exactly what `tail` and `exceedance`
+would reveal, and they show **zero under both**. This is the single most exposed result in the
+thesis and it is now the most robust.
+🟢 **The background rung is largest under every loss, and largest of all on the TAIL (39.47%).**
+A regional background carries the episode signal, which is coherent with W2: Kandy's episodes are
+substantially transboundary events, and a background series is what sees them coming.
+
+### 🔴 AND THE RESULT THAT DOES NOT SURVIVE IS THE ONE KANDY DEPENDS ON
+
+The deep-tropical inversion, paired within city, n=13:
+
+| loss | local minus background | 95% over cities | favours |
+|---|---:|---|---|
+| rmse | **+33.67 pp** | [−2.28, +53.38] | local |
+| mae | **+42.21 pp** | [−13.26, +50.40] | local |
+| **tail** | **−16.38 pp** | [−26.22, +15.78] | **background** |
+| **exceedance** | **−7.57 pp** | **[−32.10, −2.68]** | **background, EXCLUDES ZERO** |
+
+🔴 **The ordering flips sign between average-day and episode losses, and on exceedance the
+interval excludes zero in the background's favour.** The recommendation that Kandy should buy a
+local observation before a regional one is therefore **a statement about daily city-mean accuracy**.
+If the purpose is exceedance detection or health alerting — which Chapter 2 names as a stake —
+**the measurement says the opposite.** The reviewer predicted precisely this and it is what
+happened.
+
+⚠ **This does not overturn Chapter 9's recommendation; it scopes it.** The delivered product is a
+daily city-mean field, and for that product local wins. What changes is that the recommendation
+may no longer be stated without naming its loss.
+
+### ⚠ A fragility worth recording about the headline itself
+This reimplementation reproduces the recorded RMSE inversion median closely (**+33.67** here
+against the recorded **+33.34**) but its interval **includes zero** where the recorded one excludes
+it (**[+7.00, +50.07]**). The difference is resampling detail on **n = 13**, not a disagreement
+about the estimate. **An interval on thirteen cities that excludes zero under one bootstrap and
+not under another is not a robust exclusion**, and the inversion should be quoted with that
+fragility attached rather than as a clean significance claim.
+
+Claims: `loss.*` (39).

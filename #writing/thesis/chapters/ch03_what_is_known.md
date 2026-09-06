@@ -95,8 +95,11 @@ times what a well-specified non-linear model reports.
 
 **What learning does not add is the ability to see what the predictors do not encode.** This is
 the constraint that Chapter 8 turns into a measurement. A model can only redistribute the
-information present in its inputs, and if the spatial structure of a city is not encoded in any
-globally available covariate, no architecture recovers it. Chapter 5 records five separate
+information present in its inputs, so where the spatial structure of a city is not encoded in the
+covariates a model is given, no change of architecture will recover it. Stated as a claim about
+this study rather than as a theorem, what Chapter 8 establishes is narrower and is the version to
+rely on: the information and the model classes tested here did not recover it, within a detection
+limit fixed in advance. Chapter 5 records five separate
 attempts to find such structure and Chapter 8 records a sixth, pre-registered with a detection
 limit stated in advance.
 

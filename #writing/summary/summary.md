@@ -35,9 +35,9 @@ measurement possible.
 in the pattern misplaces material without creating it.
 
 **Exact degradation.** The model declares which observation streams each tier may use, and
-withholding one reproduces the lower tier bit-for-bit rather than approximately. That converts an
-ablation into a measurement of information: the difference between two tiers is information loss
-and nothing else, because it is the same model rather than a refitted one.
+withholding one reproduces the lower tier bit-for-bit rather than approximately. Specification and
+fitting are held constant, so the difference between two tiers isolates the predictive consequence
+of admitting that stream rather than confounding it with a change of model.
 
 ## Three results
 

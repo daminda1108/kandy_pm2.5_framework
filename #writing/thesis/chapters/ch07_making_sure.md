@@ -67,8 +67,14 @@ resembling its band, which is an assumption with evidence behind it and not a de
 ## 7.2 The marginal predictive value of each information stream
 
 The measurement is possible because the tiers are nested. A lower tier is not a different model,
-it is the same model with a stream removed, so the difference between two tiers is information
-loss and nothing else.
+it is the same model with a stream removed, so the specification and the fitting machinery are
+held constant and the difference between two tiers isolates the predictive consequence of
+admitting that stream. That is a weaker sentence than saying the difference is information loss
+and nothing else, and it is the accurate one. Admitting a stream also changes what the estimator
+can fit, how the shrinkage weight lands and how the covariates interact, all of which are
+consequences of the added information rather than separate effects, but none of which is nothing.
+What the nesting rules out is the confound that matters: a difference produced by changing the
+model rather than by changing what it was allowed to see.
 
 **What is measured, stated precisely.** The phrase *value of information* has a formal meaning in
 decision theory, where it is the reduction in expected loss under a stated decision problem
@@ -82,7 +88,8 @@ measuring something related and not identical [@Choi2026].
 
 Two consequences follow from the surrogate and both bound what the chapter can conclude. A stream
 that would change a decision without much changing average error is under-valued here, which is
-plausible for episode warning, where the loss is concentrated in a few days a year. And because
+plausible for episode warning, where the loss is concentrated in a few days a year. That is a
+statement the chapter can test rather than merely make, and Section 7.2.1 tests it. And because
 the estimator shrinks a tier back toward the tier below when the new stream does not help,
 **the ladder cannot find that a stream is harmful**, only that it is not usable. That is the
 right behaviour for measuring what a rational user could obtain from optional information, and it
@@ -179,6 +186,57 @@ made of.
 **Additional monitors add almost nothing this model can use.** At
 {{claim:step.bud1_bud2}} per cent the effect is not small but absent, and Section 7.4 shows it is
 the most estimator-robust result in the study.
+
+### 7.2.1 Does the ordering survive a different loss?
+
+Everything above is measured as a reduction in daily root mean square error, which was chosen
+because it is what the estimator already optimises. Nothing in the construction requires it: the
+tiers are nested and the shrinkage is fitted identically whatever the scoring rule, so the ladder
+can simply be re-scored. Four losses were used, on the raw satellite stream of Section 7.5:
+root mean square error; mean absolute error; the same squared loss computed **only on days in the
+city's observed top decile**, which is the episode question stated as directly as this frame
+allows; and one minus balanced accuracy at the World Health Organization twenty-four-hour
+guideline of {{claim:loss.who_threshold}} micrograms per cubic metre, which makes the loss a
+classification error rather than a magnitude error.
+
+| step | daily error | absolute error | episode days | exceedance |
+|---|---:|---:|---:|---:|
+| the first two sensors | {{claim:loss.first2.rmse}} | {{claim:loss.first2.mae}} | {{claim:loss.first2.tail}} | {{claim:loss.first2.exceedance}} |
+| monitors three to six | {{claim:loss.stn3to6.rmse}} | {{claim:loss.stn3to6.mae}} | {{claim:loss.stn3to6.tail}} | {{claim:loss.stn3to6.exceedance}} |
+| a background series | {{claim:loss.bg.rmse}} | {{claim:loss.bg.mae}} | {{claim:loss.bg.tail}} | {{claim:loss.bg.exceedance}} |
+
+**Two results are loss-robust, and the more exposed of them is strengthened.** Monitors three to
+six buy nothing under any of the four, and this is the result most vulnerable to the objection the
+test was built to answer: the natural reply to a redundancy finding is that additional stations
+earn their keep on episodes rather than on ordinary days, and the episode and exceedance columns
+are precisely where that would appear. They show zero in both. **A background series is the largest
+gain under every loss, and its largest value of all is on episode days**, at
+{{claim:loss.bg.tail}} per cent. That is coherent rather than surprising: if a substantial part of
+a valley city's worst days is regional in origin, a series drawn from outside the urban core is
+what sees them arriving.
+
+**The result that does not survive is the one the demonstration city depends on.** Paired within
+city across the deep-tropical band, the advantage of two local sensors over the background proxy is
+{{claim:loss.inv.rmse}} points on daily error and {{claim:loss.inv.mae}} on absolute error, both
+favouring local observation. On episode days it is {{claim:loss.inv.tail}} points and on
+exceedance {{claim:loss.inv.exceedance}} points
+[{{claim:loss.inv.exceedance.lo}}, {{claim:loss.inv.exceedance.hi}}], both favouring the
+background, and the exceedance interval excludes zero.
+
+**The ordering therefore flips sign between average-day and episode losses.** Section 9.1's
+recommendation is a statement about daily city-mean accuracy, which is the product this thesis
+delivers, and it may not be stated without naming that loss. For exceedance detection or health
+alerting, which Chapter 2 gives as one of the two stakes, the measurement points the other way.
+This does not overturn the recommendation. It scopes it, and the scope was previously assumed
+rather than measured.
+
+⚠ One fragility belongs with this table rather than after it. The reimplementation used here
+reproduces the recorded daily-error inversion closely, at {{claim:loss.inv.rmse}} points against
+the {{claim:inv.maiac.median}} recorded in Section 7.3, but its interval **includes zero** where
+the recorded one excludes it. The difference is resampling detail on thirteen cities rather than a
+disagreement about the estimate. An interval on thirteen cities that excludes zero under one
+bootstrap and not under another is not a robust exclusion, and the inversion is quoted throughout
+this thesis with that fragility attached.
 
 ### Where the redundancy actually begins, which is earlier than the ladder suggests
 
@@ -620,7 +678,10 @@ open question rather than settled by choosing the record that agrees.
 
 {{fig:uncertainty}}
 
-The delivered ninety per cent interval covers {{claim:kandy.cov90}} per cent of observations at
+The interval is nominal at ninety per cent rather than guaranteed at it: conformal calibration
+earns its coverage under exchangeability, which strongly dependent environmental series do not
+satisfy, so what follows is an empirical check rather than a confirmation of a theoretical
+property. It covers {{claim:kandy.cov90}} per cent of observations at
 the two sensors, which read alone suggests the intervals are too narrow. Section 6.2 gave the
 diagnosis: the misses are one-sided, {{claim:kandy.miss_below}} per cent below against
 {{claim:kandy.miss_above}} per cent above, with a median offset of

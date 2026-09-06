@@ -15,9 +15,11 @@ changed the design of the model that followed. Four established something narrow
 closing a question or exposing a defect in how the work was being checked. A reader who wants the
 argument rather than the record can take the first group and Section 5.9.
 
-**The four that changed the design.** Section 5.1 established that physics transfers between
-cities while a fitted parameterisation does not, which is why the final construction imposes its
-physics and learns only the temporal behaviour. Section 5.3 established that a learned spatial
+**The four that changed the design.** Section 5.1 found that in the one transfer tested, between
+two cities on different continents, an imposed physical description survived the move while a
+fitted parameterisation did not. That is a single comparison rather than a general property of
+physics, and it is reported as the observation that motivated a design decision rather than as a
+law: it is why the final construction imposes its physics and learns only the temporal behaviour. Section 5.3 established that a learned spatial
 field trained across cities does not recover within-city structure. Section 5.4 established that
 a model given coordinates will memorise them, which produced the admissibility rule governing
 every tier in Chapter 6. Section 5.8 supplied the bounded spatial null that Chapter 8 is devoted
@@ -258,7 +260,7 @@ different ways in a single document without anyone noticing.
 full before anything was run.
 
 The registration [OSF 2jyfg] stated the benchmark, the detection limit and the bar. The benchmark
-was the best single globally available predictor, built-up land-cover fraction measured within
+was the strongest single globally available predictor tested here, built-up land-cover fraction measured within
 2.4 kilometres, which reaches a median per-city rank correlation of {{claim:phase1.best_rho}}
 across {{claim:phase1.cities}} cities and {{claim:phase1.stations}} stations. The smallest
 improvement the frame could detect at eighty per cent power was {{claim:phase1.min_detectable}}.

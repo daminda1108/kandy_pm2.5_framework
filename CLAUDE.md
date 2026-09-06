@@ -70,6 +70,68 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-08, 🔴 **THE TWO SUBMISSION BLOCKERS FIXED — AND THE KANDY RECOMMENDATION SCOPED TO ONE LOSS**)
+
+Third external review round, scoring **91–93/100** and naming **two things to fix before calling it
+submission-ready**. Both fixed. A third point was answered by computation and **produced the most
+consequential qualification in the chapter**. Narrative: SESLOG 2026-09-08. Ledger **F.109**.
+
+### 🔴 BLOCKER 1 — an identifiability claim that was mathematically false (§6.4)
+The thesis said the unit-mean gauge *"makes level and pattern separately identifiable"*. **It does
+not identify `B`.** For any admissible alternative background `B'`, setting
+`P' = (C − B')/(T − B')` gives a pattern that also has unit spatial mean and reproduces the same
+field — so the gauge is satisfied for **every** candidate background. It identifies the **anchor**
+and pins the pattern's normalisation; the split into background and increment is identified by
+§6.6's constraints and §6.3's construction, not by the gauge. Corrected, with the counterexample
+stated in the text.
+
+### 🔴 BLOCKER 2 — Table 9.1's evidence column cited the wrong result
+Row one recommended **a reference monitor** on the evidence *"local sensors are worth 43.7% in this
+band"* — while the thesis says elsewhere that **the ladder measured LOW-COST sensors and 43.7% is
+not evidence for reference grade**. Rebuilt: the evidence column now names the **kind** of argument
+(`LADDER` / `MEASUREMENT DESIGN` / `REGISTERED NULL` / `NO MEASUREMENT`) as well as its content, and
+the reference-grade row carries the measurement-design case alone.
+
+### 🔴 F.109 — THE RECOMMENDATION HOLDS FOR AVERAGE DAYS AND REVERSES ON EPISODES
+The reviewer's largest surviving point was that everything is scored on daily RMSE. The ladder was
+**re-scored under four losses** on the honest MAIAC stream: `rmse` · `mae` · **`tail`** (top decile
+of observed days) · **`exceedance`** (balanced accuracy at the WHO 15 µg/m³ guideline).
+
+| step | rmse | mae | tail | exceedance |
+|---|---:|---:|---:|---:|
+| first two sensors | 22.88 | 23.13 | **5.22** | **0.00** |
+| **stations three to six** | **0.13** | **0.00** | **0.00** | **0.00** |
+| **a background series** | 33.13 | 34.08 | **39.47** | **33.42** |
+
+🟢 **The redundancy null survives all four** — and this is the result most exposed to the
+objection, since the natural reply is that extra stations earn their keep on episodes. They do not.
+🟢 **The background is largest under every loss and LARGEST OF ALL ON THE TAIL**, coherent with W2:
+Kandy's worst days are substantially regional, and a background series is what sees them coming.
+🔴 **But the deep-tropical inversion FLIPS SIGN.** Paired, n=13: rmse **+33.67**, mae **+42.21**
+(local wins) — tail **−16.38**, exceedance **−7.57 [−32.10, −2.68], EXCLUDES ZERO** (background
+wins). **"Buy a local sensor first" is a statement about daily city-mean accuracy.** For exceedance
+detection or health alerting — a stake Chapter 2 names — the measurement says the opposite.
+⚠ **A fragility recorded about the headline:** this reimplementation reproduces the RMSE inversion
+median (**+33.67** vs recorded **+33.34**) but its interval **includes zero** where the recorded one
+excludes it. Resampling detail on **n=13**. **An exclusion that survives one bootstrap and not
+another is not robust**, and the inversion is now quoted with that attached.
+
+### Eight further wordings narrowed (none touched a model, a fit or a number)
+**Procurement → measurement priority**: §9.1 retitled, and it now says it **informs** procurement
+rather than optimising it, since no cost, maintenance, reliability or compliance value enters the
+ladder. *"The cheapest recommendation in it"* is gone. · **The positivity constraint** is now a
+**non-negative local-contribution constraint**, a modelling choice rather than a physical theorem
+— continuous emission is about sources, `T−B` is about a constructed decomposition. · **"Difference
+= information loss and nothing else"** → specification and fitting held constant, isolating the
+predictive consequence. · **The benchmark is "strongest tested"**, not a mathematical upper bound.
+· **"Physics transfers between cities"** → one comparison, reported as motivating a design decision.
+· **"One observation captures essentially everything"** now carries its qualifiers inside the
+sentence. · **The interval is "nominal and empirically checked"** — conformal coverage needs
+exchangeability, which a monsoon series does not satisfy. · **New §9.9** puts *the absolute
+concentration scale at Kandy is not independently validated* in the closing position.
+
+**Thesis: 39,476 words · 35 figures · 10 tables · 528 claims · 0 lint errors.** Summary 2 pages.
+
 ## Current State (updated 2026-09-07, 🔬 **AN OUTSIDE REVIEW ANSWERED BY COMPUTATION — THREE OBJECTIONS, THREE MEASUREMENTS**)
 
 A full external review (~8.5–9/10 as an undergraduate thesis; weakest on statistical inference and

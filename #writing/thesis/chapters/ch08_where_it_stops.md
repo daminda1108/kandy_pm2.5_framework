@@ -109,7 +109,7 @@ sizes they could only have found residual correlations between
 {{fig:nullpower}}
 
 The sixth was done differently. Before any model was written, the benchmark, the detection limit
-and the bar were registered [OSF 2jyfg]. The benchmark is the best single globally available
+and the bar were registered [OSF 2jyfg]. The benchmark is the strongest single globally available
 predictor, built-up land-cover fraction within {{claim:phase1.best_radius_km}} kilometres, at
 {{claim:phase1.best_rho}}
 across {{claim:phase1.cities}} cities. The detection limit on that frame is
@@ -124,6 +124,12 @@ The resulting statement is bounded, and none of the previous five produced anyth
 > On {{claim:phase1.cities}} cities and {{claim:phase1.stations}} stations, a learned within-city
 > pattern does not beat the best single globally available predictor by more than
 > {{claim:phase1.min_detectable}} in rank correlation.
+
+The benchmark in that sentence is the strongest predictor **tested here**, chosen by ranking the
+free rasters this project had assembled. It is not a mathematical upper bound on what free data
+could supply, and a covariate nobody in this study thought to pull could beat it. What the
+tournament below establishes is that no model family beats it on the covariates that were
+assembled, which is a different and weaker statement than no predictor existing.
 
 That is a claim which can be disputed, and which a better experiment can supersede. "No spatial
 signal was found" is not.

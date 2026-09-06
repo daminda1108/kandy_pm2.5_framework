@@ -121,6 +121,8 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 | **"monitors three to eight"** | the code is `pool[:6]`; the two ranges have OPPOSITE signs (+0.75 vs -0.49 pp) | **stations three to six** (F.102) |
 | **"two sensors is where the ladder saturates"** | 2 was the Kandy BUDGET; the second station adds **0.01 pp** | **saturation is at ONE station** (F.102) |
 | **"deliberate siting recovers pattern a convenience network cannot"** | 43 cities, 601 stations, **paired -0.044 [-0.095, +0.118]**, winning 19/43. The +0.114 difference-of-medians points the other way | **undetectable**; the LUR gap is INFORMATION, not siting (F.103) |
+| **"unit mean makes level and pattern separately identifiable"** | the gauge holds for **every** admissible `B`: set `P'=(C-B')/(T-B')` | it identifies the ANCHOR; `B` needs §6.6's constraints (F.108/blocker) |
+| **"buy a local sensor first" stated without a loss** | flips sign on episodes: tail **-16.38**, exceedance **-7.57 [-32.10, -2.68]** | true for a **daily city mean**; the background wins on exceedance (F.109) |
 | **f sensitivity quoted as one range** | there are **THREE** axes: anchored years **0.466-0.501** · `F_min` sweep **0.482-0.509** · **window form 0.489-0.547** | name the axis with the range (F.108) |
 | **intervals bootstrapped over CITIES** | cities share networks; 11 of 48 are one — clustering widens every interval by 1.34-1.97x | **cluster-bootstrap intervals** (F.104); no conclusion changes |
 | **the model's own `s_rep`** | estimated from the FIELD's neighbourhood gradient; instruments sharing a cell disagree **2.6x** more on the panel and **17x** more at Kandy | take it from **co-located instruments** (F.106) |

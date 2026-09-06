@@ -115,3 +115,4 @@ node_modules/
 !scripts/cluster_bootstrap.py
 !scripts/spatial_tournament.py
 !scripts/srep_external_check.py
+!scripts/loss_sensitivity.py
