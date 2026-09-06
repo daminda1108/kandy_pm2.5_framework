@@ -355,7 +355,7 @@ def t9_1_next():
            ["Precipitation in the forecast drivers",
             "wet removal, absent from the current driver set",
             "no measurement; a known structural gap"],
-           ["More monitors three through eight", "nothing measurable",
+           ["More monitors beyond the first", "nothing measurable",
             f"worth {tok('step.bud1_bud2')} per cent"]],
           note="The last row is included because it is the acquisition most often proposed "
                "and the one the measurement does not support.")

@@ -1149,6 +1149,61 @@ def campaign_cost(c: Claims) -> None:
           note="a cliff. The stratum can be trimmed but not gutted")
 
 
+    # ⚠ TAG NAMES ARE HISTORICAL AND WRONG. Every claim whose key contains `stn3to8` describes
+    # the step from 2 stations to SIX, because ladder() sets b2 = pool[:6]. The keys were named
+    # before anyone read that line. They are not renamed, because a key rename breaks every
+    # reference in one commit and the gate cannot tell a rename from a drift; the notes carry
+    # the correction and the prose says "three to six". See F.102.
+
+
+def station_count(c: Claims) -> None:
+    """F.102. Is TWO sensors the right number, or just Kandy's number? It is Kandy's number.
+
+    The ladder's first ground rung adds exactly two stations, and the budget spec says why:
+    SENSOR_PAIR is "<= 2 local low-cost sensors (the Kandy budget)" and Bud1's note reads "the
+    deployed Kandy budget". Sweeping the count from 1 to 8 shows the saturation is at ONE, so
+    the headline belonged to the first station all along.
+
+    The sweep also caught a prose error. `ladder()` sets b2 = pool[:6], so the second ground
+    rung uses SIX stations, and the thesis described that step as "monitors three to eight".
+    """
+    import json as _json
+    f = MOD / "station_count_curve.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = _json.load(fh)
+    src = "station_count_curve.json"
+
+    c.add("stn.one_gain", S["k1_gain"],
+          stat="median per-city % RMSE reduction from ONE station", n=S["k1_cities"],
+          source=src, ledger="F.102",
+          note="against 17.8 for two. The first station does essentially all the work, and the "
+               "two-station headline was the Kandy budget rather than a measured optimum")
+    c.add("stn.one_lo", S["k1_lo"], stat="2.5th percentile, bootstrap over cities",
+          n=S["k1_cities"], source=src, ledger="F.102")
+    c.add("stn.one_hi", S["k1_hi"], stat="97.5th percentile, bootstrap over cities",
+          n=S["k1_cities"], source=src, ledger="F.102")
+    c.add("stn.second_adds", S["d2_median"],
+          stat="paired median gain of a second station over one, percentage points",
+          n=S["k1_cities"], source=src, ledger="F.102",
+          note="paired within city. The second station is not a step, it is a rounding error")
+    c.add("stn.max_extra", S["max_extra_over_one"],
+          stat="largest paired median gain of any count from 2 to 8 over one station, "
+               "percentage points",
+          n=S["k1_cities"], source=src, ledger="F.102",
+          note="no count from two to eight beats one station by more than this. The redundancy "
+               "begins at the SECOND station, not the third")
+    c.add("stn.max_extra_k", S["max_extra_at_k"],
+          stat="the station count at which that largest gain occurs", n=S["k1_cities"],
+          source=src, ledger="F.102")
+    c.add("stn.bud2_stations", S["bud2_stations_in_code"],
+          stat="stations the second ground rung actually uses, from the code", n=1,
+          source="modular_validation_all.py", ledger="F.102",
+          note="b2 = pool[:6]. The thesis described this step as 'monitors three to eight' in "
+               "several places, which is a rung two stations wider than the one that was run")
+
+
 def colombo_donor(c: Claims) -> None:
     """F.63, re-run 2026-09-04 by scripts/colombo_donor_test.py.
 
@@ -1836,6 +1891,7 @@ def build() -> dict:
     sensor_design(c)
     campaign_power(c)
     campaign_cost(c)
+    station_count(c)
     chemistry_deepening(c)
     ladder_order(c)
     learned_pattern(c)

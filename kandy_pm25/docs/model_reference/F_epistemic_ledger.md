@@ -5317,3 +5317,83 @@ within ~0.04 of 1.58 — **which would itself be the finding**, since it would m
 fine surface is right about within-cell contrast.
 
 Claims: `cost.*` (12), `net.saturation_{lo,hi,seed_sd}`.
+
+
+## F.102 — 🔴 TWO sensors was Kandy's number, not a measured optimum. The saturation is at ONE.
+
+`scripts/station_count_curve.py`. Prompted by the user asking whether the ladder's emphasis on
+two sensors reflected Kandy having two, or a genuine finding. **It reflected Kandy having two,
+and the spec says so in as many words.**
+
+### The design choice, documented and never disclosed in the prose
+
+`src/modular/budgets.py`:
+* `SENSOR_PAIR = "sensor_pair"  # <= 2 local low-cost sensors (the Kandy budget)`
+* `BUD1` note: *"two elevation-gradient sensors. **The deployed Kandy budget.**"*
+
+So the first ground rung was sized to match the demonstration city. Defensible as a design
+choice — the point is to price the tier Kandy occupies — but **the two-station figure had never
+been checked against any other count**, and the thesis reported "the first two sensors buy 17.8
+per cent" as though two were a measured optimum.
+
+### 🔴 THE SWEEP: one station does essentially all the work
+
+Same frame, same `Bud0c`, same seed, only k varies. Each k shrunk toward the SENSORLESS rung so
+every count is scored against the same parent (chaining k-1 → k would be path-dependent).
+
+| k | cities | cumulative gain | step |
+|---:|---:|---:|---:|
+| **1** | 47 | **17.02%** | **+17.02** |
+| 2 | 48 | 17.85% | +0.83 |
+| 3 | 48 | 17.38% | −0.46 |
+| 4 | 48 | 18.50% | +1.11 |
+| 5 | 48 | 18.82% | +0.33 |
+| 6 | 48 | 18.60% | −0.23 |
+| 7 | 48 | 17.98% | −0.62 |
+| 8 | 42 | 17.36% | −0.62 |
+
+**Non-monotone from k=2 onward**, which is the signature of noise rather than structure. Paired
+within city and bootstrapped over cities (2000):
+
+| k vs 1 | paired median | 95% |
+|---:|---:|---|
+| 2 | **+0.01 pp** | [+0.00, +0.10] |
+| 4 | +0.13 pp | [+0.00, +0.42] |
+| 8 | +0.15 pp | [+0.00, +0.70] |
+
+🟢 **No count from 2 to 8 beats one station by more than 0.15 percentage points.** One station
+gives **17.02% [4.98, 21.83]**.
+
+**The redundancy begins at the SECOND monitor, not the third.** This makes the finding STRONGER
+than the ladder's own rungs could express: *one local observation captures essentially everything
+a city-mean model can extract from local observation.*
+
+⚠ Pooled, **not band-stratified** — does not establish that one station suffices inside the
+deep-tropical band where F.97's inversion is measured. ⚠ Prices stations for a DAILY CITY-MEAN. A
+second sensor is what makes a between-sensor comparison possible at all, which is how the
+`donor.kandy_sensor_reliability` = 0.603 and the interval centring of §7.9 were obtained. **A pair
+buys quality assurance the model does not score.**
+
+### 🔴 AND A PROSE ERROR THE SWEEP EXPOSED
+
+`ladder()` sets `b2 = pool[:min(6, len(pool))]` — the second ground rung uses **SIX** stations, so
+the step from `Bud1` adds stations **3, 4, 5, 6**. The thesis described it as **"monitors three to
+eight"** in six places, plus "three through eight" in Ch9 and T9_1.
+
+Not merely wider: **the two ranges have opposite signs.** Stations 3→6 give **+0.75 pp**;
+stations 3→8 give **−0.49 pp**. All nine occurrences corrected to "three to six" or reworded.
+
+⚠ **Claim keys containing `stn3to8` are HISTORICAL AND WRONG** (`boot.*.stn3to8.*`,
+`order.stn3to8_*`). They describe the 2→6 step. **Not renamed**: a key rename breaks every
+reference in one commit and the gate cannot distinguish a rename from a drift. The notes carry
+the correction and the prose says "three to six".
+
+### Family
+
+Third instance of spec, prose and implementation disagreeing without anything catching it —
+after **F.84** (`Bud0` using one of three admitted streams) and gotcha **#85** (MAIAC coverage
+inherited from a different stream's pull). Every gate in the project checks that a number is
+CURRENT; none checks that a number is DESCRIBED correctly. **Found by a user asking why the
+number was two.**
+
+Claims: `stn.*` (7).

@@ -106,11 +106,11 @@ with replacement:
 | step | median | interval over cities |
 |---|---:|---:|
 | the first two sensors | {{claim:step.bud0c_bud1}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} |
-| monitors three to eight | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} |
+| monitors three to six | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} |
 | a background series | {{claim:step.bud2_bud3}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} |
 
 Those intervals are wide, and they should be. **The one that is not wide is the one the thesis
-leans on hardest**: monitors three to eight are bounded above by
+leans on hardest**: monitors three to six are bounded above by
 {{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, so the absence of
 that effect is established far more tightly than the presence of either other effect. The first
 two sensors and the background are both real and neither is pinned down to better than roughly a
@@ -127,11 +127,40 @@ lights and population, and which is available for every city on Earth at no cost
 seen: an annual level cannot touch day-to-day variance, and daily error is what daily variance is
 made of.
 
-**Monitors three to eight add almost nothing this model can use.** At
+**Additional monitors add almost nothing this model can use.** At
 {{claim:step.bud1_bud2}} per cent the effect is not small but absent, and Section 7.4 shows it is
 the most estimator-robust result in the study.
 
-Two qualifications belong with that row, because it is the row most likely to be quoted as
+### Where the redundancy actually begins, which is earlier than the ladder suggests
+
+The rung above adds two stations, and that number was not chosen by measurement. The budget
+specification defines the stream as at most two local low-cost sensors and annotates it as **the
+deployed Kandy budget**, so the ladder's first ground rung was sized to match the demonstration
+city. That is a defensible design choice, because the point is to price the tier Kandy actually
+occupies. It also means the two-station figure had never been checked against the alternatives.
+
+Sweeping the count from one to eight on the same frame, the same sensorless rung and the same
+seed, so that only the number of stations varies:
+
+**A single station buys {{claim:stn.one_gain}} per cent**, against
+{{claim:step.bud0c_bud1}} for two. Paired within city, **the second station adds
+{{claim:stn.second_adds}} percentage points**, and no count between two and eight beats one
+station by more than {{claim:stn.max_extra}} percentage points.
+
+**The saturation is at one, not at two.** The headline belonged to the first station all along,
+and "the first two sensors" overstates what the pair contributes. The redundancy this chapter
+reports therefore begins at the **second** monitor rather than the third, which makes the finding
+stronger than the ladder's own rungs can express: one local observation captures essentially
+everything a city-mean model can extract from local observation.
+
+⚠ Two limits on that. The sweep is pooled rather than band-stratified, so it does not establish
+that a single station suffices within the deep-tropical band specifically, where Section 7.3's
+inversion is measured. And it prices stations for a **daily city-mean**; a second station is what
+makes a between-sensor comparison possible at all, which is how the calibration of Section 7.9 and
+the reliability figure of Section 7.2 were obtained. A pair buys quality assurance that the model
+does not score.
+
+Two further qualifications belong with the row, because it is the one most likely to be quoted as
 procurement advice. It concerns **attainable predictive improvement in a daily city-mean**, so it
 says those monitors add little that this model can exploit for that quantity, and not that they
 carry no information. A monitor also serves compliance, public reporting and calibration, none of
@@ -139,9 +168,9 @@ which this measurement addresses. And the monitors in question were **not sited 
 purpose**: they are the networks each panel city happens to operate, so what is measured is the
 marginal value of additional monitors *as actually placed*. Where a sensor is placed is itself
 part of the information problem and a developed research question in its own right
-[@Verghese2022; @Choi2026]. Nothing here shows that six monitors placed deliberately across a
-city's land-use contrast would be worth as little, and Chapter 9 recommends exactly such a
-campaign for a different purpose.
+[@Verghese2022; @Choi2026]. Nothing here shows that monitors placed deliberately across a city's
+land-use contrast would be worth as little, and Chapter 9 recommends exactly such a campaign for
+a different purpose.
 
 **A background series is the largest single gain measured.** At {{claim:step.bud2_bud3}} per
 cent it exceeds every other rung, and the instrument that would supply it is the one air quality
@@ -310,7 +339,7 @@ conclude. This thesis therefore claims the ladder is robust across non-linear es
 explicitly not that even a linear model reproduces it, which an earlier version of this work did
 claim.
 
-One result survives every learner including ridge: the second-through-eighth monitor rung stays
+One result survives every learner including ridge: the third-through-sixth monitor rung stays
 at approximately zero, with a spread of {{claim:learner.all_spread_bud1_bud2}} percentage points.
 The redundancy of those monitors is the most robust finding in the study.
 
@@ -336,13 +365,13 @@ information set and only the interior order differs:
 | quantity | in the production order | with the background moved one step earlier |
 |---|---:|---:|
 | what a background series buys | {{claim:order.bg_after_8stn}} per cent | {{claim:order.bg_after_2stn}} per cent |
-| what monitors three to eight buy | {{claim:order.stn3to8_no_bg}} per cent | {{claim:order.stn3to8_with_bg}} per cent |
+| what monitors three to six buy | {{claim:order.stn3to8_no_bg}} per cent | {{claim:order.stn3to8_with_bg}} per cent |
 
 **The background result is order-robust.** It is the largest step in either position, and moving
 it changes it by about two percentage points.
 
 **The redundancy result is order-robust in its conclusion and not in its magnitude.** Monitors
-three to eight buy {{claim:order.stn3to8_with_bg}} per cent once a background is present, which
+three to six buy {{claim:order.stn3to8_with_bg}} per cent once a background is present, which
 is more than twenty times the production figure and still small. Part of that difference is not
 extra local information at all: with more stations the fitted background coefficient is estimated
 more sharply, so some of the apparent gain is a better-estimated background rather than a
@@ -432,7 +461,7 @@ appropriate for Kandy while leaving open what the band contrast is actually made
 {{fig:confounds}}
 
 The gain from additional sensors depends on what they are, and the class matters. Median
-shrinkage weight placed on sensors three through eight is {{claim:class.LCS.w_bud2}} for low-cost
+shrinkage weight placed on sensors three through six is {{claim:class.LCS.w_bud2}} for low-cost
 units against {{claim:class.reference.w_bud2}} for reference monitors, a contrast of
 {{claim:class.w_bud2_contrast}} times. Low-cost units gain more from replication because
 per-device error averages down.

@@ -40,12 +40,20 @@ one that matches carries an undocumented instrument, and it would anchor the cal
 low-cost sensors deployed afterwards. That case is strong, and the
 {{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
 
-**Do not expand to a third through eighth monitor as a way of improving this model.** At
-{{claim:step.bud1_bud2}} per cent the gain is indistinguishable from zero, with an upper bound of
-{{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, and it is the most
-estimator-robust result in the study. The qualification of Section 7.2 travels with it: this
-concerns monitors as networks actually place them, and a campaign designed across land-use
-contrast is a different proposition, recommended below for a different reason.
+**Do not expand the local network as a way of improving this model, and the redundancy starts
+earlier than the ladder's rungs suggest.** Section 7.2 sweeps the station count from one to
+eight: a single station buys {{claim:stn.one_gain}} per cent, the second adds
+{{claim:stn.second_adds}} percentage points paired within city, and no count between two and
+eight beats one station by more than {{claim:stn.max_extra}}. **One local observation captures
+essentially everything a city-mean model can extract from local observation**, which makes this
+the most estimator-robust result in the study and also the cheapest recommendation in it.
+
+Two qualifications travel with it. This concerns monitors as networks actually place them, and a
+campaign designed across land-use contrast is a different proposition, recommended below for a
+different reason. And a pair buys something the ladder does not score: a second sensor is what
+makes a between-sensor comparison possible, which is how the calibration checks of Chapter 7 were
+obtained at all. The advice is that a second station does not improve the model, not that it is
+worthless.
 
 {{tbl:T9_1}}
 
@@ -411,7 +419,7 @@ which recovered information that was not in the inputs.
 **More monitors in the same city, sited as networks conventionally site them**, for the reason
 given in Section 9.1. ⚠ This is not an argument against the campaign of Section 9.7. That
 campaign is a different proposition precisely because its sites are chosen for contrast rather
-than for compliance and access, and the measured redundancy of monitors three to eight says
+than for compliance and access, and the measured redundancy of additional monitors says
 nothing about it.
 
 **More cities in the panel**, unless they are chosen to break the class-band association, which
