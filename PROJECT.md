@@ -250,6 +250,79 @@ the thesis says so.
 
 ---
 
+## 2e. What an external review changed, and what it did not (2026-09-07, F.104-F.108)
+
+A full external methodological review was answered over two rounds. Its three computational
+objections were settled by running the experiments rather than by rewording, and all three found
+something. The reviewer's closing assessment of the design is the frame this section is written
+in: the core experimental architecture works, and the remaining work is narrower interpretation of
+individual estimands rather than repair.
+
+**Cities are not independent inferential units, and the intervals were too narrow.** The 48 panel
+cities fall into 29 clusters when a cluster is a network within a country, and 11 of them belong to
+one national network. A two-level bootstrap that resamples clusters and then cities inside each
+drawn cluster widens every interval by between 1.34 and 1.97 times. No conclusion moves. The
+background rung keeps a lower bound of 22.3 per cent, the first two sensors keep 4.5 per cent, and
+stations three to six remain bounded above by 1.37 per cent, so the redundancy null is improved
+rather than damaged by the objection. The deep-tropical inversion is unchanged to four decimal
+places, because those 13 cities occupy 12 clusters: the dependence problem belongs to the pooled
+numbers, which one national network dominates, and not to the band-stratified result the
+recommendation for Kandy rests on. An intra-class correlation of 0.82 to 0.99 was computed and then
+withdrawn, because 23 singleton clusters have no within-cluster variance and inflate it by
+construction; over cities with a sibling it runs 0.23 to 0.65.
+
+**The spatial null belongs to the data rather than to one model family.** Seven admissible model
+families were fitted on 47 cities and 636 stations with 60 predictors, each with the target city
+withheld entirely. None beats the benchmark of 0.301 by more than the registered detection limit
+of 0.130; the best is a Gaussian process on covariates at plus 0.018, and conventional stepwise
+land-use regression, the class that reaches published coefficients of determination between 0.43
+and 0.83, buys plus 0.010. Kriging and geographically weighted regression are inadmissible in this
+setting, because both estimate a surface from observations at the target and a city without
+monitors has none. Run anyway as an oracle with the city's own stations visible, they score 0.048
+and 0.073 against a benchmark of 0.301 obtained with no local observation at all, which extends the
+earlier interpolation result from inverse distance weighting to the geostatistical and locally
+weighted families.
+
+**The representativeness error is externally identifiable and it was too small.** The observation
+model estimated it from the local variability of the field, which asks the model to price its own
+unresolved structure. Instruments sharing a single model cell measure the quantity directly: 14
+such cells across 12 panel cities give a within-cell coefficient of variation of 0.140, the Kandy
+transect gives 0.911 as a censored lower bound, and the model estimator gives 0.054. The estimator
+is therefore too small by a factor of 2.6 on the panel and at least 17 at Kandy. It is not wired
+into production and the delivered interval takes its width from the conformal quantiles instead, so
+the shipped product is unaffected; what the result does is catch the defect at the point the
+specification requires the observation model to exist, which is before any regulatory record is
+ingested.
+
+**A 2026 Sri Lankan calibration study was missing from the bibliography and is load-bearing three
+ways.** It corroborates the refusal of Colombo as a background donor from an entirely different
+quantity, since calibration models fitted in Colombo lose effectiveness at Kandy across climatic
+zones. It gives the instrument-class confound a named mechanism, since a wet-season calibration
+applied to dry-season data costs 26.57 per cent in mean absolute percentage error and the
+deep-tropical stratum is 77 per cent low-cost against 25 per cent elsewhere. And its Kandy
+reference is the Torrington Park BAM-1020, recorded in this project as defunct, which is worth
+resolving because a reference anchor is the campaign's largest budget line.
+
+**One defect was introduced by a correction.** After the first round, the abstract was tightened to
+report the local fraction's sensitivity and gave the range 0.466 to 0.501 as sensitivity to the
+definition of the background window. Those numbers are the minimum and maximum over anchored years.
+The partition has three separate sensitivity axes, all reported correctly in the body: anchored
+years 0.466 to 0.501, the parameter sweep 0.482 to 0.509, and background-window form 0.489 to
+0.547. The abstract attached the right numbers to the wrong descriptor and so omitted the largest
+member of the axis it named. The claims gate could not have caught it, because every token resolved
+and the error was in the clause describing what the tokens measured.
+
+**Four statements were narrowed and none of them was a model change.** The deep-tropical ordering
+is now stated as supported by the available panel, with the question of whether it reflects an
+atmospheric or a measurement regime left explicitly unresolved. The background rung's
+conditionality reaches the abstract, including donor recovery falling to 37 per cent in Kandy's own
+stratum. The partition's first appearance, in Section 2.3 rather than Chapter 6, now carries the
+assumptions and the statement that a constrained decomposition is not a source apportionment.
+And marginal predictive value is now the dominant term in the results, with value of information
+reserved for the conceptual frame.
+
+---
+
 ---
 
 ## 3. Epistemic status (what each claim can bear)
