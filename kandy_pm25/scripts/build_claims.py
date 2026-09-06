@@ -1098,6 +1098,12 @@ def campaign_cost(c: Claims) -> None:
         K = _json.load(fh)
     src = "campaign_costing.json"
 
+    # Currency claims are stored PRE-FORMATTED with thousands separators. Their only consumer
+    # is prose, and "49900 dollars" reads as a typo where "49,900" reads as money. The
+    # underlying numbers stay in campaign_costing.json for anything that needs to compute.
+    def usd(x):
+        return f"{int(round(x)):,}"
+
     c.add("cost.lcs_unit_usd", int(K["lcs_unit_usd"]),
           stat="published vendor price, one assembled low-cost outdoor monitor, USD", n=1,
           source=src, ledger="F.101",
@@ -1111,22 +1117,22 @@ def campaign_cost(c: Claims) -> None:
     c.add("cost.spares", K["spares"],
           stat="spare units for attrition and co-location rotation", n=K["n_lcs"],
           source=src, ledger="F.101")
-    c.add("cost.lcs_total_usd", K["lcs_total_usd"],
+    c.add("cost.lcs_total_usd", usd(K["lcs_total_usd"]),
           stat="all low-cost units including spares, assembled, USD", n=K["n_lcs"],
           source=src, ledger="F.101")
-    c.add("cost.ref_lo_usd", int(K["ref_lo_usd"]),
+    c.add("cost.ref_lo_usd", usd(int(K["ref_lo_usd"])),
           stat="lower end of the published range for a regulatory-grade monitor, USD", n=1,
           source=src, ledger="F.101",
           note="the US EPA describes regulatory monitors as costing tens of thousands of "
                "dollars. A RANGE from a public statement, never a quote")
-    c.add("cost.ref_hi_usd", int(K["ref_hi_usd"]), stat="upper end of that range, USD", n=1,
+    c.add("cost.ref_hi_usd", usd(int(K["ref_hi_usd"])), stat="upper end of that range, USD", n=1,
           source=src, ledger="F.101")
-    c.add("cost.total_lo_usd", K["instrument_total_lo"],
+    c.add("cost.total_lo_usd", usd(K["instrument_total_lo"]),
           stat="instrument subtotal at the low end, USD", n=1, source=src, ledger="F.101",
           note="INSTRUMENTS ONLY. Mounting, power, connectivity, import duty, labour and "
                "servicing are line items with no unit price here, because none is published "
                "for Sri Lanka and a typed number would be a guess wearing a budget's clothes")
-    c.add("cost.total_hi_usd", K["instrument_total_hi"],
+    c.add("cost.total_hi_usd", usd(K["instrument_total_hi"]),
           stat="instrument subtotal at the high end, USD", n=1, source=src, ledger="F.101")
     c.add("cost.design_saving_usd", K["design_saving_usd"],
           stat="saved by cutting the design stratum to the recommended size, USD",
