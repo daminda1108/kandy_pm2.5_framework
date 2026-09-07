@@ -5794,3 +5794,67 @@ not under another is not a robust exclusion**, and the inversion should be quote
 fragility attached rather than as a clean significance claim.
 
 Claims: `loss.*` (39).
+
+
+## F.110 — 🔬 two independent reviewers, one measurable style claim, and five results promoted or demoted
+
+Two further external assessments of the finished thesis, both landing at **91–93/100** and both
+agreeing the methodology is sound and the remaining work is claim calibration. No computation
+overturned anything; what changed is what the document *emphasises*.
+
+### 🔴 A style claim that was checkable, and was checked
+Reviewer 2 wrote that the construction *"X is not Y. It is Z"* recurred **"dozens of times almost
+verbatim"** and might read as machine-written. **Counted, it appears 8 times in 33,694 words.**
+The specific charge is wrong. But the underlying diagnosis is right, and two other tics are
+genuinely uniform:
+
+| tic | before | per 1000 words | after |
+|---|---:|---:|---:|
+| `rather than` | 189 | 5.6 | **147** |
+| paragraph-opening **bold** | 178 of 535 paragraphs (**33%**) | — | **78 (15%)** |
+
+Both ran at a near-constant rate in *every* chapter (4–8 and 2–12 per 1000), which is what makes a
+voice read as machine-set. Thinned with rotating alternatives so that removing one tic did not
+install another, skipping any occurrence already preceded by a comma. **Three rewrites broke the
+sense and were repaired by hand** — one inverted a comparative (*"specifying one of those counts,
+not the other"*), two were merely awkward. **A mechanical style pass needs a human read of every
+diff**; the guard rails prevented syntax errors, not meaning errors.
+
+### 🟢 Promoted: the dispersion failure is a headline, not a caveat
+Both reviewers said the same thing and they are right. The raw emission surface ranks
+neighbourhoods at **0.371**; passing it through the terrain-steered dispersion solver **lowers**
+that to **0.274**, improving **3 of 10** cities. That was reported honestly in §8.4 and §6.1 and
+mentioned in neither the abstract nor Chapter 1. **The measurement framework works better than the
+spatial model it was built to evaluate.** Now stated in both.
+
+### 🟢 Promoted: the loss reversal reaches the abstract
+A skimming examiner could previously have missed that the Kandy recommendation inverts on episode
+and exceedance losses (F.109), because it lived in §7.2.1 and §9.1. It is now in the abstract and
+in Chapter 1's summary.
+
+### 🔴 Demoted: the attributable-burden projection moved to **Appendix E**
+Both reviewers, independently. Labelling it an illustrative projection was not enough, because a
+figure of the form *"N deaths per year"* detaches from its caveats the moment anyone quotes it and
+its interval propagates only the response-function uncertainty. §7.11 keeps the **exposure
+weighting**, which is a measurement on this project's own raster; the mortality arithmetic is an
+appendix with its own statement of why it is not a result.
+
+### Four further narrowings
+- **`partition.f` now prints to three significant figures, 0.483 not 0.4828.** The fourth digit is
+  unsupported: the value moves 0.035 across anchored years and 0.058 across window forms. Displaying
+  it read as *overclaiming by formatting* next to scrupulously hedged prose.
+- **"Any analysis that prices observations against a covariate trained on them will under-price
+  them"** → the measured statement: *in this nested construction, contamination showed up as an
+  understatement of the rung above, not an inflation of the contaminated rung*. Generality untested.
+- **What is validated is named**: a budget-matched measurement procedure on **monitored valley and
+  basin cities**, applied to a monitorless one **by analogy**. The target is by construction the
+  kind of city the validation set excludes, so the transfer is resemblance, not a transportability
+  theorem.
+- **Reproducibility restated as auditable and reproducible *conditional on obtaining the source
+  datasets***, which the third-party data licences make the honest ceiling.
+
+⚠ **Raised and NOT acted on, because it is the user's call:** reviewer 2 suggests the title and
+framing should say outright that this is a value-of-information study carrying a Kandy case study,
+not a Kandy air-quality map. The thesis argues that in its text; the title does not.
+⚠ **Declined, on standing instruction:** both reviewers asked for a 15–25% length cut. Thesis
+length is not a concern for this user, and the round added measured content.

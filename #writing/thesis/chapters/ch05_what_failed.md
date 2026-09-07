@@ -1,7 +1,7 @@
 # Chapter 5. What was tried and did not work
 
 This chapter is longer than the one describing the model that did work, and it is placed before
-it rather than in an appendix. The reason is that the pattern across these eight attempts turned
+it, not in an appendix. The reason is that the pattern across these eight attempts turned
 out to be more useful than any of them individually, and the model in Chapter 6 is largely a
 consequence of that pattern rather than of a design decision taken at the start.
 
@@ -13,19 +13,19 @@ The last of those is the column that matters, and it varies enormously between t
 The eight are not of equal weight and the chapter does not present them as though they were. Four
 changed the design of the model that followed. Four established something narrower, either
 closing a question or exposing a defect in how the work was being checked. A reader who wants the
-argument rather than the record can take the first group and Section 5.9.
+argument and not the record can take the first group and Section 5.9.
 
 **The four that changed the design.** Section 5.1 found that in the one transfer tested, between
 two cities on different continents, an imposed physical description survived the move while a
 fitted parameterisation did not. That is a single comparison rather than a general property of
-physics, and it is reported as the observation that motivated a design decision rather than as a
+physics, and it is reported as the observation that motivated a design decision and not as a
 law: it is why the final construction imposes its physics and learns only the temporal behaviour. Section 5.3 established that a learned spatial
 field trained across cities does not recover within-city structure. Section 5.4 established that
 a model given coordinates will memorise them, which produced the admissibility rule governing
 every tier in Chapter 6. Section 5.8 supplied the bounded spatial null that Chapter 8 is devoted
 to explaining.
 
-**The four that established something narrower, or nothing.** Section 5.2 is an identifiability
+The four that established something narrower, or nothing. Section 5.2 is an identifiability
 diagnostic that closed a modelling direction. Section 5.6 records five reconstructions of the
 background, all rejected, which is the origin of the constraint in Section 6.6. Section 5.7
 records defects found by audit rather than by review, and is the reason Chapter 10 exists. None
@@ -43,14 +43,14 @@ equation should learn a representation of transport that is a property of the ph
 than of the city it was fitted in. If so, a network trained where data is plentiful could be
 transferred to a city where it is not, and the physical constraint would carry the transfer.
 
-**What happened.** A time-dependent formulation was fitted at Medellin, reaching a coefficient
+What happened. A time-dependent formulation was fitted at Medellin, reaching a coefficient
 of determination of 0.932, and transferred to Chiang Mai, where it reached 0.765 with a bias of
 -0.59 [ledger stage 2, 76,261 parameters]. By the standards of the transfer literature that is a
 good result. It was nonetheless abandoned.
 
-**What it cost.** Several months, and the larger part of the project's computational budget.
+What it cost. Several months, and the larger part of the project's computational budget.
 
-**What it established.** The transferred quantity was not what the design assumed. What survives
+What it established. The transferred quantity was not what the design assumed. What survives
 transfer is the **form** of the physics, which was imposed rather than learned and would have
 been imposed identically without any network. What does not survive is the fitted parameterisation,
 because those parameters encode the emission field and the boundary-layer climatology of the
@@ -68,17 +68,17 @@ imposes.
 mountain meteorology literature, could be fitted jointly across several cities, the fitted
 parameters would characterise valley behaviour in general and could be applied to a new valley.
 
-**What happened.** Two of the form's six parameters, a trapping depth and a valley shape
+What happened. Two of the form's six parameters, a trapping depth and a valley shape
 exponent, were driven onto their bound constraints by the fit. Cross-validated skill was uneven:
 correlation of 0.863 at one city and 0.323 at another [ledger stage 3 LOOCV].
 
 {{fig:bound}}
 
-**What it cost.** Less than the previous attempt, because the failure was legible early.
+What it cost. Less than the previous attempt, because the failure was legible early.
 
-**What it established.** Parameters that saturate their bounds are not estimates. The data does
+What it established. Parameters that saturate their bounds are not estimates. The data does
 not contain the information needed to identify them, and a fit that reports them anyway is
-reporting the boundary of the search space rather than a property of the atmosphere. This is
+reporting the boundary of the search space in place of a property of the atmosphere. This is
 identifiability failure, and the useful response is not a better optimiser but a declaration:
 those parameters are imposed, not estimated, and the model should say so. That declaration
 became the fourth of the properties set out in Chapter 6.
@@ -98,7 +98,7 @@ learn to map from covariates to a spatial field, and could then be applied to a 
 never seen. This is the most direct machine-learning attack on the problem and it is what most
 readers would try first.
 
-**What happened.** The model was built, trained across three source cities, and applied to Kandy
+What happened. The model was built, trained across three source cities, and applied to Kandy
 producing a full year of hourly fields. Cross-city correlation reached 0.599 on average
 [ledger v14]. Calibrated intervals were obtained by conformal post-processing and covered close
 to their nominal rate at all three source cities.
@@ -112,7 +112,7 @@ uninformative.
 **What it cost.** The largest single block of work in the project, and it produced deliverable
 output that was held back rather than published.
 
-**What it established.** Three things, and the third is the one that mattered.
+What it established. Three things, and the third is the one that mattered.
 
 A model can be right on every aggregate diagnostic and still fail at the task it was built for.
 Annual mean, seasonal cycle, diurnal cycle and interval coverage were all acceptable, and none of
@@ -133,14 +133,14 @@ months later.
 Kandy's own two sensors should sharpen it. The sensors are the only local information available
 and using them is the obvious next step.
 
-**What happened.** After fine-tuning, agreement at the exact sensor coordinates went from a
+What happened. After fine-tuning, agreement at the exact sensor coordinates went from a
 correlation of 0.43 to 0.9999, and the error at those points fell to 0.12 micrograms per cubic
 metre [ledger sim2real]. On the grid, the annual mean rose from 22.1 to 37.0 micrograms per
 cubic metre, which is a physically impossible response to fitting two points more closely.
 
-**What it cost.** Little in time. A great deal in what it revealed.
+What it cost. Little in time. A great deal in what it revealed.
 
-**What it established.** The model had been given latitude and longitude as inputs. With two
+What it established. The model had been given latitude and longitude as inputs. With two
 sensors and coordinates available, the cheapest way to fit the training data is to memorise the
 two coordinate pairs as identity keys and predict the sensor value at those keys. Everywhere
 else the network is unconstrained, and the field it produces there is arbitrary.
@@ -159,7 +159,7 @@ away from the training points can, and here the grid mean was that quantity.
 measured concentrations varying by a factor of {{claim:spatial.obs_spread}} across the city.
 Some covariate should encode it.
 
-**What happened.** Five separate searches, over about four months.
+What happened. Five separate searches, over about four months.
 
 The first tested whether the emission proxy correlated with observed concentration across
 monitored cities, and found that it did, weakly. The second tested whether a learned spatial
@@ -175,7 +175,7 @@ across {{claim:lur.cities}} cities, and moved the pooled rank correlation from 0
 **What it cost.** Four months, and a settled belief that the spatial problem was
 information-limited.
 
-**What it established.** Very little, and that is the finding. Not one of the five stated, before
+What it established. Very little, and that is the finding. Not one of the five stated, before
 it ran, what size of effect it would have been able to detect. A power analysis conducted much
 later established that at their sample sizes they could only have detected residual correlations
 between {{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}. They therefore
@@ -194,12 +194,12 @@ experiment into a claim about the atmosphere.
 on a background term. The first construction of that term produced a partition that disagreed
 with source-apportionment literature, so the term was rebuilt.
 
-**What happened.** It was rebuilt five times. A cap, a re-levelling, and three successive
+What happened. It was rebuilt five times. A cap, a re-levelling, and three successive
 reformulations. Each was scored against the same criteria and each was rejected.
 
-**What it cost.** Roughly six weeks, spread over two months.
+What it cost. Roughly six weeks, spread over two months.
 
-**What it established.** After the fifth rejection the reason became clear, and it was not that
+What it established. After the fifth rejection the reason became clear, and it was not that
 the constructions were poor. The background is required to satisfy four conditions
 simultaneously: to reproduce an independently measured regional concentration, to remain below
 the total at every hour, to yield a local fraction inside a bracket taken from source
@@ -222,7 +222,7 @@ fifth.
 
 **What was expected.** That the model's own numbers were what the documentation said they were.
 
-**What happened.** They were not, repeatedly, and the discrepancies were found by recomputing
+What happened. They were not, repeatedly, and the discrepancies were found by recomputing
 rather than by anyone noticing.
 
 The most serious concerned the sensorless tier. Its specification admits three information
@@ -241,7 +241,7 @@ when it is trained on the very monitors the study prices.
 **What it cost.** A full development cycle, and the retraction of several statements that had
 been made confidently.
 
-**What it established.** Two things that changed how the work is done.
+What it established. Two things that changed how the work is done.
 
 The first is that admissibility must be checked in both directions. A check that a tier does not
 use information it is not entitled to is half a check. The other half is that a tier does use
@@ -276,10 +276,10 @@ at a p-value of {{claim:phase2.p_value}}.
 
 {{fig:learnedbar}}
 
-**What it cost.** About a week, because the preceding phases had already established the frame,
+What it cost. About a week, because the preceding phases had already established the frame,
 the benchmark and the detection limit.
 
-**What it established.** A bounded claim, which none of the five nulls in Section 5.5 produced:
+What it established. A bounded claim, which none of the five nulls in Section 5.5 produced:
 
 > On {{claim:phase1.cities}} cities and {{claim:phase1.stations}} stations, a learned within-city
 > pattern does not beat the best single globally available predictor by more than

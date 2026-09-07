@@ -23,7 +23,7 @@ Together they buy {{claim:step.geography}} per cent on the ladder, comparable to
 instrument a city could purchase. A programme that has not exhausted them is leaving the cheapest
 available improvement unused.
 
-**Then buy according to the stratum the city belongs to, not according to the global average.**
+Then buy according to the stratum the city belongs to, not according to the global average.
 
 {{fig:acquisition}}
 
@@ -59,11 +59,11 @@ background proxy, with the exceedance interval excluding zero. **A programme who
 daily city-mean field should buy the local observation first. A programme whose purpose is
 exceedance detection or health alerting should not**, and the background series is worth
 {{claim:loss.bg.tail}} per cent on episode days, its largest value under any loss. Chapter 2 names
-both purposes, so the ordering has to be stated with its loss attached rather than as a single
+both purposes, so the ordering has to be stated with its loss attached and not as a single
 recommendation.
 
-**Two separate arguments then point at a reference-grade instrument, and they should not be
-merged.** The ladder measured two low-cost sensors, so it establishes that a local observation
+Two separate arguments then point at a reference-grade instrument, and they should not be
+merged. The ladder measured two low-cost sensors, so it establishes that a local observation
 outranks a regional one in this band. It does not establish the value of a reference monitor,
 which was never a rung. The case for making that local observation reference-grade is a
 measurement-design argument standing on its own: a reference instrument would settle the level
@@ -72,8 +72,8 @@ one that matches carries an undocumented instrument, and it would anchor the cal
 low-cost sensors deployed afterwards. That case is strong, and the
 {{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
 
-**Do not expand the local network as a way of improving this model, and the redundancy starts
-earlier than the ladder's rungs suggest.** Section 7.2 sweeps the station count from one to
+Do not expand the local network as a way of improving this model, and the redundancy starts
+earlier than the ladder's rungs suggest. Section 7.2 sweeps the station count from one to
 eight: a single station buys {{claim:stn.one_gain}} per cent, the second adds
 {{claim:stn.second_adds}} percentage points paired within city, and no count between two and
 eight beats one station by more than {{claim:stn.max_extra}}. **For a daily city mean under this
@@ -130,7 +130,7 @@ experiment, and the registered null explicitly does not exclude it finding somet
 sets that campaign out in full, because it is the recommendation this thesis is most likely to be
 acted on and the one that most needs to be defensible.
 
-**A regional background station.** It ranks second for Kandy rather than first, and the reason to
+A regional background station. It ranks second for Kandy rather than first, and the reason to
 want one anyway is that it would close a question the panel can only bound. Section 7.2 rebuilt
 the background from a donor city the target never sees and recovered
 {{claim:donor.gain_reproduced_pct}} per cent of the gain, which establishes that the rung carries
@@ -150,7 +150,7 @@ applied at Kandy, and the authors attribute it to the two cities lying in differ
 zones. Two unrelated measurements, one conclusion, and Colombo does not become a Kandy donor by
 being close.
 
-One further item belongs here even though it is an analysis rather than an observation, because
+One further item belongs here even though it is an analysis and not an observation, because
 it needs no new data and it would sharpen the thesis's most policy-relevant result. Section 7.3
 reports that the measurement-priority ordering differs between bands and states that latitude is
 a label rather than a mechanism. The candidate mechanism is the amplitude of the regional
@@ -190,7 +190,7 @@ Chapter 8's finding that within-cell spread exceeds between-cell spread, the ban
 spatial information is bounded from both sides.
 
 The consequence for anyone building a product of this kind is uncomfortable and worth stating
-plainly. **Increasing resolution is not the improvement it appears to be.** A finer grid does not
+plainly. Increasing resolution is not the improvement it appears to be. A finer grid does not
 recover the sub-grid variation, because that variation is not encoded in any available covariate,
 and it moves the reporting scale further from the scale at which the predictors carry
 information. The registered refinement test of Section 8.3 measured exactly this and found a
@@ -205,15 +205,15 @@ cell value, which Chapter 8 shows is both well-posed and the larger of the two q
 Three items, in decreasing order of what the evidence supports.
 
 **Precipitation in the forecast drivers.** The current driver set for the forecast tier contains
-no precipitation at all, which is a structural gap rather than a measured deficiency. Wet removal
+no precipitation at all, which is a structural gap, not a measured deficiency. Wet removal
 is one of the principal loss processes for particulate matter and the model is currently blind to
 it in that mode.
 
-**A per-lead skill curve.** The forecast tier is presented as a demonstration rather than as a
+A per-lead skill curve. The forecast tier is presented as a demonstration rather than as a
 validated product, and it will remain so until skill is reported separately at each lead time.
 The current single widening factor applied across all leads is a placeholder.
 
-**A second driver source.** Everything the model knows about the atmospheric state comes from one
+A second driver source. Everything the model knows about the atmospheric state comes from one
 reanalysis family. A second source would allow the driver contribution to be separated from the
 particular reanalysis it came from, which no result in this thesis currently does.
 
@@ -229,8 +229,8 @@ in this field. That such products leak is established and guarded against in eva
 [@Just2020]; what Section 3.4 argues is unreported is the displaced signature, which is what
 makes the obvious diagnostic the wrong one.
 
-**A null result without a stated detection limit converts a limitation of the experiment into a
-claim about the world.** Chapter 5 records five nulls that did this and one that did not, and the
+A null result without a stated detection limit converts a limitation of the experiment into a
+claim about the world. Chapter 5 records five nulls that did this and one that did not, and the
 difference between them is the difference between a belief and a bounded claim. The cost of
 stating a detection limit in advance is a power calculation. The cost of not stating one, in this
 project, was four months.
@@ -279,14 +279,14 @@ varies threefold in nocturnal speed across this domain, and its convergence mark
 accumulates. The model predicts a sink down-valley of the core and no instrument has ever tested
 that prediction.
 
-**Confinement and inversion.** The depth of a cell below its surroundings is what traps a
+Confinement and inversion. The depth of a cell below its surroundings is what traps a
 nocturnal inversion, and the model's confinement term is built from it and has never been
 validated. Sky view factor would be the natural second covariate for the radiative cooling that
 forms an inversion; measured on this domain it is very nearly constant, so it is dropped rather
 than carried as a covariate that would dilute the others.
 
-**The vertical gradient, which is the axis nobody samples.** Section 5.5 records that the
-dynamic-transport null was diagnosed as a data problem rather than a physics problem: monitored
+The vertical gradient, which is the axis nobody samples. Section 5.5 records that the
+dynamic-transport null was diagnosed as a data problem and not a physics problem: monitored
 stations worldwide sit on the valley floor and never straddle the floor-to-ridge gradient, and
 the one panel city with several hundred metres of station relief showed the expected signs. Kandy
 has {{claim:kandy.relief_m}} metres of relief inside the domain. A deliberate transect from
@@ -294,7 +294,7 @@ has {{claim:kandy.relief_m}} metres of relief inside the domain. A deliberate tr
 single most valuable physical addition available here, and it is a stratum of its own rather than
 something left to chance.
 
-**Logistics enters as a constraint and never as an objective.** Only
+Logistics enters as a constraint and never as an objective. Only
 {{claim:net.cells_feasible}} of the domain's {{claim:net.cells_total}} cells,
 {{claim:net.feasible_pct}} per cent, are close enough to a road to be serviced, and candidates
 outside that set are removed before the design is optimised. Making access an objective rather
@@ -340,11 +340,11 @@ a record of that assumption failing six times, and the campaign exists to find o
 assumption can be rescued by better sampling. Buying coefficient precision for a model that does
 not work would be buying the wrong thing.
 
-**The number of sites is set by where the design stops paying**, not by a budget, and the
+The number of sites is set by where the design stops paying, not by a budget, and the
 saturation point is a range rather than a value. Between {{claim:net.saturation_lo}} and
 {{claim:net.saturation_hi}} sites the representativeness measure moves by less than its own
-seed-to-seed standard deviation of {{claim:net.saturation_seed_sd}}, so specifying one of those
-counts rather than the other is not supported by the curve. Below that range the loss is real:
+seed-to-seed standard deviation of {{claim:net.saturation_seed_sd}}, so preferring one of those
+counts over another is not supported by the curve. Below that range the loss is real:
 cutting to eight costs {{claim:cost.ks_loss_pct_8}} per cent and cutting to six costs
 {{claim:cost.ks_loss_pct_6}} per cent. Averaging over five random restarts is what makes this
 readable, because a single restart produces a curve with a knee that is not there.
@@ -372,13 +372,13 @@ experiment that cannot see the effect it seeks, reporting its silence as evidenc
 bound attached, and the campaign is not to be described as resolving the spatial question under
 any outcome.
 
-**What the campaign is well powered for is the physics and the level**, and those become what it
+What the campaign is well powered for is the physics and the level, and those become what it
 is for. The paired triplets resolve a within-cell ratio to a factor of
 {{claim:camp.h2_ratio_7d}} after a single week, against competing predictions of
 {{claim:net.pair_contrast_hi}} from the model and {{claim:spatial.paired_obs_ratio}} from the one
 existing observation, so that test is decisive almost immediately and
 its power comes from hours averaged rather than from sites installed. The drainage prediction is
-a sign test whose unit is the night rather than the site, needing the down-valley sink to exceed
+a sign test whose unit is the night and not the site, needing the down-valley sink to exceed
 the core on {{claim:camp.h4_nights90}} per cent of ninety nights. And one reference instrument
 settles the level discrepancy on its own.
 
@@ -398,7 +398,7 @@ so while the cost of changing course was still a paragraph.
 A recommendation without a price is not a recommendation, and the price here has a shape worth
 knowing.
 
-The low-cost network is **{{claim:cost.n_lcs}} units plus {{claim:cost.spares}} spares**, at a
+The low-cost network is {{claim:cost.n_lcs}} units plus {{claim:cost.spares}} spares, at a
 published vendor price of {{claim:cost.lcs_unit_usd}} US dollars each, so
 **{{claim:cost.lcs_total_usd}} dollars** in total. The reference anchor is the other line, and
 public statements put a regulatory-grade instrument at {{claim:cost.ref_lo_usd}} to
@@ -415,7 +415,7 @@ entire low-cost network. The national environmental authority has granted this p
 principle to a Kandy regulatory station carrying hourly concentration and full meteorology,
 subject to a formal agreement. If that completes, the largest line in the budget becomes a letter.
 
-**And the obvious economy is not worth making.** The design stratum lost most of its
+And the obvious economy is not worth making. The design stratum lost most of its
 justification when the spatial hypothesis was demoted, which invites cutting it. Cutting it from
 twelve sites to ten saves {{claim:cost.design_saving_usd}} dollars, under three per cent of the
 low-end subtotal. At this unit price no plausible re-scoping of a low-cost network changes the
@@ -439,7 +439,7 @@ decisive and is not.
 siting**, with an interval of {{claim:site.paired_lo}} to {{claim:site.paired_hi}}, and it wins
 in {{claim:site.wins}} of {{claim:site.cities}} cities. Fewer than half.
 
-⚠ **The apparent advantage is the difference-of-medians artefact again.** The gap between the two
+⚠ The apparent advantage is the difference-of-medians artefact again. The gap between the two
 medians is {{claim:site.diff_of_medians}} while the paired median is negative, because the city
 sitting at the median is not the same city in the two arms. This is the second time in this
 chapter's supporting work that the two disagreed in sign, and on both occasions the difference of
@@ -465,7 +465,7 @@ any form**.
 Two justifications remain and neither was the original intention.
 
 The stratum makes the delivered exposure field checkable at more than the three locations the
-paired triplets provide, which matters because Section 7.11 projects a health burden through it.
+paired triplets provide, which matters because Appendix E projects a health burden through it.
 
 **And it would make Kandy the only deliberately sited city in a panel of
 {{claim:frame.cities}} convenience samples.** That is now a weaker argument than it was an hour
@@ -474,8 +474,8 @@ prediction. What it would produce is a city whose network was not selected by th
 every other city in the frame, which is worth something for future work on siting itself and is
 worth admitting is a thin reason to buy twelve instruments.
 
-**The honest recommendation is therefore to keep the stratum only if the exposure objective
-justifies it, and to stop justifying it by the spatial one.** Section 8.4 of the plan shows the
+The honest recommendation is therefore to keep the stratum only if the exposure objective
+justifies it, and to stop justifying it by the spatial one. Section 8.4 of the plan shows the
 cost either way is under three per cent of the instrument budget, so this is a question about
 what the campaign claims rather than about what it costs.
 
@@ -506,15 +506,15 @@ Stated because these are the proposals most likely to be made.
 **A larger model.** Chapter 5 records several architectures of increasing capacity, none of
 which recovered information that was not in the inputs.
 
-**A finer grid**, for the reason given in Section 9.4.
+A finer grid, for the reason given in Section 9.4.
 
-**More monitors in the same city, sited as networks conventionally site them**, for the reason
+More monitors in the same city, sited as networks conventionally site them, for the reason
 given in Section 9.1. ⚠ This is not an argument against the campaign of Section 9.7. That
 campaign is a different proposition precisely because its sites are chosen for contrast rather
 than for compliance and access, and the measured redundancy of additional monitors says
 nothing about it.
 
-**More cities in the panel**, unless they are chosen to break the class-band association, which
+More cities in the panel, unless they are chosen to break the class-band association, which
 Chapter 2 established cannot be done with the cities that currently publish data.
 
 ## 9.9 The sentence to carry away
@@ -525,9 +525,9 @@ Two statements should survive any summary of this work, and they pull in opposit
 can be told what its next observation is worth, in units of predictive error, on evidence from
 forty-eight cities with the target withheld from every fit.
 
-**The absolute concentration scale at Kandy is not independently validated.** The temporal anchor
+The absolute concentration scale at Kandy is not independently validated. The temporal anchor
 is calibrated against the city's own two low-cost sensors, so the external records of Section 7.8
-test the modelled lift above an already anchored mean rather than the level itself; three of the
+test the modelled lift above an already anchored mean, not the level itself; three of the
 four independent point records sit below the model and the one that agrees carries an undocumented
 instrument. Nothing in this thesis resolves that, and a reference-grade measurement at Kandy is
 the only thing that would. Until one exists, the field should be read as a well-founded relative

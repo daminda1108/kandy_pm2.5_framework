@@ -121,6 +121,9 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 | **"monitors three to eight"** | the code is `pool[:6]`; the two ranges have OPPOSITE signs (+0.75 vs -0.49 pp) | **stations three to six** (F.102) |
 | **"two sensors is where the ladder saturates"** | 2 was the Kandy BUDGET; the second station adds **0.01 pp** | **saturation is at ONE station** (F.102) |
 | **"deliberate siting recovers pattern a convenience network cannot"** | 43 cities, 601 stations, **paired -0.044 [-0.095, +0.118]**, winning 19/43. The +0.114 difference-of-medians points the other way | **undetectable**; the LUR gap is INFORMATION, not siting (F.103) |
+| **f = 0.4828** | the 4th digit is unsupported: f moves 0.035 across anchored years and 0.058 across window forms | **0.483**, three significant figures (F.110) |
+| **the dispersion step as a working component** | it LOWERS neighbourhood rank from **0.371** to **0.274**, 3/10 cities improve | the measurement framework works better than the spatial model (F.110) |
+| **the burden figure as a result** | its interval carries only response-function uncertainty | **Appendix E**, an illustrative projection (F.110) |
 | **"unit mean makes level and pattern separately identifiable"** | the gauge holds for **every** admissible `B`: set `P'=(C-B')/(T-B')` | it identifies the ANCHOR; `B` needs §6.6's constraints (F.108/blocker) |
 | **"buy a local sensor first" stated without a loss** | flips sign on episodes: tail **-16.38**, exceedance **-7.57 [-32.10, -2.68]** | true for a **daily city mean**; the background wins on exceedance (F.109) |
 | **f sensitivity quoted as one range** | there are **THREE** axes: anchored years **0.466-0.501** · `F_min` sweep **0.482-0.509** · **window form 0.489-0.547** | name the axis with the range (F.108) |

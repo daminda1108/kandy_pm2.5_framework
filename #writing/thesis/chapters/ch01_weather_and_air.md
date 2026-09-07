@@ -47,7 +47,7 @@ the places with the most to learn from a measurement are the places least likely
 
 {{fig:obsdensity}}
 
-**The physics is not closed, because emission is a boundary condition that nobody measures.**
+The physics is not closed, because emission is a boundary condition that nobody measures.
 The atmosphere transports and removes particulate matter according to equations that are as well
 understood as those governing the weather. What enters the atmosphere is a different matter. A
 model of urban air quality needs to know how much material is emitted, from where, at what hour,
@@ -58,8 +58,8 @@ predicted. Chemistry compounds the difficulty: a substantial fraction of fine pa
 is not emitted at all but formed in the atmosphere from gaseous precursors, through reactions
 whose rates depend on temperature, humidity, sunlight and the concentrations of other species.
 
-**Assimilation is therefore of limited use.** Assimilating an observation corrects a model state,
-but if the dominant error is in the emission field rather than in the state, the correction is
+Assimilation is therefore of limited use. Assimilating an observation corrects a model state,
+but if the dominant error is in the emission field, not in the state, the correction is
 absorbed by the wrong term and decays as soon as the model is integrated forward. The technique
 that made weather forecasting work does not transfer, because the error it is designed to
 correct is not the error that dominates.
@@ -103,6 +103,13 @@ quality programmes are least likely to fund, because a rural monitor serves no c
 the ordering of those recommendations reverses between latitude bands, so the advice derived from
 the pooled panel is the wrong advice in the band the city this thesis is about belongs to.
 
+Two further results belong in this summary because both cut against the work itself. The ordering
+above reverses again when it is scored on episode days instead of average ones, so the
+recommendation holds for a daily city mean and not for exceedance detection. And the model's own
+dispersion step, the part that redistributes emissions through terrain-steered flow, makes
+neighbourhood ranking worse than the raw emission surface it starts from. The measurement
+framework works better than the spatial model it was built to evaluate.
+
 Each of those findings is bounded rather than general, and Chapter 7 states the bounds alongside
 the numbers. The panel is the set of cities that publish enough data to be scored, which is not a
 sample of the world's cities; the background result rests on a constructed proxy that a separate
@@ -117,7 +124,7 @@ what none of those studies could establish. Chapter 4 describes the data and com
 resources available for the work.
 
 Chapter 5 is an account of what was attempted and did not succeed. It is placed in the middle of
-the thesis rather than in an appendix because the pattern in those failures turned out to be the
+the thesis and not in an appendix because the pattern in those failures turned out to be the
 most useful thing the project learned. Chapter 6 sets out the model that did work, Chapter 7
 describes how it was checked, and Chapter 8 establishes where it stops and why the stopping
 point is a property of the question rather than a deficiency of the method. Chapter 9 sets out
@@ -130,8 +137,12 @@ Stated here rather than left for a reader to extract.
 
 This thesis does not claim a validated neighbourhood-scale map of Kandy. Chapter 8 shows that
 such a map is not available at the resolution used, and explains why the limit is one of
-definition rather than of data. It does not claim that the model captures atmospheric chemistry,
-because the model contains none. It does not claim that the approach is validated for coastal
+definition, not of data. It does not claim that the model captures atmospheric chemistry,
+because the model contains none. What is validated is narrower than the problem it is aimed at:
+the procedure is tested as a budget-matched measurement on monitored valley and basin cities, and
+applied to a monitorless one by analogy. The target is by construction the kind of city the
+validation set excludes, so the transfer is an argument from resemblance and not a theorem about
+transportability. It does not claim that the approach is validated for coastal
 cities, because every city in the validation panel is a valley or a basin. And it does not claim
 that machine learning solved the problem. The learning in this work is standard and the physics
 is deliberately modest. What is new is the accounting: a declaration of what the model is

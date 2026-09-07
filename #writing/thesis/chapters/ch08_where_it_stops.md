@@ -42,7 +42,7 @@ at a common upper value and several more are binned, leaving only
 {{claim:spatial.transect_distinct_obs}} distinct observations, so the rank correlation across all
 sites is a weak test and this chapter does not lean on it. And a second apparent pair in the
 survey, a school junction and its grounds, proves on inspection to carry a single coordinate for
-both sites, so the model's unit ratio there is an artefact of the question rather than a result.
+both sites, so the model's unit ratio there is an artefact of the question, not a result.
 That pair is withdrawn. The garden pair is the evidence.
 
 ## 8.3 Is it resolution? A registered test says no
@@ -97,7 +97,7 @@ that redistributes contrast is the step that misplaces it.
 {{fig:dispersion}}
 
 That result now holds on two independently selected sets of cities, which is why Chapter 9 treats
-the dispersion step rather than the source surface as the place to intervene.
+the dispersion step and not the source surface as the place to intervene.
 
 ## 8.5 Six nulls, and why only the last one says anything
 
@@ -227,17 +227,17 @@ protocol recorded a factor of {{claim:spatial.paired_obs_ratio}} over three hund
 [@Elangasinghe2008]. Nothing in this chapter contradicts that, and nothing in it should be read
 as claiming that Kandy's air is uniform below a kilometre. The opposite is measured.
 
-**The scale at which the reporting grid is defined.** This is a choice, and Section 8.3 tested
+The scale at which the reporting grid is defined. This is a choice, and Section 8.3 tested
 changing it. A tenfold refinement in cell area moved the paired-site ratio by
 {{claim:s1.paired_delta_on_refinement}}, so the choice is not what is binding.
 
-**The scale at which the available predictors carry information.** This is the constraint, and it
+The scale at which the available predictors carry information. This is the constraint, and it
 is the only one of the three this chapter measures. Section 9.4 reports that predictor skill
 rises with the radius over which a predictor is averaged and peaks above the cell size, and
 Section 8.5 bounds what a learned pattern adds over the best single predictor. Both are
 statements about a predictor set, not about the atmosphere.
 
-Read together the three give a conditional rather than a universal claim, and the condition is
+Read together the three give a conditional claim, not a universal one, and the condition is
 worth carrying: **given the globally available covariates that a city with no monitors can
 obtain, sub-kilometre structure cannot be placed, even though it exists and is large.** A
 campaign that measured the structure directly would not be bound by this, which is why Chapter 9
@@ -270,7 +270,7 @@ The operational statement is narrow and, this thesis argues, honest.
 rank of the delivered construction is {{claim:r2.rho_with_atransport}}, and Section 8.5 gives the
 bound on what a learned alternative could add.
 
-**Can a user be told the range their cell spans?** Yes. The within-cell distribution is both
+Can a user be told the range their cell spans? Yes. The within-cell distribution is both
 well-posed and the larger of the two quantities, and Section 8.6 supplies it.
 
 The second question is the more useful one for exposure assessment, and this thesis is not aware
@@ -293,11 +293,11 @@ Passing the emission surface through the dispersion solver takes rank from
 selected sets of cities. This is a defect in the present implementation and it is not a statement
 about information.
 
-**Established.** Within-cell spread exceeds between-cell spread, and a tenfold refinement of the
+Established. Within-cell spread exceeds between-cell spread, and a tenfold refinement of the
 grid does not recover the paired contrast. Sub-kilometre structure cannot be placed from the
 covariates available.
 
-**Not established.** That the best possible use of the available information could not beat the
+Not established. That the best possible use of the available information could not beat the
 benchmark substantially. The registered test bounds what a learned pattern added over the best
 single predictor at {{claim:phase1.min_detectable}} in rank correlation, which leaves real room
 between the benchmark and any ceiling. **The evidence does not exclude a better construction; it

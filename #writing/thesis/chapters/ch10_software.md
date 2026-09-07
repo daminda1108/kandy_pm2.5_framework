@@ -42,11 +42,11 @@ observed.
 
 **Generated** numbers carry a claim token and are recomputed at build time.
 
-**Literature** numbers belong to other people's measurements and carry a citation. They are
+Literature numbers belong to other people's measurements and carry a citation. They are
 deliberately not claim tokens, because putting them in the generated set would falsely imply this
 project computed them.
 
-**Recorded** numbers are this project's own results from runs that can no longer be regenerated,
+Recorded numbers are this project's own results from runs that can no longer be regenerated,
 because the models are gone and the inputs have moved. They carry an explicit reference to the
 project record. Marking them separately is the honest description and it tells a reader which is
 which.
@@ -91,7 +91,7 @@ hypothesis. A defect found in the machinery **before** scoring may be corrected,
 amendment is dated and reported, and this happened once when a sampling design was found to alias
 latitude band with monitoring network. A criterion changed **after** the result is known is not a
 criterion. The distinction is procedural rather than moral, and it is the reason the registrations
-are timestamped by a third party rather than by the author.
+are timestamped by a third party, not by the author.
 
 ## 10.5 Admissibility, asserted in code
 
@@ -109,7 +109,7 @@ And every scored unit must carry every stream its tier admits, because a single 
 stream is invisible in a pooled median and shifts it.
 
 A deliberate omission is permitted but must be declared at the call site, so that it appears in
-the code rather than in someone's memory.
+the code and not in someone's memory.
 
 ## 10.6 Reproducing this work
 
@@ -129,6 +129,14 @@ And the earliest experiments described in Chapter 5 are not reproducible from th
 Their model checkpoints and input frames have been superseded, and the honest position is that
 those results are recorded rather than reproducible. They are marked as such wherever they
 appear.
+
+The accurate summary of the whole is therefore that this work is **auditable, and reproducible
+conditional on obtaining the source datasets**, which is not the same as self-contained. Every
+step from those inputs to every number in this document can be re-run and checked by a reader who
+holds them; the inputs themselves are third-party observations this project is not free to
+redistribute, and one of them requires an institutional agreement to obtain at all. Claiming
+self-contained reproducibility would be claiming something the data licences do not allow, and the
+distinction is worth naming rather than leaving a reader to discover it.
 
 ## 10.7 What this machinery does not do
 

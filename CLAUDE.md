@@ -70,6 +70,60 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-09, 🔬 **TWO MORE REVIEWERS · A STYLE CLAIM MEASURED · FIVE CLAIMS PROMOTED OR DEMOTED**)
+
+Two further external assessments of the finished thesis, both **91–93/100**, both agreeing the
+methodology is sound and the remaining work is claim calibration. **No computation overturned
+anything.** What changed is what the document emphasises. Narrative: SESLOG 2026-09-09.
+Ledger **F.110**.
+
+### 🔴 A STYLE CLAIM THAT WAS CHECKABLE — and the specific charge was wrong
+Reviewer 2 said *"X is not Y. It is Z"* recurred **"dozens of times almost verbatim"** and might
+read as machine-written. **Counted: 8 times in 33,694 words.** But the *diagnosis* was right and
+two other tics were genuinely uniform, at a near-constant rate in **every** chapter:
+
+| tic | before | after |
+|---|---:|---:|
+| `rather than` | 189 (5.6 / 1000 words) | **147** |
+| paragraph-opening **bold** | 178 of 535 paragraphs (**33%**) | **78 (15%)** |
+
+Thinned with rotating alternatives so removing one tic did not install another. ⚠ **Three rewrites
+broke the sense and were repaired by hand** — one inverted a comparative. **A mechanical style pass
+needs a human read of every diff**: the guards stopped syntax errors, not meaning errors.
+
+### 🟢 PROMOTED — the dispersion failure is a headline, not a caveat
+Both reviewers, independently. The raw emission surface ranks neighbourhoods at **0.371**; the
+terrain-steered dispersion solver **lowers** it to **0.274**, improving **3 of 10** cities. It was
+honestly reported in §8.4 and §6.1 and mentioned in **neither the abstract nor Chapter 1**.
+**The measurement framework works better than the spatial model it was built to evaluate.** Now in
+both. 🟢 **The F.109 loss reversal also reaches the abstract** — a skimmer could previously have
+missed that the Kandy recommendation inverts on episode and exceedance losses.
+
+### 🔴 DEMOTED — the attributable-burden projection moved to **Appendix E**
+Both reviewers. Labelling it *illustrative* was not enough: *"N deaths per year"* detaches from its
+caveats on first quotation, and its interval carries only response-function uncertainty. §7.11
+keeps the **exposure weighting** (a measurement on this project's own raster); the mortality
+arithmetic is an appendix stating why it is not a result.
+
+### Four narrowings
+- **`partition.f` prints 0.483, not 0.4828.** The fourth digit is unsupported — the value moves
+  0.035 across anchored years and 0.058 across window forms. Four decimals read as **overclaiming
+  by formatting**.
+- **"Any analysis ... will under-price them"** → the measured statement only: *in this nested
+  construction, contamination showed up as an understatement of the rung above*. Generality untested.
+- **What is validated is named**: a budget-matched procedure on **monitored valley/basin cities**,
+  applied to a monitorless one **by analogy**. The target is by construction the kind of city the
+  validation set excludes — resemblance, not a transportability theorem.
+- **Reproducibility** is **auditable, and reproducible conditional on obtaining the source
+  datasets**. Third-party licences make that the honest ceiling.
+
+⚠ **RAISED, NOT ACTED ON — user's call:** reviewer 2 suggests the **title** should say outright
+that this is a value-of-information study carrying a Kandy case study, not a Kandy air-quality map.
+The text argues that; the title does not.
+⚠ **Declined on standing instruction:** both asked for a 15–25% length cut.
+
+**Thesis: 40,010 words · 35 figures · 10 tables · 528 claims · 0 lint errors.** Summary 2 pages.
+
 ## Current State (updated 2026-09-08, 🔴 **THE TWO SUBMISSION BLOCKERS FIXED — AND THE KANDY RECOMMENDATION SCOPED TO ONE LOSS**)
 
 Third external review round, scoring **91–93/100** and naming **two things to fix before calling it

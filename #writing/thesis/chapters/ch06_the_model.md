@@ -3,7 +3,7 @@
 The construction described here is deliberately modest in its physics and entirely conventional
 in its machine learning. Neither is the contribution. What the model does that is unusual is
 declare which observations it is entitled to use, and degrade exactly when one of them is
-withheld. That property is what makes Chapter 7 a measurement rather than a set of ablations,
+withheld. That property is what makes Chapter 7 a measurement, not a set of ablations,
 and everything else in this chapter exists to support it.
 
 {{dia:pipeline}}
@@ -52,10 +52,10 @@ One qualification belongs here rather than in a limitations list. The satellite 
 in that the annual mean of `T` matches the reference product to four decimal places every year.
 The delivered field nonetheless sits {{claim:gauge.drift_lo_pct}} to {{claim:gauge.drift_hi_pct}}
 per cent above it, consistently and in the same direction. The cause is an accumulation across
-build steps rather than a defect in the gauge: each step preserves the mean, but the unit-mean
+build steps instead of a defect in the gauge: each step preserves the mean, but the unit-mean
 pattern is recovered from an upstream field rather than from the anchor directly, and a small
 positive offset accrues. The condition holds by construction and to within about half a per cent
-in practice, and this thesis states it that way rather than as an exact identity.
+in practice, and this thesis states it that way, not as an exact identity.
 
 ### Why the background is allowed to be uniform
 
@@ -187,16 +187,16 @@ were would be the easiest way to oversell this work, so the differences are set 
 **Conservation is a guarantee.** The spatial mean of the field returns the temporal anchor,
 analytically and under test, to the tolerance given in Section 6.1. This holds by construction.
 
-**Exact degradation is a guarantee.** Withholding a stream reproduces the lower tier
+Exact degradation is a guarantee. Withholding a stream reproduces the lower tier
 bit-for-bit, not approximately. This is what allows the difference between two tiers to be
-attributed to information rather than to model change, and Chapter 7 depends on it entirely.
+attributed to information, not to model change, and Chapter 7 depends on it entirely.
 
-**Monotone skill under added information is an enforced mechanism, not a theorem.** The
+Monotone skill under added information is an enforced mechanism, not a theorem. The
 construction shrinks towards the lower tier when the added observation does not help, so skill
 cannot decrease. That is a property of the estimator that was built in deliberately, and a
 different estimator would not have it.
 
-**Declared identifiability is a discharged obligation rather than a property.** The model states
+Declared identifiability is a discharged obligation rather than a property. The model states
 which parameters the data can constrain and which are imposed. Under a refined test, of
 {{claim:p4.rows}} parameter combinations examined, {{claim:p4.identified}} were identified and
 {{claim:p4.unidentified}} were not, with {{claim:p4.saturated}} saturating a bound. The one
@@ -223,7 +223,7 @@ is to structure only the accumulation above background and let ventilation below
 uniformly, which is the `max(inc, 0) * P` and `min(inc, 0)` pair. The basin mean is preserved
 exactly and the midday inversion falls to {{claim:field.postcap_inversion_midday}} per cent.
 
-**The ventilated-hour floor.** The split renders ventilated hours perfectly flat, and ground
+The ventilated-hour floor. The split renders ventilated hours perfectly flat, and ground
 truth from a city with a dense network shows they are not. A bounded, mean-zero term
 `e(t)(P - 1)` restores a small amount of structure on those hours. Being mean-zero, it leaves
 conservation exact; being bounded below by zero and acting only on the accumulation side, it
@@ -276,7 +276,7 @@ forms that respect the daily structure of `B`, and drifts only when the window e
 timescale on which `B` is defined.
 
 The sweep and the constraint-form figures come from an independent reimplementation of the
-constraint rather than from the production code path, because the original sweep left no
+constraint and not from the production code path, because the original sweep left no
 artefact. It reproduces the originally reported values closely enough that the conclusion is
 unchanged, and the text above quotes the reimplementation because it is the version that can be
 re-run.
@@ -303,7 +303,7 @@ resolves soil, aged sea salt, vehicular, biomass-burning and industrial factors
 is that **under the stated background and minimum-increment assumptions, the constrained
 decomposition assigns {{claim:partition.f}} of modelled concentration to the local increment.**
 
-**Local increment is not the same as locally emitted primary material.** The model has no
+Local increment is not the same as locally emitted primary material. The model has no
 chemistry, as Section 6.7 states. Precursors emitted inside the basin can form particulate mass
 inside it, and material formed outside can arrive already aged. The increment is defined by
 spatial structure and timing rather than by origin, so it contains locally formed secondary
@@ -311,7 +311,7 @@ aerosol and excludes regionally formed aerosol regardless of where the precursor
 Section 7.10 supplies the one chemical check the thesis has, and it also refuted the simplest
 reading, that the local increment can be treated as fresh primary aerosol.
 
-**The intervention statement therefore has to be weaker than the arithmetic suggests.** It is not
+The intervention statement therefore has to be weaker than the arithmetic suggests. It is not
 established that removing every local source would remove half the concentration, because a
 share of the increment is secondary material whose precursors are not all local and whose
 formation would not stop with the emissions this decomposition can see.
@@ -322,7 +322,7 @@ secondary share together, with no further assumption, and at Kandy it lies betwe
 **{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per cent** of concentration.
 The lower figure responds immediately to local emission control. The upper figure equals the
 whole local increment and requires every locally formed secondary particle to vanish with it,
-which is why the withdrawn claim sat at the top of a range rather than in the middle of one.
+which is why the withdrawn claim sat at the top of a range and not in the middle of one.
 
 That is the honest form of the statement, and it is more useful than either the withdrawn
 version or silence: local action is worth substantially more than the retired quarter implied,

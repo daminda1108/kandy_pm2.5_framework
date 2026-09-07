@@ -542,9 +542,15 @@ def partition(c: Claims) -> None:
     if not p.exists():
         return
     d = json.loads(p.read_text(encoding="utf-8"))["summary"]
-    c.add("partition.f", round(float(d["f_anchored_mean"]), 4), stat="mean over anchored years",
+    # THREE significant figures, not four. An external reader pointed out that displaying 0.4828
+    # for a quantity built on a background proxy the thesis itself calls the weakest link, pinned
+    # to a city with no reference monitor, reads as overclaiming by formatting even where the
+    # surrounding prose is scrupulously hedged. The fourth digit is not supported by anything: the
+    # value moves by 0.035 across anchored years and by 0.058 across background-window forms.
+    c.add("partition.f", round(float(d["f_anchored_mean"]), 3), stat="mean over anchored years",
           n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43",
-          note="the coherence cap. Supersedes ~0.25 from source-apportionment literature")
+          note="the coherence cap, quoted to three significant figures because the fourth is not "
+               "supported by the sensitivity. Supersedes ~0.25 from source-apportionment literature")
     lo, hi = d["f_anchored_range"]
     c.add("partition.f_lo", round(float(lo), 3), stat="min over anchored years",
           n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43")

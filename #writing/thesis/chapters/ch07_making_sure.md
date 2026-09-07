@@ -42,23 +42,23 @@ regime with the least reference monitoring is the regime that most needs a senso
 the cities that could best represent Kandy are the cities least able to appear. Where a claim
 depends on the panel being representative, it is not made.
 
-**What transfers is an ordering, not a magnitude.** The quantity carried to Kandy is which
+What transfers is an ordering, not a magnitude. The quantity carried to Kandy is which
 observation is worth more than which, and orderings survive shifts in level that would invalidate
 a transferred number. No statement in Chapter 9 depends on Kandy's own error falling by any
 particular percentage.
 
-**The transfer is made within a stratum, not from the pool.** Kandy is matched to the panel on
-the variables that plausibly govern the ordering rather than to the panel as a whole. It is read
+The transfer is made within a stratum, not from the pool. Kandy is matched to the panel on
+the variables that plausibly govern the ordering, not to the panel as a whole. It is read
 against the deep-tropical band, which Section 7.3 shows reverses the pooled result, and against
 the low-cost-sensor stratum, since Kandy's instruments are low-cost and Section 7.6 shows the
 class changes what added sensors are worth. A pooled number would be the wrong number twice over.
 
-**The panel matches Kandy on the one structural variable it was selected for and on no others by
-design.** Every panel city is a valley or basin, which is the feature the construction depends
+The panel matches Kandy on the one structural variable it was selected for and on no others by
+design. Every panel city is a valley or basin, which is the feature the construction depends
 on, and this is a selection criterion rather than a finding. The panel contains no coastal city,
 so nothing here supports a coastal application.
 
-**What would break the transfer is stated so that it can be checked.** If Kandy's ordering is
+What would break the transfer is stated so that it can be checked. If Kandy's ordering is
 governed by something the band does not capture, the recommendation is wrong. Section 7.3 names
 the candidate, the amplitude of the regional seasonal cycle, and Chapter 9 gives the analysis that
 would test whether the band is standing in for it. Until that is run, the transfer rests on Kandy
@@ -74,7 +74,7 @@ and nothing else, and it is the accurate one. Admitting a stream also changes wh
 can fit, how the shrinkage weight lands and how the covariates interact, all of which are
 consequences of the added information rather than separate effects, but none of which is nothing.
 What the nesting rules out is the confound that matters: a difference produced by changing the
-model rather than by changing what it was allowed to see.
+model, not by changing what it was allowed to see.
 
 **What is measured, stated precisely.** The phrase *value of information* has a formal meaning in
 decision theory, where it is the reduction in expected loss under a stated decision problem
@@ -178,12 +178,12 @@ Four features of the table matter more than its ordering.
 lights and population, and which is available for every city on Earth at no cost, buys
 {{claim:step.geography}} per cent. That is comparable to what the first local instrument buys.
 
-**Geography beats the satellite level.** The annual satellite level buys
+Geography beats the satellite level. The annual satellite level buys
 {{claim:step.satellite}} per cent, less than the geography. The reason is straightforward once
 seen: an annual level cannot touch day-to-day variance, and daily error is what daily variance is
 made of.
 
-**Additional monitors add almost nothing this model can use.** At
+Additional monitors add almost nothing this model can use. At
 {{claim:step.bud1_bud2}} per cent the effect is not small but absent, and Section 7.4 shows it is
 the most estimator-robust result in the study.
 
@@ -197,7 +197,7 @@ root mean square error; mean absolute error; the same squared loss computed **on
 city's observed top decile**, which is the episode question stated as directly as this frame
 allows; and one minus balanced accuracy at the World Health Organization twenty-four-hour
 guideline of {{claim:loss.who_threshold}} micrograms per cubic metre, which makes the loss a
-classification error rather than a magnitude error.
+classification error, not a magnitude error.
 
 | step | daily error | absolute error | episode days | exceedance |
 |---|---:|---:|---:|---:|
@@ -215,7 +215,7 @@ gain under every loss, and its largest value of all is on episode days**, at
 a valley city's worst days is regional in origin, a series drawn from outside the urban core is
 what sees them arriving.
 
-**The result that does not survive is the one the demonstration city depends on.** Paired within
+The result that does not survive is the one the demonstration city depends on. Paired within
 city across the deep-tropical band, the advantage of two local sensors over the background proxy is
 {{claim:loss.inv.rmse}} points on daily error and {{claim:loss.inv.mae}} on absolute error, both
 favouring local observation. On episode days it is {{claim:loss.inv.tail}} points and on
@@ -223,7 +223,7 @@ exceedance {{claim:loss.inv.exceedance}} points
 [{{claim:loss.inv.exceedance.lo}}, {{claim:loss.inv.exceedance.hi}}], both favouring the
 background, and the exceedance interval excludes zero.
 
-**The ordering therefore flips sign between average-day and episode losses.** Section 9.1's
+The ordering therefore flips sign between average-day and episode losses. Section 9.1's
 recommendation is a statement about daily city-mean accuracy, which is the product this thesis
 delivers, and it may not be stated without naming that loss. For exceedance detection or health
 alerting, which Chapter 2 gives as one of the two stakes, the measurement points the other way.
@@ -254,19 +254,19 @@ seed, so that only the number of stations varies:
 {{claim:stn.second_adds}} percentage points**, and no count between two and eight beats one
 station by more than {{claim:stn.max_extra}} percentage points.
 
-**The saturation is at one, not at two.** The headline belonged to the first station all along,
+The saturation is at one, not at two. The headline belonged to the first station all along,
 and "the first two sensors" overstates what the pair contributes. The redundancy this chapter
-reports therefore begins at the **second** monitor rather than the third, which makes the finding
+reports therefore begins at the **second** monitor, not the third, which makes the finding
 stronger than the ladder's own rungs can express: one local observation captures essentially
 everything a city-mean model can extract from local observation.
 
-**The band Kandy belongs to gives the same answer.** In the deep tropics a single station buys
+The band Kandy belongs to gives the same answer. In the deep tropics a single station buys
 {{claim:stn.dt_one_gain}} per cent and a second adds {{claim:stn.dt_second_adds}} percentage
 points paired within city, improving {{claim:stn.dt_improving}} of {{claim:stn.dt_n}} cities. No
 band shows a measurable second-station gain, so the recommendation does not depend on reading the
 pooled result across a band boundary.
 
-⚠ **One number in that analysis is a trap, and it is worth showing rather than hiding.** In the
+⚠ One number in that analysis is a trap, and it is worth showing rather than hiding. In the
 temperate band the *median gain* rises by {{claim:stn.temp_diff_of_medians}} percentage points
 when a second station is added, which looks like a large effect and is not one. Paired within
 city the median is {{claim:stn.temp_second_adds}}, and only {{claim:stn.temp_improving}} of
@@ -300,7 +300,7 @@ a different purpose.
 cent it exceeds every other rung, and the instrument that would supply it is the one air quality
 programmes are least likely to fund, because a rural monitor serves no constituency.
 
-That last row needs a qualification stated in its own right rather than in a footnote, because
+That last row needs a qualification stated in its own right, not in a footnote, because
 the row is the most quotable number in this thesis and the qualification changes what it means.
 
 **What was actually supplied to the model was not a rural station.** It was the tenth percentile
@@ -336,13 +336,13 @@ city while the own-network ring sits just outside it, so the residual gap confla
 network* with *much closer*. The honest statement is that the same-network component is **at
 most** the residual quarter, most likely less, and this test cannot divide it further.
 
-**The recovery fraction itself moved when the ladder was corrected**, from a recorded 79 per cent
+The recovery fraction itself moved when the ladder was corrected, from a recorded 79 per cent
 to {{claim:donor.gain_reproduced_pct}} on the rebuilt bottom rung [ledger F.54]. A stronger
 sensorless rung leaves less headroom for any background to recover, and the independent one loses
 more of that headroom than the city's own. The direction survives; the margin is smaller than the
 project previously recorded.
 
-**Coverage is partial and biased.** Only {{claim:donor.pairs}} of the panel's cities have a donor
+Coverage is partial and biased. Only {{claim:donor.pairs}} of the panel's cities have a donor
 in range at all; {{claim:donor.no_donor}} have none. The cities that do are concentrated where
 urban monitoring is dense, and the deep-tropical cell is the thinnest. In that cell, which is
 Kandy's own, recovery falls to {{claim:donor.reproduced_deep_tropical}} per cent at a median
@@ -397,7 +397,7 @@ independent and the panel's true unit here is the city.
 win in barely half the cities, which is a coin flip. Read alone, that version of the result would
 not support a recommendation, and an earlier version of this work stated it as though it did.
 
-**On the raw retrieval it does.** The interval excludes zero and the sensors win in
+On the raw retrieval it does. The interval excludes zero and the sensors win in
 {{claim:inv.maiac.frac_cities}} per cent of the band. This is the version the recommendation
 rests on.
 
@@ -459,7 +459,7 @@ reporting {{claim:learner.ridge_linear.step_bud0c_bud1}} per cent against the sh
 {{claim:bud0c.n_features}} predictors a linear model cannot exploit the free data and the monitor
 therefore appears to rescue it.
 
-That is a result rather than a nuisance, and it is the useful reading. **The measured value of a
+That is a result and not a nuisance, and it is the useful reading. **The measured value of a
 monitor depends on how well the free data is already being used.** A programme modelling badly
 will conclude that monitors are worth several times what a programme modelling well would
 conclude. This thesis therefore claims the ladder is robust across non-linear estimators, and
@@ -497,7 +497,7 @@ information set and only the interior order differs:
 **The background result is order-robust.** It is the largest step in either position, and moving
 it changes it by about two percentage points.
 
-**The redundancy result is order-robust in its conclusion and not in its magnitude.** Monitors
+The redundancy result is order-robust in its conclusion and not in its magnitude. Monitors
 three to six buy {{claim:order.stn3to8_with_bg}} per cent once a background is present, which
 is more than twenty times the production figure and still small. Part of that difference is not
 extra local information at all: with more stations the fitted background coefficient is estimated
@@ -505,7 +505,7 @@ more sharply, so some of the apparent gain is a better-estimated background rath
 better-observed city. The defensible statement is that the rung is small under both orders, and
 not that it is a fixed quantity.
 
-**And the two orders do not reach the same skill despite reaching the same information.** Median
+And the two orders do not reach the same skill despite reaching the same information. Median
 final error differs by {{claim:order.endpoint_gap}} micrograms per cubic metre between the
 routes. The shrinkage estimator accumulates differently along different paths, so path dependence
 is a property of this measurement and not only of the presentation. It is reported here rather
@@ -531,15 +531,19 @@ fused product's apparent value was satellite information that a raw retrieval su
 well, not recycled information inflating its own score. The pre-registered prediction was the
 opposite.
 
-**The rung above it moves a great deal.** The mechanism is clear once seen: a product trained on
+The rung above it moves a great deal. The mechanism is clear once seen: a product trained on
 a city's monitors already encodes part of what those monitors would tell you, so adding the
 monitor appears to buy less. **Contamination does not inflate the contaminated rung, it deflates
 the rung above it.** The pre-registered test looked for excess skill in the satellite's own rung,
 found none, and would have reported the leakage as immaterial had the ladder not been re-run.
 
-This generalises past this thesis. Any analysis that prices observations against a covariate
-trained on those observations will under-price them, and fused products are now the default
-covariate in this field.
+The mechanism plausibly reaches past this thesis, and the claim should be stated at the width the
+experiment supports. What was measured is that in this nested construction, contamination by a
+covariate trained on the candidate observation showed up as an understatement of the marginal
+value of the rung above it, not as an inflation of the contaminated rung itself. Whether that
+signature is general to observation-pricing designs is untested here. It is worth stating because
+fused products are now the default covariate in this field, and because the diagnostic a careful
+analyst would reach for first looks in the wrong place.
 
 The claim needs its boundary stated, and Section 3.4 states it. That such products leak is
 known, and evaluation practice already guards against it [@Just2020]. The addition here concerns
@@ -551,7 +555,7 @@ contaminated data.
 
 ## 7.6 Three confounds the pooled numbers hid
 
-Each was caught by a gate declared before the run rather than by review, and each would otherwise
+Each was caught by a gate declared before the run and not by review, and each would otherwise
 have reached print.
 
 **Country crossed with latitude.** A minimum-cost sampling design drew the entire mid-latitude
@@ -560,13 +564,13 @@ band-stratified result could have been interpreted. It was corrected by a regist
 before any scoring took place, which is the only reason it appears here as a methodological note
 rather than as a retraction.
 
-**Driver completeness crossed with band.** Boundary-layer height coverage is uneven across bands,
+Driver completeness crossed with band. Boundary-layer height coverage is uneven across bands,
 so the ladder was re-run without it. The first rung moves from
 {{claim:confound.blh.with_blh_step1}} to {{claim:confound.blh.without_blh_step1}} per cent, a
 shift of {{claim:confound.blh.delta}} percentage points, which bounds what the uneven coverage
 can be doing. The band ordering is unchanged.
 
-**Instrument class crossed with band.** The deep-tropical cell is
+Instrument class crossed with band. The deep-tropical cell is
 {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost sensors against
 {{claim:confound.other_bands_lcs_pct}} per cent in the other bands, and this one cannot be
 sampled away for the reason Chapter 2 gave.
@@ -680,7 +684,7 @@ open question rather than settled by choosing the record that agrees.
 
 The interval is nominal at ninety per cent rather than guaranteed at it: conformal calibration
 earns its coverage under exchangeability, which strongly dependent environmental series do not
-satisfy, so what follows is an empirical check rather than a confirmation of a theoretical
+satisfy, so what follows is an empirical check and not a confirmation of a theoretical
 property. It covers {{claim:kandy.cov90}} per cent of observations at
 the two sensors, which read alone suggests the intervals are too narrow. Section 6.2 gave the
 diagnosis: the misses are one-sided, {{claim:kandy.miss_below}} per cent below against
@@ -719,7 +723,7 @@ sites were censored at an upper sampling limit and censoring can only shrink an 
 so the bias runs toward the model and cannot have produced the result.
 
 Two things follow, and they are different. The delivered interval is unaffected, because its width
-comes from the temporal anchor's conformal quantiles rather than from this term, and the coverage
+comes from the temporal anchor's conformal quantiles, not from this term, and the coverage
 figures above already show that width to be right for an areal quantity. What is affected is the
 observation model, which the specification requires to exist before any regulatory record is
 ingested. Had this term been used as written, the first point-level interval built against a real
@@ -760,7 +764,7 @@ background observation should be worth more there and a local monitor less. That
 fixed in a script committed four days before any correlation was computed, which is why it could
 be tested one-sided. It was pre-registered with its detection limit before the analysis ran.
 
-**The result is undetectable at this power.** All {{claim:chem.mech.undetectable}} confirmatory
+The result is undetectable at this power. All {{claim:chem.mech.undetectable}} confirmatory
 hypotheses return correlations far below what the design could see: the largest is
 {{claim:chem.mech.largest_rho}} against a detection limit of {{claim:chem.mech.mde}}. That is not
 a near miss, it is an order of magnitude short.
@@ -783,7 +787,7 @@ country as well as in chemistry. This is the confound of Section 7.6 reappearing
 chemical variable's name, and the only reason it was caught is that the registered design
 controlled for band rather than pooling.
 
-**Is the split chemically coherent species by species?** The decomposition asserts that the
+Is the split chemically coherent species by species? The decomposition asserts that the
 background is aged and the increment fresher. Chemistry orders the species without ambiguity:
 black carbon is emitted directly and has no secondary source, so it is the purest available
 tracer of fresh local material, while sulphate forms over hours to days and is the purest tracer
@@ -804,7 +808,7 @@ chemical result would be reporting an instrument failure as a finding, which is 
 Chapter 5 exists to document. ⚠ The controls were read after the run rather than declared before
 it, which is a weakness in the design and not a defence of it.
 
-**What an intervention could remove.** The third attempt is the one that works, and it repairs a
+What an intervention could remove. The third attempt is the one that works, and it repairs a
 claim Section 6.6 withdraws. With the local share and the secondary share both known, the
 locally emitted primary share is bounded from both directions without further assumption. At
 Kandy it lies between **{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per
@@ -813,23 +817,11 @@ responds immediately to local emission control. The upper figure is the whole lo
 and requires every locally formed secondary particle to disappear as well. The gap between them
 is precisely what cannot be resolved without speciated measurement in the city.
 
-## 7.11 Exposure and attributable burden, as an illustrative projection
+## 7.11 Exposure weighting
 
-Chapter 2 gave health as one of the two stakes, and the delivered field supports an estimate.
-
-This section is deliberately the least load-bearing in the chapter, and it is placed last for
-that reason. Everything before it measures something and reports what the measurement can carry.
-What follows takes the delivered field, which has unresolved level uncertainty, unresolved spatial
-uncertainty and an open discrepancy against three of its four independent point records, and
-projects it through a published concentration-response function that was estimated elsewhere. The
-arithmetic then returns a single confident-looking number of deaths. That mismatch between the
-discipline of the measurement and the apparent precision of the output is a property of burden
-estimation rather than of this field, and the honest label for the result is an **illustrative
-projection**, not a finding. It is included because a thesis that names health as a stake and then
-declines to quantify it has ducked its own framing, and excluded from every summary of what the
-work establishes.
-
-{{fig:burden}}
+Chapter 2 gave health as one of the two stakes. The step this section takes toward it is a
+measurement on this project's own field: where people are relative to where the concentration is.
+The mortality arithmetic that could follow from it is in Appendix E, for reasons given there.
 
 **The area mean under-states exposure.** People are not distributed uniformly over the basin;
 they concentrate in the higher-concentration core. For {{claim:exposure.year}} the unweighted
@@ -838,31 +830,10 @@ is {{claim:exposure.residential}}, and the population-weighted mean is
 {{claim:exposure.dynamic}}. That is an uplift of {{claim:exposure.uplift_pct}} per cent over the
 area mean, and any health statement should use the weighted figure.
 
-**The attributable burden.** Projecting the population-weighted exposure through a published
-concentration-response function [@Burnett2018] against the national mortality baseline gives
-{{claim:burden.deaths}} attributable deaths per year, with a **response-function-conditional
-interval** of {{claim:burden.ci_low}} to {{claim:burden.ci_high}}. That is an attributable
-fraction of {{claim:burden.fraction_pct}} per cent, of which {{claim:burden.avoidable}} would be
-avoidable if concentrations met the World Health Organization guideline [@WHO2021].
-
-The interval is named that way because of what it does not contain. It propagates the published
-uncertainty in the response function and nothing else. It carries no uncertainty from the
-concentration field, from the population weighting, or from the level discrepancy of Section 7.8,
-and a full interval would be wider than this one by an amount this thesis has not estimated.
-**It should not be read as a total uncertainty interval on the burden.**
-
-⚠ **Three qualifications, and they are not small.** The response function and the mortality
-baseline are both taken from published work and neither was estimated here, so this is a
-projection of the delivered field through somebody else's epidemiology rather than an
-epidemiological result. The interval reflects only the published uncertainty in the response
-function and not uncertainty in the field, which would widen it. And the estimate inherits the
-level discrepancy of Section 7.8: if the three low point records are right and the model reads
-high, the burden is over-stated proportionally.
-
-The figures in this section were regenerated for this thesis, and doing so moved them. The
-exposure and burden files predated the field rebuild, so the previously reported uplift of seven
-per cent and burden of 427 were computed on a superseded field. This is recorded because it is
-the same failure mode Chapter 10 describes and it was found the same way.
+Projecting that exposure through a published concentration-response function gives an
+attributable mortality figure. That projection is reported in **Appendix E** and not here,
+because its uncertainty is incomplete by construction and it is not a result of this work
+in the sense the rest of this chapter is.
 
 ## 7.12 What this chapter does and does not establish
 

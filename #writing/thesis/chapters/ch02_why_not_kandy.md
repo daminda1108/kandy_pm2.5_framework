@@ -23,13 +23,13 @@ flow, and the flow near a valley floor is not the flow a coarse driver reports. 
 one kilometre may contain a busy junction, a river, a wooded slope and a residential terrace,
 and the concentration at each will differ.
 
-**The relationship between emission and concentration is mediated by a boundary layer that a
-coarse model represents only in aggregate.** Nocturnal inversions and cold-air pooling can hold
+The relationship between emission and concentration is mediated by a boundary layer that a
+coarse model represents only in aggregate. Nocturnal inversions and cold-air pooling can hold
 a shallow polluted layer over a valley city for days at a time [@Whiteman2000; @Chemel2016]. The
 same emission produces a very different concentration depending on whether the layer above it is
 two hundred metres deep or two thousand.
 
-**The monitors that exist are on the valley floor.** People live on the floor, so instruments are
+The monitors that exist are on the valley floor. People live on the floor, so instruments are
 sited there. A network in a basin therefore samples one horizon of a strongly stratified field,
 and cannot constrain the rest of it. This is not a criticism of any particular network. It
 follows from the same logic that put the city where it is.
@@ -71,7 +71,7 @@ anchored years, which is above the World Health Organization annual guideline th
 [@WHO2021]. Chapter 7 gives the exposure and burden estimates that follow from the delivered
 field, with their intervals.
 
-**The second is that nothing can be prioritised without a field.** This is the more practical
+The second is that nothing can be prioritised without a field. This is the more practical
 stake and it receives less attention. A municipality deciding whether to reroute heavy vehicles,
 restrict open burning, or relocate a bus terminus needs to know how much of the concentration at
 a given place is generated locally and how much has arrived from outside the basin. Those two
@@ -85,7 +85,7 @@ local authority. For Kandy, **under the background and minimum-increment assumpt
 Section 6.6**, the constrained decomposition assigns {{claim:partition.f}} of modelled
 concentration to the local increment and the remainder to the regional background. That number is
 derived in Chapter 6 from a physical constraint rather than assumed. It is a property of the
-decomposition rather than a measurement of where material was emitted: the increment is defined by
+decomposition and not a measurement of where material was emitted: the increment is defined by
 spatial structure and timing, so it contains particulate mass formed inside the basin from any
 precursors and excludes regionally formed mass whatever its origin. Section 6.6 states in full
 what the figure does and does not license, and it should not be read as a source apportionment.

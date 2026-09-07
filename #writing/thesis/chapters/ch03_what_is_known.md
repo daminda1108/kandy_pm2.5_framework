@@ -59,18 +59,18 @@ and the sites were chosen either for contrast, as in the roadside survey, or for
 convenience, as with the fixed stations. Neither sampling design supports interpolation to a
 location nobody sampled.
 
-**A continuous record.** The campaigns lasted hours. The longest published record is two years
+A continuous record. The campaigns lasted hours. The longest published record is two years
 of daily means at one location. Nothing supports a statement about a particular hour on a
 particular day, which is the resolution at which exposure actually varies and at which an
 episode would need to be recognised.
 
-**A separation of local from regional.** The single most decision-relevant quantity is the split
+A separation of local from regional. The single most decision-relevant quantity is the split
 between what Kandy generates and what arrives from outside it, and no measurement at one point
 can separate the two. The monsoon result of Abeyratne and Ileperuma is suggestive, but it
 concerns gases rather than particulate mass and it establishes a seasonal pattern rather than a
 partition.
 
-**Anything at all after the instrument stopped.** The reference monitor that anchored the
+Anything at all after the instrument stopped. The reference monitor that anchored the
 published calibrations is no longer operating. A record that ends is not a record a decision can
 be based on today.
 
@@ -93,17 +93,17 @@ measures this directly and finds that the choice of estimator matters more than 
 sensorless tier a linear model collapses, and reports the value of a monitor as roughly four
 times what a well-specified non-linear model reports.
 
-**What learning does not add is the ability to see what the predictors do not encode.** This is
+What learning does not add is the ability to see what the predictors do not encode. This is
 the constraint that Chapter 8 turns into a measurement. A model can only redistribute the
 information present in its inputs, so where the spatial structure of a city is not encoded in the
 covariates a model is given, no change of architecture will recover it. Stated as a claim about
-this study rather than as a theorem, what Chapter 8 establishes is narrower and is the version to
+this study, not as a theorem, what Chapter 8 establishes is narrower and is the version to
 rely on: the information and the model classes tested here did not recover it, within a detection
 limit fixed in advance. Chapter 5 records five separate
 attempts to find such structure and Chapter 8 records a sixth, pre-registered with a detection
 limit stated in advance.
 
-**And what learning cannot do at all is validate itself in a city with no monitors.** This is
+And what learning cannot do at all is validate itself in a city with no monitors. This is
 Chapter 1's argument restated at the level of method. A more capable model does not relieve the
 problem that its capability cannot be assessed where it is used. If anything it worsens it,
 because a more capable model produces more plausible output, and plausibility is precisely what
@@ -126,12 +126,12 @@ narrower, and it is easier to defend once the boundary is drawn.
 observation is the reduction in expected loss from having it before deciding [@Howard1966]. This
 is the definition the present work uses informally, with predictive error standing in for loss.
 
-**Bayesian optimal experimental design** asks which experiment to run given a model and a
+Bayesian optimal experimental design asks which experiment to run given a model and a
 utility, and supplies the machinery for choosing among candidate observations
 [@Chaloner1995]. It assumes a model in which the candidate observations can be simulated, which
 is exactly what a city with no monitors and no validated field does not have.
 
-**Observing-system experiments** are the closest methodological ancestor and the comparison most
+Observing-system experiments are the closest methodological ancestor and the comparison most
 worth making. Operational weather centres routinely measure the worth of an instrument by
 withholding it and re-running the forecast, and report per-instrument impact from data-denial
 runs [@Samrat2025]. **The idea of measuring an observation's value by removing it is therefore
@@ -143,7 +143,7 @@ denial run is a genuinely different model run, since the assimilation re-converg
 observation, whereas the tiers here are nested by construction and reproduce one another exactly.
 Section 6.4 explains why that exactness is what turns an ablation into a measurement.
 
-**Air quality monitoring network design** is a developed field with its own review literature
+Air quality monitoring network design is a developed field with its own review literature
 [@Verghese2022], and the nearest published neighbour to this thesis applies value of information
 directly to low-cost particulate networks [@Choi2026]. That work optimises **where** to place
 sensors within a region, using an advection-diffusion model and a loss defined over misclassified
@@ -166,20 +166,20 @@ that value decision-theoretically, and applying it to air quality networks have 
 and the paragraphs above give the references. Nothing in Chapter 7 should be read as claiming
 otherwise.
 
-**The application is close to new, and is the weaker half of the claim.** Running the measurement
+The application is close to new, and is the weaker half of the claim. Running the measurement
 in order to advise cities that cannot validate a model, and scoring it on a panel assembled to
 stand in for such cities rather than on the data-rich systems where observation impact is usually
 studied, is a use of the method this thesis has not found reported. That is a statement about a
 search of the literature and not a proof of absence.
 
-**The implementation is new, and is the more defensible half.** The tiers of Chapter 6 are nested
+The implementation is new, and is the more defensible half. The tiers of Chapter 6 are nested
 so that withholding a stream reproduces the lower tier exactly rather than approximately, which
-follows from a conservation property of the decomposition rather than from a training procedure.
+follows from a conservation property of the decomposition, not from a training procedure.
 Admissibility is asserted in code in both directions, so a tier can neither use a stream it is
 not entitled to nor silently fail to use one it is. Section 5.7 records what the absence of the
 second check cost, which is the argument for it.
 
-**Two of the empirical results are new as findings**, independently of the framework that
+Two of the empirical results are new as findings, independently of the framework that
 produced them. That the ordering of acquisition priorities differs between latitude bands, and
 that a monitor-trained covariate deflates the measured value of the rung above it rather than
 inflating its own, are both statements about the world that a reader could act on, and neither

@@ -19,7 +19,7 @@ available can be applied anywhere, and the cost of that decision is visible in C
 {{tbl:T4_1}}
 
 The column that earns that table is the last one. A data inventory listing resolution and
-coverage without stating what each stream cannot do is a catalogue rather than an argument.
+coverage without stating what each stream cannot do is a catalogue, not an argument.
 
 ## 4.2 The streams, and what each one is actually good for
 
@@ -29,38 +29,38 @@ weaknesses are that it is absent under cloud, which in a monsoon climate is a su
 fraction of days, and that it carries no diurnal information whatever, because the satellite
 passes at a fixed local time.
 
-**A satellite-derived annual concentration surface** supplies the level. It is a fusion product
+A satellite-derived annual concentration surface supplies the level. It is a fusion product
 and it is used here only as an annual anchor. Section 7.5 describes what happened when it was
 used as though it were an independent observation, which it is not.
 
-**Reanalysis meteorology** supplies wind, boundary-layer height, temperature and humidity at
+Reanalysis meteorology supplies wind, boundary-layer height, temperature and humidity at
 hourly resolution [@Hersbach2020]. This is the workhorse of the temporal model and it is the
 reason a sensorless tier is possible at all. Its limitation is one of scale: a valley
 boundary layer fifteen kilometres across is not resolved by a driver whose grid is twice that.
 What the driver supplies is the regional state, and the model's task is to map from that state
 to a local response.
 
-**A global composition reanalysis** supplies a chemical prior [@Keller2021]. It enters as a
+A global composition reanalysis supplies a chemical prior [@Keller2021]. It enters as a
 feature rather than as a target, and Section 7.10 uses its speciation for an independent check.
 It is itself a model at roughly twenty-five kilometres, so it can corroborate or contradict but
 cannot validate.
 
-**Precipitation** required a decision that is worth recording. The obvious choice, land-surface
+Precipitation required a decision that is worth recording. The obvious choice, land-surface
 reanalysis precipitation, was tested against a representative gauge and rejected: it delivers
 approximately twice the gauge total at this site. Satellite precipitation radar lands within a
 few per cent of the same gauge and is used instead. Where it is absent the field reports nothing
 rather than falling back to the rejected product.
 
-**Static geography** supplies terrain, roads, land cover, vegetation, night lights and
+Static geography supplies terrain, roads, land cover, vegetation, night lights and
 population. Individually each is a weak predictor. Collectively they are worth
 {{claim:step.geography}} per cent on the ladder of Chapter 7, which is comparable to the first
 local instrument, and they are free everywhere on Earth. Chapter 9 reports that land cover
 measured over a coarse buffer is the strongest single spatial predictor in the entire set, which
 was not expected.
 
-**The two local sensors** are low-cost units at different elevations, one at roughly 460 metres
+The two local sensors are low-cost units at different elevations, one at roughly 460 metres
 about six kilometres north of the city and one at roughly 738 metres on the southern slope. Both
-sit on or near the valley floor rather than on the ridge, and a metadata audit early in the
+sit on or near the valley floor, not on the ridge, and a metadata audit early in the
 project found that both had been recorded at incorrect elevations for some months, which had
 propagated into a description of them as highland sites. They are not.
 
@@ -100,17 +100,17 @@ advance. That condition needs clarifying with the issuing office, because bias c
 handling and aggregation are ordinary analysis rather than manipulation, and a model that cannot
 perform them cannot be built. The record was not obtained within the period of this work.
 
-**The reference monitor at Torrington Park.** This instrument anchored the calibration of
+The reference monitor at Torrington Park. This instrument anchored the calibration of
 published low-cost sensor records in the region and would have settled the level discrepancy of
 Section 7.8 directly. It is no longer operating, so it is a provenance for other people's
 records rather than a data route.
 
-**A national research organisation's regional stations.** These supply the external check used in
+A national research organisation's regional stations. These supply the external check used in
 Section 7.8, obtained through a published paper rather than directly. A direct request would
 provide the regional background that Chapter 7 measures as the largest single gain on the
 ladder, and Chapter 9 ranks it accordingly.
 
-**The university's own islandwide sensor network.** Identified late and not pursued within this
+The university's own islandwide sensor network. Identified late and not pursued within this
 work. It is the cheapest route of the four and it is internal.
 
 ## 4.5 Computational resources

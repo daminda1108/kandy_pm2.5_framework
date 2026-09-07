@@ -53,7 +53,7 @@ in daily error, comparable to the first local instrument. Monitors three to six 
 one rung lower still: the first station buys {{claim:stn.one_gain}} per cent and the second adds
 {{claim:stn.second_adds}} points. A background series drawn from outside the urban core is worth
 {{claim:step.bud2_bud3}} per cent, the largest single gain measured; it is a proxy built from each
-city's own outer ring rather than a rural monitor, and rebuilding it from a donor city the target
+city's own outer ring, not a rural monitor, and rebuilding it from a donor city the target
 has never seen recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, which bounds
 from above how much of it could be an artefact of that proxy; recovery falls to
 {{claim:donor.reproduced_deep_tropical}} per cent in the stratum the demonstration city belongs
@@ -66,7 +66,11 @@ ordering in which local observations outperform the background proxy, so the rec
 derived from the pooled panel is the wrong recommendation in the stratum the demonstration city
 belongs to. That stratum holds thirteen cities and its instrument class is strongly associated
 with its latitude, so how far the reversal reflects an atmospheric regime rather than a
-measurement regime is unresolved.
+measurement regime is unresolved. The ordering also depends on the loss it is scored under. Local
+observation wins on daily and absolute error, and the background proxy wins on the days in the
+observed top decile and on exceedance at the World Health Organization guideline, where the
+interval excludes zero. The recommendation is therefore a statement about daily city-mean accuracy
+and not about episode detection, and both purposes are named in this thesis as stakes.
 
 The model is demonstrated at Kandy, Sri Lanka, a valley city with two low-cost sensors and no
 operating reference monitor. The decomposition assigns {{claim:partition.f}} of modelled
@@ -82,7 +86,14 @@ and the model carries no chemistry with which to separate them. The city-mean le
 against two published records that played no part in producing the spatial pattern, agreeing at
 {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two independent years;
 because the temporal anchor is calibrated against Kandy's own low-cost sensors, those checks test
-the modelled lift above an already anchored mean rather than the field as a whole.
+the modelled lift above an already anchored mean, not the field as a whole.
+
+The clearest negative result concerns the model's own spatial machinery. The step that
+redistributes the emission surface through terrain-steered flow makes neighbourhood ranking worse,
+lowering it from {{claim:r2.rho_emission_surface}} to {{claim:r2.rho_with_atransport}} across ten
+monitored cities and improving only {{claim:r2.cities_improved}} of them. The measurement framework
+therefore works better than the spatial model it was built to evaluate, which is an uncomfortable
+result to report and the most directly actionable one in the thesis.
 
 The thesis also reports where the model stops. Two sites three hundred metres apart inside one
 model cell differ by a factor of {{claim:spatial.paired_obs_ratio}} observationally while the
