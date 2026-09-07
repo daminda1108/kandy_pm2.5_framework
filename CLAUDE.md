@@ -70,6 +70,55 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-09c, 🟢 **NO F.84 REPEAT — THE UNUSED DRIVER WAS UNUSED HARMLESSLY**)
+
+Two registered tests in one session, both nulls, both useful. Narrative: SESLOG 2026-09-09.
+Ledger **F.111** (embeddings) and **F.112** (precipitation). Registrations **OSF
+[`6udm3`](https://osf.io/6udm3/)** and **[`z89kt`](https://osf.io/z89kt/)**, both lodged before
+their scripts were written. **Seven → nine OSF registrations.**
+
+### 🟢 F.112 — the defect that was NOT there
+`total_precipitation_sum` was **already in the scored frame** — pulled, merged, never referenced,
+because it is absent from `FEATS`. So `Bud0a` held a driver its budget admits, in its own inputs,
+unused. **That is the F.84 defect class**, which moved a headline from 25.6% to 17.9%.
+⚠ `require_covers()` cannot catch it: it asserts coverage at **stream** level and cannot see an
+unused variable **inside** an admitted stream.
+
+Both arms on **one fixed city set**, identical seed and machinery, one feature apart:
+
+| registered | result | verdict |
+|---|---|---|
+| **P1** bottom rung improves | **−0.129%** [−4.561, +5.780] | **REFUTED** |
+| **P2** gains above shrink | paired **+0.000** [−4.88, +1.61] | **REFUTED** |
+| **P3** redundancy null survives | 0.37 → 0.69, paired **+0.000** | HOLDS |
+| **P4** background stays largest | 28.53 → 32.12 | HOLDS |
+| **P5** deep-tropical does not reverse | +19.84 → **+9.20** pp, both exclude 0 | HOLDS in direction |
+
+**No published number is overstated.** The variable was unused harmlessly. 🟢 **Table 9.1's
+`NO MEASUREMENT` row for precipitation is now a REGISTERED NULL** — the gap is measured, not
+unexamined. ⚠ **Not** evidence that wet removal does not matter: an 11 km reanalysis daily total
+does not help *this* prediction at *this* resolution.
+⚠ **P5's magnitude roughly HALVES** (+19.84 → +9.20). The deep-tropical margin has now proved
+sensitive to the **satellite stream** (F.97), the **loss** (F.109) and the **driver set** (F.112) —
+three demonstrations that it is the least robust quantity the Kandy recommendation rests on.
+
+### 🔴 GOTCHA #91 A FOURTH TIME — and the most instructive instance yet
+Unpaired, the first-rung gain reads **35.05% without precipitation against 27.42% with**, a
+7.6-point drop that is exactly the shrinkage **P2 predicted**. Paired: **+0.000**. **The unpaired
+comparison would have CONFIRMED a registered prediction that the paired one refutes.** Every prior
+instance produced a *flattering* number; this produced a *confirming* one, which is harder to
+resist. Registration is what made it visible.
+
+### ⚠ Two caveats that must travel with F.112's numbers
+The coverage gate keeps **37 of 48 cities** (35 scored), so the first rung reads **35.05%** here
+against the published **17.9%** on 48 cities. **That gap is the city subset, not precipitation.**
+The arms are comparable to each other and to nothing else.
+⚠ **A hypothesis tested and refuted:** ERA5-Land has no data over water, so the excluded cities
+were expected to be coastal. They are the opposite — **18% coastal against 51%**, median coast
+distance **187 km against 46 km**. The gap is inland and its cause is unidentified.
+
+**Thesis: 40,868 words · 35 figures · 10 tables · 566 claims · 0 lint errors.** Summary 2 pages.
+
 ## Current State (updated 2026-09-09b, 🔬 **A SEVENTH NULL, REGISTERED — EO FOUNDATION EMBEDDINGS DO NOT BREAK THE CEILING**)
 
 The user asked whether the newest GEE geospatial model could help. It could, the question was

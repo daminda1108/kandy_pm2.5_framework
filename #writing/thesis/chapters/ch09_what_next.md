@@ -499,6 +499,37 @@ all, because they have no fixed location. Reaching them needs personal or mobile
 is a different instrument and a different protocol. Their absence is a gap in this plan rather
 than a judgement that they matter less.
 
+### Precipitation, which was a gap and is now a measured null
+
+Table 9.1 listed precipitation as a structural gap with no measurement behind it, and that entry is
+now out of date. The driver set carries temperature, wind, boundary-layer height and two
+day-of-year terms, so wet removal was absent from the model's meteorology. On inspection the
+variable was not missing at all: `total_precipitation_sum` was already in the scored frame, pulled
+and merged and never referenced, because it was not in the feature list. A rung holding a driver
+its budget admits, in its own inputs, unused. That is the shape of the defect described in
+Section 7.6, which moved a headline by eight percentage points when it was found.
+
+It was registered [OSF z89kt] and tested with both arms fitted on one fixed set of
+{{claim:precip.cities_scored}} cities, identical seed and machinery, differing in one feature.
+Adding precipitation changes the sensorless rung by {{claim:precip.p1}} per cent
+[{{claim:precip.p1_lo}}, {{claim:precip.p1_hi}}], which is nothing, and the gains above it are
+unmoved: the first two sensors shift by {{claim:precip.first2.paired}} points paired within city.
+The redundancy null survives and the background remains the largest single gain.
+
+So there is no repeat of the earlier defect. The unused driver was unused harmlessly, and no
+published number in this thesis is overstated because of it. What the test establishes is narrow
+and worth stating exactly: an eleven-kilometre reanalysis daily rainfall total does not improve
+daily city-mean prediction on this panel. It is not evidence that wet removal does not matter, and
+a gauge network or a higher-resolution product remains untested.
+
+⚠ Two cautions travel with it. The coverage gate keeps {{claim:precip.cities_passing}} of the
+panel's cities, so these figures sit on a subset and are not comparable to the ladder reported in
+Chapter 7; the two arms are comparable to each other and to nothing else. And the deep-tropical
+margin, while it keeps its direction, roughly halves, from {{claim:precip.p5_without}} to
+{{claim:precip.p5_with}} points. That margin has now proved sensitive to the satellite stream, to
+the loss function and to the driver set, which is three demonstrations that it is the least robust
+quantity the recommendation rests on.
+
 ## 9.8 What would not help
 
 Stated because these are the proposals most likely to be made.

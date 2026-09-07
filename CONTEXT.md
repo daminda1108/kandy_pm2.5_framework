@@ -121,6 +121,8 @@ data disagree. Registrations: `g6hqb` (re-validation), `bkpyr` (sub-grid/streams
 | **"monitors three to eight"** | the code is `pool[:6]`; the two ranges have OPPOSITE signs (+0.75 vs -0.49 pp) | **stations three to six** (F.102) |
 | **"two sensors is where the ladder saturates"** | 2 was the Kandy BUDGET; the second station adds **0.01 pp** | **saturation is at ONE station** (F.102) |
 | **"deliberate siting recovers pattern a convenience network cannot"** | 43 cities, 601 stations, **paired -0.044 [-0.095, +0.118]**, winning 19/43. The +0.114 difference-of-medians points the other way | **undetectable**; the LUR gap is INFORMATION, not siting (F.103) |
+| **"precipitation is an unmeasured gap"** | registered and tested: bottom rung **-0.129% [-4.56, +5.78]**, gains above **+0.000** | a **measured null** (F.112); no F.84 repeat |
+| **the deep-tropical margin as a stable quantity** | it moves with the satellite stream (F.97), the loss (F.109) AND the driver set (F.112: +19.84 -> +9.20) | direction robust, **magnitude is not** |
 | **"AlphaEarth embeddings are one of the spatial nulls"** | that test resolved only **0.65-0.96** on 17/10/6 stations | re-run on 47 cities resolves **0.130** (F.111) |
 | **embeddings' median rho 0.327 > benchmark 0.301** | unpaired; **paired it is -0.028**, 21/47 | the paired value is the effect (F.111, gotcha #91 third time) |
 | **f = 0.4828** | the 4th digit is unsupported: f moves 0.035 across anchored years and 0.058 across window forms | **0.483**, three significant figures (F.110) |

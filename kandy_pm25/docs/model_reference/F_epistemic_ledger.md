@@ -5966,3 +5966,63 @@ probe stations (⚠ de-accumulate, gotcha #60).
 ⚠ **This is not a cheap change despite being a cheap pull.** Precipitation enters `Bud0a`, the
 bottom rung, and **F.84 is the record of what happens when the bottom rung moves: every gain above
 it changes.** Adding it means re-running and re-registering the ladder, not appending a column.
+
+
+## F.112 — 🟢 NO F.84 REPEAT: the unused driver was unused harmlessly, and a fourth medians trap
+
+`scripts/precip_ladder_test.py` → `precip_ladder.{csv,json}`.
+**Registered at OSF [`z89kt`](https://osf.io/z89kt/)** (project `x7a8j`), lodged before the script
+was written. Prereg `docs/prereg_precipitation_ladder_2026-09-09.md`.
+
+### What was actually being tested
+Not a data gap. **`total_precipitation_sum` was already in the scored frame** — pulled, merged, and
+never referenced, because it is absent from `FEATS`. So `Bud0a` held a driver its budget admits,
+in its own inputs, unused. **That is the F.84 defect class**, which moved the headline from 25.6%
+to 17.9%. `require_covers()` cannot catch it: it asserts coverage at *stream* level and cannot see
+an unused variable inside an admitted stream.
+
+### 🟢 The result — P1 and P2 both REFUTED, which is the good outcome
+
+Both arms fitted on **one fixed city set**, identical seed, station roles and machinery; the only
+difference is one feature.
+
+| registered prediction | result | verdict |
+|---|---|---|
+| **P1** the bottom rung improves | **−0.129%** [−4.561, +5.780] | **REFUTED** |
+| **P2** the gains above it shrink | paired **+0.000** [−4.88, +1.61] | **REFUTED** |
+| **P3** the redundancy null survives | 0.37 → 0.69, paired **+0.000** [−0.01, +0.23] | **HOLDS** |
+| **P4** the background stays largest | 28.53 → 32.12 | **HOLDS** |
+| **P5** deep-tropical ordering does not reverse | +19.84 → **+9.20** pp, both exclude zero | **HOLDS in direction** |
+
+**There is no F.84 repeat.** An 11 km reanalysis daily rainfall total does not improve daily
+city-mean prediction on this panel, so the variable was unused *harmlessly* and no published gain
+is overstated because of it. **This closes the `NO MEASUREMENT` row Table 9.1 carries for
+precipitation** — it is now a measured null rather than an unexamined gap.
+⚠ It is **not** evidence that wet removal does not matter. It is evidence that this product, at
+this resolution, on this loss, does not help.
+⚠ **P5 holds in direction but its magnitude halves**, +19.84 → +9.20 pp. Both intervals exclude
+zero, so the recommendation survives, but the deep-tropical margin is sensitive to the driver set
+as well as to the satellite stream (F.97) and the loss (F.109).
+
+### 🔴 GOTCHA #91 FOR THE FOURTH TIME — and this is the most instructive instance yet
+Unpaired, the first-two-sensors gain reads **35.05% without precipitation against 27.42% with**, a
+7.6-point drop that is exactly the shrinkage **P2 predicted**. Paired within city it is
+**+0.000 [−4.88, +1.61]**. **The unpaired comparison would have CONFIRMED a registered prediction
+that the paired comparison refutes.** Every previous instance (F.102, F.103, F.111) produced a
+flattering number; this one produced a *confirming* number, which is harder to resist. Registering
+the analysis is what made it visible.
+
+### ⚠ These numbers are NOT the published ladder, and must not be quoted as it
+The coverage gate keeps **37 of 48 cities**, 35 of which score in both arms. On that subset the
+first rung reads **35.05%** against the published **17.9%** on 48 cities. That gap is the city
+subset, not precipitation. **The two arms are comparable to each other and neither is comparable to
+the headline.**
+
+### ⚠ A hypothesis about the exclusion, tested and refuted
+ERA5-Land has no data over water (a recorded trap), so the obvious expectation was that the
+low-coverage cities would be coastal. **They are the opposite.** Excluded cities are **18% coastal
+against 51%** for those kept, with a median coast distance of **187 km against 46 km**. The gap is
+inland, not maritime, and its cause is unidentified. Recorded because the plausible explanation was
+checked rather than assumed.
+
+Claims: `precip.*` (16).

@@ -117,3 +117,4 @@ node_modules/
 !scripts/srep_external_check.py
 !scripts/loss_sensitivity.py
 !scripts/embedding_spatial_test.py
+!scripts/precip_ladder_test.py

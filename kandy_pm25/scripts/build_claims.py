@@ -2232,6 +2232,63 @@ def embedding_test(c: Claims) -> None:
               stat="97.5th percentile, bootstrap over cities", n=t["n"], source=src,
               ledger="F.111")
 
+
+def precip_ladder(c: Claims) -> None:
+    """F.112 -- does wet removal belong in the ladder's bottom rung? Registered, and refuted."""
+    f = MOD / "precip_ladder.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "precip_ladder.json"
+    R = S["results"]
+    c.add("precip.osf", S["osf"], stat="OSF registration lodged before the analysis",
+          n=S["cities_scored"], source=src, ledger="F.112")
+    c.add("precip.cities_passing", S["cities_passing"],
+          stat="cities passing the 90 per cent coverage gate", n=48, source=src,
+          ledger="F.112")
+    c.add("precip.cities_excluded", S["cities_excluded"],
+          stat="cities excluded by the coverage gate", n=48, source=src, ledger="F.112",
+          note="the exclusion is INLAND-biased, not coastal: 18 per cent coastal against 51, "
+               "median coast distance 187 km against 46")
+    c.add("precip.cities_scored", S["cities_scored"],
+          stat="cities scored in both arms", n=S["cities_scored"], source=src, ledger="F.112",
+          note="NOT the published 48-city frame; these numbers are not comparable to the headline")
+    p1 = R["P1_bottom_rung"]
+    c.add("precip.p1", round(float(p1["median"]), 3),
+          stat="percentage RMSE reduction at the sensorless rung from adding precipitation",
+          n=p1["n"], source=src, ledger="F.112", note="REFUTED: the interval spans zero")
+    c.add("precip.p1_lo", round(float(p1["lo"]), 3), stat="2.5th percentile over cities",
+          n=p1["n"], source=src, ledger="F.112")
+    c.add("precip.p1_hi", round(float(p1["hi"]), 3), stat="97.5th percentile over cities",
+          n=p1["n"], source=src, ledger="F.112")
+    names = {"first two sensors": "first2", "stations three to six": "stn3to6",
+             "a background series": "bg"}
+    for step, tag in names.items():
+        v = R.get(step)
+        if not v:
+            continue
+        c.add("precip." + tag + ".without", v["without"],
+              stat="median percentage gain on this subset WITHOUT precipitation",
+              n=S["cities_scored"], source=src, ledger="F.112")
+        c.add("precip." + tag + ".with", v["with_precip"],
+              stat="median percentage gain on this subset WITH precipitation",
+              n=S["cities_scored"], source=src, ledger="F.112")
+        b = v["paired"]
+        c.add("precip." + tag + ".paired", round(float(b["median"]), 3),
+              stat="paired within-city change from adding precipitation", n=b["n"],
+              source=src, ledger="F.112",
+              note="the paired value is the effect; unpaired, this step appears to move 7.6 points")
+    p5 = R.get("P5_deep_tropical")
+    if p5:
+        c.add("precip.p5_without", round(float(p5["without"]["median"]), 2),
+              stat="deep-tropical local minus background, without precipitation",
+              n=p5["without"]["n"], source=src, ledger="F.112")
+        c.add("precip.p5_with", round(float(p5["with_precip"]["median"]), 2),
+              stat="deep-tropical local minus background, with precipitation",
+              n=p5["with_precip"]["n"], source=src, ledger="F.112",
+              note="direction holds, magnitude roughly halves")
+
 def build() -> dict:
     d = _ladder()
     c = Claims()
@@ -2279,6 +2336,7 @@ def build() -> dict:
     srep_external(c)
     loss_sensitivity(c)
     embedding_test(c)
+    precip_ladder(c)
     return dict(
         generated=str(date.today()),
         gate="Phase 1 of docs/improvement_plan_2026-09-01.md",

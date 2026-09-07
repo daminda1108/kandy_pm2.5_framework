@@ -363,7 +363,9 @@ def t9_1_next():
             "REGISTERED NULL: the effect is bounded at the detection limit, not at zero"],
            ["Precipitation in the forecast drivers",
             "wet removal, absent from the current driver set",
-            "NO MEASUREMENT: a known structural gap"],
+            f"REGISTERED NULL: adding it moves the sensorless rung by "
+            f"{tok('precip.p1')} per cent and the gains above it by "
+            f"{tok('precip.first2.paired')} points. The gap is now measured, not unexamined"],
            ["More monitors beyond the first", "nothing this model can use for a daily city mean",
             f"LADDER: {tok('step.bud1_bud2')} per cent"]],
           note="The evidence column names the KIND of argument as well as its content, because "
