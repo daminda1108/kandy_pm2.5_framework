@@ -130,10 +130,14 @@ study** after, and *"demonstrated at"* cannot be read as *"validated for"* — t
 
 ### 🟢 RETITLED, and the summary format fixed (2026-09-09)
 The thesis is now titled *“An information-tiered decomposition for hourly kilometre-scale urban
-PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a
-city that cannot check either”* — a merge of two candidates, naming **what the model is, what it
-does, its second job, and why the setting is hard**. “Reconstructs” and “cannot check either” are
-deliberate: neither can be read as a validated map, which is what §9.9 concludes.
+PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy”* —
+a merge of two candidates, naming **what the model is, what it does, its second job, and where it
+is demonstrated**. **“Reconstructs” is the load-bearing verb**: it says what the code produces
+without asserting the product has been checked, where *mapping* or *predicting* would reopen the
+overclaim the review rounds closed. An earlier draft ended *“…at Kandy, a city that cannot check
+either”*; the user trimmed that tail, so **the epistemic caveat now lives only in the abstract and
+§9.9**, which is where it belongs — but it is no longer signalled by the title, and anyone quoting
+the title alone will not meet it.
 **Summary format, user-set:** Times New Roman throughout, **body 12pt and nothing smaller**, title
 one step above body, both contact addresses (`11daminda08@gmail.com`, `s20005@sci.pdn.ac.lk`).
 ⚠ **Two pages is now TIGHT.** 12pt cost a third page; recovered with margins **1.25cm**,

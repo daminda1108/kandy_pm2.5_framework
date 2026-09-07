@@ -1,5 +1,5 @@
 ---
-title: "An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a city that cannot check either"
+title: "An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy"
 author: "Daminda Alahakoon, University of Peradeniya, Sri Lanka"
 date: "2026"
 geometry: margin=1.25cm
