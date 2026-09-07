@@ -1,11 +1,20 @@
 ---
-title: "Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka"
+title: "An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a city that cannot check either"
 author: "Daminda Alahakoon, University of Peradeniya, Sri Lanka"
 date: "2026"
 geometry: margin=1.9cm
 fontsize: 10pt
 mainfont: "Times New Roman"
 colorlinks: false
+header-includes: |
+  \usepackage{titling}
+  \setlength{\droptitle}{-1.6cm}
+  \pretitle{\begin{center}\normalsize\bfseries}
+  \posttitle{\par\end{center}\vspace{-0.8em}}
+  \preauthor{\begin{center}\small}
+  \postauthor{\par\end{center}\vspace{-0.9em}}
+  \predate{\begin{center}\small}
+  \postdate{\par\end{center}}
 ---
 
 **Undergraduate thesis, 2026. Two-page summary.** Full thesis: 35,000 words, 35 figures, 10
@@ -13,38 +22,37 @@ chapters. Six pre-registrations lodged on OSF before the corresponding analyses 
 
 ## The problem
 
-Most of the world's population breathes air that nobody measures, and the deficit is worst where
+Most of the world's population breathes air nobody measures, and the deficit is worst where
 concentrations are highest. Models supply a field where instruments do not, and they are good. But
 they are validated where monitors are dense and used where monitors are absent, so **the transfer
-that matters is the one transfer that cannot be scored**, and the usual response to doubt needs
-exactly the observations whose absence created it.
+that matters is the one that cannot be scored**, and the usual response to doubt needs exactly the
+observations whose absence created it.
 
-This thesis changes the question. Rather than asking how accurate a model is where accuracy
-cannot be measured, it asks what a model is entitled to claim given the observations it has, and
-measures the marginal predictive value of each further observation stream: the reduction in
-out-of-sample daily error at a fixed position in a fixed ordering, which stands in for loss rather
-than being decision-theoretic value of information.
+This thesis changes the question. Instead of asking how accurate a model is where accuracy cannot
+be measured, it asks what a model may claim given the observations it has, and measures the
+marginal predictive value of each further stream: the reduction in out-of-sample daily error at a
+fixed position in a fixed ordering, standing in for loss and not decision-theoretic value of
+information.
 
 ## The construction
 
-Concentration is separated into a spatially uniform regional background and a locally generated
-increment redistributed by a pattern normalised to unit spatial mean. Two properties make the
-measurement possible.
+Concentration separates into a uniform regional background and a local increment redistributed by
+a unit-mean pattern. Two properties make the measurement possible.
 
-**Conservation.** The spatial mean of the field returns the temporal anchor exactly, so an error
-in the pattern misplaces material without creating it.
+**Conservation.** The field's spatial mean returns the temporal anchor exactly, so an error in the
+pattern misplaces material without creating it.
 
-**Exact degradation.** The model declares which observation streams each tier may use, and
-withholding one reproduces the lower tier bit-for-bit rather than approximately. Specification and
-fitting are held constant, so the difference between two tiers isolates the predictive consequence
-of admitting that stream rather than confounding it with a change of model.
+**Exact degradation.** The model declares which streams each tier may use, and withholding one
+reproduces the lower tier bit-for-bit. Specification and fitting are held constant, so the
+difference between tiers isolates the predictive consequence of admitting that stream instead of
+confounding it with a change of model.
 
 ## Three results
 
 Measured across **{{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
-{{claim:frame.city_days}} city-days**, scoring each city against monitors withheld from it. Every
-panel city is a valley or basin and publishes enough monitoring to be scored, so what follows is
-bounded by that panel.
+{{claim:frame.city_days}} city-days**, each scored against monitors withheld from it. Every panel
+city is a valley or basin that publishes enough monitoring to be scored, so what follows is bounded
+by that panel.
 
 **1. Freely available geography is worth about as much as the first monitor a city buys.** Terrain,
 roads, land cover, night lights and population together buy {{claim:step.geography}} per cent in

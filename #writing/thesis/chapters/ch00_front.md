@@ -1,4 +1,4 @@
-# Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka
+# An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a city that cannot check either
 
 **A thesis submitted in partial fulfilment of the requirements for the degree of Bachelor of
 Science**
