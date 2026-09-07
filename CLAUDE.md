@@ -128,7 +128,23 @@ study** after, and *"demonstrated at"* cannot be read as *"validated for"* — t
 ⚠ **The summary now carries the SAME title**; the two previously disagreed.
 ⚠ **Declined on standing instruction:** both asked for a 15–25% length cut.
 
-**Thesis: 40,010 words · 35 figures · 10 tables · 528 claims · 0 lint errors.** Summary 2 pages.
+### 🟢 RETITLED, and the summary format fixed (2026-09-09)
+The thesis is now titled *“An information-tiered decomposition for hourly kilometre-scale urban
+PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a
+city that cannot check either”* — a merge of two candidates, naming **what the model is, what it
+does, its second job, and why the setting is hard**. “Reconstructs” and “cannot check either” are
+deliberate: neither can be read as a validated map, which is what §9.9 concludes.
+**Summary format, user-set:** Times New Roman throughout, **body 12pt and nothing smaller**, title
+one step above body, both contact addresses (`11daminda08@gmail.com`, `s20005@sci.pdn.ac.lk`).
+⚠ **Two pages is now TIGHT.** 12pt cost a third page; recovered with margins **1.25cm**,
+`linespread 0.95`, `titlesec` spacing and ~75 words of genuine redundancy. **Any further addition
+to the summary pushes it to three pages** — trim something else, or accept the third page.
+⚠ **Two LaTeX traps in the summary preamble, both cost a build:** a `%` comment is escaped by
+pandoc into `\%` and breaks LaTeX, and `\selectfont` cannot run before `\begin{document}`.
+⚠ **And a shell trap:** backticks inside a double-quoted `python -c` string are command-substituted
+by bash. Use a heredoc or the Write tool for any text containing backticks.
+
+**Thesis: 40,024 words · 35 figures · 10 tables · 528 claims · 0 lint errors.** Summary 2 pages.
 
 ## Current State (updated 2026-09-08, 🔴 **THE TWO SUBMISSION BLOCKERS FIXED — AND THE KANDY RECOMMENDATION SCOPED TO ONE LOSS**)
 

@@ -317,7 +317,7 @@ The **first external checks on the Kandy field** in the project's history.
 | the formal model statement | `kandy_pm25/docs/MODEL_SPECIFICATION.md` |
 | doc index — current vs historical | `kandy_pm25/docs/README.md` |
 | the manuscript | `kandy_pm25/docs/paper/` — **edit `draft_s*.md`, never `manuscript_kandy.md`** |
-| **the thesis** | `#writing/` — **edit `thesis/chapters/ch*.md`, never `build/thesis.md`**. Titled *"Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka"* since 2026-09-09; the summary carries the same title |
+| **the thesis** | `#writing/` — **edit `thesis/chapters/ch*.md`, never `build/thesis.md`**. Titled *"An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a city that cannot check either"*; the summary carries the same title, at 12pt Times New Roman |
 
 **Publication view:** two papers, not one — the methods/VoI paper (strong, needs no Sri
 Lankan data) and the Kandy application (weaker alone). See `CLAUDE.md` §1b.

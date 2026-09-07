@@ -2,23 +2,30 @@
 title: "An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy, a city that cannot check either"
 author: "Daminda Alahakoon, University of Peradeniya, Sri Lanka"
 date: "2026"
-geometry: margin=1.9cm
-fontsize: 10pt
+geometry: margin=1.25cm
+fontsize: 12pt
 mainfont: "Times New Roman"
+sansfont: "Times New Roman"
+monofont: "Times New Roman"
 colorlinks: false
 header-includes: |
   \usepackage{titling}
   \setlength{\droptitle}{-1.6cm}
-  \pretitle{\begin{center}\normalsize\bfseries}
+  \pretitle{\begin{center}\large\bfseries}
   \posttitle{\par\end{center}\vspace{-0.8em}}
-  \preauthor{\begin{center}\small}
+  \preauthor{\begin{center}\normalsize}
   \postauthor{\par\end{center}\vspace{-0.9em}}
-  \predate{\begin{center}\small}
+  \predate{\begin{center}\normalsize}
   \postdate{\par\end{center}}
+  \usepackage{titlesec}
+  \titlespacing*{\section}{0pt}{0.45em}{0.15em}
+  \setlength{\parskip}{0.25em}
+  \linespread{0.95}
+  \setlength{\parindent}{0pt}
 ---
 
-**Undergraduate thesis, 2026. Two-page summary.** Full thesis: 35,000 words, 35 figures, 10
-chapters. Six pre-registrations lodged on OSF before the corresponding analyses ran.
+**Undergraduate thesis, 2026.** Full thesis: 40,000 words, 35 figures, 10 chapters, with six OSF
+pre-registrations lodged before the corresponding analyses ran.
 
 ## The problem
 
@@ -65,12 +72,11 @@ largest single gain measured, and the instrument that would supply it is the one
 least likely to fund. That series is a proxy built from each city's own outer ring rather than a
 rural monitor, so it was rebuilt from a donor city the target never sees: an independent network
 recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, falling to
-{{claim:donor.reproduced_deep_tropical}} per cent in Kandy's own stratum. That establishes
-transferable information in a background-like observation, not that a rural station would deliver
-this figure at Kandy. Every figure is a marginal value at a position in one ordering. Cities are
-not independent either, since {{claim:clust.largest_n}} share a national network; resampling
-clusters widens every interval by about half again and overturns none, and the tightest result
-stays the null.
+{{claim:donor.reproduced_deep_tropical}} per cent in Kandy's own stratum: transferable information
+in a background-like observation, not a figure a rural station would deliver at Kandy. Every figure
+is a marginal value at one position in one ordering, and cities are not independent either, since
+{{claim:clust.largest_n}} share a national network. Resampling clusters widens every interval by
+about half again and overturns none; the tightest result stays the null.
 
 **2. The recommendation inverts between strata.** In the deep tropics, local sensors buy
 {{claim:maiac.deep_tropical_first2}} per cent against {{claim:maiac.deep_tropical_background}}
@@ -84,40 +90,36 @@ that reflects an atmospheric regime rather than a measurement regime is unresolv
 holds thirteen cities, instrument class is strongly associated
 with latitude, and the paired test was not pre-registered.
 
-**3. A monitor-trained covariate under-prices monitors, and not in the way one would look for.**
-Replacing a published fused concentration product with a raw satellite retrieval left the
-satellite's own contribution essentially unchanged, at {{claim:c1.step_fused_ghap}} per cent
-against {{claim:c1.step_raw_aod}}, and roughly doubled the contribution of the rung above it.
-**Contamination does not inflate the contaminated term; it deflates the term above.** A
-pre-registered test looking for excess skill in the contaminated stream found none and would have
-reported the leakage as immaterial; the displaced signature is what makes the obvious diagnostic
-the wrong one. It is not cosmetic: on the fused product the inversion above is
-{{claim:inv.ghap.median}} points with an interval spanning zero, so the contamination did not
-shift that result, it removed it.
+**3. A monitor-trained covariate under-prices monitors, and not where one would look.** Replacing
+a fused concentration product with a raw satellite retrieval left the satellite's own contribution
+unchanged, {{claim:c1.step_fused_ghap}} against {{claim:c1.step_raw_aod}} per cent, and roughly
+doubled the rung above it. **Contamination does not inflate the contaminated term; it deflates the
+term above.** A pre-registered test looking for excess skill in the contaminated stream found none
+and would have called the leakage immaterial, so the displaced signature is what makes the obvious
+diagnostic the wrong one. Not cosmetic: on the fused product the inversion above is
+{{claim:inv.ghap.median}} points with an interval spanning zero, so contamination did not shift
+that result, it removed it.
 
 ## Where the model stops, and why that is a result
 
-Two survey sites three hundred metres apart fall inside a single model cell and differ by a factor
-of {{claim:spatial.paired_obs_ratio}} observationally; the model returns unity, because it is
-being asked about one pixel twice. A pre-registered test of the obvious diagnosis, that the grid
-is too coarse, was **refuted**: a tenfold refinement in area moves the paired ratio by
-{{claim:s1.paired_delta_on_refinement}}. The reason is a change of support rather than a data
-deficiency, since spread *within* a typical cell exceeds spread *between* cells across the whole
-map, {{claim:s2.within_pixel_p90p10}} against {{claim:s2.between_pixel_p90p10}}. A
-kilometre-scale product cannot answer which part of a cell is worst, however it is built. What it
-can report is the range the cell spans, which is well-posed, larger, and reported by no gridded
-product now in use.
+Two survey sites three hundred metres apart fall in one model cell and differ by a factor of
+{{claim:spatial.paired_obs_ratio}}; the model returns unity, being asked about one pixel twice. A
+pre-registered test of the obvious diagnosis, that the grid is too coarse, was **refuted**: a
+tenfold refinement moves the paired ratio by {{claim:s1.paired_delta_on_refinement}}. The reason is
+a change of support, not a data deficiency, since spread *within* a typical cell exceeds spread
+*between* cells across the whole map, {{claim:s2.within_pixel_p90p10}} against
+{{claim:s2.between_pixel_p90p10}}. A kilometre-scale product cannot say which part of a cell is
+worst, however built. It can report the range the cell spans, which is well-posed, larger, and
+reported by no gridded product in use.
 
 ## A pre-registered null with a stated detection limit
 
-A learned spatial pattern was tested with the benchmark, the detection limit and the bar all
-fixed before the model was written. Benchmark {{claim:phase1.best_rho}}, detection limit
-{{claim:phase1.min_detectable}}, bar {{claim:phase2.bar}}. The learned pattern reached
-{{claim:phase2.rho_learned}}.
-
-This is the sixth null on this question and the first with a detection limit fixed in advance, so
-it yields a bounded claim where the previous five, which could only have detected effects between
-{{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}, yielded none.
+A learned spatial pattern was tested with the benchmark, the detection limit and the bar fixed
+before the model was written: benchmark {{claim:phase1.best_rho}}, limit
+{{claim:phase1.min_detectable}}, bar {{claim:phase2.bar}}. It reached
+{{claim:phase2.rho_learned}}. This is the sixth null here and the first with a detection limit fixed in advance, so it yields a
+bounded claim where the previous five, which could only have detected effects of
+{{claim:null.min_detectable_lo}}-{{claim:null.min_detectable_hi}}, yielded none.
 {{claim:tour.families}} further families were then run on the same frame, including stepwise
 land-use regression, a Gaussian process and a mixed model: none beats the benchmark by more than
 the detection limit, and kriging and geographically weighted regression, which need observations
@@ -127,32 +129,27 @@ the information, not of one model family.
 ## Demonstration
 
 Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no reference monitor.
-Under the stated background and minimum-increment assumptions the constrained
-decomposition assigns **{{claim:partition.f}}** of modelled concentration to a locally generated
-increment, derived from a physical constraint rather than assumed, against a retired prior of
-about a quarter; it ranges {{claim:partition.f_lo}} to {{claim:partition.f_hi}} across anchored
-years and {{claim:field.f_form_calendar}} to {{claim:field.f_form_roll48}} across background-window
-definitions. That is a model-imposed split rather than a
-measured source apportionment: the increment is the spatially structured component inside the
-model domain, which is not the same quantity as material emitted in Kandy, and the model carries
-no chemistry with which to separate them. Against two published records that played no part in
+Under the stated assumptions the constrained decomposition assigns
+**{{claim:partition.f}}** of modelled concentration to a local increment, fixed by a physical
+constraint and not assumed, against a retired prior of about a quarter; it ranges
+{{claim:partition.f_lo}}-{{claim:partition.f_hi}} across anchored years and
+{{claim:field.f_form_calendar}}-{{claim:field.f_form_roll48}} across background-window definitions.
+That is a model-imposed split and not a source apportionment: the increment is the spatially
+structured component inside the domain, which is not material emitted in Kandy, and the model has
+no chemistry to separate them. Against two published records that played no part in
 building the model, the field agrees to {{claim:nbro.diff_pct_2021}} and
 {{claim:nbro.diff_pct_2022}} per cent in two independent years. Those checks cover the city-mean
 level, and because the temporal anchor is calibrated to Kandy's own sensors they test the modelled
 lift above an anchored mean rather than the whole field. **The neighbourhood-scale map is not validated and is not
 claimed to be**, for the reason the previous section gives.
 
-## How the work is done
+## How the work is done, and where it stands
 
-Every numeric claim is regenerated from its source at build time and the build refuses to complete
-if prose and data disagree. Writing the thesis moved eleven previously recorded quantities, none
-found by reading; four made the surrounding argument weaker and were kept. Chapter 5 is an account
-of eight approaches that did not work.
+Every numeric claim is regenerated from source at build time and the build refuses to complete if
+prose and data disagree. Writing the thesis moved eleven recorded quantities, none found by
+reading; four made the argument weaker and were kept, and Chapter 5 accounts for eight approaches
+that did not work. Six pre-registrations, fourteen of thirty predictions refuted across the five
+that ran. Thesis complete; a 13,800-word manuscript is drafted for a methods venue. Code, claim
+generators and registrations are version-controlled.
 
-## Status
-
-Manuscript drafted (13,800 words, 18 figures, 62 references) and targeted at a methods venue.
-Thesis complete. Six OSF pre-registrations, fourteen of thirty predictions refuted across the five
-that have run. Code, claim generators and pre-registrations are version-controlled.
-
-**Contact:** 11daminda08@gmail.com
+**Contact:** 11daminda08@gmail.com  ·  s20005@sci.pdn.ac.lk
