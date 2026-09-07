@@ -5858,3 +5858,74 @@ framing should say outright that this is a value-of-information study carrying a
 not a Kandy air-quality map. The thesis argues that in its text; the title does not.
 ⚠ **Declined, on standing instruction:** both reviewers asked for a 15–25% length cut. Thesis
 length is not a concern for this user, and the round added measured content.
+
+
+## F.111 — 🟢 EO foundation-model embeddings do NOT break the spatial ceiling, and now the null is BOUNDED
+
+`scripts/embedding_spatial_test.py` → `embedding_spatial_test.{csv,json}`.
+**Registered at OSF [`6udm3`](https://osf.io/6udm3/)** (project `ng2tc`), lodged
+2026-09-09 **before the script was written**. Prereg: `docs/prereg_embedding_spatial_2026-09-09.md`.
+
+### Why it was run, given six prior nulls
+One of those six used AlphaEarth embeddings (F.27) and returned partial ρ **+0.066**, p = 0.80. But
+**F.28 already retracted how hard that null could push**: its minimum detectable partial ρ was
+**0.65 / 0.82 / 0.96** on 17 / 10 / 6 stations. It excluded only a *large* effect. Meanwhile F.105
+built a frame resolving **0.130** on **47 cities and 636 stations**, and the embeddings had never
+been tested on it. An external reviewer independently named the gap: the benchmark is *"the best
+predictor among the predictors you happened to assemble, not a mathematical maximum."*
+
+### The result: all three confirmatory tests fail, as registered
+
+`GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL`, 64 dims, 10 m, 2023 mosaic, 100 m buffer, **100% coverage
+of 636 stations**. Leave-one-CITY-out, both sides standardised within city.
+
+| model | median ρ |
+|---|---:|
+| benchmark raster (`lc_built_2400`) | 0.301 |
+| **embeddings alone** | **0.327** |
+| 60 existing predictors | 0.250 |
+| existing + embeddings | 0.273 |
+
+| test | paired | 95% over cities | wins | verdict |
+|---|---:|---|---:|---|
+| **E1** embeddings vs benchmark | **−0.028** | [−0.170, +0.084] | 21/47 | fail |
+| **E2** +embeddings vs existing | **−0.002** | [−0.064, +0.049] | 23/47 | fail |
+| **E3** partial ρ, benchmark removed | **+0.191** | **[−0.007, +0.355]** | — | undetectable |
+
+🟢 **The claim this licenses:** *on 47 cities and 636 stations, 64-dimensional EO foundation-model
+embeddings do not beat the best single globally available raster by more than 0.130 in rank
+correlation.* **The previous embedding null could resolve 0.65; this one resolves 0.130** — a
+five-fold tightening of the same question, and it converts an underpowered null into a bounded one
+exactly as Phase 2 did for the learned pattern. **The seventh null, and the second with a detection
+limit fixed in advance.**
+
+### 🔴 GOTCHA #91 FOR THE THIRD TIME, and it would have been the headline
+Unpaired, **embeddings post the highest median of anything tested, 0.327 against the benchmark's
+0.301** — they appear to beat the best free raster and to beat the entire 60-predictor set. **Paired
+within city the same comparison is −0.028, winning 21 of 47.** Opposite signs again. Had the median
+table been reported as the result, this would have been written up as *foundation-model embeddings
+break the spatial ceiling*. Third occurrence after F.102's temperate band (+12.91 vs +0.14) and
+F.103's siting experiment (+0.114 vs −0.044).
+
+### ⚠ E3 is marginal, not zero, and that is the honest reading
+The partial correlation is **+0.191 with a lower bound of −0.007** — it fails by seven thousandths.
+It is also **roughly three times F.27's point estimate of +0.066**, measured with far more power. The
+registered verdict is *undetectable* and that stands, but *"embeddings carry no independent signal"*
+would be a stronger statement than the data support. **This is the quantity a follow-up should
+target**, and the obvious design is more cities rather than more bands.
+
+### What did not need checking
+The registration made a PASS provisional on auditing AlphaEarth's training corpus for ground-monitor
+ingestion (the C1/F.95 lesson). **A failure needs no such check**, because contamination could only
+have inflated the score. The audit is therefore not required and was not done.
+
+### Context that makes the null unsurprising rather than disappointing
+Published prior art closest to this test ([Quito, *Remote Sensing* 17:3472,
+2025](https://www.mdpi.com/2072-4292/17/20/3472)) reports R² ≈ 0.71 for NO₂ and SO₂ from these same
+embeddings but only *moderate* accuracy for **PM2.5** — the pollutant here. NO₂ is a sharp local
+traffic tracer; PM2.5 is regionally dominated and partly secondary. And F.68/F.69 establish that
+Kandy's within-city signal decays over tens to hundreds of metres, so the pattern is **sub-grid by
+construction** and no annual surface covariate can place it. ⚠ A null still does **not** establish
+that sub-kilometre PM2.5 is unpredictable; it bounds what this information recovered on this frame.
+
+Claims: `emb.*` (14).

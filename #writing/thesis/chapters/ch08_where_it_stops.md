@@ -134,6 +134,53 @@ assembled, which is a different and weaker statement than no predictor existing.
 That is a claim which can be disputed, and which a better experiment can supersede. "No spatial
 signal was found" is not.
 
+### The strongest available covariate, tested where the power is
+
+The tournament above varies the model and holds the information fixed. The complement is to hold
+the model fixed and vary the information, and the strongest candidate available is an Earth
+observation foundation model. This project had already tested one, and the test was not good
+enough: it ran on three cities and thirty-three stations between them, and Appendix D records its
+minimum detectable partial correlation as {{claim:emb.f27_mde_lo}} to
+{{claim:emb.f27_mde_hi}}. It could exclude only a large effect. On the frame this chapter uses the
+detectable difference is {{claim:emb.detection_limit}}, and the embeddings had never been scored
+there.
+
+That test was registered [OSF 6udm3] before it was written, with the benchmark, the detection limit
+and the bar carried over unchanged from the tournament. Sixty-four dimensional annual embeddings
+were sampled in a hundred-metre buffer at every station, returning values at all
+{{claim:emb.stations}} of them across {{claim:emb.cities}} cities, and scored leave-one-city-out
+exactly as above.
+
+| model | median rank correlation |
+|---|---:|
+| the benchmark raster | {{claim:emb.rho_bench}} |
+| embeddings alone | {{claim:emb.rho_alone}} |
+| the sixty existing predictors | {{claim:emb.rho_existing}} |
+| existing predictors and embeddings together | {{claim:emb.rho_combined}} |
+
+**That table is the trap this thesis has now fallen into three times, and it is shown because
+hiding it would be worse.** Read down the column, the embeddings post the highest median of
+anything tested. They appear to beat the best free raster and to beat the entire sixty-predictor
+set at once. Paired within city, which is the only comparison that answers the question, embeddings
+against the benchmark is {{claim:emb.e1.paired}}
+[{{claim:emb.e1.lo}}, {{claim:emb.e1.hi}}], and adding them to the existing predictors is
+{{claim:emb.e2.paired}} [{{claim:emb.e2.lo}}, {{claim:emb.e2.hi}}]. Both fail the registered bar,
+and both point the opposite way to the medians.
+
+The claim this licenses is the one the registration specified: on {{claim:emb.cities}} cities and
+{{claim:emb.stations}} stations, {{claim:emb.dims}}-dimensional Earth observation foundation-model
+embeddings do not beat the best single globally available raster by more than
+{{claim:emb.detection_limit}} in rank correlation. That is the seventh null on this question and
+the second with a detection limit fixed in advance, and it replaces an underpowered null with a
+bounded one.
+
+⚠ One number in it should not be rounded to zero. The partial correlation with the benchmark
+regressed out is {{claim:emb.e3.paired}}, with a lower bound of {{claim:emb.e3.lo}}: it fails to
+exclude zero by seven thousandths, and it is about three times the estimate the earlier
+underpowered test produced. The registered verdict is undetectable and that stands. But *embeddings
+carry no independent signal* would be a stronger statement than this measurement supports, and if
+any part of this question deserves a further experiment it is that one.
+
 ### Was it the data, or was it one model family?
 
 The registered test compared one learned family against one raster, and a reader is entitled to

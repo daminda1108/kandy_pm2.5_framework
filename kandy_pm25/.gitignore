@@ -116,3 +116,4 @@ node_modules/
 !scripts/spatial_tournament.py
 !scripts/srep_external_check.py
 !scripts/loss_sensitivity.py
+!scripts/embedding_spatial_test.py

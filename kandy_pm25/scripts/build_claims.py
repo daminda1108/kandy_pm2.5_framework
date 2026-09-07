@@ -2188,6 +2188,50 @@ def loss_sensitivity(c: Claims) -> None:
               stat="97.5th percentile, bootstrap over cities", n=v["n"], source=src,
               ledger="F.109")
 
+
+def embedding_test(c: Claims) -> None:
+    """F.111 -- EO foundation-model embeddings against the registered spatial bar."""
+    f = MOD / "embedding_spatial_test.json"
+    if not f.exists():
+        return
+    with open(f, encoding="utf-8") as fh:
+        S = json.load(fh)
+    src = "embedding_spatial_test.json"
+    c.add("emb.osf", S["osf"], stat="OSF registration lodged before the analysis",
+          n=S["cities"], source=src, ledger="F.111")
+    c.add("emb.cities", S["cities"], stat="cities in the scoring frame", n=S["cities"],
+          source=src, ledger="F.111")
+    c.add("emb.stations", S["stations"], stat="stations in the scoring frame",
+          n=S["cities"], source=src, ledger="F.111")
+    c.add("emb.dims", S["dims"], stat="embedding dimensions per station", n=S["cities"],
+          source=src, ledger="F.111")
+    c.add("emb.f27_mde_lo", 0.65,
+          stat="minimum detectable partial correlation of the SUPERSEDED 3-city embedding test",
+          n=17, source="ledger F.28", ledger="F.111",
+          note="recorded, not recomputed: the original run is superseded")
+    c.add("emb.f27_mde_hi", 0.96,
+          stat="the same quantity at Kathmandu, n=6", n=6, source="ledger F.28",
+          ledger="F.111")
+    c.add("emb.detection_limit", S["detection_limit"],
+          stat="minimum detectable paired improvement on this frame, from F.105",
+          n=S["cities"], source=src, ledger="F.111")
+    mr = S["median_rho"]
+    for k, tag in (("benchmark", "bench"), ("embeddings", "alone"),
+                   ("existing", "existing"), ("combined", "combined")):
+        c.add("emb.rho_" + tag, mr[k],
+              stat="median held-out rank correlation across cities, leave-one-city-out",
+              n=S["cities"], source=src, ledger="F.111")
+    for tag, t in S["tests"].items():
+        c.add("emb." + tag.lower() + ".paired", round(float(t["median"]), 3),
+              stat="paired median within city", n=t["n"], source=src, ledger="F.111",
+              note="paired, not a difference of medians: unpaired this comparison changes sign")
+        c.add("emb." + tag.lower() + ".lo", round(float(t["lo"]), 3),
+              stat="2.5th percentile, bootstrap over cities", n=t["n"], source=src,
+              ledger="F.111")
+        c.add("emb." + tag.lower() + ".hi", round(float(t["hi"]), 3),
+              stat="97.5th percentile, bootstrap over cities", n=t["n"], source=src,
+              ledger="F.111")
+
 def build() -> dict:
     d = _ladder()
     c = Claims()
@@ -2234,6 +2278,7 @@ def build() -> dict:
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)
+    embedding_test(c)
     return dict(
         generated=str(date.today()),
         gate="Phase 1 of docs/improvement_plan_2026-09-01.md",
