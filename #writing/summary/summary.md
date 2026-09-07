@@ -1,5 +1,5 @@
 ---
-title: "Measuring what an air quality observation is worth, in cities that cannot check a model"
+title: "Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka"
 author: "Daminda Alahakoon, University of Peradeniya, Sri Lanka"
 date: "2026"
 geometry: margin=1.9cm

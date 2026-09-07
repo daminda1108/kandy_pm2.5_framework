@@ -1,4 +1,4 @@
-# An information-tiered model for urban fine particulate matter in a city that cannot check it
+# Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka
 
 **A thesis submitted in partial fulfilment of the requirements for the degree of Bachelor of
 Science**

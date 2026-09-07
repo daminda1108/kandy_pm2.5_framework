@@ -117,9 +117,15 @@ arithmetic is an appendix stating why it is not a result.
 - **Reproducibility** is **auditable, and reproducible conditional on obtaining the source
   datasets**. Third-party licences make that the honest ceiling.
 
-⚠ **RAISED, NOT ACTED ON — user's call:** reviewer 2 suggests the **title** should say outright
-that this is a value-of-information study carrying a Kandy case study, not a Kandy air-quality map.
-The text argues that; the title does not.
+🟢 **RESOLVED — THE THESIS IS RETITLED** (user chose option C, 2026-09-09):
+> *Measuring what an air quality observation is worth: an information-budget approach, demonstrated at Kandy, Sri Lanka*
+
+The old title, *"An information-tiered model for urban fine particulate matter in a city that
+cannot check it"*, promised a **PM2.5 product**; §9.9 says the absolute scale at Kandy is not
+independently validated. The colon form puts the **contribution** before the colon and the **case
+study** after, and *"demonstrated at"* cannot be read as *"validated for"* — the same distinction
+§9.9 draws. Kandy stays visible, which matters at Peradeniya and in the CEA correspondence.
+⚠ **The summary now carries the SAME title**; the two previously disagreed.
 ⚠ **Declined on standing instruction:** both asked for a 15–25% length cut.
 
 **Thesis: 40,010 words · 35 figures · 10 tables · 528 claims · 0 lint errors.** Summary 2 pages.
