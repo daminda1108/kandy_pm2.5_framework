@@ -5929,3 +5929,40 @@ construction** and no annual surface covariate can place it. ⚠ A null still do
 that sub-kilometre PM2.5 is unpredictable; it bounds what this information recovered on this frame.
 
 Claims: `emb.*` (14).
+
+### F.111b — a cheap screen that rules out the next obvious covariate before anyone builds it
+
+Two gaps surfaced while investigating what else GEE could supply, both admissible at `Bud0`.
+
+**🔴 The 60 LUR predictors contain no chemical tracer.** Every one is a land-surface proxy: NDVI,
+tree, water, population, built-up, night lights, land cover, roads, distance-to-road. A satellite
+NO₂ column would be a direct observation of co-emitted combustion, and the Quito study found NO₂
+far more predictable from these same embeddings (R² ≈ 0.71) than PM2.5. It is the most obvious
+remaining candidate.
+
+**It was screened in one probe rather than tested in a full experiment.** For a covariate to place
+within-city structure it must first *vary* within a city. Median within-city coefficient of
+variation, 8 cities and 90 stations, TROPOMI NO₂ 2023 annual mean:
+
+| quantity | median within-city CV |
+|---|---:|
+| TROPOMI NO₂ column | **0.198** |
+| the benchmark raster (built-up, 2.4 km) | **0.445** |
+| the target itself (observed PM2.5) | 0.214 |
+
+**NO₂ carries 0.45× the within-city contrast of the benchmark that already fails to clear the
+bar**, which is what a 3.5 × 5.5 km pixel predicts against a 1 km target. ⚠ Its CV happens to sit
+near the target's own (0.198 against 0.214), and that is a coincidence of scale, not evidence:
+matching variance is not matching pattern. **Recorded as a screen, not a null** — no bar was
+registered and none was tested. NO₂ as a *daily city-level driver* on the temporal axis is a
+different question and remains untested.
+
+**🔴 The ladder's driver set contains no precipitation and no humidity.** `FEATS` is temperature,
+u/v wind, wind speed, boundary-layer height and two day-of-year terms, so **wet removal is entirely
+absent from the model's meteorology**. Table 9.1 already carries this as `NO MEASUREMENT: a known
+structural gap`. ERA5-Land daily precipitation is global, free, and returned values at 29 of 30
+probe stations (⚠ de-accumulate, gotcha #60).
+
+⚠ **This is not a cheap change despite being a cheap pull.** Precipitation enters `Bud0a`, the
+bottom rung, and **F.84 is the record of what happens when the bottom rung moves: every gain above
+it changes.** Adding it means re-running and re-registering the ladder, not appending a column.

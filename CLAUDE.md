@@ -70,6 +70,67 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-09b, 🔬 **A SEVENTH NULL, REGISTERED — EO FOUNDATION EMBEDDINGS DO NOT BREAK THE CEILING**)
+
+The user asked whether the newest GEE geospatial model could help. It could, the question was
+well posed, and it was registered and run. Narrative: SESLOG 2026-09-09. Ledger **F.111**.
+Registration **OSF [`6udm3`](https://osf.io/6udm3/)**, project `ng2tc`, lodged **before** the
+script was written. Prereg `docs/prereg_embedding_spatial_2026-09-09.md`.
+
+### Why it was worth re-running something already tested
+AlphaEarth was already one of the six spatial nulls (**F.27**, partial ρ +0.066, p = 0.80) — but
+**F.28 had already retracted its force**: minimum detectable partial ρ **0.65 / 0.82 / 0.96** on
+**17 / 10 / 6 stations**. It excluded only a large effect. **F.105**'s frame resolves **0.130** on
+**47 cities / 636 stations**, and the embeddings had never been scored there. An external reviewer
+named the same gap independently: the benchmark is *"the best predictor among the predictors you
+happened to assemble, not a mathematical maximum."*
+
+### 🟢 The result — all three confirmatory tests fail, as registered
+64 dims, 10 m, 2023 mosaic, 100 m buffer, **100% coverage of 636 stations**, leave-one-CITY-out.
+
+| test | paired | 95% over cities | wins |
+|---|---:|---|---:|
+| **E1** embeddings vs benchmark | **−0.028** | [−0.170, +0.084] | 21/47 |
+| **E2** +embeddings vs 60 existing | **−0.002** | [−0.064, +0.049] | 23/47 |
+| **E3** partial ρ, benchmark removed | **+0.191** | **[−0.007, +0.355]** | undetectable |
+
+**The claim:** *on 47 cities and 636 stations, 64-dim EO foundation-model embeddings do not beat
+the best single free raster by more than 0.130 in rank correlation.* **The previous embedding null
+resolved 0.65; this one resolves 0.130** — a five-fold tightening. **Seventh null, second with a
+detection limit fixed in advance.**
+
+### 🔴 GOTCHA #91 FOR THE THIRD TIME — and it would have been the headline
+Unpaired, embeddings post **the highest median of anything tested: 0.327 vs the benchmark's
+0.301**, appearing to beat both the best free raster and the whole 60-predictor set. **Paired
+within city: −0.028, winning 21/47.** Opposite signs. Reporting the medians would have produced
+*"foundation-model embeddings break the spatial ceiling."* Third instance after F.102 (+12.91 vs
++0.14) and F.103 (+0.114 vs −0.044). **The misleading table is kept in §8.5 beside the paired
+numbers, deliberately.**
+
+### ⚠ E3 is marginal, not zero
+**+0.191 with a lower bound of −0.007** — it misses excluding zero by seven thousandths, and is
+**~3× F.27's +0.066** measured with far more power. Registered verdict *undetectable* stands, but
+*"embeddings carry no independent signal"* overstates it. **This is where a follow-up goes**, and
+the design is **more cities, not more bands**.
+🟢 **The leakage audit was not required:** the registration made a PASS provisional on checking
+AlphaEarth's training corpus for ground-monitor ingestion (the C1/F.95 lesson). Contamination could
+only have *inflated* a score, so a failure needs no such check.
+
+### 🟡 TWO GAPS THIS SURFACED, both admissible at `Bud0` and neither yet tested
+- 🔴 **The driver set contains NO precipitation and NO humidity.** `FEATS` is temperature, u/v wind,
+  wind speed, BLH and two day-of-year terms. **Wet removal is entirely absent**, and Table 9.1
+  already lists it as `NO MEASUREMENT: a known structural gap`. ERA5-Land precipitation is global,
+  free and already used at Kandy (⚠ de-accumulate, gotcha #60). This targets the **temporal** axis,
+  where the model is strong and where the ladder's bottom rung sits.
+- 🔴 **Every one of the 60 LUR predictors is a LAND-SURFACE proxy** — NDVI, tree, water, population,
+  built-up, night lights, land cover, roads, distance-to-road. **There is no chemical tracer.** A
+  satellite NO₂ column is a direct observation of co-emitted combustion rather than a land proxy,
+  and the Quito study found NO₂ *far* more predictable from these same embeddings (R² ≈ 0.71) than
+  PM2.5. ⚠ Resolution is the open question: TROPOMI is ~3.5×5.5 km against a 1 km target, so this
+  may be coarser than the structure it would have to place.
+
+**Thesis: 40,472 words · 35 figures · 10 tables · 548 claims · 0 lint errors.** Summary 2 pages.
+
 ## Current State (updated 2026-09-09, 🔬 **TWO MORE REVIEWERS · A STYLE CLAIM MEASURED · FIVE CLAIMS PROMOTED OR DEMOTED**)
 
 Two further external assessments of the finished thesis, both **91–93/100**, both agreeing the
