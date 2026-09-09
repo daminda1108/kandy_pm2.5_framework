@@ -1,10 +1,10 @@
 # Chapter 6. The model
 
-The construction described here is deliberately modest in its physics and entirely conventional
-in its machine learning. Neither is the contribution. What the model does that is unusual is
-declare which observations it is entitled to use, and degrade exactly when one of them is
-withheld. That property is what makes Chapter 7 a measurement, not a set of ablations,
-and everything else in this chapter exists to support it.
+The physics in this model is deliberately modest and the machine learning is entirely
+conventional. Neither is the contribution. What is unusual is that the model states which
+observations it is allowed to use, and that taking one of them away returns it exactly to the
+simpler version rather than approximately. That is what makes Chapter 7 a measurement rather than a
+set of ablations, and everything else in this chapter exists to support it.
 
 {{dia:pipeline}}
 
@@ -27,10 +27,10 @@ scale separation it rests on has long precedent in air quality time series work 
 
 {{dia:decomposition}}
 
-Because `P` integrates to unity, **the spatial average of the field returns `T(t)` exactly**.
-The pattern moves material around the basin without altering how much of it there is. That
-condition does three things at once, and they are the reason the decomposition was chosen over
-a multiplicative alternative.
+The pattern `P` is normalised so that it averages to one across the city. Because of that,
+**the spatial average of the field returns `T(t)` exactly**: the pattern moves material around the
+basin without changing how much of it there is. That single condition does three things, and
+together they are why this form was chosen over a multiplicative one.
 
 It prevents an imposed spatial pattern from displacing the level, which is the quantity the
 observations actually constrain. It separates the temporal anchor from the spatial redistribution,
@@ -38,23 +38,22 @@ so the two can be evaluated independently, which is what Chapter 7 exploits. And
 consequence of being wrong: an error in `P` is an error in **where** material sits, never in
 **how much** of it there is.
 
-**What the unit-mean condition does not do is identify `B`.** It is worth being exact, because the
-stronger statement is easy to make and is false. Taking the spatial mean of the field gives
-`T` whatever the background happens to be: for any admissible alternative `B'`, setting
-`P' = (C − B') / (T − B')` yields a pattern that also has unit spatial mean, and reproduces the
-same field. The gauge therefore identifies the anchor and pins the normalisation of the pattern;
-it says nothing about how the anchor divides into a background and an increment. That division is
-identified by the constraints of Section 6.6 and by the construction of `B` in Section 6.3, not by
-the gauge, and the sensitivity of the resulting fraction to those choices is reported there rather
-than assumed away.
+**What that condition does not do is pin down `B`.** Being exact here matters, because the
+stronger statement is easy to make and is false. Taking the spatial mean of the field returns `T`
+whatever the background happens to be. For any other background `B'` that is physically allowed,
+setting `P' = (C − B') / (T − B')` gives a pattern that also averages to one and reproduces exactly
+the same field, so the condition is satisfied by every candidate background rather than by one.
+What it fixes is the anchor and the scale of the pattern. It says nothing about how the anchor
+divides into a background and an increment. That division is settled by the constraint in
+Section 6.6 and by the way `B` is built in Section 6.3, and how much the resulting fraction moves
+when those choices are varied is reported there rather than assumed away.
 
 One qualification belongs here rather than in a limitations list. The satellite anchor is exact,
 in that the annual mean of `T` matches the reference product to four decimal places every year.
 The delivered field nonetheless sits {{claim:gauge.drift_lo_pct}} to {{claim:gauge.drift_hi_pct}}
-per cent above it, consistently and in the same direction. The cause is an accumulation across
-build steps instead of a defect in the gauge: each step preserves the mean, but the unit-mean
-pattern is recovered from an upstream field rather than from the anchor directly, and a small
-positive offset accrues. The condition holds by construction and to within about half a per cent
+per cent above it, consistently and in the same direction. The cause is a small error accumulating across build steps rather than a fault in the
+normalisation itself: each step preserves the mean, but the pattern is recovered from the output of
+the previous step rather than from the anchor directly, so a small positive offset builds up. The condition holds by construction and to within about half a per cent
 in practice, and this thesis states it that way, not as an exact identity.
 
 ### Why the background is allowed to be uniform
@@ -106,8 +105,9 @@ and the appropriate response is Chapter 9's rather than a defence of the constru
 
 ## 6.2 Comparing an areal model to a point instrument
 
-A field is areal. A monitor is a point. Comparing them by co-location is a change-of-support
-error and it is the most common way a model of this kind is scored wrongly.
+The model gives an average over a square kilometre. A monitor gives a reading at one point inside
+that square. Comparing the two as though they were the same quantity is called a change-of-support
+error, and it is the most common way a model of this kind is scored wrongly.
 
 {{dia:obsoperator}}
 
@@ -151,9 +151,10 @@ at the demonstration city without correcting it.
 
 ## 6.3 The information budget
 
-An information budget declares which observation streams a tier of the model may use. Builders
-assert against it, so a stream a tier is not entitled to is unreachable by construction rather
-than by discipline.
+An information budget is a statement of which observations a given tier of the model is allowed to
+use. The code that builds each tier checks itself against that statement, so a tier cannot reach a
+data source it is not entitled to. The restriction is enforced by the program rather than by the
+author remembering to honour it.
 
 {{dia:tiers}}
 
@@ -161,8 +162,8 @@ The tiers are nested, and the nesting is asserted at import time so that a malfo
 cannot be registered. Each tier declares, in one machine-readable object, what it admits, what it
 estimates, what it imposes, and which tier it degrades to.
 
-Admissibility is checked in three directions, and each check exists because the corresponding
-failure occurred in this project.
+The check runs in three directions, and each one is there because that particular failure actually
+happened during this project.
 
 The first stops a tier reaching for information it was not granted. This is the obvious
 direction and it was implemented first.
@@ -187,17 +188,19 @@ were would be the easiest way to oversell this work, so the differences are set 
 **Conservation is a guarantee.** The spatial mean of the field returns the temporal anchor,
 analytically and under test, to the tolerance given in Section 6.1. This holds by construction.
 
-Exact degradation is a guarantee. Withholding a stream reproduces the lower tier
-bit-for-bit, not approximately. This is what allows the difference between two tiers to be
-attributed to information, not to model change, and Chapter 7 depends on it entirely.
+**Exact removal is a guarantee.** Taking a stream away reproduces the simpler tier exactly, to the
+last decimal place, rather than approximately. This is what allows the difference between two tiers
+to be attributed to the data and not to a change in the model, and Chapter 7 depends on it
+entirely.
 
-Monotone skill under added information is an enforced mechanism, not a theorem. The
-construction shrinks towards the lower tier when the added observation does not help, so skill
-cannot decrease. That is a property of the estimator that was built in deliberately, and a
-different estimator would not have it.
+**Skill never falling when data is added is an enforced mechanism, not a theorem.** When an added
+observation does not help, the model falls back towards the simpler tier, so the score cannot get
+worse. That behaviour was built into the estimator deliberately. A different estimator would not
+have it, and the property belongs to the estimator rather than to the data.
 
-Declared identifiability is a discharged obligation rather than a property. The model states
-which parameters the data can constrain and which are imposed. Under a refined test, of
+**Declared identifiability is an obligation that has been discharged, rather than a property of
+the model.** The model states which of its parameters the data can actually pin down and which are
+imposed by hand. Under a refined test, of
 {{claim:p4.rows}} parameter combinations examined, {{claim:p4.identified}} were identified and
 {{claim:p4.unidentified}} were not, with {{claim:p4.saturated}} saturating a bound. The one
 parameter the specification says the data should constrain has profile intervals containing
@@ -223,8 +226,9 @@ is to structure only the accumulation above background and let ventilation below
 uniformly, which is the `max(inc, 0) * P` and `min(inc, 0)` pair. The basin mean is preserved
 exactly and the midday inversion falls to {{claim:field.postcap_inversion_midday}} per cent.
 
-The ventilated-hour floor. The split renders ventilated hours perfectly flat, and ground
-truth from a city with a dense network shows they are not. A bounded, mean-zero term
+**The floor on well-mixed hours.** On hours when the city is well ventilated and the total falls
+to or below the background, the split above renders the map perfectly flat. Measurements from a
+city with a dense network show that such hours are not flat. A bounded, mean-zero term
 `e(t)(P - 1)` restores a small amount of structure on those hours. Being mean-zero, it leaves
 conservation exact; being bounded below by zero and acting only on the accumulation side, it
 cannot re-invert the core; and setting its scale to zero recovers the previous form exactly,
