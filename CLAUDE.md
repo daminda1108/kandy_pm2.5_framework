@@ -70,6 +70,66 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-09-09d, ✍️ **THE THESIS AND SUMMARY REWRITTEN FOR A READER — AND THE VISUALS AUDITED**)
+
+No computation this session. What changed is who the document is written for, and a plan exists
+for the part of it that was never done properly: the figures. Narrative: SESLOG 2026-09-09d.
+
+### ✍️ The prose was written for the person who built it, and now is not
+The user's instruction was *"phrasing and wording to be humanized and understandable... much of it
+sounds cryptic"*, applied first to the summary, then to the thesis. The pass was structural, not
+cosmetic:
+- 🔴 **"The ladder" is used 33 times and was never introduced.** The thesis's central metaphor had
+  no definition anywhere. Same defect for `rung`, `tier`, `the panel`. All now glossed at first use.
+- 🔴 **"Stratum" named two different objects in ch09** — a latitude band and a design group. Split.
+- **49 section headings replaced.** 31 of 124 opened with What/Where/Why/How and 16 used the
+  *"X, and what it does not"* construction — a quarter of all headings following one formula, which
+  reads as a house style before it reads as description. ⚠ **Distinctive chapter titles were
+  deliberately kept**; flattening every heading into a bureaucratic noun phrase is a different
+  failure. Section *numbers* untouched, so every cross-reference still resolves.
+- **11 figures gained lead-in paragraphs.** Six sat directly under a heading with no prose at all,
+  so a reader met the image before being told what question it answers.
+- ⚠ **The summary tension resolved in favour of comprehension** (user: *"I don't mind if the summary
+  is recompressed but it should be comprehensible"*). Space came from layout and content, never from
+  re-compressing the language.
+- 🔴 **Process note, twice over:** I cut summary body text before noticing the extra page came from
+  the **title block**, then again before noticing it came from the **final paragraph splitting
+  across the break**. **Measure where the space went before cutting content.**
+
+### 📋 A FIGURE AND MAP PLAN, written after checking rather than assuming
+Plan: [`kandy_pm25/docs/figure_and_map_plan_2026-09-09.md`](kandy_pm25/docs/figure_and_map_plan_2026-09-09.md).
+**Awaiting user approval before execution** — in particular the seven proposed chapter titles.
+- 🔴 **The maps are not maps.** `obsdensity` (ch1) and `panel` (ch4) are `scatter(lon, lat)` on bare
+  axes labelled "longitude" and "latitude" — **no coastline, no landmass, no projection, no
+  graticule**. For the figure that opens the thesis and carries its motivating claim, that is the
+  weakest visual decision in the document. `valley` (ch2) has a reasoned hand-computed hillshade but
+  no scale bar, north arrow, contours or locator inset.
+- 🟢 **The libraries are already installed** — geopandas 1.1.2, cartopy 0.25.0, contextily, rasterio,
+  shapely, pyproj, osmnx, matplotlib-scalebar. 🟢 **Cartopy's Natural Earth cache is populated**
+  (65 shapefiles); all five needed features were **tested loading from disk**, so the maps build
+  offline with no tile service and no licensing question. **Missing: `mapclassify`, `adjustText`** —
+  install rather than hand-roll.
+- 🟢 **All six proposed new figures have their data on disk.** N1 station-count curve · N2
+  model-family tournament · N3 loss sensitivity and the sign flip · N4 partition sensitivity across
+  **three** axes (the F.108 error, made impossible to repeat) · N5 paired vs unpaired (gotcha #91,
+  which has now caught this project four times) · N6 cluster-bootstrap forest plot.
+  **This is a plotting job, not an analysis job.**
+- 🟢 **Both stated risks were tested, not just listed:** no prose anywhere names a figure by number,
+  so inserting six figures and renumbering is safe; and every cartopy feature loads from cache, so a
+  build cannot silently attempt a download.
+- **Deliberately NOT proposed:** figures for the precipitation null, the campaign costing or the
+  chemistry bounds — all three are table-shaped and a figure would be decoration.
+
+### 📄 A CV rebuilt from a veteran's skeleton
+`D:\Downloads\Daminda_Alahakoon_CV_2026-09.{md,docx}`, for the user to finish by hand. Assessed the
+**Makoto Kelp / University of Utah** PhD opening against the user's profile; advised emailing with
+CV + summary attached rather than waiting on a partial transcript that costs money and days.
+⚠ **Per [[phd-application-strategy]] the standing decision is Fall 2028**, so this is one posting
+evaluated on its merits, not a reopening of the cycle.
+
+**Thesis: 42,637 words · 35 figures · 10 tables · 566 claims · 0 lint errors, builds clean.**
+Summary 2 pages.
+
 ## Current State (updated 2026-09-09c, 🟢 **NO F.84 REPEAT — THE UNUSED DRIVER WAS UNUSED HARMLESSLY**)
 
 Two registered tests in one session, both nulls, both useful. Narrative: SESLOG 2026-09-09.
@@ -1113,6 +1173,12 @@ All paths are relative to `d:\ProjectCD\kandy_pm25\` unless stated otherwise.
   reordering + bootstrap over CITIES + the paired deep-tropical inversion test on both satellite
   streams). Products: `modular/{independent_background_revalidated,ladder_order_variants,
   ladder_bootstrap}.csv` + `ladder_order_summary.json`.
+- **🆕 Figure and map plan (2026-09-09):** `kandy_pm25/docs/figure_and_map_plan_2026-09-09.md` —
+  the visual audit and its plan. **Not started.** Records what was verified rather than assumed:
+  which GIS libraries are installed, that cartopy's Natural Earth cache is populated and every
+  needed feature loads offline, that all six proposed figures already have their data on disk, and
+  that **no prose anywhere names a figure by number** so renumbering is safe. Also holds the seven
+  proposed chapter titles.
 - **🆕 Thesis (2026-09-04/05):** `D:\ProjectCD\#writing\` — `thesis/chapters/ch00..ch11.md` (edit
   these, never `build/thesis.md`) · `src/{thesisviz,d_flowcharts,d_schematics,d05_validation_protocol,f_chapters,t_tables}.py`
   · `build/{make_reference_docx,lint,assemble,build_docx}.py` · `summary/{summary.md,build_summary.py}`.
@@ -1351,7 +1417,42 @@ python src/comparison/publication_figures.py --all
 Narrative/history for everything below lives in `memory/SESLOG.md`.
 This section is the FORWARD list only.
 
-### 0. 🔴 IMMEDIATE (updated 2026-09-06)
+### 0. 🔴 IMMEDIATE (updated 2026-09-09d)
+0. **THE THESIS NEEDS A HUMAN READ END TO END.** 42,637 words, 566 claims, gates green, four
+   rounds of outside review answered, and a full humanisation pass. Every mechanical check runs on
+   every build; **none of them checks that a number is meaningful, only that it is current** — and
+   F.108 proved the claims gate cannot catch an English clause that names the wrong thing.
+   ⚠ **The style pass raises the stakes:** three mechanical rewrites broke the sense this session
+   and were repaired by hand, so a human read is now checking meaning the guards never touched.
+   User action, and the critical path for the thesis.
+0a. **APPROVE OR AMEND THE FIGURE AND MAP PLAN**, then execute it.
+   `kandy_pm25/docs/figure_and_map_plan_2026-09-09.md`. **Nothing in it is started.** Order:
+   install `mapclassify` + `adjustText` → **seven chapter titles** → N1/N4/N6 → N2/N3/N5 →
+   M3 `valley` (UTM 44N, contours, scale bar, north arrow) → M1/M2 as a pair (Robinson + Natural
+   Earth) → lead-ins for the six new figures. The two proposed titles that carry the most:
+   **"Eight approaches that did not work"** (a number is a claim; "What was tried and did not work"
+   is a mood) and **"Validation without local ground truth"** (states the hardest problem on the
+   contents page, where "Making sure it works" states nothing).
+0b. **Decide what the campaign CLAIMS, now that F.103 removed its spatial justification.** The
+   design stratum's founding argument — that deliberate siting recovers pattern a convenience
+   network cannot — **does not survive 43 dense-network cities**. Two thin justifications remain:
+   making the exposure field checkable beyond the three paired locations, and making Kandy the
+   only deliberately sited city in a 48-city convenience panel (itself weakened by F.103).
+   ⚠ Per F.101 the cost either way is **under 3% of the instrument budget**, so this is a
+   question about **what the campaign claims, not what it costs.**
+0c. **Send the CEA letter** — now both the first scientific step (F.96: local stations worth
+   **4.2×** the background in Kandy's band) **and the largest cost decision** (F.101: a reference
+   anchor is 10,000–40,000 USD to buy, or a letter to borrow).
+0d. **Get a local quote in rupees.** Every non-instrument line in the costing carries an empty
+   unit price — mounting, power, import duty, labour, servicing — because none is published for
+   Sri Lanka. **Import duty is the single largest unknown.**
+0e. **Circulate the paper** to the four readers — user action, unchanged.
+0f. ⚠ **CLAUDE.md is 1,614 lines against its own ~900-line target.** Ten months of `## Current
+   State` blocks have stacked up and several are fully absorbed into the gotchas, the ledger and
+   `PROJECT.md`. **Archive them to the index table** (one row + a SESLOG date) at the next
+   convenient boundary. Not urgent; it is context cost, not correctness.
+
+### 0w. Superseded IMMEDIATE list (2026-09-06)
 0. **THE THESIS NEEDS A HUMAN READ END TO END.** 34,949 words, 417 claims, gates green, two
    rounds of outside methodological review answered. Every mechanical check runs on every build;
    **none of them checks that a number is meaningful, only that it is current.** User action,
@@ -1370,6 +1471,7 @@ This section is the FORWARD list only.
    unit price — mounting, power, import duty, labour, servicing — because none is published for
    Sri Lanka. **Import duty is the single largest unknown.**
 0d. **Circulate the paper** to the four readers — user action, unchanged.
+
 
 ### 0x. Superseded IMMEDIATE list (2026-09-05)
 0. **THE THESIS NEEDS A HUMAN READ END TO END.** ~~30,052 words, 302 claims.~~

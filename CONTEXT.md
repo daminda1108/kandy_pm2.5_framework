@@ -3,7 +3,7 @@
 **Read this first.** One page of what is true, what is refuted, and what is open.
 Everything here is distilled from `CLAUDE.md`, `PROJECT.md`, the epistemic ledger
 (`kandy_pm25/docs/model_reference/F_epistemic_ledger.md`) and `memory/SESLOG.md` — those stay
-authoritative. **Keep this file under 250 lines.** Last updated **2026-09-06**.
+authoritative. **Keep this file under 250 lines.** Last updated **2026-09-09**.
 
 ---
 
@@ -321,7 +321,7 @@ The **first external checks on the Kandy field** in the project's history.
 | the formal model statement | `kandy_pm25/docs/MODEL_SPECIFICATION.md` |
 | doc index — current vs historical | `kandy_pm25/docs/README.md` |
 | the manuscript | `kandy_pm25/docs/paper/` — **edit `draft_s*.md`, never `manuscript_kandy.md`** |
-| **the thesis** | `#writing/` — **edit `thesis/chapters/ch*.md`, never `build/thesis.md`**. Titled *"An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy"*; the summary carries the same title, at 12pt Times New Roman |
+| **the thesis** | `#writing/` — **edit `thesis/chapters/ch*.md`, never `build/thesis.md`**. Titled *"An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy"*; the summary carries the same title, at 12pt Times New Roman. **42,637 words, 35 figures, 10 tables, 566 claims, 0 lint errors.** ⚠ The maps are not maps — see `kandy_pm25/docs/figure_and_map_plan_2026-09-09.md`, not started |
 
 **Publication view:** two papers, not one — the methods/VoI paper (strong, needs no Sri
 Lankan data) and the Kandy application (weaker alone). See `CLAUDE.md` §1b.
