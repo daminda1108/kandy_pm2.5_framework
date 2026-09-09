@@ -19,137 +19,141 @@ header-includes: |
   \postdate{\par\end{center}}
   \usepackage{titlesec}
   \titlespacing*{\section}{0pt}{0.45em}{0.15em}
-  \setlength{\parskip}{0.25em}
+  \setlength{\parskip}{0.18em}
   \linespread{0.95}
   \setlength{\parindent}{0pt}
 ---
 
-**Undergraduate thesis, 2026.** Full thesis: 40,000 words, 35 figures, 10 chapters, with six OSF
-pre-registrations lodged before the corresponding analyses ran.
+**Undergraduate thesis, 2026.** Full thesis: 40,000 words, 35 figures, 10 chapters, with eight OSF
+pre-registrations lodged before the corresponding analyses were run.
 
 ## The problem
 
-Most of the world's population breathes air nobody measures, and the deficit is worst where
-concentrations are highest. Models supply a field where instruments do not, and they are good. But
-they are validated where monitors are dense and used where monitors are absent, so **the transfer
-that matters is the one that cannot be scored**, and the usual response to doubt needs exactly the
-observations whose absence created it.
+Most of the world's population breathes air nobody measures, and the shortage of instruments is
+worst where the air is dirtiest. Models fill the gap, and they are good. But they are tested where
+monitors are dense and then used where monitors are absent, so **the one transfer that matters is
+the one that cannot be scored**, and the usual answer to that doubt needs exactly the measurements
+whose absence created it.
 
-This thesis changes the question. Instead of asking how accurate a model is where accuracy cannot
-be measured, it asks what a model may claim given the observations it has, and measures the
-marginal predictive value of each further stream: the reduction in out-of-sample daily error at a
-fixed position in a fixed ordering, standing in for loss and not decision-theoretic value of
-information.
+This thesis changes the question. Instead of asking how accurate a model is where its accuracy
+cannot be checked, it asks what the model may claim from the data it already has, then measures
+what each further source of data would be worth. Worth is defined concretely: how
+much the model's day-to-day error falls when that source is added, at a fixed point in a fixed
+order of adding them. This is a practical stand-in for value rather than a formal
+decision-theoretic calculation, and the thesis says so.
 
-## The construction
+## How the model is built
 
-Concentration separates into a uniform regional background and a local increment redistributed by
-a unit-mean pattern. Two properties make the measurement possible.
+Concentration is split in two: a regional background that is the same everywhere in the city at any
+given hour, and a local increment on top of it that varies from place to place. Two design choices
+make the measurement possible.
 
-**Conservation.** The field's spatial mean returns the temporal anchor exactly, so an error in the
-pattern misplaces material without creating it.
+**Conservation.** The map's spatial average always equals the city-wide estimate. If the model
+puts pollution in the wrong neighbourhood it cannot also invent more of it, so being wrong about
+location has a bounded cost.
 
-**Exact degradation.** The model declares which streams each tier may use, and withholding one
-reproduces the lower tier bit-for-bit. Specification and fitting are held constant, so the
-difference between tiers isolates the predictive consequence of admitting that stream instead of
-confounding it with a change of model.
+**Exact removal.** The model is built in tiers, each told which data sources it may use. Taking a
+source away reproduces the simpler tier exactly rather than approximately, because the model and
+the fitting procedure stay fixed and only the data changes. The gap between two tiers is therefore
+the effect of that data, not of having quietly changed the model as well.
 
 ## Three results
 
 Measured across **{{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
-{{claim:frame.city_days}} city-days**, each scored against monitors withheld from it. Every panel
-city is a valley or basin that publishes enough monitoring to be scored, so what follows is bounded
-by that panel.
+{{claim:frame.city_days}} city-days**, each scored against monitors kept out of its own fit. Every
+panel city is a valley or basin publishing enough data to be scored, so the findings are bounded by
+that panel.
 
-**1. Freely available geography is worth about as much as the first monitor a city buys.** Terrain,
-roads, land cover, night lights and population together buy {{claim:step.geography}} per cent in
-daily error. Monitors three to six buy {{claim:step.bud1_bud2}} per cent, an absent effect rather
-than a small one, and the most estimator-robust result in the study. Sweeping from one station to
-eight puts the saturation one rung lower than the tier structure could express: the first station
-buys {{claim:stn.one_gain}} per cent and the second adds {{claim:stn.second_adds}} points.
-A background series from outside the urban core buys {{claim:step.bud2_bud3}} per cent, the
-largest single gain measured, and the instrument that would supply it is the one programmes are
-least likely to fund. That series is a proxy built from each city's own outer ring rather than a
-rural monitor, so it was rebuilt from a donor city the target never sees: an independent network
-recovers {{claim:donor.gain_reproduced_pct}} per cent of the gain, falling to
-{{claim:donor.reproduced_deep_tropical}} per cent in Kandy's own stratum: transferable information
-in a background-like observation, not a figure a rural station would deliver at Kandy. Every figure
-is a marginal value at one position in one ordering, and cities are not independent either, since
-{{claim:clust.largest_n}} share a national network. Resampling clusters widens every interval by
-about half again and overturns none; the tightest result stays the null.
+**1. Free data is worth about as much as the first monitor a city buys.** Terrain, roads, land
+cover, night lights and population are free and available anywhere, and together they cut daily
+error by {{claim:step.geography}} per cent. The third through sixth monitors cut it by
+{{claim:step.bud1_bud2}} per cent, which is not a small effect but an absent one, and it is the
+finding that survives best when the learning algorithm is changed. Counting from one station up to
+eight shows the saturation arriving earlier still: the first station buys {{claim:stn.one_gain}}
+per cent and the second adds {{claim:stn.second_adds}} points.
 
-**2. The recommendation inverts between strata.** In the deep tropics, local sensors buy
-{{claim:maiac.deep_tropical_first2}} per cent against {{claim:maiac.deep_tropical_background}}
-per cent for the background proxy, reversing the pooled ordering. Paired within city and
-bootstrapped over cities the advantage is {{claim:inv.maiac.median}} points
+The largest single gain comes from elsewhere. A background series measured outside
+the urban core cuts error by {{claim:step.bud2_bud3}} per cent, and it is the instrument air
+quality programmes are least likely to fund. That series is a stand-in, built from each city's own
+outermost monitors rather than a true rural station, so it was rebuilt using a donor city the
+target never sees. An independent network recovers {{claim:donor.gain_reproduced_pct}} per cent of
+the gain, falling to {{claim:donor.reproduced_deep_tropical}} per cent in the group Kandy belongs
+to. What that establishes is that a background measurement carries real transferable information,
+not that a rural station would deliver this particular figure at Kandy. Two cautions apply to all
+of these figures: each is what a source is worth at one position in one order of adding them, and
+the cities are not independent, since {{claim:clust.largest_n}} share a national network.
+Resampling whole networks widens every interval by about half again and changes no conclusion.
+
+**2. The right advice flips between climate zones.** In the deep tropics, two local sensors cut
+error by {{claim:maiac.deep_tropical_first2}} per cent against
+{{claim:maiac.deep_tropical_background}} per cent for the background series, reversing the order
+found by pooling all cities together. Comparing the two within each city and resampling over
+cities, the advantage is {{claim:inv.maiac.median}} points
 [{{claim:inv.maiac.lo}}, {{claim:inv.maiac.hi}}], favouring sensors in
-{{claim:inv.maiac.frac_cities}} per cent of the band, and a programme following pooled advice
-would buy the wrong instrument first. The defensible form is narrow: the panel supports a
-deep-tropical ordering in which local observations outperform the background proxy, and how far
-that reflects an atmospheric regime rather than a measurement regime is unresolved. The stratum
-holds thirteen cities, instrument class is strongly associated
-with latitude, and the paired test was not pre-registered.
+{{claim:inv.maiac.frac_cities}} per cent of that group. A programme following the pooled advice
+would buy the wrong instrument first. The defensible version is narrow: within this panel, local
+measurements beat the background stand-in in the tropical group, and how much of that reflects the
+atmosphere rather than the instruments used there is unresolved. The group holds thirteen cities,
+instrument type is closely tied to latitude, and this comparison was not pre-registered.
 
-**3. A monitor-trained covariate under-prices monitors, and not where one would look.** Replacing
-a fused concentration product with a raw satellite retrieval left the satellite's own contribution
-unchanged, {{claim:c1.step_fused_ghap}} against {{claim:c1.step_raw_aod}} per cent, and roughly
-doubled the rung above it. **Contamination does not inflate the contaminated term; it deflates the
-term above.** A pre-registered test looking for excess skill in the contaminated stream found none
-and would have called the leakage immaterial, so the displaced signature is what makes the obvious
-diagnostic the wrong one. Not cosmetic: on the fused product the inversion above is
-{{claim:inv.ghap.median}} points with an interval spanning zero, so contamination did not shift
-that result, it removed it.
+**3. A satellite product trained on monitors hides what monitors are worth, and not where anyone
+would look for it.** Swapping a published product that had itself been fitted to ground monitors
+for a raw satellite retrieval barely moved the satellite's own contribution,
+{{claim:c1.step_fused_ghap}} against {{claim:c1.step_raw_aod}} per cent, but roughly doubled the
+step above it. **The contamination does not inflate the step it sits in. It deflates the step
+above.** A pre-registered test looking for extra skill inside the contaminated stream found none
+and would have called the problem harmless, because the signal had moved rather than grown. On the
+contaminated product the reversal in result 2 measures {{claim:inv.ghap.median}} points with an
+interval spanning zero, so the contamination had not shifted that finding, it had erased it.
 
-## Where the model stops, and why that is a result
+## Where the model stops, and why that is itself a result
 
-Two survey sites three hundred metres apart fall in one model cell and differ by a factor of
-{{claim:spatial.paired_obs_ratio}}; the model returns unity, being asked about one pixel twice. A
-pre-registered test of the obvious diagnosis, that the grid is too coarse, was **refuted**: a
-tenfold refinement moves the paired ratio by {{claim:s1.paired_delta_on_refinement}}. The reason is
-a change of support, not a data deficiency, since spread *within* a typical cell exceeds spread
-*between* cells across the whole map, {{claim:s2.within_pixel_p90p10}} against
-{{claim:s2.between_pixel_p90p10}}. A kilometre-scale product cannot say which part of a cell is
-worst, however built. It can report the range the cell spans, which is well-posed, larger, and
-reported by no gridded product in use.
+Two survey sites three hundred metres apart fall inside a single model cell. Measured, they differ
+by a factor of {{claim:spatial.paired_obs_ratio}}. The model says they are identical, because it is
+being asked about the same pixel twice. The obvious explanation is a grid that is too coarse, and a
+pre-registered test **refuted** it: making the cells ten times finer moves the ratio by
+{{claim:s1.paired_delta_on_refinement}}. The variation lives inside cells rather than between them.
+Across the whole map, the spread within a typical cell,
+{{claim:s2.within_pixel_p90p10}}, is larger than the spread between cells,
+{{claim:s2.between_pixel_p90p10}}. No kilometre-scale product can say which part of a cell is
+worst, however it is built. What it can honestly report is the range a cell spans, which is the
+larger quantity and one that no gridded product currently publishes.
 
-## A pre-registered null with a stated detection limit
-
-A learned spatial pattern was tested with the benchmark, the detection limit and the bar fixed
-before the model was written: benchmark {{claim:phase1.best_rho}}, limit
-{{claim:phase1.min_detectable}}, bar {{claim:phase2.bar}}. It reached
-{{claim:phase2.rho_learned}}. This is the sixth null here and the first with a detection limit fixed in advance, so it yields a
-bounded claim where the previous five, which could only have detected effects of
-{{claim:null.min_detectable_lo}}-{{claim:null.min_detectable_hi}}, yielded none.
-{{claim:tour.families}} further families were then run on the same frame, including stepwise
-land-use regression, a Gaussian process and a mixed model: none beats the benchmark by more than
-the detection limit, and kriging and geographically weighted regression, which need observations
-at the target, fall below it even when given the city's own stations. The null is a property of
-the information, not of one model family.
+That limit was then tested rather than asserted. A learned spatial pattern was run with the
+benchmark, the detection limit and the pass mark all fixed before the model was written: benchmark {{claim:phase1.best_rho}}, smallest effect the
+experiment could detect {{claim:phase1.min_detectable}}, pass mark {{claim:phase2.bar}}. It reached
+{{claim:phase2.rho_learned}}. This is the sixth negative result on the question in this project and
+the first where the detection limit was fixed beforehand, so it bounds the answer instead of merely
+reporting an absence. The previous five could only have detected effects of
+{{claim:null.min_detectable_lo}} to {{claim:null.min_detectable_hi}}, which is why they said
+nothing. {{claim:tour.families}} further model families were then run on the same data, among them
+conventional land-use regression, a Gaussian process and a mixed model, and none beats the
+benchmark by more than the detection limit. Kriging and geographically weighted regression need
+measurements at the target city, and score below it even when handed that city's own stations. The
+limit belongs to the available information, not to one family of models.
 
 ## Demonstration
 
-Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no reference monitor.
-Under the stated assumptions the constrained decomposition assigns
-**{{claim:partition.f}}** of modelled concentration to a local increment, fixed by a physical
-constraint and not assumed, against a retired prior of about a quarter; it ranges
-{{claim:partition.f_lo}}-{{claim:partition.f_hi}} across anchored years and
-{{claim:field.f_form_calendar}}-{{claim:field.f_form_roll48}} across background-window definitions.
-That is a model-imposed split and not a source apportionment: the increment is the spatially
-structured component inside the domain, which is not material emitted in Kandy, and the model has
-no chemistry to separate them. Against two published records that played no part in
-building the model, the field agrees to {{claim:nbro.diff_pct_2021}} and
-{{claim:nbro.diff_pct_2022}} per cent in two independent years. Those checks cover the city-mean
-level, and because the temporal anchor is calibrated to Kandy's own sensors they test the modelled
-lift above an anchored mean rather than the whole field. **The neighbourhood-scale map is not validated and is not
-claimed to be**, for the reason the previous section gives.
+Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no working reference
+monitor. Under the stated assumptions the model assigns **{{claim:partition.f}}** of concentration
+to the local increment, fixed by a physical constraint rather than assumed and against an earlier,
+now retired figure of about a quarter. It moves between {{claim:field.f_form_calendar}} and
+{{claim:field.f_form_roll48}} depending on how the background window is defined. This is a split
+imposed by the model, not a measurement of sources: the
+increment is the part that varies across the map, which is not the same as material emitted inside
+Kandy, and the model has no chemistry that could tell them apart. Against two published records
+that played no part in building it, the field agrees to {{claim:nbro.diff_pct_2021}} and
+{{claim:nbro.diff_pct_2022}} per cent in two separate years. Those checks cover the city-wide level
+only: the model's timing is calibrated against Kandy's own sensors, so they test the modelled
+variation on top of an already anchored average, not the whole field.
+**The neighbourhood-scale map is not validated, and this thesis does not claim that it is**, for
+the reason the previous section gives.
 
 ## How the work is done, and where it stands
 
-Every numeric claim is regenerated from source at build time and the build refuses to complete if
-prose and data disagree. Writing the thesis moved eleven recorded quantities, none found by
-reading; four made the argument weaker and were kept, and Chapter 5 accounts for eight approaches
-that did not work. Six pre-registrations, fourteen of thirty predictions refuted across the five
-that ran. Thesis complete; a 13,800-word manuscript is drafted for a methods venue. Code, claim
-generators and registrations are version-controlled.
+Every number is regenerated from its source file when the document is built, and the build fails if
+the prose and the data disagree. Writing the thesis moved eleven recorded quantities, four of which
+made the argument weaker and were kept anyway. Eight pre-registrations, fourteen of thirty
+predictions refuted, and one chapter on eight approaches that did not work.
 
 **Contact:** 11daminda08@gmail.com  ·  s20005@sci.pdn.ac.lk
