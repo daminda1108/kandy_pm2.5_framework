@@ -23,7 +23,8 @@ Together they buy {{claim:step.geography}} per cent on the ladder, comparable to
 instrument a city could purchase. A programme that has not exhausted them is leaving the cheapest
 available improvement unused.
 
-Then buy according to the stratum the city belongs to, not according to the global average.
+Then buy according to the group of cities the target belongs to, not according to the global
+average.
 
 {{fig:acquisition}}
 
@@ -41,9 +42,9 @@ the band, and that it does **not** survive on the contaminated stream.
 
 The scope of that recommendation should be stated exactly, because it is the sentence most likely
 to be lifted out of this thesis. What is established is that **within this panel, the
-deep-tropical stratum is the closest available empirical analogue to Kandy, and in that stratum a
-local observation outranks the background proxy.** It is not established that tropical cities in
-general should buy local monitors first. The stratum contains thirteen cities, band travels with
+deep-tropical group is the closest available analogue to Kandy, and within that group a local
+observation outranks the background stand-in.** It is not established that tropical cities in
+general should buy local monitors first. The group contains thirteen cities, band travels with
 instrument class and five other things, and Section 7.3 sets out why a latitude label is not a
 mechanism. A city that resembles Kandy in the ways this panel can measure should read the band
 row; a city that does not has been given a method for pricing its own options, which is the more
@@ -65,11 +66,11 @@ recommendation.
 Two separate arguments then point at a reference-grade instrument, and they should not be
 merged. The ladder measured two low-cost sensors, so it establishes that a local observation
 outranks a regional one in this band. It does not establish the value of a reference monitor,
-which was never a rung. The case for making that local observation reference-grade is a
-measurement-design argument standing on its own: a reference instrument would settle the level
-discrepancy of Section 7.8, where three of four independent records sit below the model and the
-one that matches carries an undocumented instrument, and it would anchor the calibration of any
-low-cost sensors deployed afterwards. That case is strong, and the
+which was never a rung. The case for making that local observation reference-grade stands on its own as a
+measurement-design argument. A reference instrument would settle the level discrepancy of
+Section 7.8, where three of four independent records sit below the model and the one that matches
+carries an undocumented instrument. It would also anchor the calibration of any low-cost sensors
+deployed afterwards. That case is strong, and the
 {{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
 
 Do not expand the local network as a way of improving this model, and the redundancy starts
@@ -221,10 +222,10 @@ particular reanalysis it came from, which no result in this thesis currently doe
 
 Two of the findings here are not about air quality.
 
-**A value-of-information analysis must not price observations against a covariate trained on
-those observations.** Section 7.5 showed that such contamination deflates the rung above it
-rather than inflating its own, so a test that looks for excess skill in the contaminated stream
-finds nothing and reports the leakage as immaterial. Fused products are now the default covariate
+**A value-of-information analysis must not price observations against a covariate that was trained
+on those same observations.** Section 7.5 showed that this kind of contamination deflates the rung
+above it rather than inflating its own. A test that looks for excess skill inside the contaminated
+stream therefore finds nothing, and reports the leakage as immaterial. Fused products are now the default covariate
 in this field. That such products leak is established and guarded against in evaluation practice
 [@Just2020]; what Section 3.4 argues is unreported is the displaced signature, which is what
 makes the obvious diagnostic the wrong one.
@@ -247,11 +248,12 @@ moves the paired-site ratio by {{claim:s1.paired_delta_on_refinement}}, and Sect
 what a learned pattern adds over a single free raster. A campaign sold as increased resolution
 would be spending against results this thesis already has.
 
-It is for four things: anchoring the level, where three of four independent records sit below the
-model and one matches; measuring the within-cell distribution, which Chapter 8 argues is the
-well-posed quantity and the larger one; testing the flow physics the model imposes and has never
-validated, meaning the nocturnal drainage sink and the confinement term; and establishing what
-susceptible people actually breathe, which is a different question answered at different places.
+It is for four things. It anchors the level, where three of four independent records sit below the
+model and one matches. It measures how concentration is distributed within a single cell, which
+Chapter 8 argues is both the well-posed quantity and the larger one. It tests the flow physics the
+model imposes and has never validated, meaning the nocturnal drainage sink and the confinement
+term. And it establishes what susceptible people actually breathe, which is a different question
+and is answered in different places.
 
 ⚠ The campaign was conceived with a fifth purpose, testing whether the spatial ceiling is a
 sampling artefact, and that purpose does not survive its own power calculation. The subsection
@@ -291,8 +293,8 @@ stations worldwide sit on the valley floor and never straddle the floor-to-ridge
 the one panel city with several hundred metres of station relief showed the expected signs. Kandy
 has {{claim:kandy.relief_m}} metres of relief inside the domain. A deliberate transect from
 {{claim:net.vertical_lo}} to {{claim:net.vertical_hi}} metres above the local valley floor is the
-single most valuable physical addition available here, and it is a stratum of its own rather than
-something left to chance.
+single most valuable physical addition available here, and it earns a group of sites of its own
+rather than being left to chance.
 
 Logistics enters as a constraint and never as an objective. Only
 {{claim:net.cells_feasible}} of the domain's {{claim:net.cells_total}} cells,
@@ -301,13 +303,13 @@ outside that set are removed before the design is optimised. Making access an ob
 than a constraint is precisely how convenience sampling happens, and it is what this design
 exists to avoid.
 
-### The five strata
+### The five groups of sites
 
 {{tbl:T9_2}}
 
 They are separate because they answer different questions, and because **a site used to fit a
-model cannot honestly validate it.** The receptor stratum in particular is chosen for who is
-present rather than for what it would teach a model, and is held out of all fitting.
+model cannot honestly validate it.** The receptor sites in particular are chosen for who is
+present rather than for what they would teach a model, and they are held out of all fitting.
 
 ### Why these sites and not the ones a programme would otherwise choose
 
@@ -355,10 +357,10 @@ The design began from an assumption worth testing: that deliberate siting could 
 convenience siting could not. Registering the analysis [OSF ad3py] meant computing, in advance,
 what the campaign could actually see. **The answer disqualifies its own headline question.**
 
-Beating the benchmark rank correlation of {{claim:phase1.best_rho}} that a single free raster
-already achieves would require, with {{claim:camp.n_fit}} sites available to fit a spatial
-pattern, a gain of between {{claim:camp.h1_gain_lo}} and {{claim:camp.h1_gain_hi}} depending on
-how far the campaign pattern departs from the benchmark predictor. The panel study this campaign
+A single free map layer already reaches a rank correlation of {{claim:phase1.best_rho}}. Beating
+that, with {{claim:camp.n_fit}} sites available to fit a spatial pattern, would require a gain of
+between {{claim:camp.h1_gain_lo}} and {{claim:camp.h1_gain_hi}}, depending on how far the campaign
+pattern departs from the benchmark predictor. The panel study this campaign
 was meant to follow up resolved a gain of {{claim:camp.panel_limit}}. **Matching that in one city
 would need on the order of a hundred to three hundred fitting sites**, against the
 {{claim:camp.n_fit}} proposed.
@@ -415,8 +417,8 @@ entire low-cost network. The national environmental authority has granted this p
 principle to a Kandy regulatory station carrying hourly concentration and full meteorology,
 subject to a formal agreement. If that completes, the largest line in the budget becomes a letter.
 
-And the obvious economy is not worth making. The design stratum lost most of its
-justification when the spatial hypothesis was demoted, which invites cutting it. Cutting it from
+And the obvious economy is not worth making. The design sites lost most of their
+justification when the spatial hypothesis was demoted, which invites cutting them. Cutting it from
 twelve sites to ten saves {{claim:cost.design_saving_usd}} dollars, under three per cent of the
 low-end subtotal. At this unit price no plausible re-scoping of a low-cost network changes the
 shape of the budget. The effort belongs on the agreement, not on trimming sensors.
@@ -454,7 +456,7 @@ arithmetically impossible: the median city has twelve stations, so a held-out th
 was promised, run, and returned nothing, and that is a limit of the panel rather than a
 confirmation.
 
-### What this leaves of the design stratum
+### What this leaves of the design sites
 
 **Its founding justification is now gone twice over.** The power calculation said a campaign of
 this size could not detect a siting effect at Kandy; the panel says there is probably no siting
@@ -464,7 +466,7 @@ any form**.
 
 Two justifications remain and neither was the original intention.
 
-The stratum makes the delivered exposure field checkable at more than the three locations the
+Those sites make the delivered exposure field checkable at more than the three locations the
 paired triplets provide, which matters because Appendix E projects a health burden through it.
 
 **And it would make Kandy the only deliberately sited city in a panel of
@@ -474,8 +476,8 @@ prediction. What it would produce is a city whose network was not selected by th
 every other city in the frame, which is worth something for future work on siting itself and is
 worth admitting is a thin reason to buy twelve instruments.
 
-The honest recommendation is therefore to keep the stratum only if the exposure objective
-justifies it, and to stop justifying it by the spatial one. Section 8.4 of the plan shows the
+The honest recommendation is therefore to keep those sites only if the exposure objective
+justifies them, and to stop justifying it by the spatial one. Section 8.4 of the plan shows the
 cost either way is under three per cent of the instrument budget, so this is a question about
 what the campaign claims rather than about what it costs.
 
