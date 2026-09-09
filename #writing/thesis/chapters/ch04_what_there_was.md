@@ -131,6 +131,15 @@ undergraduate scale at all.
 
 ## 4.6 The construction that follows
 
+The streams described in this chapter do not combine in a single step, and the order in which they
+enter matters to every result reported later. The figure below traces one path from raw inputs to
+delivered field: which archives are read, which quantities are computed from them, where the
+satellite anchor and the ground sensors enter, and what is written out at the end. Two features are
+worth noting before reading it. The temporal and spatial parts of the model are computed
+separately and joined only at the last step, which is what allows Chapter 7 to score them
+independently. And every arrow leaving a box is a file on disk rather than a value held in memory,
+which is what makes the regeneration chain of Chapter 10 possible.
+
 {{dia:pipeline}}
 
 The remainder of Part II describes how these streams are combined. The temporal anchor takes the

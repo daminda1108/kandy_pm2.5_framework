@@ -72,9 +72,17 @@ prose but never placed leaves a reader hunting for something that is not there. 
 
 ## 10.4 Pre-registration as a working practice
 
+Pre-registration is usually described as a safeguard against reporting a result that was chosen
+after the data were seen. In this project it worked as a procedure rather than a promise, and the
+difference is what the figure below draws. A prediction, a detection limit and a pass mark are
+fixed and lodged with a third party. Only then is the analysis written. The outcome is reported
+against the mark that was set, whichever way it falls, and the branch where the prediction fails is
+drawn as an ordinary path through the diagram rather than as an exception. That branch is the one
+this project took most often, and the counts are given below.
+
 {{dia:prereg}}
 
-Six pre-registrations were lodged during this work, each stating its predictions and the
+Eight pre-registrations were lodged during this work, each stating its predictions and the
 condition under which each would be abandoned, before the corresponding analysis ran. The sixth
 is prospective: it registers a measurement campaign that has not been deployed, and its
 detection limits demoted that campaign's original headline hypothesis before any money was

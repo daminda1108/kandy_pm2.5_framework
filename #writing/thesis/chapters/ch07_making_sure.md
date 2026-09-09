@@ -620,6 +620,16 @@ re-made rather than inherited.
 
 ## 7.7 The model across ten cities
 
+The ladder measures what an observation is worth. It does not say how well the model performs, and
+those are different questions. This section answers the second one across the ten cities where the
+full model was built rather than the forty-eight where only the ladder was run. Three axes are
+scored separately: how well the model reproduces the seasonal cycle, how well it reproduces the
+daily cycle, and how far its annual level sits from the observed one. The figure below gives all
+three for every city, with the axes kept apart rather than combined into a single score. Reading
+across a row shows one city's profile; reading down a column shows how consistent the model is on
+that axis. The spread down the diurnal column is the result that matters most, and Section 7.8
+returns to it.
+
 {{fig:scorecard}}
 
 Three axes are reported separately and never averaged, because averaging a skill percentile
@@ -683,6 +693,15 @@ This is a level discrepancy on the axis this thesis calls well supported, and it
 open question rather than settled by choosing the record that agrees.
 
 ## 7.9 Interval calibration
+
+An interval that is honest about its own uncertainty has to be checked against observations, not
+merely constructed. The check available at Kandy is narrow, because the city has only two low-cost
+sensors, but it is the check that exists. The figure below compares the delivered interval against
+what those sensors recorded, hour by hour. What to look for is not simply whether the observations
+fall inside the band, but where they fall when they land outside it. An interval that is too narrow
+misses on both sides in roughly equal numbers. An interval that is correctly sized but wrongly
+positioned misses almost entirely on one side, and that distinction decides whether the problem is
+the width or the centring. The figure shows the second pattern.
 
 {{fig:uncertainty}}
 

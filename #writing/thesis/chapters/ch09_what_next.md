@@ -6,6 +6,15 @@ than by how appealing it is, and the two orderings differ.
 
 ## 9.1 The measurement-priority ordering
 
+The practical question behind this thesis is what a city with almost no monitoring should obtain
+first. The answer is not a single instrument, because it depends on what the city already has and
+on which group of cities it resembles. The figure below sets that out as the decision it actually
+is: start from what is already available at no cost, then branch on whether the city has any local
+observation at all, and then branch again on the group it belongs to, because Section 7.3 shows the
+ordering reverses between those groups. Each endpoint names the measurement to obtain and the
+section that prices it. The diagram encodes ordering only. It does not encode cost, and the
+distinction is the subject of the paragraph that follows.
+
 {{dia:decisiontree}}
 
 This section ranks measurements by the marginal predictive value defined in Section 7.2, and that
@@ -181,6 +190,15 @@ information-limited; this result says that the current construction is not even 
 limit that the information allows.
 
 ## 9.4 Implications of the radius result
+
+A predictor of within-city pattern has to be measured over some area around each point, and the
+size of that area is a free choice that is usually made without comment. Testing it directly
+produces the most surprising result in this thesis. The figure below scores the best single freely
+available predictor at a range of buffer radii, from a few hundred metres up to several kilometres,
+against held-out monitors. If sub-kilometre structure were the thing being recovered, skill would
+be highest at the smallest radius and fall away as the buffer widened. It does the opposite. Skill
+rises with radius and peaks at {{claim:phase1.best_radius_km}} kilometres, which is coarser than
+the cell the model reports on, and Section 9.4 draws the consequence for resolution.
 
 {{fig:radius}}
 
