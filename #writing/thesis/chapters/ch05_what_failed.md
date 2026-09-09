@@ -183,8 +183,9 @@ excluded a very large learnable signal and said nothing whatever about a moderat
 
 For four months the project held a belief that its own evidence did not support. The belief
 happened to be approximately correct, as Section 5.8 shows, but it was held for the wrong
-reason, and a null result reported without a detection limit converts a limitation of the
-experiment into a claim about the atmosphere.
+reason. A null result reported without a detection limit, meaning the smallest effect the
+experiment could have found had one been there, converts a limitation of the experiment into a
+claim about the atmosphere.
 
 {{dia:taxonomy}}
 

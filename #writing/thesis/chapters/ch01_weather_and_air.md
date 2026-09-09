@@ -96,8 +96,7 @@ that makes withholding exact, and Chapter 7 reports what the measurement found.
 
 The results are not what the field's intuition suggests. Freely available geographic data is
 worth about as much as the first monitor a city buys. The second monitor onward is worth nothing
-that can be measured, and that is a stronger statement than the tier structure was built to
-express. The largest single gain comes from a background series drawn
+that can be measured, and that is a stronger statement than the model was built to make. The largest single gain comes from a background series drawn
 from outside the urban core, and the instrument that would supply one is the instrument air
 quality programmes are least likely to fund, because a rural monitor serves no constituency. And
 the ordering of those recommendations reverses between latitude bands, so the advice derived from

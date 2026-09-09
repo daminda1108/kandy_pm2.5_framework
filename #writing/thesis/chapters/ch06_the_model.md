@@ -79,7 +79,7 @@ rather than air accumulating in place.
 
 Section 7.10 supplies composition evidence from an independent direction: air classified by
 arrival sector as continental is more secondary-rich, and therefore more aged, than air arriving
-from the ocean. A background composed of aged air is what the construction requires.
+from the ocean. A background composed of aged air is what the decomposition requires.
 
 The assumption is nonetheless the one a denser network would test first, and Section 7.2 is
 explicit that the proxy standing in for `B` is the weakest link in the chain.
@@ -98,10 +98,10 @@ against held-out monitors is reported rather than assumed, with a median of
 {{claim:scorecard.spatial_rho_median}}.
 
 **And it has been partly refuted, which an arbitrary prior cannot be.** Section 8.4 reports that
-the dispersion step, which is the part of the construction that redistributes the emission
+the dispersion step, which is the part of the model that redistributes the emission
 surface through terrain-steered flow, **lowers** rank from {{claim:r2.rho_emission_surface}} to
 {{claim:r2.rho_with_atransport}}. A prior that cannot fail would not have produced that result,
-and the appropriate response is Chapter 9's rather than a defence of the construction.
+and the appropriate response is Chapter 9's rather than a defence of the model.
 
 ## 6.2 Comparing an areal model to a point instrument
 
@@ -186,7 +186,7 @@ The sensorless tier as finally specified carries {{claim:bud0c.n_features}} pred
 {{claim:bud0c.n_geo_features}} are static geography. Chapter 7 shows that this width is not
 incidental to the results.
 
-## 6.4 What the construction guarantees, and what it does not
+## 6.4 What the model guarantees, and what it does not
 
 Four properties are claimed, and they are not of equal standing. Stating them as though they
 were would be the easiest way to oversell this work, so the differences are set out explicitly.
