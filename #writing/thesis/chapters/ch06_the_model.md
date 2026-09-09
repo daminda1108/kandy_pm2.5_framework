@@ -162,6 +162,12 @@ The tiers are nested, and the nesting is asserted at import time so that a malfo
 cannot be registered. Each tier declares, in one machine-readable object, what it admits, what it
 estimates, what it imposes, and which tier it degrades to.
 
+Because each tier admits everything the tier below it admits and one thing more, the tiers form a
+sequence that a city can climb as it acquires observations. This thesis calls that sequence **the
+ladder**, and each step from one tier to the next **a rung**. The value of an observation is then
+simply the improvement measured across the rung that admits it, and the rest of Chapter 7 is
+written in those terms.
+
 The check runs in three directions, and each one is there because that particular failure actually
 happened during this project.
 

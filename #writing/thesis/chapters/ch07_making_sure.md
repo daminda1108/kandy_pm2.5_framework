@@ -47,11 +47,11 @@ observation is worth more than which, and orderings survive shifts in level that
 a transferred number. No statement in Chapter 9 depends on Kandy's own error falling by any
 particular percentage.
 
-The transfer is made within a stratum, not from the pool. Kandy is matched to the panel on
-the variables that plausibly govern the ordering, not to the panel as a whole. It is read
-against the deep-tropical band, which Section 7.3 shows reverses the pooled result, and against
-the low-cost-sensor stratum, since Kandy's instruments are low-cost and Section 7.6 shows the
-class changes what added sensors are worth. A pooled number would be the wrong number twice over.
+The transfer is made within a matched group of cities, not from the pool. Kandy is matched on the
+variables that plausibly govern the ordering rather than against the panel as a whole. It is read
+against the deep-tropical band, which Section 7.3 shows reverses the pooled result, and against the
+group of cities whose instruments are low-cost, since Kandy's are low-cost and Section 7.6 shows
+that the class of instrument changes what an added sensor is worth. A pooled number would be the wrong number twice over.
 
 The panel matches Kandy on the one structural variable it was selected for and on no others by
 design. Every panel city is a valley or basin, which is the feature the construction depends
@@ -71,8 +71,9 @@ it is the same model with a stream removed, so the specification and the fitting
 held constant and the difference between two tiers isolates the predictive consequence of
 admitting that stream. That is a weaker sentence than saying the difference is information loss
 and nothing else, and it is the accurate one. Admitting a stream also changes what the estimator
-can fit, how the shrinkage weight lands and how the covariates interact, all of which are
-consequences of the added information rather than separate effects, but none of which is nothing.
+can fit, how much weight it places on the new tier rather than falling back to the one below, and
+how the covariates interact. All of those are consequences of the added information rather than
+separate effects, but none of them is nothing.
 What the nesting rules out is the confound that matters: a difference produced by changing the
 model, not by changing what it was allowed to see.
 
@@ -163,10 +164,11 @@ network dominates, and not to the band-stratified result that the recommendation
 on.**
 
 One statistic had to be withdrawn from this analysis after it was computed. An intra-class
-correlation over all cities returned values between 0.82 and 0.99 [ledger F.104], which reads as
-overwhelming network dependence and is an artefact of the grouping: {{claim:clust.singletons}} of the
-{{claim:clust.n_clusters}} clusters hold one city, a single-city cluster has no internal variance
-by construction, and its whole deviation is therefore booked as between-cluster variance. Computed
+correlation computed over all cities returned values between 0.82 and 0.99 [ledger F.104]. That
+reads as overwhelming dependence between cities in the same network, and it is an artefact of how
+the groups were formed. {{claim:clust.singletons}} of the {{claim:clust.n_clusters}} clusters hold a
+single city. A cluster of one has no internal variation by construction, so its entire deviation
+from the average is counted as variation between clusters rather than within them. Computed
 only over cities that have a cluster sibling the figure is {{claim:clust.bg.icc}} for the
 background rung and {{claim:clust.stn3to6.icc}} for the redundancy rung. Those are substantial and
 they are meaningful. The width ratio in the table above is the diagnostic that carries no such
@@ -192,12 +194,13 @@ the most estimator-robust result in the study.
 Everything above is measured as a reduction in daily root mean square error, which was chosen
 because it is what the estimator already optimises. Nothing in the construction requires it: the
 tiers are nested and the shrinkage is fitted identically whatever the scoring rule, so the ladder
-can simply be re-scored. Four losses were used, on the raw satellite stream of Section 7.5:
-root mean square error; mean absolute error; the same squared loss computed **only on days in the
-city's observed top decile**, which is the episode question stated as directly as this frame
-allows; and one minus balanced accuracy at the World Health Organization twenty-four-hour
-guideline of {{claim:loss.who_threshold}} micrograms per cubic metre, which makes the loss a
-classification error, not a magnitude error.
+can simply be re-scored. Four scoring rules were used, all on the raw
+satellite stream of Section 7.5. The first two are root mean square error and mean absolute error.
+The third is the same squared loss computed **only on days in the city's observed top decile**,
+which asks the episode question as directly as this frame allows. The fourth is one minus balanced
+accuracy at the World Health Organization twenty-four-hour guideline of
+{{claim:loss.who_threshold}} micrograms per cubic metre, which makes the loss a question of
+classification rather than of magnitude.
 
 | step | daily error | absolute error | episode days | exceedance |
 |---|---:|---:|---:|---:|
@@ -205,11 +208,11 @@ classification error, not a magnitude error.
 | monitors three to six | {{claim:loss.stn3to6.rmse}} | {{claim:loss.stn3to6.mae}} | {{claim:loss.stn3to6.tail}} | {{claim:loss.stn3to6.exceedance}} |
 | a background series | {{claim:loss.bg.rmse}} | {{claim:loss.bg.mae}} | {{claim:loss.bg.tail}} | {{claim:loss.bg.exceedance}} |
 
-**Two results are loss-robust, and the more exposed of them is strengthened.** Monitors three to
-six buy nothing under any of the four, and this is the result most vulnerable to the objection the
-test was built to answer: the natural reply to a redundancy finding is that additional stations
-earn their keep on episodes rather than on ordinary days, and the episode and exceedance columns
-are precisely where that would appear. They show zero in both. **A background series is the largest
+**Two results survive every scoring rule, and the more exposed of the two is strengthened.**
+Monitors three to six buy nothing under any of the four. That is the result most vulnerable to the
+objection this test was built to answer, because the natural reply to a redundancy finding is that
+extra stations earn their keep on episodes rather than on ordinary days. The episode and exceedance
+columns are exactly where that would show, and it does not show there. They show zero in both. **A background series is the largest
 gain under every loss, and its largest value of all is on episode days**, at
 {{claim:loss.bg.tail}} per cent. That is coherent rather than surprising: if a substantial part of
 a valley city's worst days is regional in origin, a series drawn from outside the urban core is
@@ -418,22 +421,23 @@ pooled row without the band row will act on it.
 
 **Latitude is a label here, not a mechanism, and the distinction is not pedantic.** The statement
 the evidence supports is this one: *the available panel supports a deep-tropical ordering in which
-local observations outperform the background proxy; the extent to which that difference reflects
-an atmospheric regime rather than a measurement regime remains unresolved.* What the measurement
-establishes is that cities sorted into these bands differ in the ordering, which is a
-latitude-stratified empirical difference. It does not establish that latitude causes the
-difference, and nothing in this design could. Band travels with at least six other things:
-instrument class, which Section 7.6 shows differs by a factor of
-{{claim:confound.deep_tropical_lcs_pct}} against
-{{claim:confound.other_bands_lcs_pct}} per cent low-cost units; network density and design;
-driver completeness; the seasonal structure of the meteorology; the source mix; and the
-institutional history that determines which cities publish at all.
+local observations outperform the background proxy, and how far that difference reflects the
+atmosphere rather than the instruments used there remains unresolved.* What the measurement
+establishes is that cities sorted into these bands differ in the ordering. That is an empirical
+difference between groups defined by latitude, and nothing more. It does not establish that
+latitude causes the difference, and nothing in this design could.
+
+Band travels with at least six other things. The first is instrument class, which Section 7.6
+shows differs by a factor of {{claim:confound.deep_tropical_lcs_pct}} against
+{{claim:confound.other_bands_lcs_pct}} per cent low-cost units. The others are network density and
+design, driver completeness, the seasonal structure of the meteorology, the source mix, and the
+institutional history that decides which cities publish data at all.
 
 A mechanism can be proposed, and the honest status of the proposal is that it is consistent with
 the data rather than tested by it. In the deep tropics the seasonal cycle of the regional
-background is weak, so a background series carries less information that a sensorless model has
-not already extracted from reanalysis and geography; in the temperate bands a strong winter
-accumulation regime makes the background series carry a great deal. If that is right, the
+background is weak, so a background series adds little that a model without sensors has not already
+taken from reanalysis and geography. In the temperate bands a strong winter accumulation regime
+makes the same series carry a great deal. If that is right, the
 operative variable is the amplitude of the regional seasonal cycle and latitude is standing in
 for it. Testing it would require sorting cities by that amplitude directly and checking whether
 the ordering follows the amplitude or the latitude, which is one of the analyses Chapter 9 lists
@@ -584,7 +588,7 @@ the held-out target. Some part of what the band contrast measures is instrument 
 than atmosphere, and no analysis in this thesis can separate the two.
 
 The consequence is carried into the recommendation rather than left here. Kandy's own instruments
-are low-cost, so the low-cost stratum is the right analogue for it, and reading Kandy against a
+are low-cost, so the low-cost group is the right analogue for it, and reading Kandy against a
 band that happens to share its instrument class is a better match than reading it against the
 pool. That is a defence of the recommendation and not of the mechanism: it makes the advice
 appropriate for Kandy while leaving open what the band contrast is actually made of.
@@ -593,7 +597,7 @@ There is now a named route by which the confound could operate, which is more th
 could offer when the confound was first recorded. [@Senarathna2026] calibrated low-cost sensors
 against reference monitors in two Sri Lankan climatic zones and found that a calibration fitted in
 the wet season, applied to dry-season data, produces a mean absolute percentage error of 26.57 per
-cent. Seasonal calibration drift of that size in a stratum that is
+cent. Seasonal calibration drift of that size in a group of cities that is
 {{claim:confound.deep_tropical_lcs_pct}} per cent low-cost, against
 {{claim:confound.other_bands_lcs_pct}} per cent elsewhere, is a concrete mechanism by which part of a
 band difference could be instrument behaviour rather than atmospheric behaviour. It does not
