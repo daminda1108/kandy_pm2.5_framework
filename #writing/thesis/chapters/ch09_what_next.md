@@ -292,6 +292,16 @@ and this is the most likely reason six searches for spatial structure found none
 A design stratified on emissions samples where the sources are and learns nothing about what the
 atmosphere does with them. The sites are therefore selected to span flow as well as emission.
 
+The figure below is the resulting network, drawn on the terrain that determines it. Each site
+carries the group it belongs to, and the groups answer different questions rather than providing
+replication of the same one. What to look for is not coverage in the sense of an even scatter
+across the map, which a design optimised for a different purpose would show. It is the deliberate
+concentration of sites along the valley axis and up its sides, which is the gradient no existing
+record samples, and the pairs at short separation, which exist to measure the within-cell spread
+that Chapter 8 identifies as the well-posed quantity. Sites that a conventional siting rule would
+have chosen are shown for comparison, and the difference between the two is the argument of this
+section.
+
 {{fig:network}}
 
 **Nocturnal drainage.** Cold air runs downslope after sunset and pools. The diagnostic wind field

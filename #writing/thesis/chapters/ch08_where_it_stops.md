@@ -241,7 +241,17 @@ withheld and no such constraint exists.
 
 ## 8.6 The reason, which is a change of support
 
-The deeper explanation is not about method at all.
+The deeper explanation is not about method at all. It is about which quantity the model and the
+observations are each reporting. A model cell reports an average over a square kilometre. A monitor
+reports a value at one point inside that square. If most of the variation in a city happens between
+one cell and the next, then a kilometre-scale map can capture it and a finer map would help. If
+most of it happens inside a single cell, no kilometre-scale product can capture it however it is
+built, and refining the grid is answering a question that was never the obstacle.
+
+The figure below settles which of those two worlds this is. It compares the spread of concentration
+found within a typical cell against the spread found between cells across the whole domain, on the
+same measure so the two are directly comparable. The comparison needs no model skill to interpret:
+whichever bar is taller names where the variation lives.
 
 {{fig:withinpixel}}
 

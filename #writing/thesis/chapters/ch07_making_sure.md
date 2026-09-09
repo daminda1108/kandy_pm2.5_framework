@@ -454,6 +454,15 @@ causal one and it is sufficient for the decision.
 A measurement of this kind is worthless if it is really a statement about one estimator. The
 first rung was therefore re-run across four [@Ke2017; @Chen2016; @Prokhorenkova2018].
 
+The question the figure below answers is whether the value assigned to an observation is a property
+of that observation or of the algorithm that was given it. If the four learners agree, the value is
+a property of the information. If they disagree, then what has been measured is partly the
+competence of the model, and the number cannot be quoted without naming the estimator alongside it.
+The figure gives the first rung under each learner. The three non-linear learners should be read
+together and the linear one separately, because the gap between them is the finding rather than
+noise, and Section 7.4 explains why a linear baseline behaves so differently on a predictor set of
+this width.
+
 {{fig:streams}}
 
 Across the three non-linear learners the spread is

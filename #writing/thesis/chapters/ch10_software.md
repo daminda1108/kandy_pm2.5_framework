@@ -22,7 +22,17 @@ as strong as it actually was.
 
 ## 10.2 Generated numbers
 
-Every numeric claim in this thesis is a token that is resolved at build time.
+Every numeric claim in this thesis is a token that is resolved at build time. No number is typed
+into the prose, and none is copied from an earlier draft. The reason is a failure this project made
+more than once: a value is computed, written into text, then superseded when the analysis is
+re-run, and the text keeps the old number while every other check stays green. Appendix D lists
+eleven quantities that moved this way.
+
+The figure below traces the path a single number takes, from the scored file where it is computed,
+through the generator that records its value with its provenance, into the token in the text, and
+past the gate that compares the two. The branch that matters is the one on the right, where the
+stored value and a fresh recomputation disagree and the build refuses to produce a document at all.
+That branch is not hypothetical. It has fired, correctly, more than once.
 
 {{dia:claimsgate}}
 
