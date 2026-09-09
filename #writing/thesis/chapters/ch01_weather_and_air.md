@@ -80,7 +80,7 @@ That is not an accusation of carelessness. It is a structural feature of the pro
 means that the usual response to doubt about a model, which is to test it more thoroughly, is
 unavailable. Testing more thoroughly requires the observations whose absence created the doubt.
 
-## 1.4 What this thesis does about it
+## 1.4 Aim and approach
 
 The response taken here is not to build a better fusion product. It is to change the question.
 Rather than asking how accurate a model is in a place where accuracy cannot be measured, this
@@ -115,7 +115,7 @@ sample of the world's cities; the background result rests on a constructed proxy
 test can bound but not fully verify; and the latitude ordering is a difference between bands
 rather than an effect of latitude itself.
 
-## 1.5 How the argument is arranged
+## 1.5 Structure of the thesis
 
 Chapter 2 sets out why the problem is sharpest in a place like Kandy and what is at stake there.
 Chapter 3 reviews what has actually been measured in the city over two decades and identifies
@@ -130,7 +130,7 @@ point is a property of the question rather than a deficiency of the method. Chap
 what to build next, ranked by measured value. Chapter 10 documents the software and the
 reproducibility machinery.
 
-## 1.6 What is claimed and what is not
+## 1.6 Scope of the claims
 
 Stated here rather than left for a reader to extract.
 

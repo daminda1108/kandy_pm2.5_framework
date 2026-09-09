@@ -138,7 +138,7 @@ redistribute, and one of them requires an institutional agreement to obtain at a
 self-contained reproducibility would be claiming something the data licences do not allow, and the
 distinction is worth naming rather than leaving a reader to discover it.
 
-## 10.7 What this machinery does not do
+## 10.7 Limits of the machinery
 
 It does not check that a number is meaningful, only that it is current. A claim can be
 regenerated faithfully from a file and still be the wrong statistic, computed on the wrong

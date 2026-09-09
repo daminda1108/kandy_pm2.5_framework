@@ -29,7 +29,7 @@ allows the measurement to be applied to it.
 
 {{tbl:T4_3}}
 
-### Why a panel measurement should apply to Kandy at all
+### Transferability of the panel result to Kandy
 
 Independence is necessary for the transfer and it is not sufficient. A panel that Kandy is absent
 from is also a panel Kandy may not resemble, and the question of what licenses carrying a number
@@ -124,7 +124,7 @@ that effect is established far more tightly than the presence of either other ef
 two sensors and the background are both real and neither is pinned down to better than roughly a
 factor of two.
 
-### Cities are not independent of each other either
+### Dependence between cities
 
 Resampling cities is an improvement on resampling city-days, but it still assumes that one city
 tells you nothing about another, and that assumption is false here. Cities share national
@@ -189,7 +189,7 @@ Additional monitors add almost nothing this model can use. At
 {{claim:step.bud1_bud2}} per cent the effect is not small but absent, and Section 7.4 shows it is
 the most estimator-robust result in the study.
 
-### 7.2.1 Does the ordering survive a different loss?
+### 7.2.1 The ordering under four loss functions
 
 Everything above is measured as a reduction in daily root mean square error, which was chosen
 because it is what the estimator already optimises. Nothing in the construction requires it: the
@@ -241,7 +241,7 @@ disagreement about the estimate. An interval on thirteen cities that excludes ze
 bootstrap and not under another is not a robust exclusion, and the inversion is quoted throughout
 this thesis with that fragility attached.
 
-### Where the redundancy actually begins, which is earlier than the ladder suggests
+### Where the redundancy begins
 
 The rung above adds two stations, and that number was not chosen by measurement. The budget
 specification defines the stream as at most two local low-cost sensors and annotates it as **the
@@ -314,7 +314,7 @@ be more of the same network rather than regional air. Read without this paragrap
 that a rural monitor is worth {{claim:step.bud2_bud3}} per cent, and the experiment does not
 establish that.
 
-### Testing it with a network the city never sees
+### A test using an independent donor network
 
 The question is answerable without new instruments. The background can be rebuilt from **a
 different city entirely**, thirty to three hundred kilometres away, whose monitors the target
@@ -384,7 +384,7 @@ which Section 7.5 describes. On the corrected stream the two local sensors buy
 {{claim:maiac.deep_tropical_background}} for the background, a local advantage of
 {{claim:maiac.deep_tropical_local_advantage}} times.
 
-### Does the inversion survive an interval?
+### The inversion under a paired interval
 
 A median of thirteen cities is a thin basis for a procurement recommendation, and the difference
 between two medians hides whether the same cities drive both. The comparison was therefore made
@@ -449,7 +449,7 @@ falls in, because that row is the closest available match to Kandy on every one 
 variables at once, whichever of them is doing the work. That is a weaker justification than a
 causal one and it is sufficient for the decision.
 
-## 7.4 Is this a property of the information or of the model?
+## 7.4 Dependence on the estimator
 
 A measurement of this kind is worthless if it is really a statement about one estimator. The
 first rung was therefore re-run across four [@Ke2017; @Chen2016; @Prokhorenkova2018].
@@ -474,7 +474,7 @@ One result survives every learner including ridge: the third-through-sixth monit
 at approximately zero, with a spread of {{claim:learner.all_spread_bud1_bud2}} percentage points.
 The redundancy of those monitors is the most robust finding in the study.
 
-### And is it a property of the information, or of the order it was added in?
+### Dependence on the ordering
 
 Every number in {{tbl:T7_1}} is a marginal gain at a position in a fixed sequence. What the table
 reports is therefore the value of a stream **given the streams below it and before the streams
@@ -515,7 +515,7 @@ routes. The shrinkage estimator accumulates differently along different paths, s
 is a property of this measurement and not only of the presentation. It is reported here rather
 than left for a reader to discover.
 
-## 7.5 What a fused product does to a measurement of this kind
+## 7.5 The effect of a monitor-trained covariate
 
 The satellite stream was initially a published fused concentration product [@Wei2023]. Products
 of that kind are trained on ground monitors, in this case on networks that supply this study's
@@ -682,7 +682,7 @@ carrying a downward calibration correction; the one that matches has an undocume
 This is a level discrepancy on the axis this thesis calls well supported, and it is stated as an
 open question rather than settled by choosing the record that agrees.
 
-## 7.9 Are the intervals right?
+## 7.9 Interval calibration
 
 {{fig:uncertainty}}
 
@@ -699,7 +699,7 @@ restores coverage to {{claim:kandy.cov90_recentred}} per cent.
 The width was right and the centring was wrong, and the cause is the change of support of
 Chapter 8 rather than a failure of the calibration procedure.
 
-### What identifies the representativeness error, other than the model itself
+### External identification of the representativeness error
 
 That answer is complete for the delivered interval and incomplete for the observation model that
 Section 6.2 specifies. The specification writes a point measurement as the areal field plus an
@@ -755,7 +755,7 @@ the freshest, and it is not, because stagnation gives local precursors time to a
 consequence is that treating the local increment as fresh primary aerosol is too simple, and
 Chapter 9 lists the composition measurement that would settle it.
 
-### Three attempts to make chemistry carry more weight, and what each returned
+### Three chemical tests and their outcomes
 
 Composition is the one axis on which this model makes a claim it does not model. That invites a
 deeper test, and three were run. **Two returned nothing usable, and the reasons differ in a way
@@ -839,7 +839,7 @@ attributable mortality figure. That projection is reported in **Appendix E** and
 because its uncertainty is incomplete by construction and it is not a result of this work
 in the sense the rest of this chapter is.
 
-## 7.12 What this chapter does and does not establish
+## 7.12 Summary of established results
 
 It establishes that the level and the seasonal cycle transfer across the panel of
 {{claim:frame.cities}} cities and four latitude bands, and that the value of each observation

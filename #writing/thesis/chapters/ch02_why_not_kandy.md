@@ -1,4 +1,4 @@
-# Chapter 2. Why not Kandy, and what is at stake
+# Chapter 2. Kandy: the setting, the record and the stakes
 
 Chapter 1 argued that most of the world's cities have an air quality field nobody can check.
 This chapter makes that concrete for one city, and sets out what following from it would be
@@ -34,7 +34,7 @@ sited there. A network in a basin therefore samples one horizon of a strongly st
 and cannot constrain the rest of it. This is not a criticism of any particular network. It
 follows from the same logic that put the city where it is.
 
-## 2.2 What Kandy actually has
+## 2.2 The existing measurement record
 
 Two low-cost sensors, and no operating reference monitor.
 
@@ -58,7 +58,7 @@ no local monitoring is the regime where local monitoring is scarcest. Any valida
 assembled for this problem inherits that imbalance, and Chapter 7 reports every result
 stratified because of it.
 
-## 2.3 What is at stake
+## 2.3 Health and policy stakes
 
 Two things, and they are different in kind.
 

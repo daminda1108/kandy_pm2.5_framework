@@ -153,7 +153,7 @@ It also established the diagnostic. A metric evaluated at the training points ca
 memorisation, because memorisation is what makes that metric good. Only a quantity evaluated
 away from the training points can, and here the grid mean was that quantity.
 
-## 5.5 Five attempts to find spatial structure, and what none of them reported
+## 5.5 Five attempts to find spatial structure
 
 **What was expected.** Kandy has a large within-city gradient. The roadside survey of Chapter 3
 measured concentrations varying by a factor of {{claim:spatial.obs_spread}} across the city.

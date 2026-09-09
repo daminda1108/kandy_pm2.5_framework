@@ -21,7 +21,7 @@ available can be applied anywhere, and the cost of that decision is visible in C
 The column that earns that table is the last one. A data inventory listing resolution and
 coverage without stating what each stream cannot do is a catalogue, not an argument.
 
-## 4.2 The streams, and what each one is actually good for
+## 4.2 The data streams and their uses
 
 **Satellite aerosol retrieval** supplies a daily signal that correlates with column loading. It
 is the only stream that observes the atmosphere over Kandy directly at useful frequency. Its
@@ -86,7 +86,7 @@ And the association between instrument class and latitude band cannot be removed
 more carefully, for the reason Chapter 2 gave: the population of candidate cities does not
 contain a balanced draw.
 
-## 4.4 What was requested and did not arrive
+## 4.4 Data requested but not obtained
 
 This section exists because the alternative is to present the constraint as though it were a
 design decision throughout.

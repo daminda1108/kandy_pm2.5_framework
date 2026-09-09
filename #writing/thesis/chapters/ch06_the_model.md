@@ -56,7 +56,7 @@ normalisation itself: each step preserves the mean, but the pattern is recovered
 the previous step rather than from the anchor directly, so a small positive offset builds up. The condition holds by construction and to within about half a per cent
 in practice, and this thesis states it that way, not as an exact identity.
 
-### Why the background is allowed to be uniform
+### The uniform background assumption
 
 Taking `B(t)` uniform over the domain looks like a strong physical assumption and is mostly a
 definition. The decomposition splits concentration into a part with no horizontal structure at
@@ -84,7 +84,7 @@ from the ocean. A background composed of aged air is what the decomposition requ
 The assumption is nonetheless the one a denser network would test first, and Section 7.2 is
 explicit that the proxy standing in for `B` is the weakest link in the chain.
 
-### Why an imposed pattern is not simply an arbitrary prior
+### The imposed pattern is not an arbitrary prior
 
 If `P` were chosen freely it would carry no information and the conservation property would
 merely make it harmless. Three things stop it being arbitrary, and the third matters most.
@@ -186,7 +186,7 @@ The sensorless tier as finally specified carries {{claim:bud0c.n_features}} pred
 {{claim:bud0c.n_geo_features}} are static geography. Chapter 7 shows that this width is not
 incidental to the results.
 
-## 6.4 What the model guarantees, and what it does not
+## 6.4 Guarantees, enforced mechanisms and discharged obligations
 
 Four properties are claimed, and they are not of equal standing. Stating them as though they
 were would be the easiest way to oversell this work, so the differences are set out explicitly.
@@ -299,7 +299,7 @@ itself differs, so it constrains a quantity the decomposition does not define. A
 rejects that reasoning should read the partition as spanning roughly
 {{claim:field.f_sweep_lo}} to {{claim:field.f_form_roll48}} rather than as a point value.
 
-### What the partition is, and what it is not
+### Interpreting the partition
 
 This replaces an earlier estimate of about a quarter taken from source apportionment, and the
 constraint refutes that value rather than refining it. Three statements about the new number have
@@ -339,7 +339,7 @@ version or silence: local action is worth substantially more than the retired qu
 and its immediate effect is bounded well below half. A speciated measurement in the city is the
 experiment that would narrow the range, and Chapter 9 lists it.
 
-## 6.7 What this model is not
+## 6.7 Excluded processes and known limits
 
 It contains no chemistry. There is no gas-phase mechanism, no aerosol thermodynamics, no
 secondary formation and no deposition scheme beyond a bulk loss term in a layer that is not part

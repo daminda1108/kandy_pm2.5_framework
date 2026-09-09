@@ -74,7 +74,7 @@ Anything at all after the instrument stopped. The reference monitor that anchore
 published calibrations is no longer operating. A record that ends is not a record a decision can
 be based on today.
 
-## 3.3 What computation offers, and what it does not
+## 3.3 Capabilities and limits of modelling
 
 The response of the last decade to gaps of this kind has been machine learning applied to
 satellite and reanalysis data, and the results have been substantial. Global surfaces at
@@ -115,7 +115,7 @@ predictors, and it declines to use learning for the part where no check is avail
 spatial pattern is imposed from physical reasoning and declared as an assumption rather than
 fitted, and Chapter 8 reports what happened when that decision was finally tested.
 
-## 3.4 Where this work sits, and what in it is actually new
+## 3.4 Position in the literature, and claims to novelty
 
 The question this thesis asks, what an observation is worth before it is bought, is old and has
 been asked well by several fields. Stating what they established is a precondition for claiming
@@ -156,7 +156,7 @@ already has regulatory monitors, where the design here exists to serve cities th
 it is demonstrated on one region over six weeks, where the measurement here is made across a
 multi-city panel.
 
-### What is claimed, separated by kind of novelty
+### Novelty, separated by kind
 
 Four different things get called new in this sort of work and conflating them is how novelty
 claims fail under examination.

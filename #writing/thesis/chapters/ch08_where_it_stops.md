@@ -45,7 +45,7 @@ survey, a school junction and its grounds, proves on inspection to carry a singl
 both sites, so the model's unit ratio there is an artefact of the question, not a result.
 That pair is withdrawn. The garden pair is the evidence.
 
-## 8.3 Is it resolution? A registered test says no
+## 8.3 Resolution tested and refuted
 
 The obvious diagnosis is that one kilometre is too coarse. That diagnosis was pre-registered as
 a hypothesis and tested.
@@ -71,7 +71,7 @@ A tenfold refinement in area moves the paired ratio by
 {{claim:s1.predictions_refuted}} are refuted. Resolution is not the binding constraint, and per
 the registration the question is treated as closed rather than re-scoped.
 
-## 8.4 What is actually lost, and where
+## 8.4 Where the spatial contrast is lost
 
 The refutation also disposes of the premise that motivated it. Contrast is not destroyed by
 coarsening. It is **relocated**. Tracking the spread through the build:
@@ -99,7 +99,7 @@ that redistributes contrast is the step that misplaces it.
 That result now holds on two independently selected sets of cities, which is why Chapter 9 treats
 the dispersion step and not the source surface as the place to intervene.
 
-## 8.5 Six nulls, and why only the last one says anything
+## 8.5 Six negative results and their detection limits
 
 Section 5.5 described five searches for learnable spatial structure, none of which stated in
 advance what it could detect. {{fig:nullpower}} gives the retrospective answer: at their sample
@@ -181,7 +181,7 @@ underpowered test produced. The registered verdict is undetectable and that stan
 carry no independent signal* would be a stronger statement than this measurement supports, and if
 any part of this question deserves a further experiment it is that one.
 
-### Was it the data, or was it one model family?
+### Seven further model families, tested
 
 The registered test compared one learned family against one raster, and a reader is entitled to
 ask whether the conventional spatial toolkit would have done better. Land-use regression,
@@ -309,7 +309,7 @@ of this comparison set an annual model contrast against observed values taken at
 which overstated the agreement. The residual is a support difference that cannot be closed
 without a campaign designed for it.
 
-## 8.8 What this licenses
+## 8.8 What the spatial results support
 
 The operational statement is narrow and, this thesis argues, honest.
 
@@ -329,7 +329,7 @@ rather than a validated one. The difference from where this project began is tha
 has now been tested, under a registration that could have overturned it, and the test reported
 what it was able to see.
 
-### Three claims about the spatial limit, at three different strengths
+### Three claims at three strengths
 
 The chapter's argument is easy to compress into something stronger than the evidence, so the
 components are separated here and graded.

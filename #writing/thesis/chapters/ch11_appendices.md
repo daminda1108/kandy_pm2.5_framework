@@ -94,7 +94,7 @@ to hold, and it came back smaller. A number that strengthens an argument is the 
 number to be checked, and that is the argument for checking all of them mechanically rather than
 selectively.
 
-# Appendix E. An attributable-burden projection, and why it is not a result
+# Appendix E. An attributable-burden projection
 
 This projection sits in an appendix because two independent readers made the same point
 about it, and both were right. A figure of the form "N deaths per year" is quotable in a

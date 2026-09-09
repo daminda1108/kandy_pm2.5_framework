@@ -4,7 +4,7 @@ The measurement of Chapter 7 was undertaken to answer a practical question, and 
 gives the answer. Everything here is ranked by what the evidence says an action is worth rather
 than by how appealing it is, and the two orderings differ.
 
-## 9.1 A measurement-priority ordering, and why it inverts
+## 9.1 The measurement-priority ordering
 
 {{dia:decisiontree}}
 
@@ -180,7 +180,7 @@ already be better than the one shipped. Chapter 8 argues that the placement prob
 information-limited; this result says that the current construction is not even reaching the
 limit that the information allows.
 
-## 9.4 What the radius result implies for resolution
+## 9.4 Implications of the radius result
 
 {{fig:radius}}
 
@@ -201,7 +201,7 @@ ratio.
 A more useful direction is the opposite one: report the within-cell distribution rather than a
 cell value, which Chapter 8 shows is both well-posed and the larger of the two quantities.
 
-## 9.5 What would make the temporal model better
+## 9.5 Improvements to the temporal model
 
 Three items, in decreasing order of what the evidence supports.
 
@@ -218,7 +218,7 @@ A second driver source. Everything the model knows about the atmospheric state c
 reanalysis family. A second source would allow the driver contribution to be separated from the
 particular reanalysis it came from, which no result in this thesis currently does.
 
-## 9.6 What this thesis suggests about method, beyond this problem
+## 9.6 Methodological lessons beyond this problem
 
 Two of the findings here are not about air quality.
 
@@ -236,12 +236,12 @@ difference between them is the difference between a belief and a bounded claim. 
 stating a detection limit in advance is a power calculation. The cost of not stating one, in this
 project, was four months.
 
-## 9.7 A network for Kandy, and why these sites rather than the obvious ones
+## 9.7 A measurement network for Kandy
 
 Everything above ranks which measurement to obtain. This says where to put it, because the two questions have
 different answers and the second is where a recommendation usually becomes unfalsifiable.
 
-### What the campaign is for, and what it is deliberately not for
+### Purposes of the campaign
 
 **It is not for making the map finer.** Chapter 8 measured that a tenfold refinement of the grid
 moves the paired-site ratio by {{claim:s1.paired_delta_on_refinement}}, and Section 8.5 bounds
@@ -311,7 +311,7 @@ They are separate because they answer different questions, and because **a site 
 model cannot honestly validate it.** The receptor sites in particular are chosen for who is
 present rather than for what they would teach a model, and they are held out of all fitting.
 
-### Why these sites and not the ones a programme would otherwise choose
+### Site selection against convention
 
 Proposing a design and asserting it is good is not an argument. Five designs were built on the
 same candidate grid with the same covariates and scored on the same measures, including the two
@@ -395,7 +395,7 @@ reported. The first time, in Chapter 8, it converted five uninformative nulls in
 claim. This time it stopped a campaign being sold for something it could not deliver, and it did
 so while the cost of changing course was still a paragraph.
 
-### What it costs, and where the cost actually sits
+### Costs
 
 A recommendation without a price is not a recommendation, and the price here has a shape worth
 knowing.
@@ -456,7 +456,7 @@ arithmetically impossible: the median city has twelve stations, so a held-out th
 was promised, run, and returned nothing, and that is a limit of the panel rather than a
 confirmation.
 
-### What this leaves of the design sites
+### The remaining case for the design sites
 
 **Its founding justification is now gone twice over.** The power calculation said a campaign of
 this size could not detect a siting effect at Kandy; the panel says there is probably no siting
@@ -481,7 +481,7 @@ justifies them, and to stop justifying it by the spatial one. Section 8.4 of the
 cost either way is under three per cent of the instrument budget, so this is a question about
 what the campaign claims rather than about what it costs.
 
-### What this design cannot do
+### Limits of the design
 
 It cannot narrow the intervention bound of Section 7.10, which runs from
 {{claim:chem.intervention_lo}} to {{claim:chem.intervention_hi}} per cent and needs filter
@@ -532,7 +532,7 @@ margin, while it keeps its direction, roughly halves, from {{claim:precip.p5_wit
 the loss function and to the driver set, which is three demonstrations that it is the least robust
 quantity the recommendation rests on.
 
-## 9.8 What would not help
+## 9.8 Approaches that would not help
 
 Stated because these are the proposals most likely to be made.
 
