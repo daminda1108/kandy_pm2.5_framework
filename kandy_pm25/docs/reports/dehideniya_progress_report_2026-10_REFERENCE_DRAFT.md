@@ -13,12 +13,55 @@ main supervisor and I agreed to settle the method first. A self-review of my cod
 headline results, and I would value your view on whether the corrected analysis is now sound and on the five questions
 in Section 7. I am open to substantial changes.
 
-## 1. The problem
-Kandy has no public PM2.5 monitor. Before anyone buys instruments, it helps to know **how much each kind of
-observation improves an estimate of a city's daily PM2.5**, starting from free global data only (weather reanalysis,
-satellite aerosol, a map of the city's surface). This is a **value-of-information** question. I answer it on cities
-that do have dense monitoring networks, by withholding most of their stations and measuring what each added
-observation buys, then ask what transfers to Kandy.
+## 1. The problem, and how the project got here
+**The original aim** was an hourly, 1 km map of PM2.5 over the Kandy basin with honest uncertainty. The difficulty
+that shaped everything since: Kandy has **no public monitor**. The only local data are two low-cost PurpleAir
+sensors (FECT, 2018 onward) and one year of a research monitor (KOALA, 2019).
+
+**Phase 1 — machine learning and physics-informed networks (March–May 2026).**
+- A satellite-ML model for the city's daily level. The first version calibrated CAMS labels with KOALA and then
+  validated against KOALA, which is circular. Moving to the FECT sensors as labels gave leave-one-month-out R² 0.69
+  (daily); an hourly version reached 0.58, just short of its 0.60 target.
+- For the map, physics-informed neural networks and a terrain-flow model: the spatial PINN lost the ordering of
+  stations, and all six terrain parameters hit their bounds.
+- A cross-city neural process (ConvCNP) trained on three valley cities and applied zero-shot to Kandy gave an
+  over-smoothed map, and fine-tuning on the two FECT sensors memorised their locations.
+- Lesson: the binding constraint was **data, not architecture**.
+
+**Phase 2 — a physically structured model, checked elsewhere (June–July).**
+- I rebuilt the product as an additive decomposition: a regional background plus a local increment, spread by an
+  emission pattern, terrain confinement and diagnostic winds. It is anchored to a satellite PM2.5 product.
+- Because Kandy cannot check it, I ran the same pipeline at ten cities with dense networks, restricted to Kandy's
+  two-sensor budget. Seasonal cycles transferred (r 0.94–1.00), the level was within a median of +8 %, and the fine
+  spatial ranking was significant in 6 of 9 cities.
+- Several independent tests showed the fine within-city pattern cannot be learned from free covariates.
+- A public web explorer, a release repository and a preprint followed.
+
+**Phase 3 — the question changes (August).**
+- The first independent Kandy checks arrived. The NBRO station agrees with the model within 3 %, but three low-cost
+  records sit below it, which leaves an open level question.
+- Since the Kandy map cannot be validated without local data, the useful scientific question became **what each
+  observation is worth to a city without monitors**, and so what Kandy should measure first.
+- That became the "information-budget ladder" (Section 3), with each rung's admissible data checked in code.
+
+**Phase 4 — testing it properly (September).**
+- Repeating the analysis over many random station splits showed that some striking early results were single
+  random draws, so I rebuilt the method (ladder v2).
+- I then registered and ran a confirmation on 72 fresh cities, three robustness tests and a within-city "spatial
+  learning curve".
+- A Kandy sensor-network design was also drafted; it is excluded from the thesis until the method is settled.
+
+**Phase 5 — auditing it (October).**
+- A design audit found that a 12-station cap and a one-year record window had shaped two results, so both were
+  re-run under new registrations (full networks, full records).
+- A self-review of my code, written as an outside referee would, found the flaw described in Section 5 and narrowed
+  several claims.
+
+**The current problem,** and the subject of my method paper: how much each kind of observation improves an estimate
+of a city's **daily PM2.5**, starting from free global data only (weather reanalysis, satellite aerosol, a map of the
+city's surface). I answer it on cities that have dense monitoring networks, by withholding most of their stations
+and measuring what each added observation buys, then ask what transfers to Kandy. The Kandy model itself becomes the
+second paper, once the CEA monitoring data allow a proper local check.
 
 ## 2. Data
 - **Cities:** about 120 cities with at least 10 monitoring stations, from OpenAQ (worldwide) and the Chinese national
