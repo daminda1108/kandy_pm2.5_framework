@@ -122,8 +122,42 @@ Plan and full log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`; ledg
 - ✅ Pushed: framework `ca27722`, release `cb33beb`. Decision: **Kandy chain rebuild (hourly RH, local-day cap) waits
   for CEA data.**
 
+## Current State (updated 2026-10-05, 🟢 **CONFIRMED; ROBUST TO BASELINE, LEARNER AND STATION CAP; SPATIAL CURVE RE-RUN ON FULL RECORDS**)
 
-📦 Current State blocks of 2026-09-12 (archived 2026-10-05) and 2026-10-05 (archived 2026-10-06): `docs/claude_md_archive/CLAUDE_archived_blocks.md`.
+Four registered tests scored ONCE each, 2026-09-28/29, every one behind a parity or preflight gate.
+Records in `kandy_pm25/docs/`: `confirmation_results_2026-09-28.md`, `rich_baseline_results_2026-09-28.md`,
+`spatial_curve_results_2026-09-28.md`, `learner_robustness_results_2026-09-29.md`. Ledger **F.117–F.120**.
+
+- 🟢 **Confirmation (OSF `ueyfr`, F.117)**: 72 fresh cities. H1 first two **+8.5 % [3.1, 25.1]** (discovery
+  +21.8 retired) · H2 stations 3–6 **+0.22** · H3 background **+41.1** · H4 **+24.6 [4.1, 47.8]** background >
+  first two · H5 exceedances **+59.3** · M1 latitude **undetectable**. Deviation E-1 (parallel ingest) only.
+- 🟢 **Richer baseline (OSF `b379r`, F.118)**: + CAMS NRT PM2.5, terrain (ocean-masked), FIRMS, TROPOMI NO2,
+  IMERG, day of week → Bud0 **+13.1 %**; 6/7 as registered; **R3 refuted** (first-station gain did not shrink).
+- 🟢 **Learners (OSF `jea58`, F.120)**: TabPFN / 14-day GRU / HGB+physics → **all 12 directional verdicts
+  held**; none beats HGB (TabPFN −11 %); H4 ordering unresolved under TabPFN's weaker baseline.
+- 🔬 **Spatial learning curve (`rqn4y`+`26hp8`, F.119)**: 7 held, 3 refuted (X1, X6, X10), 1 not testable
+  (X12). Cities split (11/18 cross the raster, 7 never); reach ~1 km; siting irrelevant; **no Kandy station
+  count follows**.
+- Registry: **17 entries (incl. amendments); 105 predictions over 14 run: 66 held, 23 refuted, 6 not tested, 10 two-sided/exploratory**
+  (A: 4 held + 2 two-sided; B: 6 held, X4 refuted). `ueyfr`, `4qs9c`, `b379r`, `jea58`, `mhgna`, `fu59b` pending OSF approval (gotcha #100).
+- 🔴 **Design audit (F.121, 2026-10-04)**: the OpenAQ 12-station/2-year cap and the spatial curve's one-year window shaped
+  results. **User approved redoing both** as registered tests **A** (full-network ladder) and **B** (spatial curve on full
+  records). 🟢 **LODGED 2026-10-04: A = OSF `mhgna` (project `87znu`), B = OSF `fu59b` (project `4xvpw`)**, freeze `1e5f712`
+  (`docs/{fullnet,curve_fullrecord}_freeze_manifest.json`). Dry runs before lodging: A parity 72/72 vs ueyfr (2.8e-14);
+  B freeze byte-identical, leakage 0.0798; retrieval engine exact on in-cap data. Scripts `openaq_archive.py` (shared
+  unit cache, `--fetch ab`), `ladder_v2_fullnet.py` (`--build/--mirror/--score/--endpoints`), `spatial_curve_fullrecord.py`
+  (`--assemble/--freeze/--frame/--cover/--extracts/--predictors/--analysis`). Retrieval started 2026-10-05 00:05
+  — complete (3.26 M objects, 0 errors). 🟢 **Both scored 2026-10-05:** A (F.122) all verdicts hold on
+  full networks (background − first two +32.0 [11.6, 50.5]); B (F.123) 23 primary cities incl. Bangkok, X4 refuted, tropical arm inside
+  the temperate envelope. Records `docs/{full_network_ladder,spatial_curve_full_record}_results_2026-10-05.md`.
+  Large retrievals run in a scheduled window via `scripts/night_window.sh`; operating details are kept local (memory
+  `reference-slt-fibre-network`). **Manuscripts and registrations state design choices and their consequences, never
+  infrastructure** (user rule).
+- 🧭 **Supervisor (2026-10-04)**: method part first; he handles Kandy institutional data; sensor proposal waits; meet
+  Dr. Mahasen Dehideniya; review paper (topic open).
+- ⏭ Paper 1 draft updated (§2.12, §3.1.5–3.1.6, §3.6; commit `760abad`); evidence map still to update.
+
+📦 The 2026-09-12 Current State block (spatial curve underway) archived 2026-10-05 (`docs/claude_md_archive/CLAUDE_archived_blocks.md`).
 
 ## Archived state — the 2026-06 → 2026-09-14 arc (narrative in SESLOG)
 
@@ -135,7 +169,6 @@ kept verbatim** in [`docs/claude_md_archive/CLAUDE_archived_blocks.md`](docs/cla
 
 | Arc | Outcome that survived | SESLOG |
 |---|---|---|
-| 📦 Confirmed + robust to baseline, learner and station cap; spatial curve on full records (2026-10-05 block, archived 2026-10-06) | **F.117–F.123**; ordering reinterpreted by **F.124** (as constructed) | 2026-09-28 → 10-05 |
 | 📦 Spatial learning curve underway: data built, gates passed (2026-09-12 block, archived 2026-10-05) | **F.119** + addendum (D-6, D-7, D-8, E10 passed / E11 failed controls); re-run on full records **F.123** | 2026-09-12 → 09-28 |
 | 📦 Verification pass + ladder v2 redesign (2026-09-27 block, archived 2026-09-28) | **F.115/F.116**; superseded by the confirmation (F.117) | 2026-09-27 |
 | 📦 Two theses from one pool, A and B compliant (2026-09-19 block, archived 2026-09-28) | old thesis frozen; a new one will be written | 2026-09-19 |

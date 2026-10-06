@@ -12,12 +12,12 @@ from pathlib import Path
 ROOT = Path(r"D:\ProjectCD")
 SRC = ROOT / "CLAUDE.md"
 ARCH = ROOT / "docs" / "claude_md_archive" / "CLAUDE_archived_blocks.md"
-EXPECTED_SHA = "d00725e4d809d0b0df73b21a64444aa4e28542c65888cc1b2e7e4fe4ea2be69b"
-DATE = "2026-10-05"
+EXPECTED_SHA = "59472372d54f3894d61d70e257bf457c9a2dd3d7ed7530755004954e74e9dfbd"
+DATE = "2026-10-06"
 
 # (first, last) 1-indexed inclusive, with the text the first line must start with.
 RANGES = [
-    (130, 188, '## Current State (updated 2026-09-12'),
+    (125, 158, '## Current State (updated 2026-10-05'),
 ]
 
 raw = SRC.read_bytes()
