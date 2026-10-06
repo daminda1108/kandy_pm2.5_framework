@@ -656,7 +656,13 @@ python src/comparison/publication_figures.py --all
    (69/72 per-city vectors differ; verdicts unchanged). **Rule: a reproduction check on re-retrieved data is reported, never
    used as a gate; the parity gate runs on the STORED files.**
 
-## Pending Tasks (updated 2026-10-05)
+103. **A `.gitignore` line that starts with `#` is a COMMENT — the `#writing/` and `#el nino/` folders need `\#` (2026-10-06).**
+   `#writing/build/a/` sat in `.gitignore` for weeks and ignored nothing, so 52 MB of thesis builds showed as untracked.
+   Escape it: `\#writing/build/a/`. Sibling for publication: **all four repos are PUBLIC** (framework, release, two
+   webapps); before pushing, scan for secrets and for infrastructure notes, and keep operating records local-only
+   (`.gitignore` block "Local-only operating records").
+
+## Pending Tasks (updated 2026-10-06)
 
 Narrative/history for everything below lives in `memory/SESLOG.md`.
 This section is the FORWARD list only.
@@ -701,8 +707,9 @@ This section is the FORWARD list only.
    ⚠ Three mechanical rewrites broke the sense in the style pass and were repaired by hand.
    User action, and the critical path for the thesis itself.
 0c. ~~Figure and map plan~~ **DONE 2026-09-14** (`8ac0b56`). Remaining from it: small locator
-   insets for `transect` and `withinpixel` (not ordered). **Push `8ac0b56`** — verify with
-   `git -C D:/ProjectCD rev-list --count origin/main..HEAD` (gotcha #77).
+   insets for `transect` and `withinpixel` (not ordered). ✅ **Pushed 2026-10-06** with everything since 09-09
+   (repo audit: all four public repos in sync; framework history squashed to two commits for publication,
+   full history in local branch `backup/pre-squash-20261006`, never pushed).
 0d. ~~Remove the sensor-placement proposal from the thesis~~ **DONE 2026-09-17** — see the
    2026-09-17 Current State block. Open: whether to retire the 48 now-unused `net.*`/`cost.*`/`camp.*`
    claim generators (user's call).
