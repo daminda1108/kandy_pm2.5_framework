@@ -54,8 +54,9 @@ context that led here.
 | Ventilated-hour floor (additive_v3) | **Medellín-VALIDATED**: holdout-6 flat-hour RMSE 8.53→8.00 | `scripts/score_additive_v3.py` |
 | Spatial ceiling — 5th independent null | EO foundation embeddings add **no** signal beyond physics (3 cities, partial ρ≈0) | `scripts/alphaearth_spatial_test.py` |
 | **Spatial ceiling — MEASURED, 47 cities** | **ρ ≈ 0.2–0.28**, unmoved by four surfaces AND by a full LUR predictor set incl. roads (+0.273→+0.275) | `scripts/{spatial_proxy_scan,lur_fit}.py` (F.56/F.58/F.59/F.61) |
-| **Budget ladder — CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`)** | Ladder v2 (21 splits, 5 seeds, cross-fitted weights). First two stations **+8.5 % [3.1, 25.1]**, stations 3–6 **+0.22**, same-network background **+41.1**, background > first two **+24.6 [4.1, 47.8]**, exceedances **+59.3**; latitude undetectable. ⚠ Earlier ladder gains (17.9 / 40.6; discovery 21.8) are retired | `scripts/ladder_v2_confirm.py` (F.117) |
+| **Budget ladder — CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`)** | Ladder v2 (21 splits, 5 seeds, cross-fitted weights). First two stations **+8.5 % [3.1, 25.1]**, stations 3–6 **+0.22**, same-network background **+41.1**, background > first two **+24.6 [4.1, 47.8]** *as constructed* (F.124), exceedances **+59.3**; latitude undetectable. ⚠ Earlier ladder gains (17.9 / 40.6; discovery 21.8) are retired | `scripts/ladder_v2_confirm.py` (F.117) |
 | **Ladder robustness — registered** | Richer baseline (+CAMS, terrain, fires, NO2, rain; Bud0 +13.1 %): every verdict survives, first-station gain does not shrink (OSF `b379r`, F.118). Learners TabPFN / 14-day GRU / HGB+physics: all 12 directional verdicts hold, none beats HGB (TabPFN −11 %) (OSF `jea58`, F.120) | `scripts/{ladder_v2_rich,ladder_v2_learners,bud0_learners_kaggle}.py` |
+| **🔴 Like-for-like re-analysis (post hoc, 2026-10-06, F.124)** | The registered first-station rungs only recalibrate Bud0; the background is read on the day. Every stream read on the day: first two **+58.8 % [44.9, 69.0]**, background +57.7, background − first two **−0.22 [−0.60, +0.04]** (100 cities); full networks: kind nothing, ~10-station background +2.5 (count); LONO Bud0 → registered first-two 13.3. **Stations read daily: 1/2/3/5/8 → −42/−53/−56/−58/−61 %; as calibration ~−11 % flat** (86 cities) | `scripts/{ladder_v2_review,ladder_v2_review_k}.py` |
 | **Ladder on full station networks — registered** | Up to 40 stations over each city's full window (median 17 vs cap 12; 75 cities): every verdict holds; background +46.0, background − first two **+32.0 [11.6, 50.5]**; N6 change vs `ueyfr` +2.4 on H4 only (OSF `mhgna`, F.122) | `scripts/{openaq_archive,ladder_v2_fullnet}.py` |
 | **Spatial amplitude — at matched support** | Model annual p90/p10 **1.232** vs observed **1.26–1.47**; the apparent 85× vs 1.23× gap was a change-of-support artefact. Paired microsites 300 m apart in one pixel: **27.5× observed vs 1.000× modelled** | `scripts/{elangasinghe_spatial_test,support_collapse_test,fit_s_exp}.py` (F.69/F.76/F.77) |
 | **P4 identifiability — RUN** | `kappa`, `eps0`, `w_evening` unidentifiable at Kandy's budget; **`s_exp` is the only identifiable parameter and had never been fitted** (fitted → non-transferable, held at 1.0) | `scripts/{p4_identifiability,fit_s_exp}.py` (F.75/F.77) |
@@ -344,7 +345,10 @@ amendment 3 `4qs9c`). **No station count for a Kandy map follows** (1 tropical c
 **Re-run on full station records (OSF `fu59b`, F.123, 2026-10-05).** 23 primary cities (960 sites, 9 countries), incl. Bangkok
 (first deep-tropical); detection limit 0.24. X1–X7 repeat except **X4 refuted** (negative within-cell ceilings in London and
 Bangkok). 15/23 cross the raster (8 at three stations), 8 never; reach 1.0 km; cLHS ≈ random. Tropical arm (8 cities, MDE 0.28):
-inside the temperate envelope, none above. Kandy reading: a handful of reference stations, no specific number. E8–E11 not
+inside the temperate envelope, none above. **Narrowed by F.124 (post hoc):** heterogeneity between cities not significant,
+**3/23** cross after Holm; X5 interval [0.00, 0.00] was a pooling bug (per-k ±0.05, verdict holds); tropical − other −0.22
+[−0.45, +0.02]; detection limits 0.35/0.51 with the empirical SD; GHAP ranks like the built-up layer (ρ≈0.1); beyond ~1 km
+kriging returns the city mean. Kandy reading: a handful of stations gives the level and its days, not a neighbourhood map. E8–E11 not
 re-run. Record `kandy_pm25/docs/spatial_curve_full_record_results_2026-10-05.md`.
 
 ## 3. Epistemic status (what each claim can bear)
@@ -520,6 +524,10 @@ Because the background is daily-flat, the constraint has a closed form — cap e
 `(1 − F_MIN) × min_hour(T)`, which is the coherence bound of F.17 *imposed* rather than
 merely computed. Result across all eight years: **zero-local hours fall from ~25% to 0.13%**,
 and the annual local fraction becomes **f ≈ 0.48**.
+
+> ⚠ **F.124 (2026-10-06):** f is a bound set by T's diurnal amplitude where the cap binds, not identified by data. Across
+> cap choices (UTC vs local day; min, 2nd-lowest hour, 3-h running min, P10) it spans **0.433–0.492**; production 0.483
+> (`scripts/kandy_f_sensitivity.py`). Quote "about 0.45–0.5, a bound under the cap".
 
 **The answer is not tunable.** Sweeping `F_MIN` from 0 to 0.08 moves `f` only from 0.477 to
 0.502 — the physical constraint sets it, not the parameter. `F_MIN = 0.02` was chosen as the
