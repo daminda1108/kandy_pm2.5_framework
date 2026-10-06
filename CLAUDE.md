@@ -875,3 +875,4 @@ When prioritizing what to keep in context: current kernel gate results, pending 
 2. Data → `kandy_pm25/data/`. Results/figures → `kandy_pm25/results/`. Never outside these.
 3. Papers → `references/papers/`. Design docs → `docs/`. Old artifacts → `archive/`.
 4. Never put loose `.py` files in `kandy_pm25/` root.
+5. **`#el nino/` is a different research programme with its own repository** (private `daminda1108/enso-2026-27-sri-lanka`, git dir `#el nino/.git`). This repo ignores it (`/\#el nino/` in `.gitignore`; the `#` must be escaped). Never commit ENSO work here; run ENSO git commands from inside `#el nino`. ENSO was removed from this repo's tree on 2026-10-06 (`2a9174b`); squash commit `0eb89b7` remains in public history.
