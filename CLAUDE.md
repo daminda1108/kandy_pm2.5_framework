@@ -110,7 +110,17 @@ Plan and full log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`; ledg
   GBD download, user).
 - ✅ Paper 1 reference draft revised (abstract, §2.3.6, §2.7.9, §3.1.8, §3.6.5, §4, §5); new Figs 3b/7b; 111 `v2.*`
   claim keys (`build_claims.py` `registered_v2`), gate 683 OK.
-- ⏳ L2 (full-network frame) and L3 (leave-one-network-out Bud0) running/queued.
+- ✅ L2/L3 done: full networks — kind of station nothing, ~10-station background +2.5 [1.1, 3.7] (count); LONO Bud0
+  → registered first-two 8.5 → 13.3 (LOCO flattered Bud0 slightly), like for like unchanged.
+- 🟢 **Station-count curve read daily** (`ladder_v2_review_k.py`, 86 cities): 1/2/3/5/8 stations **+42/+53/+56/+58/+61 %**;
+  recalibration ~11 % flat for every k. This is the practical headline for a monitor-less city (and Kandy).
+- ✅ Paper 1 figures complete: S1–S4 + graphical abstract (calibration −11 % vs 1/2/5 daily stations −42/−53/−58 %).
+- ✅ Thesis A builds again (it had failed since 09-23, gotcha #105); source is `#writing/pool/`; v2 tables T7_1/T7_2/T9_1.
+- Standing (from the archived 2026-10-05 block): supervisor direction = method part first, meet Dr. Dehideniya, review
+  paper topic open (memory `project-supervisor-direction-2026-10`); **manuscripts and registrations state design choices,
+  never infrastructure** (user rule); large retrievals only via `scripts/night_window.sh`.
+- ✅ Pushed: framework `ca27722`, release `cb33beb`. Decision: **Kandy chain rebuild (hourly RH, local-day cap) waits
+  for CEA data.**
 
 ## Current State (updated 2026-10-05, 🟢 **CONFIRMED; ROBUST TO BASELINE, LEARNER AND STATION CAP; SPATIAL CURVE RE-RUN ON FULL RECORDS**)
 
@@ -333,6 +343,15 @@ All paths are relative to `d:\ProjectCD\kandy_pm25\` unless stated otherwise.
   S1–S4 + `90_evidence_map.md`); bib `references/references.bib` (pandoc `[@key]`); `supplement/build_supplement_tables.py`
   (S1 registry, S2 X1–X13, asserts registry totals); `figures/build_figures.py --figs 1..9` (every number from result files),
   `figures/FIGURE_PLAN.md`, `figures/CAPTIONS.md`; `VERIFIED_notes_proposals_2026-10-05.md` (applied).
+- **🆕 External review (2026-10-06, `kandy_pm25/scripts/`, F.124):** `ladder_v2_review.py` (`--frame registered|full`,
+  `--bud0 loco|lono`; symmetric same-day arms + registered parity; caches `review_bud0_*.parquet`) · `ladder_v2_review_k.py`
+  (k = 1..8 read daily vs recalibration) · `spatial_curve_x5_erratum.py` · `spatial_curve_reanalysis.py` (Fisher-z,
+  Holm, tropical diff, empirical MDE; `reanalysis_city.csv`) · `spatial_curve_satellite_benchmark.py` (GHAP at sites,
+  `ghap_sites.csv`) · `kandy_f_sensitivity.py` (→ `decomp/f_sensitivity.csv`) · `kandy_rh_sensitivity.py`
+  (→ `decomp/rh_sensitivity.csv`). Outputs `ladder_v2/review_*`, `{spatial_curve,_full}/analysis/{x5_erratum,
+  reanalysis,satellite_benchmark}.json`. Plan + log `docs/review_remediation_plan_2026-10-06.md`; thesis change list
+  `docs/thesis_change_list_2026-10-06.md`; claims section `registered_v2` (`v2.*`) in `build_claims.py`; Paper 1
+  `figures/build_figures.py --figs 3b,7b,S1,S2,S3,S4,GA`; thesis tables `#writing/src/t_tables.py` `T7_1v2/T7_2v2/T9_1v2`.
 - **🆕 Tests A and B (2026-10-04/05, `kandy_pm25/scripts/`):** `openaq_archive.py` (shared (location, year) unit cache
   `modular/openaq_archive/units/`, plans `plan_{a,b}.csv`, `--fetch ab` under `night_window.sh`) · `ladder_v2_fullnet.py` (A:
   `--build full|capped`, `--mirror original|capped|full` (SHA-verified copies), `--score`, `--endpoints`; outputs
@@ -722,11 +741,17 @@ This section is the FORWARD list only.
    all `[VERIFIED]` notes resolved (6 deleted, 4 → S3.4 corrections, 3 → prose); "download" wording removed from the draft;
    X-T run (null). **Figures: plan rewritten (`figures/FIGURE_PLAN.md`); all 9 main figures BUILT by
    `figures/build_figures.py` (reads result files only), CVD-checked, draft captions `figures/CAPTIONS.md`.**
-0a2a. 🔜 **NEXT (user, 2026-10-05): build the 3 supplementary figures (S1 station-count curve, S2 reach by distance,
-   S3 X-T moderator) and the graphical abstract** (staircase of the four rungs + small panel map; not a shrunk Fig. 3).
-   Then: author agrees captions; target journal → column-width check → figures FINAL.
+0a2a. ✅ **Supplementary figures S1–S4 and graphical abstract BUILT 2026-10-06** (on the F.124 headline). 🔜 **User:**
+   rewrite Paper 1 from the revised reference draft (abstract now 'same-day reading vs calibration'); agree captions;
+   target journal → column-width check → figures FINAL.
+0a2r. 🔜 **User: rewrite the thesis** from `kandy_pm25/docs/thesis_change_list_2026-10-06.md` (~128 items; edit
+   `#writing/pool/`, not `thesis/chapters/`). Gated v2 tables and Paper 1 figures are ready to place. Rebuild with
+   `build/build_docx.py --thesis a` after every token change (gotcha #105). **Submission next month.**
+0a2d. **User: GBD 2021 download** (Sri Lanka, deaths, NCD + LRI, 5-year age groups, 2019–2023) → age-25+ GEMM (review K-d).
+0a2e. **Deferred until CEA data:** rebuild the Kandy chain with hourly-RH Barkjohn + local-day coherence cap (review K-f;
+   diurnal swing −11 %, f +≤0.01), then co-locate to settle the diurnal shape and W11.
 0a2b. **Dr. Dehideniya progress report:** reference draft `kandy_pm25/docs/reports/dehideniya_progress_report_2026-10_REFERENCE_DRAFT.md`
-   (updated with A and B). User rewrites and sends; meet him ASAP (supervisor direction). Review-paper topic still open.
+   (updated with A and B, and 2026-10-06 with the F.124 correction — use this version). User rewrites and sends; meet him ASAP (supervisor direction). Review-paper topic still open.
 0a2c. **Exploratory follow-ups from the design audit (F.121), not registered:** precipitation test with IMERG incl. CNEMC
    (B1), Premasiri pixel test (B2), hourly-BLH sensitivity (B3), station-frame spatial nulls on the full networks; X-T on
    the full-record frame.

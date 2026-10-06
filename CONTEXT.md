@@ -48,6 +48,8 @@ first two same-day **+58.8 % [44.9, 69.0]**, background +57.7, background − fi
 Spatial curve: X5 interval was a bug; only **3/23** cities cross after Holm (not 15/23); tropical − other −0.22
 [−0.45, +0.02]; detection limit 0.35/0.51; GHAP ≈ built-up raster. f: **0.433–0.492** across cap choices.
 Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
+Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
+two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
 ## 🟢 The ladder: CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`, F.117; discovery F.115/F.116) — ordering superseded by F.124
 
