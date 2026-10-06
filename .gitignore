@@ -163,7 +163,6 @@ kandy_pm25/src/**/visualise_*.py
 # ── Project-level directories that are NOT source code ───────────────────────
 archive/
 docs/
-!/#el nino/docs/
 references/
 knowledge_base/
 .obsidian/
@@ -226,3 +225,6 @@ expertise_dashboard/
 kandy_pm25/docs/network_constraints_audit_2026-10-04.md
 kandy_pm25/docs/network_usage_plan_2026-10-04.md
 docs/claude_md_archive/CLAUDE_2026-10-05_pre-trim.md
+
+# ── ENSO 2026/27 programme: its own repository since 2026-10-06 ──────────────
+/\#el nino/
