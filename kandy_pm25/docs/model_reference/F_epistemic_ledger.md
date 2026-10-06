@@ -6426,7 +6426,10 @@ same-day stations of any kind cut daily error by ~58 %; used as a calibration on
 (exceedance +3.74 [1.42, 6.95]; prospective +2.37 [0.89, 4.11]) against +27.9 under the registered construction on
 the same cities: a small COUNT effect, no KIND effect, ~90 % of the ordering is use. **Leave-one-NETWORK-out Bud0 (L3):** registered gains grow slightly (confirmation
 first two **+13.3 %** vs 8.5, background +42.5 vs 41.1, H4 +25.9 vs 24.6) — leave-one-city-out flattered Bud0
-modestly; like for like unchanged (−0.21 [−0.55, +0.13]). H2 (+0.2) is close to
+modestly; like for like unchanged (−0.21 [−0.55, +0.13]). **Station-count curve read on the day** (`ladder_v2_review_k.py`, 86
+cities, full networks): k = 1/2/3/5/8 → **+42.1 [31.8, 54.9] / +53.3 / +55.8 / +58.4 / +60.9 %**; second station +4.48
+[2.51, 5.91]; as recalibration ~11 % flat for every k. F.116's "saturation after one or two stations" is a property of the
+recalibration. H2 (+0.2) is close to
 guaranteed by construction (two stations already fix a two-parameter map). Quote H1–H5 as "as constructed"; never
 "a background is worth more than local stations".
 

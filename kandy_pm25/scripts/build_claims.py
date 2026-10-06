@@ -2133,6 +2133,20 @@ def registered_v2(c: Claims) -> None:
                 if v:
                     put(f"v2.review.{fr}_{bud}.{arm[:4]}.{key}", v,
                         f"same-day symmetric arm {key} (exploratory, review L1)", v["n"], p.name, "F.124")
+        if bud == "loco" and fr == "full":
+            pk = L2 / "review_k_full_summary.json"
+            if pk.exists():
+                K = json.load(open(pk, encoding="utf-8"))
+                for k in range(1, 9):
+                    for m in ("day", "cal"):
+                        v = K.get(f"{m}{k}_rmse")
+                        if v:
+                            put(f"v2.review.k.{m}{k}", v, f"{k} stations, {'read daily' if m == 'day' else 'recalibration only'}"
+                                " (% daily RMSE over Bud0)", v["n"], pk.name, "F.124")
+                v = K.get("dayextra2_rmse")
+                if v:
+                    put("v2.review.k.day_second_over_first", v, "second daily station over the first (points)",
+                        v["n"], pk.name, "F.124")
         if bud == "lono":
             v = S.get("reconstruction.union.registered_all", {}).get("first2_rmse")
             if v:

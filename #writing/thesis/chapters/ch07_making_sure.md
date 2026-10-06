@@ -113,12 +113,12 @@ with replacement:
 | step | median | interval over cities |
 |---|---:|---:|
 | the first two sensors | {{claim:step.bud0c_bud1}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} |
-| monitors three to six | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} |
+| monitors three to six | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to6.lo}} to {{claim:boot.ghap.pooled.stn3to6.hi}} |
 | a background series | {{claim:step.bud2_bud3}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} |
 
 Those intervals are wide, and they should be. **The one that is not wide is the one the thesis
 leans on hardest**: monitors three to six are bounded above by
-{{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, so the absence of
+{{claim:boot.ghap.pooled.stn3to6.hi}} per cent across resamples of the panel, so the absence of
 that effect is established far more tightly than the presence of either other effect. The first
 two sensors and the background are both real and neither is pinned down to better than roughly a
 factor of two.
@@ -139,7 +139,7 @@ one.
 | step | median | over cities | over clusters | wider by |
 |---|---:|---:|---:|---:|
 | the first two sensors | {{claim:clust.first2.median}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} | {{claim:clust.first2.lo}} to {{claim:clust.first2.hi}} | {{claim:clust.first2.widening}} |
-| monitors three to six | {{claim:clust.stn3to6.median}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} | {{claim:clust.stn3to6.lo}} to {{claim:clust.stn3to6.hi}} | {{claim:clust.stn3to6.widening}} |
+| monitors three to six | {{claim:clust.stn3to6.median}} per cent | {{claim:boot.ghap.pooled.stn3to6.lo}} to {{claim:boot.ghap.pooled.stn3to6.hi}} | {{claim:clust.stn3to6.lo}} to {{claim:clust.stn3to6.hi}} | {{claim:clust.stn3to6.widening}} |
 | a background series | {{claim:clust.bg.median}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} | {{claim:clust.bg.lo}} to {{claim:clust.bg.hi}} | {{claim:clust.bg.widening}} |
 
 Every interval widens, by about half again. The city count therefore overstates the effective
@@ -556,19 +556,19 @@ observation.** That is a property of the decomposition rather than a limitation 
 implementation, and it means the ladder's order is partly forced rather than chosen.
 
 What can be permuted is where the background sits relative to the later monitors. Running the
-chain both ways across {{claim:order.cities}} cities, so that both routes end at the same
+chain both ways across {{claim:order.ghap.cities}} cities, so that both routes end at the same
 information set and only the interior order differs:
 
 | quantity | in the production order | with the background moved one step earlier |
 |---|---:|---:|
-| what a background series buys | {{claim:order.bg_after_8stn}} per cent | {{claim:order.bg_after_2stn}} per cent |
-| what monitors three to six buy | {{claim:order.stn3to8_no_bg}} per cent | {{claim:order.stn3to8_with_bg}} per cent |
+| what a background series buys | {{claim:order.ghap.bg_after_6stn}} per cent | {{claim:order.ghap.bg_after_2stn}} per cent |
+| what monitors three to six buy | {{claim:order.ghap.stn3to6_no_bg}} per cent | {{claim:order.ghap.stn3to6_with_bg}} per cent |
 
 **The background result is order-robust.** It is the largest step in either position, and moving
 it changes it by about two percentage points.
 
 The redundancy result is order-robust in its conclusion and not in its magnitude. Monitors
-three to six buy {{claim:order.stn3to8_with_bg}} per cent once a background is present, which
+three to six buy {{claim:order.ghap.stn3to6_with_bg}} per cent once a background is present, which
 is more than twenty times the production figure and still small. Part of that difference is not
 extra local information at all: with more stations the fitted background coefficient is estimated
 more sharply, so some of the apparent gain is a better-estimated background rather than a
@@ -576,7 +576,7 @@ better-observed city. The defensible statement is that the rung is small under b
 not that it is a fixed quantity.
 
 And the two orders do not reach the same skill despite reaching the same information. Median
-final error differs by {{claim:order.endpoint_gap}} micrograms per cubic metre between the
+final error differs by {{claim:order.ghap.endpoint_gap}} micrograms per cubic metre between the
 routes. The shrinkage estimator accumulates differently along different paths, so path dependence
 is a property of this measurement and not only of the presentation. It is reported here rather
 than left for a reader to discover.

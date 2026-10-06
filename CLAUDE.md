@@ -690,6 +690,12 @@ python src/comparison/publication_figures.py --all
    sees them, and check the arms differ only in the factor under test; print a test's per-unit values before trusting
    a pooled interval of exactly zero.**
 
+105. **A renamed claim key breaks every document that cites it, silently, until someone builds (2026-10-06).** The
+   2026-09-23 C7 fix renamed `order.*` and `*stn3to8*` claim keys; thesis A (`#writing/pool/`, NOT `thesis/chapters/`)
+   still cited the old ones, and `t_tables.py` T7_5 failed on the 09-25 registry recount. The thesis did not build for two
+   weeks and nobody noticed, because nothing ran the build. **Rule: after any change to `build_claims.py` keys or to
+   `registrations.json`, run `#writing/build/build_docx.py --thesis a --no-word` and fix every unresolved token.**
+
 ## Pending Tasks (updated 2026-10-06)
 
 Narrative/history for everything below lives in `memory/SESLOG.md`.

@@ -22,8 +22,9 @@ that the apparent advantage of the background came from that difference in use: 
 the same day reduced error by 59 % [45, 69], whether they were the first local stations, a background
 quantile or any two others, and with the number of stations matched the paired differences stayed within
 one point. With full networks, a background summarising ten or more stations added a further 2.5 points
-[1.1, 3.7]: a small effect of count, not of kind. What a monitor-less city gains is the daily reading,
-not a particular kind of station. For a within-city map, neither free
+[1.1, 3.7]: a small effect of count, not of kind. One station read daily reduced error by 42 %,
+two by 53 % and five by 58 %, against about 11 % for any number used only as a calibration. What a
+monitor-less city gains is the daily reading, not a particular kind of station. For a within-city map, neither free
 products (a built-up layer or a satellite PM2.5 surface) nor interpolation from three to eight stations
 ranked neighbourhoods usefully (rank correlation about 0.1); after correcting for multiple testing only
 3 of 23 cities showed interpolation overtaking the free layer, and choosing sites by design gained

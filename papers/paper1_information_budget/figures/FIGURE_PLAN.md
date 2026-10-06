@@ -121,10 +121,12 @@ Status tags: `PLANNED` · `BUILT` (script runs, figure viewed) · `FINAL` (print
   Data: `spatial_curve{,_full}/analysis/{reanalysis,satellite_benchmark}.json`.
 - **Supplementary S4** — X5 per estimator and k (erratum), from `x5_erratum.json`.
 
-## Supplementary figures
-- **Fig. S1** — Station-count curve, k = 1..8 pooled and by band (§3.2, F.102/F.116).
-- **Fig. S2** — Spatial-curve reach by distance bin (§3.6, X7), both frames.
-- **Fig. S3** — Terrain moderator X-T: 16 correlations × 2 frames with intervals (§3.6.3; null).
+## Supplementary figures · BUILT 2026-10-06
+- **Fig. S1** (`figS1_station_count`) — k = 1..8 stations read daily vs as recalibration (review, F.124). Replaces the
+  planned recalibration-only station-count curve, which on its own would repeat the construction flaw.
+- **Fig. S2** (`figS2_reach`) — kriging vs city-mean error by distance, both frames, primary cities.
+- **Fig. S3** (`figS3_terrain_moderator`) — X-T, 16 correlations × 2 frames.
+- **Fig. S4** (`figS4_x5_erratum`) — X5 per estimator and k (erratum).
 
 ## Dropped from the first plan
 - **Bud4 tier:** not used in the paper.
@@ -133,9 +135,10 @@ Status tags: `PLANNED` · `BUILT` (script runs, figure viewed) · `FINAL` (print
 - **"Average-day vs episode reversal" figure:** replaced by Fig. 5, which shows what the confirmation actually
   found.
 
-## Graphical abstract · PLANNED
-A staircase of the four rungs with the confirmed gains (8.5 %, 0.2, 41 %) and a small panel map. It must be a
-distinct illustration, not a shrunk Fig. 3. Built last.
+## Graphical abstract · BUILT 2026-10-06 (`graphical_abstract`)
+Bars of daily error reduction over free data: a calibration campaign (−11 %) against one, two and five stations read
+daily (−42, −53, −58 %), with one line on station kind (local vs background, −0.2 points). Replaces the planned
+four-rung staircase, whose ordering F.124 withdrew.
 
 ## Build order
 1. Figs 3 and 4 (headline results, data ready).

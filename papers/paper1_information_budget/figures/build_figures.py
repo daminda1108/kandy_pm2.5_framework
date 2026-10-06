@@ -530,8 +530,146 @@ def fig7b() -> None:
     save(fig, "fig7b_spatial_noise")
 
 
+# ── Supplementary S1 (review F.124): what k stations buy, read on the day vs as a calibration ─────
+def figS1() -> None:
+    S = load(LV2 / "review_k_full_summary.json")
+    ks = list(range(1, 9))
+    fig, ax = plt.subplots(figsize=(WIDTH * 0.72, 3.0))
+    for m, lab, col, mk in (("day", "read on the day", "#000000", "o"),
+                            ("cal", "recalibration only (registered construction)", "#999999", "s")):
+        med = [S[f"{m}{k}_rmse"]["median"] for k in ks]
+        lo = [S[f"{m}{k}_rmse"]["cluster"][0] for k in ks]
+        hi = [S[f"{m}{k}_rmse"]["cluster"][1] for k in ks]
+        ax.fill_between(ks, lo, hi, color=col, alpha=0.15, lw=0)
+        ax.plot(ks, med, color=col, marker=mk, ms=4, lw=1.4, label=lab)
+        for k, v in zip(ks, med):
+            if m == "day" and k in (1, 2, 3, 5, 8):
+                ax.text(k, v + 2.5, f"{v:.0f}", ha="center", fontsize=7.5)
+    ax.set_xticks(ks); ax.set_xlabel("stations k (first k of the pool)")
+    ax.set_ylabel("% reduction in daily RMSE\nover the free estimate")
+    ax.set_ylim(0, 80)
+    ax.legend(fontsize=7.5, frameon=False, loc="center right")
+    ax.text(0.99, 0.03, f"{S['cities']} cities, full networks; cluster 95 % bands", transform=ax.transAxes,
+            ha="right", fontsize=7)
+    save(fig, "figS1_station_count")
+
+
+# ── Graphical abstract: what an observation is worth, by how it is used ──────────────────────────
+def figGA() -> None:
+    K = load(LV2 / "review_k_full_summary.json")
+    R = load(LV2 / "review_registered_loco_summary.json")["reconstruction.union.symmetric"]
+    steps = [("free global data\n(weather, surface,\nsatellite aerosol)", 0.0, "#CCCCCC"),
+             ("a calibration\ncampaign\n(stations removed)", K["cal2_rmse"]["median"], "#999999"),
+             ("1 station\nread daily", K["day1_rmse"]["median"], "#56B4E9"),
+             ("2 stations\nread daily", K["day2_rmse"]["median"], "#0072B2"),
+             ("5 stations\nread daily", K["day5_rmse"]["median"], "#004C7A")]
+    fig, ax = plt.subplots(figsize=(6.0, 3.0))
+    for i, (lab, v, col) in enumerate(steps):
+        ax.bar(i, max(v, 0.8), color=col, width=0.72)
+        ax.text(i, v + 2, "baseline" if i == 0 else f"−{v:.0f} %", ha="center", fontsize=10, weight="bold")
+        ax.text(i, -4, lab, ha="center", va="top", fontsize=7.6)
+    ax.set_ylim(0, 95); ax.set_xlim(-0.6, len(steps) - 0.4)
+    ax.axis("off")
+    ax.text(-0.55, 94, "Daily city PM2.5 error, starting from free data", fontsize=10.5, weight="bold", va="top")
+    d = R["BGallmL2s_rmse"]
+    ax.text(-0.55, 86, f"Which stations? Local or background made no difference once both were read daily "
+            f"({format(d['median'], '+.1f').replace('-', '−')} points, {d['n']} cities).", fontsize=7.6,
+            va="top", color="#333333")
+    ax.text(-0.55, 81.5, f"{K['cities']} cities with dense networks; 21 station splits per city; post hoc re-analysis "
+            "of a registered study.", fontsize=7.0, va="top", color="#666666")
+    save(fig, "graphical_abstract")
+
+
+# ── Supplementary S2: kriging error against distance to the nearest fitting station ─────────────
+BINS = [0, 0.5, 1, 2, 4, 8, 1e9]
+BIN_LAB = ["0–0.5", "0.5–1", "1–2", "2–4", "4–8", ">8"]
+
+
+def figS2() -> None:
+    import numpy as np
+    import pandas as pd
+    fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 2.8), sharey=True)
+    for ax, (fname, d, _) in zip(axes, FRAMES):
+        q = pd.read_parquet(d / "analysis" / "q3.parquet", columns=["cluster", "rep", "k", "est", "dist_km", "err"])
+        prim = pd.read_csv(d / "frame_cities.csv").query("primary").cluster
+        q = q[q.cluster.isin(prim)]
+        e0 = q[q.est == "E0"].reset_index(drop=True)
+        for k, col, ls in ((3, "#000000", "-"), (8, "#0072B2", "--")):
+            a = q[(q.est == "E3") & (q.k == k)].reset_index(drop=True)
+            b = e0[e0.k == k].reset_index(drop=True)
+            assert len(a) == len(b) and (a[["cluster", "rep"]].to_numpy() == b[["cluster", "rep"]].to_numpy()).all()
+            a = a.assign(gain=b.err.abs().to_numpy() - a.err.abs().to_numpy(),
+                         bin=pd.cut(a.dist_km, BINS, labels=BIN_LAB, right=False))
+            per = a.groupby(["cluster", "bin"], observed=True).gain.median().unstack()
+            med = per.median(); lo = per.quantile(0.25); hi = per.quantile(0.75)
+            xs = np.arange(len(BIN_LAB))
+            ax.plot(xs, med.reindex(BIN_LAB).to_numpy(), color=col, ls=ls, marker="o", ms=3,
+                    label=f"k = {k} ({per.shape[0]} cities)")
+            ax.fill_between(xs, lo.reindex(BIN_LAB).to_numpy(), hi.reindex(BIN_LAB).to_numpy(), color=col, alpha=0.12, lw=0)
+        ax.axhline(0, color="#555555", lw=0.7)
+        ax.set_xticks(range(len(BIN_LAB))); ax.set_xticklabels(BIN_LAB, fontsize=7)
+        ax.set_xlabel("distance to nearest fitting station (km)")
+        ax.set_title(fname, fontsize=8.5, loc="left")
+        ax.legend(fontsize=7, frameon=False)
+    axes[0].set_ylabel("|error| city mean − |error| kriging\n(standardised; > 0: kriging better)")
+    fig.tight_layout()
+    fig.text(0.5, -0.03, "median over primary cities; band: interquartile range across cities. Where kriging "
+             "returns the city mean, the difference is exactly zero.", ha="center", fontsize=7)
+    save(fig, "figS2_reach")
+
+
+def figS3() -> None:
+    import pandas as pd
+    fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 4.2), sharey=True)
+    for ax, (fname, d, _) in zip(axes, FRAMES):
+        m = pd.read_csv(d / "analysis" / "moderators_terrain.csv")
+        OUT = {"reach_E3_km": "reach", "cross_E3_k": "crossover k", "rho_E3_k12": "kriging skill, k=12",
+               "adv_E3_E1_k12": "kriging − raster, k=12"}
+        MOD_ = {"relief_m": "relief", "site_range_m": "site elevation range", "slope_deg": "slope",
+                "enclosure": "enclosure"}
+        m["lab"] = m.outcome.map(OUT).fillna(m.outcome) + "  ×  " + m.moderator.map(MOD_).fillna(m.moderator)
+        for i, r in enumerate(m.itertuples()):
+            y = len(m) - 1 - i
+            ax.plot([r.lo, r.hi], [y, y], color="#0072B2", lw=1.1)
+            ax.plot(r.rho, y, "o", color="#0072B2", ms=3.5)
+        ax.axvline(0, color="#555555", lw=0.7)
+        ax.set_yticks(range(len(m))); ax.set_yticklabels(m.lab[::-1], fontsize=6.5)
+        ax.set_xlabel("rank correlation across cities")
+        ax.set_title(f"{fname} ({int(m.cities.max())} cities)", fontsize=8.5, loc="left")
+    fig.tight_layout()
+    save(fig, "figS3_terrain_moderator")
+
+
+def figS4() -> None:
+    fig, ax = plt.subplots(figsize=(WIDTH * 0.75, 2.8))
+    for j, (fname, d, _) in enumerate(FRAMES):
+        x = load(d / "analysis" / "x5_erratum.json")
+        for e, col in (("E3", "#000000"), ("E5", "#E69F00")):
+            byk = x[e]["by_k"]
+            ks = [k for k in ("3", "5", "8", "12") if k in byk and byk[k]["lo"] == byk[k]["lo"]]
+            off = (j - 0.5) * 0.3 + (0.08 if e == "E5" else -0.08)
+            for i, k in enumerate(ks):
+                v = byk[k]
+                ax.plot([i + off] * 2, [v["lo"], v["hi"]], color=col, lw=1.1)
+                ax.plot(i + off, v["median"], marker="o" if j == 0 else "s", color=col, ms=4,
+                        mfc=col if j == 0 else "white")
+    lim = load(FRAMES[1][1] / "analysis" / "reanalysis.json")["S7"]["limit_with_empirical_sd"]
+    ax.axhspan(-0.1, 0.1, color="#EEEEEE", zorder=0)
+    ax.axhline(0, color="#555555", lw=0.7)
+    ax.set_xticks(range(4)); ax.set_xticklabels(["3", "5", "8", "12"])
+    ax.set_xlabel("fitting stations k"); ax.set_ylabel("cLHS − random siting (rank corr.)")
+    ax.legend(handles=[Line2D([], [], color="#000000", marker="o", lw=1.1, label="kriging (E3)"),
+                       Line2D([], [], color="#E69F00", marker="o", lw=1.1, label="regression kriging (E5)"),
+                       Line2D([], [], color="#555555", marker="o", lw=0, label="registered frame"),
+                       Line2D([], [], color="#555555", marker="s", mfc="white", lw=0, label="full records")],
+              fontsize=6.8, frameon=False, ncol=2, loc="upper center", bbox_to_anchor=(0.5, 1.25))
+    ax.text(0.99, 0.02, f"shaded ±0.1; detection limit {lim:.2f}", transform=ax.transAxes, ha="right",
+            va="bottom", fontsize=7)
+    save(fig, "figS4_x5_erratum")
+
+
 FIGS = {"1": fig1, "2": fig2, "3": fig3, "3b": fig3b, "4": fig4, "5": fig5, "6": fig6, "7": fig7,
-        "7b": fig7b, "8": fig8, "9": fig9}
+        "7b": fig7b, "8": fig8, "9": fig9, "S1": figS1, "GA": figGA, "S2": figS2, "S3": figS3, "S4": figS4}
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

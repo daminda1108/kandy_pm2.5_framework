@@ -59,6 +59,10 @@ Intervals are two-level cluster 95 % unless marked (city) = city bootstrap.
 | full networks: two outer (P10) − first two / mean of two − first two | −0.84 / +0.07 | [−1.43, −0.29] / [−0.38, +0.22] | 109 | EXPL | same |
 | full networks: same, exceedance / prospective (all outer − first two) | +3.74 [1.42, 6.95] / +2.37 [0.89, 4.11] | — | 105 / 109 | EXPL | same |
 | full networks, same cities, registered: first two / background / difference | +10.7 / +44.9 / +27.9 | — | 111 | EXPL | same |
+| k stations read daily, k = 1 / 2 / 3 / 5 / 8 | +42.1 / +53.3 / +55.8 / +58.4 / +60.9 % | k=1 [31.8, 54.9] | 86 | EXPL | `review_k_full_summary.json`; Fig. S1 |
+| second station over first, read daily | +4.48 | [2.51, 5.91] | 86 | EXPL | same |
+| k stations as recalibration, k = 1..8 | ~11 % flat (10.7–11.5) | — | 86 | EXPL | same |
+| leave-one-network-out Bud0: registered first two / background / H4 (confirmation) | +13.3 / +42.5 / +25.9 | — | 72/68 | EXPL | `review_registered_lono_summary.json` |
 
 ## Bounded spatial tests (within-city Spearman, paired vs built-up benchmark 0.301)
 

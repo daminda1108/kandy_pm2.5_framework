@@ -68,3 +68,31 @@ after a Holm correction over densities are printed above. Tropical cities in ora
 correlation of the GHAP 1 km satellite PM2.5 surface and the built-up raster, and paired differences against kriging
 at three, five and eight stations (two-level country bootstrap). GHAP may have been trained on these monitors, so its
 value is an upper bound. Source: `spatial_curve_full/analysis/{reanalysis,satellite_benchmark}.json`.
+
+## Fig. S1 — what k stations buy (2026-10-06, F.124; post hoc)
+Median reduction in daily RMSE over the free estimate when the first k pool stations are read on the day (black) or
+used only to recalibrate the free estimate (grey, the registered construction), 86 cities with full networks; the
+fitting target is the last two pool stations, shrinkage weights are cross-fitted from other cities, and bands are
+two-level cluster 95 % intervals. Source: `ladder_v2/review_k_full_summary.json`.
+
+## Fig. S2 — reach by distance (2026-10-06)
+Absolute error of the city-mean predictor minus that of kriging at held-out sites, by distance to the nearest fitting
+station, at three and eight fitting stations; median over primary cities with the interquartile range across cities,
+registered frame (left) and full records (right). Beyond about a kilometre kriging returns the city mean, so the
+difference is exactly zero; within half a kilometre the median gain is also about zero. Source: `analysis/q3.parquet`.
+
+## Fig. S3 — terrain as a moderator (X-T, exploratory)
+Rank correlation across cities between four terrain descriptors and four outcomes of the spatial curve, with
+two-level bootstrap 95 % intervals; registered frame (left, 18 cities) and full records (right, 23). None of the 32
+intervals excludes zero. Source: `analysis/moderators_terrain.csv`.
+
+## Fig. S4 — siting by design, corrected (erratum, F.124)
+cLHS minus random siting in within-city rank correlation, per number of fitting stations, for kriging (black) and
+regression kriging (orange), registered frame (filled) and full records (open), with the registered two-level
+bootstrap. The registered summary's interval of [0.00, 0.00] came from pooling estimators that do not depend on the
+sites chosen. Source: `analysis/x5_erratum.json`.
+
+## Graphical abstract (2026-10-06)
+Daily city PM2.5 error relative to an estimate from free global data, by how stations are used: as a calibration
+campaign, or read daily (one, two, five stations). Sources: `review_k_full_summary.json`,
+`review_registered_loco_summary.json`.

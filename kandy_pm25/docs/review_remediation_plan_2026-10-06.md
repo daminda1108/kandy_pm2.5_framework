@@ -242,3 +242,25 @@ Done: L1–L3, L5, S-a–S-c, S-e, K-a–K-c, K-e, D1–D4, F1. Declined: L4 (Te
   the CEA reference data allow a co-located check, not before.
 - **Thesis** rewrite from `thesis_change_list_2026-10-06.md` (the author's prose); the `v2.*` claim keys are ready.
 - **Paper 1**: rewrite from the revised reference draft; Figs 3b/7b are the new headline visuals.
+
+**2026-10-06 — decisions (author):** push both repos — DONE (framework `99d1513`, release `ddc0469`, verified 0/0 against
+origin). **K-f: wait for the CEA data** before rebuilding the shipped Kandy chain (hourly-RH Barkjohn + local-day cap).
+Next (model work): Paper 1 supplementary figures S1–S4 and a graphical abstract built on the corrected headline; thesis
+table/figure generators re-pointed to the v2 result files.
+
+**2026-10-06 — Paper 1 figures completed.** New same-day station-count curve (`ladder_v2_review_k.py`, 86 cities, full
+networks): k = 1/2/3/5/8 read daily **+42.1 [31.8, 54.9] / +53.3 / +55.8 / +58.4 / +60.9 %**; second station +4.48
+[2.51, 5.91]; recalibration ~11 % flat for every k. Built Fig. S1 (station count), S2 (reach — beyond ~1 km kriging
+returns the city mean; within 0.5 km the median gain is ~0 too), S3 (X-T), S4 (X5 erratum) and a graphical abstract on
+the corrected headline. Propagated to §3.2.1, §4.2, abstract, evidence map, F.124, claims (881 OK), captions, figure plan.
+Next: thesis table/figure generators re-pointed to v2 (`#writing/src`).
+
+**2026-10-06 — Thesis build repaired; v2 tables added.** (1) The thesis-A build had been FAILING since the 2026-09-23 C7
+fix renamed claim keys (`order.*` → `order.{ghap,maiac}.*`, `stn3to8` → `stn3to6`): 12 stale tokens in
+`#writing/pool/ch07_making_sure/{02,04}-*.md` re-pointed to the GHAP keys the old ones meant (values moved slightly with
+the September fix). (2) `t_tables.py` T7_5 failed since the 2026-09-25 registry audit (it required held + refuted =
+predictions); the check now allows not-tested and two-sided predictions, the table gains a column for them, and the note
+reads 17 lodged / 14 run / 23 of 105 refuted. (3) New gated tables `T7_1_ladder_v2`, `T7_2_like_for_like_v2`,
+`T9_1_next_v2` built from `v2.*` claims, beside the old ones. Build: claims 881 fresh, 99 sources, 43,014 words, 42
+figures, 9 tables, abstract 339 words — assembles. ⚠ **Thesis A is assembled from `#writing/pool/`, not
+`thesis/chapters/`**; the change list's line numbers refer to `thesis/chapters`, whose text the pool files carry.

@@ -48,12 +48,12 @@ with replacement:
 | step | median | interval over cities |
 |---|---:|---:|
 | the first two sensors | {{claim:step.bud0c_bud1}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} |
-| monitors three to six | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} |
+| monitors three to six | {{claim:step.bud1_bud2}} per cent | {{claim:boot.ghap.pooled.stn3to6.lo}} to {{claim:boot.ghap.pooled.stn3to6.hi}} |
 | a background series | {{claim:step.bud2_bud3}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} |
 
 Those intervals are wide, and they should be. **The one that is not wide is the one the thesis
 leans on hardest**: monitors three to six are bounded above by
-{{claim:boot.ghap.pooled.stn3to8.hi}} per cent across resamples of the panel, so the absence of
+{{claim:boot.ghap.pooled.stn3to6.hi}} per cent across resamples of the panel, so the absence of
 that effect is established far more tightly than the presence of either other effect. The first
 two sensors and the background are both real and neither is pinned down to better than roughly a
 factor of two.
@@ -74,7 +74,7 @@ one.
 | step | median | over cities | over clusters | wider by |
 |---|---:|---:|---:|---:|
 | the first two sensors | {{claim:clust.first2.median}} per cent | {{claim:boot.ghap.pooled.first2.lo}} to {{claim:boot.ghap.pooled.first2.hi}} | {{claim:clust.first2.lo}} to {{claim:clust.first2.hi}} | {{claim:clust.first2.widening}} |
-| monitors three to six | {{claim:clust.stn3to6.median}} per cent | {{claim:boot.ghap.pooled.stn3to8.lo}} to {{claim:boot.ghap.pooled.stn3to8.hi}} | {{claim:clust.stn3to6.lo}} to {{claim:clust.stn3to6.hi}} | {{claim:clust.stn3to6.widening}} |
+| monitors three to six | {{claim:clust.stn3to6.median}} per cent | {{claim:boot.ghap.pooled.stn3to6.lo}} to {{claim:boot.ghap.pooled.stn3to6.hi}} | {{claim:clust.stn3to6.lo}} to {{claim:clust.stn3to6.hi}} | {{claim:clust.stn3to6.widening}} |
 | a background series | {{claim:clust.bg.median}} per cent | {{claim:boot.ghap.pooled.bg.lo}} to {{claim:boot.ghap.pooled.bg.hi}} | {{claim:clust.bg.lo}} to {{claim:clust.bg.hi}} | {{claim:clust.bg.widening}} |
 
 Every interval widens, by about half again. The city count therefore overstates the effective

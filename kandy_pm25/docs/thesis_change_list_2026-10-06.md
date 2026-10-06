@@ -1,3 +1,8 @@
+> ⚠ **Where to edit (added 2026-10-06):** thesis A is assembled from `#writing/pool/<chapter>/*.md`, not from
+> `#writing/thesis/chapters/`. The locations below cite `thesis/chapters` line numbers; find the same text in the pool
+> file. New gated tables `T7_1_ladder_v2`, `T7_2_like_for_like_v2` and `T9_1_next_v2` are ready to place, and the
+> Paper 1 figures `fig3b_like_for_like`, `figS1_station_count` and `fig7b_spatial_noise` can be reused.
+
 # Thesis change list: bringing the chapters in line with the evidence (2026-10-06)
 
 **What this is.** A claim-by-claim list of what each chapter of the thesis must change. It lists facts and

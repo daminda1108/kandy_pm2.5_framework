@@ -190,6 +190,8 @@ _TENS = {20: "twenty", 30: "thirty", 40: "forty", 50: "fifty", 60: "sixty"}
 
 
 def _spell(n: int) -> str:
+    if n >= 100:                     # house style: numerals from 100 up
+        return str(n)
     if n < len(_WORDS):
         return _WORDS[n]
     t, u = divmod(n, 10)
@@ -212,15 +214,18 @@ def t7_5_registrations():
     run = [r for r in recs if r["refuted"] is not None]
     pending = [r for r in recs if r["refuted"] is None]
     for r in run:
-        if r["held"] + r["refuted"] != r["predictions"]:
-            raise ValueError(f"{r['osf']}: held + refuted != predictions")
+        other = r["predictions"] - r["held"] - r["refuted"]
+        if other < 0 or (r.get("not_tested") or 0) > other:
+            raise ValueError(f"{r['osf']}: held + refuted + not tested exceeds predictions")
+        if "descriptive" in r and r["held"] + r["refuted"] + (r.get("not_tested") or 0) + r["descriptive"]                 != r["predictions"]:
+            raise ValueError(f"{r['osf']}: held + refuted + not tested + descriptive != predictions")
 
     rows = []
     for r in recs:
         label = f"{r.get('label', r['name'])} ({r['osf']})"
         if r["refuted"] is not None:
             rows.append([label, r["date"], str(r["predictions"]), str(r["held"]),
-                         str(r["refuted"])])
+                         str(r["refuted"]), str(r["predictions"] - r["held"] - r["refuted"])])
             continue
         conf = r.get("confirmatory")
         if r["predictions"] == 0:
@@ -230,7 +235,7 @@ def t7_5_registrations():
         else:
             preds = str(r["predictions"])
         state = r.get("pending_as", "not yet run")
-        rows.append([label, r["date"], preds, state, state])
+        rows.append([label, r["date"], preds, state, state, state])
 
     n_pred = sum(r["predictions"] for r in run)
     n_ref = sum(r["refuted"] for r in run)
@@ -255,13 +260,14 @@ def t7_5_registrations():
         note += (" The Kandy measurement design is still under development and is not "
                  "reported in this thesis.")
     if curve:
-        note += (f" The spatial learning curve and its {_spell(len(curve) - 1)} amendments "
-                 "were registered before any real-data scoring; that analysis is under way "
-                 "and nothing from it has been scored.")
+        note += (f" {_spell(len(curve)).capitalize()} amendments to the spatial learning curve "
+                 "carry no outcome of their own; their analyses are scored within the curve's "
+                 "registrations. The last column counts predictions that were not tested or were "
+                 "registered as two-sided or descriptive.")
     write(
         "T7_5_registrations",
         "Registered predictions, and their outcomes where the analysis has run",
-        ["registration", "date", "predictions", "held", "refuted"],
+        ["registration", "date", "predictions", "held", "refuted", "not tested or two-sided"],
         rows, note=note)
 
 
@@ -418,7 +424,82 @@ def t9_1_next():
                "acquisition most often proposed and the one the measurement does not support.")
 
 
+# ── v2 tables (2026-10-06): registered confirmation + the post-hoc like-for-like review (F.117, F.124) ──
+# The tables above read superseded ladder-v1 claims; these read `v2.*` claims. Both build, so the current
+# thesis still assembles while the author rewrites ch07/ch09 (docs/thesis_change_list_2026-10-06.md).
+
+def _ci(tag: str) -> str:
+    return f"{tok(tag + '.median')} [{tok(tag + '.lo')}, {tok(tag + '.hi')}]"
+
+
+def t7_1_ladder_v2():
+    c = "v2.conf.reco."
+    write("T7_1_ladder_v2", "Registered confirmation on 72 fresh cities, as constructed",
+          ["endpoint", "what the rung does", "median (two-level cluster 95 % interval)"],
+          [["H1 first two stations", "recalibrate the free estimate (intercept and slope)",
+            _ci(c + "first2_rmse") + " per cent"],
+           ["H2 stations three to six", "the same recalibration from six stations",
+            _ci(c + "s36_rmse") + " points"],
+           ["H3 background series", "the daily 10th percentile of the other stations, read on the day",
+            _ci(c + "bg_rmse") + " per cent"],
+           ["H4 background minus first two", "a comparison of the two rungs as built",
+            _ci(c + "bgm2_rmse") + " points"],
+           ["H5 the same, exceedance days", "as H4, balanced error at 15 µg m⁻³",
+            _ci(c + "bgm2_exceed") + " points"]],
+          note="Verdicts stand as registered (OSF ueyfr). The rungs use their stations differently: "
+               "the local stations never enter a day's prediction, the background does. H4 and H5 "
+               "therefore compare uses, not observations (Table 7.2).")
+
+
+def t7_2_like_for_like_v2():
+    r = "v2.review.registered_loco.reco."
+    k = "v2.review.k."
+    write("T7_2_like_for_like_v2", "What a station is worth when it is read on the day (post hoc)",
+          ["comparison", "median % reduction in daily RMSE, or paired points"],
+          [["first two stations, read on the day", _ci(r + "gL2s_rmse")],
+           ["background as registered, read on the day", _ci(r + "gBGall_rmse")],
+           ["background minus first two, both read on the day", _ci(r + "BGallmL2s_rmse")],
+           ["one station read daily", _ci(k + "day1")],
+           ["two stations read daily", _ci(k + "day2")],
+           ["five stations read daily", _ci(k + "day5")],
+           ["two stations used only as a recalibration", _ci(k + "cal2")]],
+          note="Exploratory re-analysis of the registered data (ledger F.124): every stream regressed "
+               "with the free estimate against stations not otherwise used, same-day, with shrinkage "
+               "weights cross-fitted from other cities. The registered numbers are reproduced exactly "
+               "in the same run. Station-count rows: full networks, 86 cities.")
+
+
+def t9_1_next_v2():
+    write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
+          ["action", "what it would settle", "what ranks it, and of what kind"],
+          [["Continuous stations whose readings reach the estimate daily (CEA, NBRO, the university "
+            "network), of whatever kind are available",
+            "the daily city level",
+            f"RE-ANALYSIS (post hoc): one station read daily {tok('v2.review.k.day1.median')} per cent, "
+            f"two {tok('v2.review.k.day2.median')}; as a calibration only, "
+            f"{tok('v2.review.k.cal2.median')}. Kind of station: "
+            f"{tok('v2.review.registered_loco.reco.BGallmL2s_rmse.median')} points"],
+           ["Making one of them reference grade",
+            "the level discrepancy, and a calibration anchor for the low-cost sensors",
+            "MEASUREMENT DESIGN, not the ladder: three of four independent Kandy records sit below the "
+            "model, and the diurnal shape depends on the humidity correction"],
+           ["More than three to five stations for the daily mean",
+            "little: the daily curve flattens",
+            f"RE-ANALYSIS: five stations {tok('v2.review.k.day5.median')} per cent against "
+            f"{tok('v2.review.k.day2.median')} for two"],
+           ["A network for a neighbourhood map",
+            "where in the basin pollution is highest",
+            f"SPATIAL CURVE: at three to eight stations no method ranked neighbourhoods usefully; "
+            f"{tok('v2.curve.full.holm_crossing')} cities crossed a free layer after correction; a "
+            f"satellite surface ranked at {tok('v2.curve.full.ghap.median')}"],
+           ["Precipitation in the drivers", "wet removal",
+            f"REGISTERED NULL: {tok('precip.p1')} per cent on the sensorless rung"]],
+          note="Supersedes Table 9.1 of the September build, whose first row rested on the retracted "
+               "deep-tropical ordering (F.115–F.117) and on the registered rung construction (F.124).")
+
+
 BUILDERS = {
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,
