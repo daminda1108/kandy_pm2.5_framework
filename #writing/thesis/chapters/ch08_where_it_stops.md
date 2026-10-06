@@ -57,7 +57,8 @@ already exists inside the build. At the paired microsites the fine surface gives
 gives unity. That is a real signal, and the registered hypothesis was that dispersing it at
 {{claim:subgrid.fine_res_m}} metres would recover a material fraction of the observed contrast.
 
-**It does not.** Running the calibrated terrain solver at {{claim:subgrid.fine_res_m}} metres,
+**It does not.** Running the calibrated terrain solver [@Forthofer2014] at
+{{claim:subgrid.fine_res_m}} metres,
 forced with the survey's own midday climatology and with nothing fitted:
 
 | | production, {{claim:subgrid.production_res_m}} m | fine, {{claim:subgrid.fine_res_m}} m |
@@ -224,6 +225,15 @@ than a single free raster ranks a city it has never seen. Section 5.5 reported t
 inverse distance weighting alone; it holds for the geostatistical and locally weighted families
 too.
 
+A claim that nothing beat one free raster is only as good as a reader's ability to check it, so
+{{fig:tournament}} puts every family on one axis. The left panel is the paired comparison, with the
+foundation-model embeddings of the registered test included, and the registered detection limit
+drawn as the line an improvement would have had to cross. No interval reaches it. The right panel
+gives the unpaired medians, which is the only form in which the oracle families can be shown, and
+places them below a separator because they answer a question a city without monitors cannot ask.
+
+{{fig:tournament}}
+
 The null is therefore a property of the information available on this frame, and not of the one
 model family the registered test happened to use. That is a stronger statement than the
 registration was able to make, and it is the one this thesis defends.
@@ -238,6 +248,52 @@ the held-out value at exactly minus one in every city of the panel. The fix was 
 had been broken, which is to fit the normalisation on the training points only. The values above
 are the corrected ones. The admissible arm never had the problem, because there the whole city is
 withheld and no such constraint exists.
+
+### Deliberate siting, tested on the dense networks
+
+Every null in this section was measured on networks sited for compliance and access, while the
+land-use regression studies that report high coefficients of determination site their monitors
+across land-use contrast on purpose [@Hoek2008]. The null could therefore be a property of how the
+panel's networks were sited rather than of the information available to a city without monitors.
+**That is testable without a new instrument.** Every city with a dense network can be made into
+both designs by choosing which of its own stations to fit on, so the question is answerable on
+{{claim:site.cities}} cities and {{claim:site.stations}} stations at no cost beyond computation.
+
+Four fitting subsets were drawn from each city, the same model fitted on each, and every one
+scored against stations held out of it. A subset chosen across the covariate space reaches a
+median rank correlation of {{claim:site.rho_deliberate}} against
+{{claim:site.rho_convenience}} for one chosen the way compliance networks are sited, which looks
+decisive and is not.
+
+**Paired within city, deliberate siting scores {{claim:site.paired_median}} against convenience
+siting**, with an interval of {{claim:site.paired_lo}} to {{claim:site.paired_hi}}, and it wins
+in {{claim:site.wins}} of {{claim:site.cities}} cities. Fewer than half.
+
+⚠ The apparent advantage is the difference-of-medians artefact again. The gap between the two
+medians is {{claim:site.diff_of_medians}} while the paired median is negative, because the city
+sitting at the median is not the same city in the two arms. Section 7.2 records the same trap in
+the station-count sweep, and on both occasions the difference of medians was the flattering
+reading. Reporting it here would have claimed that deliberate siting nearly doubles spatial skill.
+
+The trap is easier to see than to describe, and it has caught this project more than once, so
+{{fig:pairedtrap}} draws the same experiment both ways. On the left every city is a line from its
+convenience score to its deliberate score. The lines cross in both directions and the two medians
+still sit well apart, because a different city is at the middle of each column. On the right the
+same cities become differences, and the distribution sits across zero.
+
+{{fig:pairedtrap}}
+
+⚠ **The robustness check could not be run.** Scoring every method against one common held-out set
+would remove the confound that each design leaves a different remainder. On this panel it is
+arithmetically impossible: the median city has twelve stations, so a held-out third is
+{{claim:site.fixed_median_held}}, and a rank correlation on that many points can only take values
+{{claim:site.fixed_quantisation}} apart. Every paired median collapsed to exactly zero. The check
+was run and returned nothing, and that is a limit of the panel rather than a confirmation.
+
+What this establishes is bounded in the same way as the rest of the section. The interval does
+not exclude an advantage as large as {{claim:site.paired_hi}}, so deliberate siting is
+undetectable here rather than refuted. What it removes is the easy explanation: on these
+networks, the spatial null does not look like an artefact of where the stations happen to stand.
 
 ## 8.6 The reason, which is a change of support
 
@@ -271,7 +327,10 @@ coarser than a cell.
 That is a change-of-support statement rather than a data-quality statement, and it has a
 consequence the field does not generally acknowledge. A one kilometre product cannot answer
 "which part of this cell is worst" for any city with this structure, however the product is
-built and however much data is used to build it.
+built and however much data is used to build it. The approaches that do reach below the grid,
+street-scale dispersion modelling [@Cimorelli2005] and sub-grid downscaling of a chemistry
+transport model [@Denby2020], get there by requiring a local emissions inventory, which is
+what a city in this position does not have.
 
 ### Three things called resolution, and which of them this chapter measures
 
@@ -297,8 +356,10 @@ statements about a predictor set, not about the atmosphere.
 Read together the three give a conditional claim, not a universal one, and the condition is
 worth carrying: **given the globally available covariates that a city with no monitors can
 obtain, sub-kilometre structure cannot be placed, even though it exists and is large.** A
-campaign that measured the structure directly would not be bound by this, which is why Chapter 9
-lists one. The claim is a limit on inference from a particular information set and not a
+campaign that measured the structure directly would not be bound by this
+[@Schneider2017; @Gressent2020; @Kamigauti2024], although Section 8.5 finds that siting the
+fitting stations deliberately, without measuring the structure itself, does not escape it. The
+claim is a limit on inference from a particular information set and not a
 statement about the ultimate predictability of urban air.
 
 ## 8.7 At matched support, the model is close to right

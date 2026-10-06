@@ -49,6 +49,48 @@ MAIAC = "MODIS/061/MCD19A2_GRANULES"
 BUFFER_M = 5000          # same 5 km footprint the GHAP pull used, so the streams are comparable
 
 
+def _masked(img):
+    """AOD_QA bits 8-11 = AOD QA level; 0 is best quality. Keep only that. Scale 0.001."""
+    qa = img.select("AOD_QA").rightShift(8).bitwiseAnd(15)
+    return (img.select("Optical_Depth_055").updateMask(qa.eq(0)).multiply(0.001)
+            .copyProperties(img, ["system:time_start"]))
+
+
+def pull_city_year(lat: float, lon: float, yr: int, d0: str | None = None, d1: str | None = None):
+    """Daily 5 km-buffer mean of best-quality MAIAC AOD for one city and one calendar year (or the
+    [d0, d1) sub-window). Returns a DataFrame(date, aod) -- possibly empty -- or None when the
+    request failed three times. The ONE implementation, used by main() here and by
+    confirmation_predictors.py (2026-09-26), so the two cannot drift apart."""
+    import ee
+    pt = ee.Geometry.Point([float(lon), float(lat)]).buffer(BUFFER_M)
+    col = (ee.ImageCollection(MAIAC).filterDate(d0 or f"{yr}-01-01", d1 or f"{yr + 1}-01-01")
+           .filterBounds(pt).map(_masked))
+
+    # getRegion over a 5 km buffer at 1 km returns every pixel of every granule and blows the
+    # element limit (gotcha #44). Reduce each granule to ONE buffer-mean server-side.
+    def to_feat(img):
+        v = img.reduceRegion(ee.Reducer.mean(), pt, scale=1000, maxPixels=1e9) \
+               .get("Optical_Depth_055")
+        return ee.Feature(None, {"t": img.date().millis(), "aod": v})
+
+    fc = ee.FeatureCollection(col.map(to_feat)).filter(ee.Filter.notNull(["aod"]))
+    pairs = None
+    for attempt in range(3):          # transport drops / server timeouts are recoverable
+        try:
+            pairs = fc.reduceColumns(ee.Reducer.toList(2), ["t", "aod"]).get("list").getInfo()
+            break
+        except Exception:
+            if attempt < 2:
+                time.sleep(15 * (attempt + 1))
+    if pairs is None:
+        return None
+    df = pd.DataFrame(pairs, columns=["t", "aod"]).dropna()
+    if df.empty:
+        return pd.DataFrame(columns=["date", "aod"])
+    df["date"] = pd.to_datetime(df.t, unit="ms").dt.date
+    return df.groupby("date").aod.mean().reset_index()
+
+
 def targets() -> pd.DataFrame:
     """The same 48-city target list build_bud0_streams.py uses -- OpenAQ clusters + CNEMC."""
     man = pd.read_csv(MOD / "openaq_manifest.csv")
@@ -73,14 +115,6 @@ def main() -> None:
     tgt = targets()
     print(f"MAIAC AOD pull: {len(tgt)} cities, {y0}-{y1}, {BUFFER_M/1000:.0f} km footprint\n")
 
-    def masked(img):
-        # AOD_QA bits 8-11 = AOD QA level; 0 is best quality. Keep only that.
-        qa = img.select("AOD_QA").rightShift(8).bitwiseAnd(15)
-        return (img.select("Optical_Depth_055")
-                .updateMask(qa.eq(0))
-                .multiply(0.001)                       # MCD19A2 scale factor
-                .copyProperties(img, ["system:time_start"]))
-
     # RESUME. The first run lost 131 of 228 city-years to computation timeouts and connection
     # drops while a second GEE job competed with it, leaving 26 of 57 cities. Re-pulling the
     # ~14k rows that already succeeded would just burn the same budget again, so completed
@@ -104,45 +138,17 @@ def main() -> None:
 
     failed = []
     for i, r in enumerate(tgt.itertuples(), 1):
-        pt = ee.Geometry.Point([float(r.lon), float(r.lat)]).buffer(BUFFER_M)
         got = 0
         for yr in range(y0, y1 + 1):
             if (str(r.city), yr) in done:
                 continue
             try:
-                col = (ee.ImageCollection(MAIAC)
-                       .filterDate(f"{yr}-01-01", f"{yr + 1}-01-01")
-                       .filterBounds(pt)
-                       .map(masked))
-
-                # getRegion over a 5 km buffer at 1 km returns every pixel of every granule and
-                # blows the element limit (gotcha #44). Reduce each granule to ONE buffer-mean
-                # server-side, then pull a single flat array per city-year.
-                def to_feat(img):
-                    v = img.reduceRegion(ee.Reducer.mean(), pt, scale=1000, maxPixels=1e9) \
-                           .get("Optical_Depth_055")
-                    return ee.Feature(None, {"t": img.date().millis(), "aod": v})
-
-                fc = ee.FeatureCollection(col.map(to_feat)).filter(ee.Filter.notNull(["aod"]))
-                # Retry with backoff: the losses were transport drops and server-side
-                # timeouts, not bad queries, so a single attempt throws away recoverable work.
-                pairs = None
-                for attempt in range(3):
-                    try:
-                        pairs = fc.reduceColumns(ee.Reducer.toList(2),
-                                                 ["t", "aod"]).get("list").getInfo()
-                        break
-                    except Exception:
-                        if attempt < 2:
-                            time.sleep(15 * (attempt + 1))
-                if not pairs:
+                daily = pull_city_year(r.lat, r.lon, yr)
+                if daily is None:
                     failed.append((r.city, yr, "no data after retries"))
                     continue
-                df = pd.DataFrame(pairs, columns=["t", "aod"]).dropna()
-                if df.empty:
+                if daily.empty:
                     continue
-                df["date"] = pd.to_datetime(df.t, unit="ms").dt.date
-                daily = df.groupby("date").aod.mean().reset_index()
                 daily["city"] = r.city
                 rows.append(daily)
                 got += len(daily)

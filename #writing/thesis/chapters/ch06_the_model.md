@@ -4,9 +4,8 @@ The physics in this model is deliberately modest and the machine learning is ent
 conventional. Neither is the contribution. What is unusual is that the model states which
 observations it is allowed to use, and that taking one of them away returns it exactly to the
 simpler version rather than approximately. That is what makes Chapter 7 a measurement rather than a
-set of ablations, and everything else in this chapter exists to support it.
-
-{{dia:pipeline}}
+set of ablations, and everything else in this chapter exists to support it. The construction as a
+whole was traced end to end in {{dia:pipeline}}; this chapter takes its parts in turn.
 
 ## 6.1 The decomposition and what it conserves
 
@@ -90,8 +89,8 @@ If `P` were chosen freely it would carry no information and the conservation pro
 merely make it harmless. Three things stop it being arbitrary, and the third matters most.
 
 It is constructed from measured quantities rather than fitted parameters. The surface combines
-an emission proxy built from the road network with a confinement term built from the digital
-elevation model, and neither is tuned to concentration data in the city where it is applied.
+an emission proxy built from the road network [@Ntziachristos2000] with a confinement term
+built from the digital elevation model, and neither is tuned to concentration data in the city where it is applied.
 
 It is falsifiable and has been scored. Across the ten cities of Section 7.7 the pattern's rank
 against held-out monitors is reported rather than assumed, with a median of
@@ -133,7 +132,8 @@ hours and shrinks when the basin is well mixed.
 This level of description is not decoration, and the clearest demonstration is a diagnosis it
 makes available. The interval is nominal at ninety per cent by construction and empirically
 checked here, which is the distinction that matters: conformal calibration earns its coverage
-under exchangeability, and hourly air quality in a monsoon climate is not exchangeable, so the
+under exchangeability [@Vovk2005; @Angelopoulos2023], and hourly air quality in a monsoon
+climate is not exchangeable, so the
 nominal level is a design target and the measured coverage is the evidence. It covers
 {{claim:kandy.cov90}} per cent of
 observations at the two Kandy sensors. Read alone, that suggests the interval is too narrow. It
@@ -286,10 +286,11 @@ forms that respect the daily structure of `B`, and drifts only when the window e
 timescale on which `B` is defined.
 
 The sweep and the constraint-form figures come from an independent reimplementation of the
-constraint and not from the production code path, because the original sweep left no
-artefact. It reproduces the originally reported values closely enough that the conclusion is
-unchanged, and the text above quotes the reimplementation because it is the version that can be
-re-run.
+constraint and not from the production code path. The production-path sweep does survive as an
+artefact, and it is drawn beside the reimplementation in the figure below: the two differ by
+less than a hundredth at every value of `F_min`, the reimplementation reading slightly higher,
+and they agree on the conclusion. The text quotes the reimplementation because it also covers
+the constraint forms, which the production sweep does not.
 
 The forty-eight hour form is the one that moves, from {{claim:field.f_form_calendar}} to
 {{claim:field.f_form_roll48}}, and it is reported rather than excluded as an outlier. That is a
@@ -299,6 +300,15 @@ itself differs, so it constrains a quantity the decomposition does not define. A
 rejects that reasoning should read the partition as spanning roughly
 {{claim:field.f_sweep_lo}} to {{claim:field.f_form_roll48}} rather than as a point value.
 
+The partition therefore has three separate sensitivities, and they are not interchangeable: which
+year is anchored, the value of the one free parameter, and the form of the constraint window. An
+earlier draft of this thesis attached the range of the first to the name of the third, which
+understated the window sensitivity by leaving out its largest member. {{fig:partition}} draws the
+three side by side on one scale so that the ranges cannot be exchanged again, with the widest
+of them, the forty-eight hour window, visible as the one point that leaves the cluster.
+
+{{fig:partition}}
+
 ### Interpreting the partition
 
 This replaces an earlier estimate of about a quarter taken from source apportionment, and the
@@ -307,9 +317,9 @@ to be kept apart, because the strongest reading is not supported.
 
 **It is a constrained decomposition, not an observed apportionment.** The constraint rules out
 decompositions that are physically incoherent, given that local sources emit continuously. It
-does not measure how much material comes from where. Filter-based source apportionment at Kandy
-resolves soil, aged sea salt, vehicular, biomass-burning and industrial factors
-[@Seneviratne2017], and none of those maps onto a two-way split. The defensible form of the claim
+does not measure how much material comes from where. Filter-based source apportionment
+[@Hopke2016] at Kandy resolves soil, aged sea salt, vehicular, biomass-burning and industrial
+factors [@Seneviratne2017], and none of those maps onto a two-way split. The defensible form of the claim
 is that **under the stated background and minimum-increment assumptions, the constrained
 decomposition assigns {{claim:partition.f}} of modelled concentration to the local increment.**
 

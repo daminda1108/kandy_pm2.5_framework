@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 from src.stage1_satml.decomp import pubfig  # noqa: E402
 from figdata import emit  # noqa: E402
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 KTM = ROOT / "data" / "processed" / "decomp_kathmandu"
 OBS = ROOT / "data" / "processed" / "stage2" / "kathmandu_perstation_v13.parquet"
@@ -136,8 +137,9 @@ def main() -> None:
 
     fig.text(0.5, -0.03,
              f"Out of sample: the model was given two stations and is scored against the "
-             f"other {n_st - 2}. Scored values are in Table 1.", ha="center", fontsize=6.3, color=GREY, style="italic")
+             f"other {n_st - 2}.", ha="center", fontsize=6.3, color=GREY, style="italic")
     fig.tight_layout()
+    fit_print(fig)
     for e in ("png", "pdf"):
         fig.savefig(OUT / f"F8_kathmandu.{e}", bbox_inches="tight")
     plt.close(fig)

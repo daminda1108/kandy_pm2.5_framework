@@ -1,4 +1,4 @@
-# Chapter 10. Software, reproducibility, and the machinery that catches errors
+# Chapter 10. Reproducibility, and the machinery that catches errors
 
 This chapter documents how the work is built and how it defends itself against a specific class
 of failure. It is included because that machinery is among the more defensible things the project
@@ -92,22 +92,20 @@ this project took most often, and the counts are given below.
 
 {{dia:prereg}}
 
-Eight pre-registrations were lodged during this work, each stating its predictions and the
-condition under which each would be abandoned, before the corresponding analysis ran. The sixth
-is prospective: it registers a measurement campaign that has not been deployed, and its
-detection limits demoted that campaign's original headline hypothesis before any money was
-committed.
+Each registration stated its predictions, and the condition under which each would be abandoned,
+before the corresponding analysis ran. The table lists every one, with its outcome where the
+analysis has run. Several of the refuted predictions were headline predictions of the person who
+registered them. Some registered studies have no outcomes in this thesis: a measurement design for
+Kandy that is still under development and is not reported here, and a spatial learning curve that
+is registered and underway.
 
 {{tbl:T7_5}}
 
-Fourteen of thirty predictions were refuted, several of them headline predictions of the person
-who registered them. A registration that never refutes anything is not testing a prediction; it
-is recording a hope.
-
 The practice matters most in the branch that distinguishes an honest amendment from a rescued
 hypothesis. A defect found in the machinery **before** scoring may be corrected, provided the
-amendment is dated and reported, and this happened once when a sampling design was found to alias
-latitude band with monitoring network. A criterion changed **after** the result is known is not a
+amendment is dated and reported. This happened first when a sampling design was found to alias
+latitude band with monitoring network, and again in the two dated amendments to the spatial
+learning curve, both lodged before any real-data scoring. A criterion changed **after** the result is known is not a
 criterion. The distinction is procedural rather than moral, and it is the reason the registrations
 are timestamped by a third party, not by the author.
 

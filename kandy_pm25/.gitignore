@@ -24,6 +24,8 @@ scripts/*
 !scripts/xichang_twin_figures.py
 !scripts/xichang_paper_figures.py
 !scripts/city_validation_scorecard.py
+# print-size rule every figure script imports (2026-09-19)
+!scripts/printfit.py
 # panel expansion evidence chain (paper 2; criteria pre-registered in
 # docs/panel_expansion_eligibility_2026-07-26.md)
 !scripts/panel_expansion_census.py

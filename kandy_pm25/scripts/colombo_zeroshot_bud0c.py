@@ -4,21 +4,14 @@ warnings.filterwarnings("ignore")
 from pathlib import Path
 REPO=Path("D:/ProjectCD/kandy_pm25"); sys.path.insert(0,str(REPO/"scripts"))
 from sklearn.ensemble import HistGradientBoostingRegressor
-from modular_validation_all import FEATS, build_frame
 MOD=REPO/"data/processed/modular"
 G1_LO,G1_HI,G2_MIN,G3_MAX=13.43,45.54,0.60,40.0
 
-sample=pd.read_csv(MOD/"validation_sample.csv"); manifest=pd.read_csv(MOD/"openaq_manifest.csv")
-_,pool=build_frame(sample,manifest)
-doy=pool.date.dt.dayofyear
-pool["doy_sin"]=np.sin(2*np.pi*doy/365.25); pool["doy_cos"]=np.cos(2*np.pi*doy/365.25)
-met=[c for c in FEATS if c in pool.columns]
-pool=pool.dropna(subset=met+["pm25_city"]); pool["city"]=pool.city.astype(str)
-geo=pd.read_csv(MOD/"bud0_static_geo.csv"); geo["city"]=geo.city.astype(str)
-sat=pd.read_csv(MOD/"bud0_satellite_level.csv"); sat["city"]=sat.city.astype(str)
-geo_f=[c for c in geo.columns if c not in ("city","geo_n_stations")]
-p=pool.merge(geo,on="city",how="left").merge(sat,on="city",how="left")
-p=p.dropna(subset=geo_f+["sat_level"])
+# 2026-09-25: the ONE shared frame builder (GHAP stream, as g6hqb registered). The old code
+# dropped every row with ANY missing geography value, which removed city 3147 (correct, F.113)
+# but also city 2168, whose road distance is censored (NaN by design) and which every ladder keeps.
+from ladder_frames import build_bud0_frame
+_st, p, met, geo_f, _sat = build_bud0_frame("ghap")
 feats=met+geo_f+["sat_level"]
 print(f"training pool {len(p)} city-days, {p.city.nunique()} cities, {len(feats)} features")
 

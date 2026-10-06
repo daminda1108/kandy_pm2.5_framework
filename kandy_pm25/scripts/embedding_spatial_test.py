@@ -238,9 +238,9 @@ def main() -> None:
         mm = np.median(v[idx], axis=1)
         lo, hi = np.percentile(mm, [2.5, 97.5])
         res["E3"] = dict(n=len(v), median=float(np.median(v)), lo=float(lo), hi=float(hi),
-                         excludes_zero=bool(lo > 0))
+                         excludes_zero=bool(lo > 0 or hi < 0))
         print(f"\n    E3 partial rho, benchmark removed  {np.median(v):>+9.3f}"
-              f"   [{lo:>+7.3f},{hi:>+7.3f}]   excludes 0: {'YES' if lo > 0 else 'no'}")
+              f"   [{lo:>+7.3f},{hi:>+7.3f}]   excludes 0: {'YES' if (lo > 0 or hi < 0) else 'no'}")
 
     print("\n=== the answer ===")
     passed = [k for k, v in res.items() if v.get("passes_bar")]

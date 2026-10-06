@@ -24,6 +24,7 @@ from matplotlib.lines import Line2D
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.stage1_satml.decomp import pubfig  # noqa: E402
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 MC = ROOT / "results" / "figures" / "multicity"
 OUT = ROOT / "results" / "figures" / "paper2026"
@@ -79,18 +80,20 @@ def panel_corr(ax, df, col, title, lo):
 
 def panel_level(ax, df):
     y = np.arange(len(df))
-    ax.axvspan(-10, 10, color=BAND, zorder=1)
+    # The band is the pass rule, |level error| <= 15 per cent (city_validation_scorecard.py).
+    # It was drawn at 10 while points were coloured at 15, so Bogota plotted outside the band
+    # and still marked as passing (found 2026-09-19).
+    ax.axvspan(-15, 15, color=BAND, zorder=1)
     ax.axvline(0, color=MUTED, lw=0.7, zorder=2)
     v = df["level"]
     ax.hlines(y, 0, v, color=MUTED, lw=0.7, zorder=2)
     ok = v.abs() <= 15
     ax.scatter(v[ok], y[ok], s=26, color=PASS, zorder=3, edgecolor="white", linewidth=0.5)
     ax.scatter(v[~ok], y[~ok], s=26, color=FAIL, zorder=3, edgecolor="white", linewidth=0.5)
-    ax.set_xlim(-12, 34)
-    ax.set_title("(c)  level bias (%)", loc="left", fontsize=8.0)
+    ax.set_xlim(-17, 34)
+    ax.set_title("(c)  level bias (%),\nshaded within 15", loc="left", fontsize=8.0)
     _rows(ax, df)
     ax.set_yticklabels([])
-    ax.text(10, len(df) - 0.30, "within 10%", fontsize=6.2, color=MUTED, ha="right")
 
 
 def panel_spatial(ax, df):
@@ -139,6 +142,8 @@ def main() -> None:
                Line2D([], [], color=INK, lw=1.0, label="95th percentile of the null")]
     ax3.legend(handles=handles, loc="upper center", ncol=3, fontsize=6.5,
                bbox_to_anchor=(-0.32, -0.06), borderaxespad=0.0)
+
+    fit_print(fig)
 
     for ext in ("png", "pdf"):
         fig.savefig(OUT / f"F7_scorecard.{ext}")

@@ -1,4 +1,4 @@
-# Chapter 7. Making sure it works
+# Chapter 7. Validation without local ground truth
 
 A model that cannot be checked where it is used is not obviously worth more than a plausible
 guess. This chapter sets out the procedure that makes checking possible, reports what it
@@ -20,9 +20,8 @@ measures a capability the target city will never possess, and reporting that num
 described the target is the most common way this class of model is oversold. The panel comprises
 {{claim:frame.cities}} cities across {{claim:frame.countries}} countries and
 {{claim:frame.city_days}} city days, with a median of {{claim:frame.med_held_stations}} withheld
-stations and {{claim:frame.med_days_per_city}} scored days per city.
-
-{{fig:panel}}
+stations and {{claim:frame.med_days_per_city}} scored days per city. Where those cities are is
+mapped in {{fig:panel}}, in Chapter 4.
 
 Kandy contributes nothing to this panel. It supplies no training data at any tier, which is what
 allows the measurement to be applied to it.
@@ -147,6 +146,14 @@ Every interval widens, by about half again. The city count therefore overstates 
 sample size, and an interval quoted over cities is optimistic. That correction is owed to the
 reader whichever way it points.
 
+A table of interval bounds makes the widening easy to state and hard to see. {{fig:clusterboot}}
+draws the two intervals for each step one above the other. Each row has its own scale, because the
+redundancy step is two orders of magnitude smaller than the other two, and what the eye should
+take from it is that the red bar is always longer than the blue one and never crosses a
+conclusion.
+
+{{fig:clusterboot}}
+
 It does not move any conclusion, and it strengthens one. The background remains the largest gain
 with a lower bound of {{claim:clust.bg.lo}} per cent. The first two sensors keep a lower bound of
 {{claim:clust.first2.lo}} per cent. Monitors three to six remain bounded above by
@@ -226,6 +233,15 @@ exceedance {{claim:loss.inv.exceedance}} points
 [{{claim:loss.inv.exceedance.lo}}, {{claim:loss.inv.exceedance.hi}}], both favouring the
 background, and the exceedance interval excludes zero.
 
+Both halves of that result are in {{fig:losses}}. The left panel is the table above drawn as bars,
+and shows the background as the tallest group under every loss and the redundancy step as nothing
+under any of them. The right panel is the deep-tropical comparison, one interval per loss, against
+a zero line that separates favouring local sensors from favouring the background. The change of
+sign is the visible fact. The number of cities beside each loss is smaller for exceedance, where
+not every city could be scored.
+
+{{fig:losses}}
+
 The ordering therefore flips sign between average-day and episode losses. Section 9.1's
 recommendation is a statement about daily city-mean accuracy, which is the product this thesis
 delivers, and it may not be stated without naming that loss. For exceedance detection or health
@@ -269,6 +285,14 @@ points paired within city, improving {{claim:stn.dt_improving}} of {{claim:stn.d
 band shows a measurable second-station gain, so the recommendation does not depend on reading the
 pooled result across a band boundary.
 
+{{fig:stationcount}} shows the sweep. Read the left panel for shape rather than level: the bands
+sit at very different heights, which is the band ordering of Section 7.3, but every line is close
+to flat from the first station onward. The right panel is the comparison that decides the
+question, each count paired against a single station within city, and every interval sits on or
+against zero.
+
+{{fig:stationcount}}
+
 ⚠ One number in that analysis is a trap, and it is worth showing rather than hiding. In the
 temperate band the *median gain* rises by {{claim:stn.temp_diff_of_medians}} percentage points
 when a second station is added, which looks like a large effect and is not one. Paired within
@@ -295,9 +319,10 @@ which this measurement addresses. And the monitors in question were **not sited 
 purpose**: they are the networks each panel city happens to operate, so what is measured is the
 marginal value of additional monitors *as actually placed*. Where a sensor is placed is itself
 part of the information problem and a developed research question in its own right
-[@Verghese2022; @Choi2026]. Nothing here shows that monitors placed deliberately across a city's
-land-use contrast would be worth as little, and Chapter 9 recommends exactly such a campaign for
-a different purpose.
+[@Verghese2022; @Choi2026]. Nothing here shows what monitors placed deliberately across a city's
+land-use contrast would be worth for a daily city mean. Section 8.5 asks the related spatial
+question on the panel's own dense networks, and there deliberate siting does not beat convenience
+siting.
 
 **A background series is the largest single gain measured.** At {{claim:step.bud2_bud3}} per
 cent it exceeds every other rung, and the instrument that would supply it is the one air quality
@@ -356,6 +381,38 @@ Section 7.3 gives.
 
 A genuine rural background station remains the only thing that settles it, which is why
 Chapter 9 lists one even though it ranks second for Kandy.
+
+### A driver that was admitted and never used
+
+The ladder's driver set carries temperature, wind, boundary-layer height and two day-of-year
+terms, so wet removal appeared to be absent from its meteorology, and precipitation had been
+recorded as a structural gap with no measurement behind it. On inspection the variable was
+not missing at all: `total_precipitation_sum` was already in the scored frame, pulled and merged
+and never referenced, because it was not in the feature list. A rung holding a driver its budget
+admits, in its own inputs, unused. That is the shape of the defect described in Section 7.6,
+which moved a headline by eight percentage points when it was found.
+
+It was registered [OSF z89kt] and tested with both arms fitted on one fixed set of
+{{claim:precip.cities_scored}} cities, identical seed and machinery, differing in one feature.
+Adding precipitation changes the sensorless rung by {{claim:precip.p1}} per cent
+[{{claim:precip.p1_lo}}, {{claim:precip.p1_hi}}], which is nothing, and the gains above it are
+unmoved: the first two sensors shift by {{claim:precip.first2.paired}} points paired within city.
+The redundancy null survives and the background remains the largest single gain.
+
+So there is no repeat of the earlier defect. The unused driver was unused harmlessly, and no
+published number in this thesis is overstated because of it. What the test establishes is narrow
+and worth stating exactly: an eleven-kilometre reanalysis daily rainfall total does not improve
+daily city-mean prediction on this panel. It is not evidence that wet removal does not matter, and
+a gauge network or a higher-resolution product remains untested.
+
+⚠ Two cautions travel with it. The coverage gate keeps {{claim:precip.cities_passing}} of the
+panel's cities, so these figures sit on a subset and are not comparable to the ladder reported
+earlier in this section; the two arms are comparable to each other and to nothing else. And the
+deep-tropical margin, while it keeps its direction, roughly halves, from
+{{claim:precip.p5_without}} to {{claim:precip.p5_with}} points. That margin has now proved
+sensitive to the satellite stream, to the loss function and to the driver set, which is three
+demonstrations that it is the least robust quantity the band recommendation of Section 7.3 rests
+on.
 
 ## 7.3 The recommendation inverts in the tropics
 
@@ -715,8 +772,8 @@ the width or the centring. The figure shows the second pattern.
 {{fig:uncertainty}}
 
 The interval is nominal at ninety per cent rather than guaranteed at it: conformal calibration
-earns its coverage under exchangeability, which strongly dependent environmental series do not
-satisfy, so what follows is an empirical check and not a confirmation of a theoretical
+earns its coverage under exchangeability [@Vovk2005; @Angelopoulos2023], which strongly
+dependent environmental series do not satisfy, so what follows is an empirical check and not a confirmation of a theoretical
 property. It covers {{claim:kandy.cov90}} per cent of observations at
 the two sensors, which read alone suggests the intervals are too narrow. Section 6.2 gave the
 diagnosis: the misses are one-sided, {{claim:kandy.miss_below}} per cent below against
@@ -773,7 +830,7 @@ load-bearing and had never been tested against composition.
 {{fig:chemistry}}
 
 Classifying air-mass origin by back-trajectory sector, which is independent of the composition
-product used to measure it, continental air is measurably more secondary-rich and therefore more
+product used to measure it [@Keller2021], continental air is measurably more secondary-rich and therefore more
 aged than marine air: {{claim:chem.sec_frac.IGP_E_India}} against
 {{claim:chem.sec_frac.SW_marine}}. That is the ordering the decomposition requires and it is the
 first chemical support the construction has.
@@ -856,7 +913,7 @@ measurement on this project's own field: where people are relative to where the 
 The mortality arithmetic that could follow from it is in Appendix E, for reasons given there.
 
 **The area mean under-states exposure.** People are not distributed uniformly over the basin;
-they concentrate in the higher-concentration core. For {{claim:exposure.year}} the unweighted
+they concentrate in the higher-concentration core [@Tatem2017; @Elvidge2017]. For {{claim:exposure.year}} the unweighted
 basin mean is {{claim:exposure.area}} micrograms per cubic metre, the residential-weighted mean
 is {{claim:exposure.residential}}, and the population-weighted mean is
 {{claim:exposure.dynamic}}. That is an uplift of {{claim:exposure.uplift_pct}} per cent over the

@@ -27,6 +27,7 @@ from matplotlib.patches import Patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.stage1_satml.decomp import pubfig  # noqa: E402
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 SRC = ROOT / "results" / "figures" / "multicity" / "reviewer_response_stats.json"
 OUT = ROOT / "results" / "figures" / "paper2026"
@@ -89,6 +90,8 @@ def main() -> None:
                           markeredgecolor="white", label="measured")]
     ax.legend(handles=handles, loc="upper center", ncol=3, fontsize=6.6,
               bbox_to_anchor=(0.5, -0.30), borderaxespad=0.0)
+
+    fit_print(fig)
 
     for ext in ("png", "pdf"):
         fig.savefig(OUT / f"F12_null_power.{ext}")

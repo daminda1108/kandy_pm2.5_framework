@@ -1,6 +1,6 @@
 # Kandy PM2.5 — Architecture
 
-**Last updated:** 2026-08-10. Companion to `PROJECT.md` (state) and `CLAUDE.md` (rules/tasks).
+**Last updated:** 2026-10-06. Companion to `PROJECT.md` (state) and `CLAUDE.md` (rules/tasks).
 This document is how the model and the evidence pipeline are built: the component maths, the
 module map, the execution/data flow, and the testing/reproducibility setup. All paths are
 relative to `d:/ProjectCD/kandy_pm25/` unless noted.
@@ -310,3 +310,54 @@ no number in the paper is typed by hand.
 Two build gotchas worth keeping: `plt.colorbar(ax=ax)` reflows the host axes and silently breaks
 hardcoded coordinates on a schematic; and pandoc renders markdown tables as `longtable`, which
 has no float placement and splits across a page break, so Table 1 is emitted as a LaTeX float.
+
+## 7. The information-budget ladder and the registered-test pipeline (2026-09 → 10)
+
+How the cross-city value-of-information study (Paper 1) is built. Results are in `PROJECT.md`; every script named
+here is in `kandy_pm25/scripts/`.
+
+**Frame.** `ladder_frames.build_bud0_frame()` is the single function every ladder analysis uses to build its
+city-day frame, so an exclusion reaches every analysis or none. Inputs: per-station hourly PM2.5 (OpenAQ archive,
+CNEMC), reanalysis drivers per city, static geography sampled over 40 random points in the city's GHSL urban
+centre (never at monitor sites), and MAIAC aerosol. A station-day counts only with at least 18 valid hours.
+`src/modular/schemas.py` (pandera) validates keys, ranges and static-feature constancy before any fit.
+
+**Estimator (`ladder_v2.run`).** For each city and each of 21 random station splits: a third of the stations are
+held out; Bud0 is boosted trees trained with the city left out (median over 5 learner seeds); Bud1 and Bud2 are
+affine recalibrations of Bud0 to the first two and first six stations; Bud3 adds the daily 10th percentile of
+the remaining stations by regression. Shrinkage weights are cross-fitted (borrowed from other cities), never
+chosen against the scoring stations. Each rung's gain is the % reduction in RMSE at the held-out stations;
+per-city effects are averaged over splits and seeds **before** a two-level cluster bootstrap (networks or
+countries, then cities; 4,000 draws). A reconstruction arm and a prospective arm (calibration on earlier days
+only) run side by side.
+
+**Registered-test pipeline.** Each test follows the same steps, and each step is code:
+1. A registration text (`docs/prereg_*.md`) fixes endpoints and decision rules.
+2. `freeze_manifest.py` hashes every code and input file; `--verify` refuses on any change.
+3. A dry run on a synthetic target that is independent of every predictor exercises every code path.
+4. `osf_lodge.py` lodges the registration and verifies that exactly one registration exists (OSF can answer
+   201 without creating it; the script re-submits once from the same draft).
+5. Scoring runs once, behind a **parity gate**: the new runner, pointed at the previously registered inputs,
+   must reproduce the previous registered per-city effects exactly (to ~1e-14) before any new result is
+   written.
+
+Robustness runners wrap the frozen estimator rather than editing it: `ladder_v2_rich.py` (richer Bud0 features),
+`ladder_v2_learners.py` (Bud0 learner injection: TabPFN, recurrent network, physics features),
+`ladder_v2_fullnet.py` (full station networks; SHA-verified mirror directories, only two path constants
+re-pointed).
+
+**Retrieval.** `openaq_archive.py` caches the public OpenAQ archive by (location, year). A unit is written only
+when every listed daily object has arrived (unparsable objects are counted), writes are atomic, and runs are
+resumable; `night_guard.py` and `night_window.sh` schedule large retrievals.
+
+**Spatial learning curve.** `spatial_curve_freeze.py` (frame by the registered coverage rule),
+`spatial_curve_predictors.py` (site covariates, road features from Geofabrik extracts),
+`spatial_curve_analysis.py` (estimators E0–E7, nested fitting sets, 100 replicates, leakage self-test, positive
+control; E8–E11 deep arms on Kaggle), and `spatial_curve_fullrecord.py`, which runs the registered modules
+unchanged on full station records by re-pointing their path constants (every constant derived from the base
+path at import is re-pointed and asserted).
+
+**Paper 1 build.** `papers/paper1_information_budget/`: the draft is one file per section; supplementary
+tables S1–S2 are generated from the registry and the scored summaries
+(`supplement/build_supplement_tables.py`, which asserts the registry totals), and every figure is drawn by
+`figures/build_figures.py` from the result files, so no number in a table or figure is typed by hand.

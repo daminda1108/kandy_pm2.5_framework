@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -45,7 +46,11 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 warnings.filterwarnings("ignore")
 
-from modular_validation_all import FEATS, build_frame, _affine  # noqa: E402
+from modular_validation_all import _affine                        # noqa: E402
+from ladder_frames import build_bud0_frame, fit_loco             # noqa: E402
+from src.modular.schemas import PRECIP_RANGE, validate_ladder_frame  # noqa: E402
+from src.modular.city_meta import attach_meta                   # noqa: E402
+from src.modular.runlog import DropLog                          # noqa: E402
 from src.modular import shrinkage as sh                         # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
@@ -59,18 +64,8 @@ BOOT_DEFAULT = 4000
 
 
 def fit_bottom(pool: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
-    """Leave-one-CITY-out sensorless rung, identical machinery to the production ladder."""
-    out = []
-    for city in sorted(pool.city.unique()):
-        tr, te = pool[pool.city != city], pool[pool.city == city]
-        assert city not in set(tr.city), "LOCO violated"
-        if len(tr) < 1000 or len(te) < 100:
-            continue
-        m = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, random_state=SEED)
-        m.fit(tr[feats], tr.pm25_city)
-        out.append(pd.DataFrame({"city": city, "date": te.date.values,
-                                 "bud0": m.predict(te[feats])}))
-    return pd.concat(out, ignore_index=True)
+    """Leave-one-CITY-out sensorless rung; the one implementation is ladder_frames.fit_loco."""
+    return fit_loco(pool, feats, seed=SEED)
 
 
 def ladder(city, st, bud0, seed):
@@ -125,40 +120,41 @@ def gain(a, b):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--boot", type=int, default=BOOT_DEFAULT)
+    ap.add_argument("--stream", choices=("ghap", "maiac"), default="ghap",
+                    help="GHAP is the REGISTERED primary (z89kt fixes the analysis as unchanged "
+                         "from the production ladder of 2026-09-09, which ran on GHAP). MAIAC is "
+                         "an exploratory robustness run, labelled as such (2026-09-25).")
     a = ap.parse_args()
+    tag = "" if a.stream == "ghap" else "_maiac"
+    out_csv = OUT.with_name(OUT.stem + tag + OUT.suffix)
+    out_json = OUT_JSON.with_name(OUT_JSON.stem + tag + OUT_JSON.suffix)
+    drops = DropLog(f"precip_{a.stream}")
     rng = np.random.default_rng(SEED)
 
     print("=== does wet removal belong in the ladder's bottom rung? ===")
     print("    registered at https://osf.io/z89kt/\n")
 
-    sample = pd.read_csv(MOD / "validation_sample.csv")
-    st, pool = build_frame(sample, None)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool["city"] = pool.city.astype(str)
+    # the one shared builder (2026-09-25); precipitation is a driver column in the frame
+    st, p, met, geo_f, sat_feats = build_bud0_frame(a.stream)
+    n_frame = p.city.nunique()
 
     # ── the coverage assertion, before anything is fitted ───────────────────────────────
-    cov = pool.groupby("city")[PRECIP].apply(lambda s: s.notna().mean())
+    # Coverage is measured over the city-days the ladder uses (after the driver dropna).
+    cov = p.groupby("city")[PRECIP].apply(lambda s: s.notna().mean())
     keep = set(cov[cov >= MIN_COVERAGE].index)
     print(f"[1] precipitation coverage gate at {MIN_COVERAGE:.0%}")
-    print(f"    {len(keep)} of {pool.city.nunique()} cities pass; "
-          f"{pool.city.nunique() - len(keep)} excluded")
+    print(f"    {len(keep)} of {n_frame} cities pass; {n_frame - len(keep)} excluded: "
+          f"{sorted(set(cov.index) - keep)}")
     if len(keep) < 20:
         raise SystemExit("fewer than 20 cities pass: reporting a FAILURE TO TEST, not a null")
-    rng_val = pool[PRECIP].dropna()
+    rng_val = p[PRECIP].dropna()
     print(f"    values {rng_val.min():.5f} to {rng_val.max():.4f} m/day "
           f"(0-{rng_val.max() * 1000:.0f} mm) -- physical, so no de-accumulation needed")
+    p = p[p.city.isin(keep)].copy()
+    p = validate_ladder_frame(p, met=met, static=geo_f, daily={PRECIP: PRECIP_RANGE},
+                              allow_null={"dist_major_km": "censored: no major road in query"})
 
-    pool = pool[pool.city.isin(keep)].copy()
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
-
-    base_f = met + geo_f + ["sat_level"]
+    base_f = met + geo_f + sat_feats
     print(f"\n[2] fitting both arms on the SAME {p.city.nunique()} cities, "
           f"{len(base_f)} vs {len(base_f) + 1} features")
     b_without = fit_bottom(p, base_f)
@@ -172,20 +168,19 @@ def main() -> None:
         try:
             r0 = ladder(city, s, b_without[b_without.city == city], SEED)
             r1 = ladder(city, s, b_with[b_with.city == city], SEED)
-        except Exception:
+        except Exception as e:
+            drops.error(city, e)
             continue
         if not r0 or not r1:
+            drops.skip(city, "ladder() returned None in an arm (no outer ring or too few days)")
             continue
         rows.append({"city": city,
                      **{f"no_{k}": v for k, v in r0.items() if k.startswith("rmse")},
                      **{f"yes_{k}": v for k, v in r1.items() if k.startswith("rmse")}})
-    d = pd.DataFrame(rows)
-    band = pd.read_csv(MOD / "ladder_revalidated.csv")
-    band = band[band.bottom == "Bud0c"][["city", "band"]].drop_duplicates()
-    band["city"] = band.city.astype(str)
-    d = d.merge(band, on="city", how="left")
-    d.to_csv(OUT, index=False)
-    print(f"    {len(d)} cities scored in both arms -> {OUT.name}\n")
+    drops.report(MOD / "verify_2026-09-25" / f"droplog_precip_{a.stream}.json")
+    d = attach_meta(pd.DataFrame(rows))        # band/class from the shared metadata, 2026-09-25
+    d.to_csv(out_csv, index=False)
+    print(f"    {len(d)} cities scored in both arms -> {out_csv.name}\n")
 
     def boot(v):
         v = np.asarray(v, float); v = v[np.isfinite(v)]
@@ -220,6 +215,37 @@ def main() -> None:
         print(f"    {label:<26}{g0.median():>10.2f}{g1.median():>10.2f}"
               f"{b['median']:>+10.3f} [{b['lo']:+.2f},{b['hi']:+.2f}]")
 
+    # ── P3 and P4, computed in code (2026-09-25; before this the verdicts were typed) ────
+    # P3: stations three to six stay bounded near zero -> the with-precipitation arm's paired
+    #     interval for that step's gain contains zero.
+    g36 = gain(d.yes_rmse_Bud1, d.yes_rmse_Bud2)
+    b36 = boot(g36)
+    # The registration says "bounded near zero" and gives NO number. A prediction without a
+    # registered bound cannot be adjudicated after seeing the data, so no threshold is invented
+    # here: the verdict is "not adjudicable" and the numbers are reported, together with the strict
+    # reading (does the interval contain zero?) and the scale (share of the first-two gain).
+    g12 = gain(d.yes_rmse_Bud0, d.yes_rmse_Bud1).median()
+    res["P3_redundancy"] = {**b36, "holds": None, "verdict": "not adjudicable: no bound registered",
+                            "strict_interval_contains_zero": bool(b36["lo"] <= 0 <= b36["hi"]),
+                            "share_of_first2_gain_pct": round(100 * b36["median"] / g12, 1)}
+    # P4: the background is the largest single gain. The registered estimand is PAIRED within
+    #     city, so it is the background gain minus the first-two gain, per city, bootstrapped.
+    for arm, pre in (("without", "no_"), ("with_precip", "yes_")):
+        v = (gain(d[pre + "rmse_Bud2"], d[pre + "rmse_Bud3"])
+             - gain(d[pre + "rmse_Bud0"], d[pre + "rmse_Bud1"]))
+        bb = boot(v)
+        res.setdefault("P4_background_largest", {})[arm] = {
+            **bb, "cities_bg_larger": int((v > 0).sum()), "holds": bool(bb["lo"] > 0)}
+    p4 = res["P4_background_largest"]["with_precip"]
+    print(f"\n=== P3  stations 3-6 with precipitation: {b36['median']:+.2f} "
+          f"[{b36['lo']:+.2f}, {b36['hi']:+.2f}] "
+          f"({res['P3_redundancy']['share_of_first2_gain_pct']:.1f} % of the first-two gain; "
+          f"interval contains 0: {res['P3_redundancy']['strict_interval_contains_zero']}) -> "
+          f"NOT ADJUDICABLE (no bound registered)")
+    print(f"=== P4  background minus first two, PAIRED, with precipitation: {p4['median']:+.2f} "
+          f"[{p4['lo']:+.2f}, {p4['hi']:+.2f}], background larger in {p4['cities_bg_larger']}/"
+          f"{p4['n']} -> {'HOLDS' if p4['holds'] else 'NOT SUPPORTED'}")
+
     # ── P5: the deep-tropical ordering ──────────────────────────────────────────────────
     dt = d[d.band == "deep_tropical"]
     if len(dt) >= 4:
@@ -247,12 +273,16 @@ def main() -> None:
         print("    daily city-mean prediction on this panel. That closes a gap Table 9.1 lists as")
         print("    unmeasured, and it is NOT evidence that wet removal does not matter.")
 
-    with open(OUT_JSON, "w", encoding="utf-8") as fh:
-        json.dump(dict(osf="z89kt", seed=SEED, boot=a.boot,
-                       min_coverage=MIN_COVERAGE,
-                       cities_passing=int(len(keep)), cities_scored=int(len(d)),
-                       cities_excluded=int(48 - len(keep)), results=res), fh, indent=2)
-    print(f"\n-> {OUT.name}, {OUT_JSON.name}")
+    tmp = out_json.with_suffix(".json.tmp")               # gotcha #81
+    tmp.write_text(json.dumps(dict(
+        osf="z89kt", stream=a.stream,
+        status="registered primary" if a.stream == "ghap" else "exploratory robustness",
+        seed=SEED, boot=a.boot, min_coverage=MIN_COVERAGE,
+        cities_in_frame=int(n_frame), cities_passing=int(len(keep)),
+        cities_scored=int(len(d)), cities_excluded=int(n_frame - len(keep)),
+        results=res), indent=2), encoding="utf-8")
+    os.replace(tmp, out_json)
+    print(f"\n-> {out_csv.name}, {out_json.name}")
 
 
 if __name__ == "__main__":

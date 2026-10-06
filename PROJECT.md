@@ -16,7 +16,8 @@ restated across files — where a figure matters, this doc points to where it is
 Can a city with **no public, retrievable PM2.5 monitor** be given a credible, uncertainty-
 quantified, fine-resolution (1 km hourly) PM2.5 field — and can that field be *verified*
 despite the absence of local ground truth? Target: **Kandy, Sri Lanka** (enclosed
-central-highland valley, ~0.4 M people, no public monitor).
+central-highland valley; 98,828 residents in the municipal boundary (2012 census) and ~389,000
+weekday commuters (World Bank 2020); no public reference monitor).
 
 ## 1. What the project is now
 
@@ -53,8 +54,9 @@ context that led here.
 | Ventilated-hour floor (additive_v3) | **Medellín-VALIDATED**: holdout-6 flat-hour RMSE 8.53→8.00 | `scripts/score_additive_v3.py` |
 | Spatial ceiling — 5th independent null | EO foundation embeddings add **no** signal beyond physics (3 cities, partial ρ≈0) | `scripts/alphaearth_spatial_test.py` |
 | **Spatial ceiling — MEASURED, 47 cities** | **ρ ≈ 0.2–0.28**, unmoved by four surfaces AND by a full LUR predictor set incl. roads (+0.273→+0.275) | `scripts/{spatial_proxy_scan,lur_fit}.py` (F.56/F.58/F.59/F.61) |
-| **Budget ladder — level axis, RE-VALIDATED 2026-08-23** | 47 cities, 4 bands, 32 countries. ⚠ The 2026-08-19 gains are **retired**: the scored `Bud0` used one of three admitted streams (F.84). Bottom rung now decomposed — **static geo 10.8%, satellite level 7.6%**; then **+2 stn 17.9%, +6 stn 0.1%, +background 40.6%** | `scripts/{revalidate_ladder,build_bud0_streams}.py` (F.84–F.85) |
-| **Ladder robustness** | Robust across **non-linear** estimators (spread 2.5 pp); a linear baseline **collapses** on the 68-feature `Bud0c` — F.81 refuted. `Bud1→Bud2`≈0 holds under every learner | `scripts/learner_sensitivity_bud0c.py` (F.88) |
+| **Budget ladder — CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`)** | Ladder v2 (21 splits, 5 seeds, cross-fitted weights). First two stations **+8.5 % [3.1, 25.1]**, stations 3–6 **+0.22**, same-network background **+41.1**, background > first two **+24.6 [4.1, 47.8]**, exceedances **+59.3**; latitude undetectable. ⚠ Earlier ladder gains (17.9 / 40.6; discovery 21.8) are retired | `scripts/ladder_v2_confirm.py` (F.117) |
+| **Ladder robustness — registered** | Richer baseline (+CAMS, terrain, fires, NO2, rain; Bud0 +13.1 %): every verdict survives, first-station gain does not shrink (OSF `b379r`, F.118). Learners TabPFN / 14-day GRU / HGB+physics: all 12 directional verdicts hold, none beats HGB (TabPFN −11 %) (OSF `jea58`, F.120) | `scripts/{ladder_v2_rich,ladder_v2_learners,bud0_learners_kaggle}.py` |
+| **Ladder on full station networks — registered** | Up to 40 stations over each city's full window (median 17 vs cap 12; 75 cities): every verdict holds; background +46.0, background − first two **+32.0 [11.6, 50.5]**; N6 change vs `ueyfr` +2.4 on H4 only (OSF `mhgna`, F.122) | `scripts/{openaq_archive,ladder_v2_fullnet}.py` |
 | **Spatial amplitude — at matched support** | Model annual p90/p10 **1.232** vs observed **1.26–1.47**; the apparent 85× vs 1.23× gap was a change-of-support artefact. Paired microsites 300 m apart in one pixel: **27.5× observed vs 1.000× modelled** | `scripts/{elangasinghe_spatial_test,support_collapse_test,fit_s_exp}.py` (F.69/F.76/F.77) |
 | **P4 identifiability — RUN** | `kappa`, `eps0`, `w_evening` unidentifiable at Kandy's budget; **`s_exp` is the only identifiable parameter and had never been fitted** (fitted → non-transferable, held at 1.0) | `scripts/{p4_identifiability,fit_s_exp}.py` (F.75/F.77) |
 | **Background gain is REAL** | independent network at a median 89 km recovers **73%** of it on the corrected `Bud0c` rung (was 75%/79% pre-F.84). ⚠ **Bounds the same-network artefact from above, does not measure it**: 84% at 62 km vs 57% at 152 km. ⚠ Kandy's own band recovers only **37%** at 221 km, n=4 | `scripts/independent_background_revalidated.py` (F.54 re-run 2026-09-05) |
@@ -177,6 +179,10 @@ industrial land use (which is a real predictor, and rescues Yichang where the tr
 scores −0.091, but does not win overall).
 
 ## 2c. The Kandy campaign, and what it can no longer claim (2026-09-06, OSF `ad3py`)
+
+> **2026-09-17 — excluded from the final thesis (user decision): still under development.** This section
+> records the work, which continues; it is not a thesis result. The F.103 siting experiment below is a
+> panel result and stays in the thesis, relocated out of the campaign section.
 
 A 35-site network was designed for Kandy, justified against the physics of the basin and against
 United States siting law, costed, and pre-registered before deployment. Two of its purposes were
@@ -324,6 +330,22 @@ reserved for the conceptual frame.
 ---
 
 ---
+
+## 2f. The spatial learning curve — SCORED 2026-09-28 (OSF `rqn4y` + `26hp8` + `4whsc` + `4qs9c`, F.119)
+
+18 cities, 7 countries, detection limit 0.28. **7 held, 3 refuted, 1 not testable.** Cities split: kriging or
+regression kriging beats the free built-up raster in 11/18 (5 already at 3 stations) and never in 7; pooled
+skill rises from ~0.1 at 3 stations to ~0.3 at 12–18. Reach ~1 km. cLHS siting does not beat random ordering.
+ConvGNP stays flat near the raster; E11 not interpreted (failed control). Refuted: X1 (IDW not monotone), X6
+(per-day curves not below static), X10 (TabPFN with coordinates worse). E8/E9 were CPU-only (D-8,
+amendment 3 `4qs9c`). **No station count for a Kandy map follows** (1 tropical city in the frame). Record
+`kandy_pm25/docs/spatial_curve_results_2026-09-28.md`.
+
+**Re-run on full station records (OSF `fu59b`, F.123, 2026-10-05).** 23 primary cities (960 sites, 9 countries), incl. Bangkok
+(first deep-tropical); detection limit 0.24. X1–X7 repeat except **X4 refuted** (negative within-cell ceilings in London and
+Bangkok). 15/23 cross the raster (8 at three stations), 8 never; reach 1.0 km; cLHS ≈ random. Tropical arm (8 cities, MDE 0.28):
+inside the temperate envelope, none above. Kandy reading: a handful of reference stations, no specific number. E8–E11 not
+re-run. Record `kandy_pm25/docs/spatial_curve_full_record_results_2026-10-05.md`.
 
 ## 3. Epistemic status (what each claim can bear)
 

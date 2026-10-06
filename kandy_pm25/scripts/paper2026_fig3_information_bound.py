@@ -25,6 +25,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.stage1_satml.decomp import pubfig  # noqa: E402  (applies the style on import)
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 SRC = ROOT / "data" / "processed" / "decomp" / "model_progression.json"
 OUT = ROOT / "results" / "figures" / "paper2026"
@@ -81,8 +82,10 @@ def panel_a(ax, d):
                label="on its bound")
     ax.scatter([], [], s=30, marker="s", color=NEUTRAL, edgecolor="white", linewidth=0.6,
                label="interior")
-    ax.legend(loc="upper right", ncol=2, fontsize=6.6,
-              bbox_to_anchor=(1.005, -0.30), borderaxespad=0.0)
+    # Inside the panel, over the empty middle of the rows: below it, the legend landed on
+    # panel (c)'s title once the lettering reached print size (2026-09-19).
+    ax.legend(loc="center", ncol=2, fontsize=6.6, bbox_to_anchor=(0.5, 0.5),
+              framealpha=0.95)
 
 
 CITY_LABEL = {"medellin": "Medellín", "chiangmai": "Chiang Mai",
@@ -104,15 +107,23 @@ def panel_b(ax, d):
     ax.text(1.02, 0.925, "nominal 0.90", va="bottom", fontsize=6.4, color=INK,
             ha="right")
 
+    labels = []
     for c in cities:
         ax.plot([0, 1], [v13[c]["r"], v14[c]["r"]], color=GOOD, lw=1.0,
                 marker="o", ms=3.4, zorder=3)
         ax.plot([0, 1], [v13[c]["coverage90"], v14[c]["coverage90"]], color=ACCENT,
                 lw=1.0, marker="o", ms=3.4, zorder=3)
-        ax.text(-0.055, v13[c]["r"], CITY_LABEL[c], ha="right", va="center",
-                fontsize=6.2, color=GOOD)
-        ax.text(-0.055, v13[c]["coverage90"], CITY_LABEL[c], ha="right", va="center",
-                fontsize=6.2, color=ACCENT)
+        labels += [(v13[c]["r"], CITY_LABEL[c], GOOD),
+                   (v13[c]["coverage90"], CITY_LABEL[c], ACCENT)]
+    # Spread the labels so no two overlap at print size, with a leader to each line's start
+    # (2026-09-19: at 8 pt the six labels sat on top of one another).
+    labels.sort()
+    placed = []
+    for yv, name, col in labels:
+        yl = max(yv, placed[-1] + 0.052) if placed else yv
+        placed.append(yl)
+        ax.plot([-0.16, -0.02], [yl, yv], color=col, lw=0.5, zorder=2)
+        ax.text(-0.18, yl, name, ha="right", va="center", fontsize=6.2, color=col)
 
     mr13 = np.mean([v13[c]["r"] for c in cities])
     mr14 = np.mean([v14[c]["r"] for c in cities])
@@ -122,15 +133,15 @@ def panel_b(ax, d):
     ax.plot([0, 1], [mc13, mc14], color=ACCENT, lw=2.4, zorder=4)
     ax.text(1.03, mr14, f"mean r\n{mr13:.3f} to {mr14:.3f}", va="center",
             fontsize=6.4, color=GOOD)
-    ax.text(1.03, mc14 - 0.055, f"mean coverage\n{mc13:.3f} to {mc14:.3f}", va="center",
+    ax.text(1.03, mc14 - 0.11, f"mean coverage\n{mc13:.3f} to {mc14:.3f}", va="center",
             fontsize=6.4, color=ACCENT)
 
-    ax.set_xlim(-0.42, 1.62)
+    ax.set_xlim(-0.95, 1.75)
     ax.set_ylim(0.20, 1.0)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["Gaussian", "Student-t"])
     ax.set_ylabel("correlation and 90% coverage")
-    ax.set_title("(b)  neural process: accuracy up, calibration down", loc="left")
+    ax.set_title("(b)  neural process: accuracy up,\ncalibration down", loc="left")
     ax.tick_params(top=False, right=False, which="both")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
@@ -161,8 +172,8 @@ def panel_c(ax, d):
     ax.set_xlabel("distance from the nearest tuning sensor (km)")
     ax.set_ylabel("annual mean PM$_{2.5}$ (µg m$^{-3}$)")
     ax.set_ylim(0, 50)
-    ax.set_title("(c)  two sensors: the field keys on sensor position", loc="left")
-    ax.legend(loc="lower left", fontsize=6.6)
+    ax.set_title("(c)  two sensors: the field keys\non sensor position", loc="left")
+    ax.legend(loc="upper right", fontsize=6.6)
     ax.grid(axis="y", zorder=0)
     ax.tick_params(top=False, right=False, which="both")
     for s in ("top", "right"):
@@ -179,6 +190,8 @@ def main() -> None:
     panel_b(fig.add_subplot(gs[1, 0]), d["stage_3_neural_process"])
     panel_c(fig.add_subplot(gs[1, 1]),
             d["stage_4_two_sensor_fine_tuning"]["spatial_signature"])
+
+    fit_print(fig)
 
     for ext in ("png", "pdf"):
         fig.savefig(OUT / f"F3_information_bound.{ext}")

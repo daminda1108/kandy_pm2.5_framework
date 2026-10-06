@@ -1,0 +1,233 @@
+{
+  "registration": "OSF rqn4y + amendment 26hp8",
+  "deviations": [
+    "D-1 cLHS drawn independently per k (not nested)",
+    "D-2 Q2 at 20 replicates x 60 shared days, random ordering, no E6",
+    "D-3 E6 and blocked held-out on random ordering only",
+    "D-4 Q3 reach defined on E3, with E4 reported beside it",
+    "D-5 E7 scored on held-out sites inside the grey-box model grid only (Medellin: 14 of 16 sites), and every estimator re-scored on that same subset as est|e7sub, so E7 comparisons stay paired; nothing is extrapolated outside the grid",
+    "D-6 OSM road covariates (road_major_300, dist_major_km) read from one set of Geofabrik extracts (downloaded 2026-09-11, MD5-verified) instead of live Overpass, which queued ~20 min per city. Same highway values, classes, midpoint rule and haversine; a segment enters a city by its midpoint tile rather than as a whole way, which leaves every road_* value unchanged by construction (tiles reach 4.2 km past every site, the widest buffer is 1 km). Every city is computed from the extracts; the two cities Overpass finished are kept as a cross-check",
+    "D-7 Leakage self-test implementation corrected, criterion unchanged (E3 standardised error < 0.1 with the twin in the fitting set). The first implementation compared each member's mean over its OWN days and read raw hourly files without the freeze's QC; 23 of 47 merged pairs share fewer than 30 days (5 share none: replaced instruments, not twins), so it measured seasonal difference between records and failed at 2.03. Corrected: the freeze's qc_hourly on each member, and both members compared on the days both report (>= 30). Diagnosis before the fix: concurrent twins agree to 0.01 SD and E3 reproduces the twin to 0.011 SD (leakage_diagnosis.csv)",
+    "S-1 DECLARED SENSITIVITY, 2026-09-11, before any real data were scored: the frame is also frozen at 70 per cent day coverage (tag s70) and scored identically. It is reported BESIDE the registered 75 per cent result and never instead of it. Reason: at 75 per cent Bangkok, the only dense deep-tropical network, misses the band arm by one site, and both German clusters have every station between 70 and 75 per cent.",
+    "D-8 DECLARED 2026-09-15, before any E8/E9 verdict was computed: E8/E9 (TabPFN) are scored on CPU ONLY. The registration fixes TabPFN to its package defaults but not the device, and the default inference_precision='auto' enables mixed-precision autocast on CUDA while CPU runs float32 -- so the defaults are a different numerical estimator per device. Measured: 48 GPU-scored E8/E9 values re-scored on CPU (same tabpfn 8.5.0, same v3 default weights, same seed) matched 8/48 exactly, median |d rho| 0.073, max 0.376; CPU against itself was 48/48 bit-identical. CPU is chosen for determinism, reproducibility on any machine, and no quota. The 27 cities scored on GPU (19 registered, 8 S-1) are archived and NOT merged; every E8/E9 task is re-scored on CPU."
+  ],
+  "deep": {
+    "dirs": [
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\dl_out\\e10_fold0",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\dl_out\\e10_fold1",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\dl_out\\e10_fold2",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\dl_out\\e10_fold3",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\dl_out\\e10_fold4",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\tabpfn_consolidated",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\kaggle\\control_kernel_convgnp\\out_v1\\dl_out",
+      "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\kaggle\\control_kernel\\out_v2\\dl_out"
+    ],
+    "files": 17,
+    "controls": {
+      "E10 ConvGNP": {
+        "runs": 3,
+        "passed_all": true
+      },
+      "E11 TNP-D": {
+        "runs": 3,
+        "passed_all": false
+      }
+    },
+    "sources": [
+      "pred_convgnp_fold0_seed0.parquet",
+      "pred_convgnp_fold0_seed1.parquet",
+      "pred_convgnp_fold0_seed2.parquet",
+      "pred_convgnp_fold1_seed0.parquet",
+      "pred_convgnp_fold1_seed1.parquet",
+      "pred_convgnp_fold1_seed2.parquet",
+      "pred_convgnp_fold2_seed0.parquet",
+      "pred_convgnp_fold2_seed1.parquet",
+      "pred_convgnp_fold2_seed2.parquet",
+      "pred_convgnp_fold3_seed0.parquet",
+      "pred_convgnp_fold3_seed1.parquet",
+      "pred_convgnp_fold3_seed2.parquet",
+      "pred_convgnp_fold4_seed0.parquet",
+      "pred_convgnp_fold4_seed1.parquet",
+      "pred_convgnp_fold4_seed2.parquet",
+      "pred_tabpfn_consolidated_registered.parquet"
+    ],
+    "seeds": {
+      "E10": 3,
+      "E8": 1,
+      "E9": 1
+    },
+    "seed_iqr_median": {
+      "E10": 0.12766016417281345,
+      "E8": 0.0,
+      "E9": 0.0
+    }
+  },
+  "primary_cities": 18,
+  "primary_countries": 7,
+  "detection_limit_at_countries": 0.28,
+  "band_arm": [
+    23,
+    66,
+    100,
+    107,
+    115,
+    123
+  ],
+  "k_star": {
+    "E0": 3,
+    "E1": 3,
+    "E2": 3,
+    "E3": 3,
+    "E4": 8,
+    "E5": 3,
+    "E6": null,
+    "E7": null,
+    "E8": 18,
+    "E9": 3,
+    "E10": 3,
+    "E11": null
+  },
+  "verdicts": {
+    "X1": {
+      "holds": false,
+      "detail": {
+        "E3": true,
+        "E4": false
+      }
+    },
+    "X2": {
+      "holds": true,
+      "share_of_primary_cities": 0.6111111111111112,
+      "share_by_estimator": {
+        "E3": 0.5,
+        "E5": 0.5
+      }
+    },
+    "X3": {
+      "holds": true,
+      "k_star_E2": 3,
+      "paired_E2_minus_E1_at_k_star": -0.058804610024122225
+    },
+    "X4": {
+      "holds": true,
+      "cities_with_ceiling": 2
+    },
+    "X5": {
+      "holds": true,
+      "clhs_minus_random": {
+        "median": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "cities": 18
+      }
+    },
+    "X6": {
+      "holds": false,
+      "q2_below_q1": {
+        "E1": true,
+        "E10": true,
+        "E2": true,
+        "E3": false,
+        "E4": false,
+        "E5": true,
+        "E8": true,
+        "E9": false,
+        "E0|e7sub": false,
+        "E1|e7sub": true,
+        "E2|e7sub": false,
+        "E3|e7sub": false,
+        "E4|e7sub": true,
+        "E5|e7sub": false,
+        "E7": true
+      }
+    },
+    "X7": {
+      "holds": true,
+      "median_reach_km": 1.0,
+      "cities": 18
+    },
+    "X8_exploratory": {
+      "inside_envelope": {
+        "23": true,
+        "66": true,
+        "100": true,
+        "107": null,
+        "115": null,
+        "123": false
+      }
+    },
+    "X9": {
+      "holds": true,
+      "max_paired_advantage_over_E5": {
+        "E8": 0.030303030303030297,
+        "E9": 0.0016841491841491898,
+        "E10": 0.0648619673009917
+      }
+    },
+    "X10": {
+      "holds": false,
+      "by_k": {
+        "12": {
+          "median": -0.05151515151515154,
+          "lo": -0.10329670329670332,
+          "hi": -0.01818050699300702
+        },
+        "18": {
+          "median": -0.06060606060606061,
+          "lo": -0.1802197802197802,
+          "hi": 0.02637362637362639
+        },
+        "25": {
+          "median": -0.07673545966228901,
+          "lo": -0.2593406593406594,
+          "hi": 0.09192307692307693
+        },
+        "35": {
+          "median": -0.053944632892001354,
+          "lo": -0.06726078799249535,
+          "hi": 0.10269230769230768
+        },
+        "50": {
+          "median": -0.024953095684803084,
+          "lo": -0.04737936316883684,
+          "hi": 0.11961538461538461
+        }
+      }
+    },
+    "X11": {
+      "holds": {
+        "E10": true
+      },
+      "detail": {
+        "E10": {
+          "median_small_minus_large": 0.03661951813363709,
+          "cities": 16
+        }
+      }
+    },
+    "X12": {
+      "holds": null,
+      "paired_E10_minus_E11": {}
+    },
+    "X13_exploratory": {
+      "inside_envelope": {
+        "E10@23": true,
+        "E10@66": true,
+        "E10@100": false,
+        "E10@107": null,
+        "E10@115": null,
+        "E10@123": true,
+        "E11@23": null,
+        "E11@66": null,
+        "E11@100": null,
+        "E11@107": null,
+        "E11@115": null,
+        "E11@123": null
+      }
+    },
+    "deep_gate": {
+      "E10": "PASSED: interpretable",
+      "E11": "FAILURE TO TRAIN: positive control not passed; results NOT interpreted"
+    }
+  }
+}

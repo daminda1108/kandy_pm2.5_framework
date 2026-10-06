@@ -46,6 +46,36 @@ OUT = MOD / "claims.json"
 RTOL = 1e-9
 
 
+
+def house_round(value):
+    """THREE SIGNIFICANT FIGURES on every float claim, applied at emit time (2026-09-12).
+
+    Why this exists. Each call site used to choose its own `round(x, n)`, so the documents mixed
+    precisions in one sentence: a first rung printed 35.049 per cent beside a partition printed
+    0.483, and a rank correlation printed -0.0256 beside a detection limit printed 0.13. Four
+    decimals on a quantity a 48-city panel resolves to one is OVERCLAIMING BY FORMATTING, the same
+    defect that printed the partition as 0.4828 until a reviewer caught it. Significant figures,
+    not decimal places, is what a reader infers precision from, so the rule is stated once here
+    rather than 300 times at the call sites.
+
+    Exemptions, both deliberate:
+      * values below 0.001, where the magnitude IS the claim (gauge residuals, reproducibility
+        checks, exactness tests such as 3.3e-16 -- rounding those to 3 s.f. would destroy them);
+      * ints, bools and strings, which carry counts, years and pre-formatted money.
+    A float of 100 or more is stored as an int, since a tenth of a microgram or of a day is below
+    what any of these panels resolve.
+    """
+    import math
+    if isinstance(value, bool) or not isinstance(value, float):
+        return value
+    if value == 0 or abs(value) < 1e-3:
+        return value
+    digits = 3 - 1 - math.floor(math.log10(abs(value)))
+    if digits <= 0:
+        return int(round(value, digits))
+    return round(value, digits)
+
+
 class Claims:
     """Accumulator that forces every claim to declare its provenance."""
 
@@ -57,6 +87,7 @@ class Claims:
             raise KeyError(f"duplicate claim tag {tag!r}")
         if isinstance(value, (np.floating, np.integer)):
             value = value.item()
+        value = house_round(value)
         self.rows[tag] = dict(
             value=value, stat=stat, n=int(n) if n is not None else None,
             source=source, script="scripts/build_claims.py", ledger=ledger, note=note,
@@ -718,32 +749,32 @@ def ladder_order(c: Claims) -> None:
         s = _json.load(fh)
     src = "ladder_order_summary.json"
 
-    c.add("order.cities", s["order_cities"], stat="count of cities scored in both orderings",
-          n=s["order_cities"], source=src, ledger="F.97")
-    c.add("order.bg_after_8stn", s["order_bg_after_8stn"],
-          stat="median per-city % RMSE reduction, production position", n=s["order_cities"],
-          source=src, ledger="F.97")
-    c.add("order.bg_after_2stn", s["order_bg_after_2stn"],
-          stat="median per-city % RMSE reduction, background moved one step earlier",
-          n=s["order_cities"], source=src, ledger="F.97",
-          note="the background is large in BOTH positions, so its rank on the ladder is not an "
-               "artefact of where it was placed")
-    c.add("order.stn3to8_no_bg", s["order_stn3to8_no_bg"],
-          stat="median per-city % RMSE reduction, production position", n=s["order_cities"],
-          source=src, ledger="F.97")
-    c.add("order.stn3to8_with_bg", s["order_stn3to8_with_bg"],
-          stat="median per-city % RMSE reduction, measured with a background already present",
-          n=s["order_cities"], source=src, ledger="F.97",
-          note="20x the production figure and still small. The redundancy of monitors 3-8 is "
-               "order-DEPENDENT in magnitude and order-robust in conclusion. Part of the "
-               "difference is that more stations sharpen the fitted background coefficient "
-               "rather than adding local information")
-    c.add("order.endpoint_gap", s["order_endpoint_gap"],
-          stat="absolute difference in median final RMSE, micrograms per cubic metre",
-          n=s["order_cities"], source=src, ledger="F.97",
-          note="both orderings end at the SAME information set and do not reach the same "
-               "skill, because the shrinkage estimator is itself path-dependent. This is the "
-               "size of that effect, and it is reported rather than assumed away")
+    # 2026-09-25: the orderings run on BOTH streams (MAIAC is the headline); keys carry the
+    # stream. The step is stations 3-6 (b2 = pool[:6]); it was mislabelled 3-8 until this date.
+    for strm in ("maiac", "ghap"):
+        k = f"order_{strm}_"
+        if k + "cities" not in s:
+            continue
+        n = s[k + "cities"]
+        c.add(f"order.{strm}.cities", n, stat="count of cities scored in both orderings",
+              n=n, source=src, ledger="F.97")
+        c.add(f"order.{strm}.bg_after_6stn", s[k + "bg_after_6stn"],
+              stat="median per-city % RMSE reduction, background in production position",
+              n=n, source=src, ledger="F.97")
+        c.add(f"order.{strm}.bg_after_2stn", s[k + "bg_after_2stn"],
+              stat="median per-city % RMSE reduction, background moved one step earlier",
+              n=n, source=src, ledger="F.97")
+        c.add(f"order.{strm}.stn3to6_no_bg", s[k + "stn3to6_no_bg"],
+              stat="median per-city % RMSE reduction, stations 3-6, production position",
+              n=n, source=src, ledger="F.97")
+        c.add(f"order.{strm}.stn3to6_with_bg", s[k + "stn3to6_with_bg"],
+              stat="median per-city % RMSE reduction, stations 3-6, background already present",
+              n=n, source=src, ledger="F.97")
+        c.add(f"order.{strm}.endpoint_gap", s[k + "endpoint_gap"],
+              stat="absolute difference in median final RMSE, micrograms per cubic metre",
+              n=n, source=src, ledger="F.97",
+              note="both orderings end at the same information set; the gap is the "
+                   "path-dependence of the shrinkage estimator")
 
     for lad in ("ghap", "maiac"):
         if f"inv_{lad}_median" not in s:
@@ -766,7 +797,7 @@ def ladder_order(c: Claims) -> None:
     b = pd.read_csv(MOD / "ladder_bootstrap.csv")
     for lad in ("ghap", "maiac"):
         for step, tag in (("first two sensors", "first2"),
-                          ("sensors three to eight", "stn3to8"),
+                          ("sensors three to six", "stn3to6"),
                           ("a background series", "bg")):
             for stratum, stag in (("pooled", "pooled"), ("deep_tropical", "deep_tropical")):
                 r = b[(b.ladder == lad) & (b.step == step) & (b.stratum == stratum)]

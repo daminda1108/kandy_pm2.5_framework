@@ -26,6 +26,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.stage1_satml.decomp import pubfig  # noqa: E402
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 SRC = ROOT / "data" / "processed" / "decomp" / "kandy_interval_coverage.json"
 OUT = ROOT / "results" / "figures" / "paper2026"
@@ -59,7 +60,7 @@ def panel_a(ax, d):
         for val, col in parts:
             ax.barh(yi, val, left=left, height=0.42, color=col,
                     edgecolor="white", linewidth=0.8, zorder=3)
-            if val > 0.06:
+            if val > 0.12:
                 ax.text(left + val / 2, yi, f"{100 * val:.1f}%", ha="center", va="center",
                         fontsize=7.0, color="white" if col is not ABOVE else INK)
             left += val
@@ -75,7 +76,7 @@ def panel_a(ax, d):
     ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_xticklabels(["0", "25%", "50%", "75%", "100%"])
     ax.set_xlabel("share of the 19,585 sensor-hours")
-    ax.set_title("(a)  the failure is one-sided, so the width is not the problem", loc="left")
+    ax.set_title("(a)  the failure is one-sided,\nso the width is not the problem", loc="left")
     ax.tick_params(axis="y", length=0, right=False, which="both")
     ax.tick_params(axis="x", top=False, which="both")
     for s in ("top", "right", "left"):
@@ -107,8 +108,9 @@ def panel_b(ax, d):
     ax.text(len(order) - 0.5, d["nominal"] + 0.012, "nominal 0.90", ha="right",
             fontsize=6.5, color=INK)
     ax.axhline(d["pooled_coverage"], color=NEUTRAL_LINE, lw=0.9, zorder=4)
-    ax.text(-0.44, d["pooled_coverage"] + 0.018,
-            f"pooled {d['pooled_coverage']:.3f}", ha="left", fontsize=6.5,
+    # Over the two lower bars, where the label does not collide with a bar value.
+    ax.text(len(order) - 0.5, d["pooled_coverage"] + 0.075,
+            f"pooled {d['pooled_coverage']:.3f}", ha="right", fontsize=6.5,
             color=NEUTRAL_LINE)
 
     ax.set_xticks(x)
@@ -132,6 +134,8 @@ def main() -> None:
     gs = fig.add_gridspec(1, 2, width_ratios=[1.35, 1.0], wspace=0.30)
     panel_a(fig.add_subplot(gs[0, 0]), d)
     panel_b(fig.add_subplot(gs[0, 1]), d)
+
+    fit_print(fig)
 
     for ext in ("png", "pdf"):
         fig.savefig(OUT / f"F11_uncertainty.{ext}")

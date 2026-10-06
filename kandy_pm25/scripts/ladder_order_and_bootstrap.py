@@ -13,14 +13,15 @@ TWO OBJECTIONS, BOTH RAISED BY AN EXTERNAL REVIEWER, BOTH ANSWERABLE WITHOUT NEW
     background enters as a second regressor whose coefficient is fitted against LOCAL station
     data, so a "background before any local station" rung has no target to fit and cannot be
     built. The background is only ever priceable given some local observation. What CAN be
-    permuted is where the background sits relative to stations 3-8:
+    permuted is where the background sits relative to stations 3-6:
 
-        A (production)   Bud0c -> +2 stn -> +6 stn -> +6 stn & bg
-        B (bg early)     Bud0c -> +2 stn -> +2 stn & bg -> +6 stn & bg
+        A (production)   Bud0c -> stn 1-2 -> stn 1-6 -> stn 1-6 & bg
+        B (bg early)     Bud0c -> stn 1-2 -> stn 1-2 & bg -> stn 1-6 & bg
 
     Both end at the same information set, so the endpoints are comparable and only the interior
     order differs. If the background is large in both positions and stations 3-8 are near zero
-    in both, the two headline conclusions are order-robust.
+    in both, the two headline conclusions are order-robust. (Until 2026-09-25 this docstring
+    and the output said 'stations 3-8'; the code has always taken pool[:6].)
 
 (2) CITY-DAYS ARE NOT INDEPENDENT UNITS. 28,930 city-days across 48 cities is not n=28,930;
     days within a city are strongly correlated. The per-city median already avoids letting
@@ -34,6 +35,7 @@ Out:   data/processed/modular/ladder_order_variants.csv
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -47,28 +49,22 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 warnings.filterwarnings("ignore")
 
-from modular_validation_all import FEATS, build_frame, _affine  # noqa: E402
-import modular_validation_all as mv                             # noqa: E402
+from modular_validation_all import _affine                        # noqa: E402
+from ladder_frames import build_bud0_frame, fit_loco             # noqa: E402
 from src.modular import shrinkage as sh                         # noqa: E402
+from src.modular.city_meta import attach_meta                   # noqa: E402
+from src.modular.runlog import DropLog                          # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
 OUT_ORDER = MOD / "ladder_order_variants.csv"
 OUT_BOOT = MOD / "ladder_bootstrap.csv"
+VERIFY = MOD / "verify_2026-09-25"
 SEED = 20260823          # the seed ladder_revalidated.csv was fitted under
 
 
 def fit_bud0c(pool: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
-    out = []
-    for city in sorted(pool.city.unique()):
-        tr, te = pool[pool.city != city], pool[pool.city == city]
-        assert city not in set(tr.city), "LOCO violated"
-        if len(tr) < 1000 or len(te) < 100:
-            continue
-        m = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, random_state=SEED)
-        m.fit(tr[feats], tr.pm25_city)
-        out.append(pd.DataFrame({"city": city, "date": te.date.values,
-                                 "bud0": m.predict(te[feats])}))
-    return pd.concat(out, ignore_index=True)
+    """Kept for importers; the one implementation lives in ladder_frames.fit_loco."""
+    return fit_loco(pool, feats, seed=SEED)
 
 
 def ladder_ordered(city, st, bud0, seed, order):
@@ -126,8 +122,9 @@ def ladder_ordered(city, st, bud0, seed, order):
 
 
 # A: production.            B: the background moved one step earlier.
-ORDER_A = [("s2", "b1", False), ("s8", "b2", False), ("s8bg", "b2", True)]
-ORDER_B = [("s2", "b1", False), ("s2bg", "b1", True), ("s8bg", "b2", True)]
+# b1 = pool[:2] (stations 1-2); b2 = pool[:6] (stations 1-6), so the b1->b2 step adds 3-6.
+ORDER_A = [("s2", "b1", False), ("s6", "b2", False), ("s6bg", "b2", True)]
+ORDER_B = [("s2", "b1", False), ("s2bg", "b1", True), ("s6bg", "b2", True)]
 
 
 def gain(a: pd.Series, b: pd.Series) -> pd.Series:
@@ -141,69 +138,60 @@ def main() -> None:
     a = ap.parse_args()
 
     print("=== ladder order sensitivity and city-level bootstrap ===\n")
-    print("[1] frame and Bud0c")
-    sample = pd.read_csv(MOD / "validation_sample.csv")
-    manifest = pd.read_csv(MOD / "openaq_manifest.csv")
-    st, pool = build_frame(sample, manifest)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    pool["city"] = pool.city.astype(str)
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
-    b0 = fit_bud0c(p, met + geo_f + ["sat_level"])
-    print(f"    {b0.city.nunique()} cities")
+    summary = {}
+    for stream in ("maiac", "ghap"):
+        print(f"[1:{stream}] frame and Bud0c")
+        st, p, met, geo_f, sat_feats = build_bud0_frame(stream)
+        b0 = fit_bud0c(p, met + geo_f + sat_feats)
+        print(f"    {b0.city.nunique()} cities")
 
-    print("\n[2] running both orderings")
-    rows = []
-    for city, s in st.items():
-        city = str(city)
-        if city not in set(b0.city):
-            continue
-        b0c = b0[b0.city == city]
-        try:
-            ra = ladder_ordered(city, s, b0c, a.seed, ORDER_A)
-            rb = ladder_ordered(city, s, b0c, a.seed, ORDER_B)
-        except Exception:
-            continue
-        if not ra or not rb:
-            continue
-        rows.append({"city": city, "n_days": ra["n_days"],
-                     "rmse_Bud0": ra["rmse_Bud0"],
-                     "A_s2": ra["rmse_s2"], "A_s8": ra["rmse_s8"], "A_s8bg": ra["rmse_s8bg"],
-                     "B_s2": rb["rmse_s2"], "B_s2bg": rb["rmse_s2bg"],
-                     "B_s8bg": rb["rmse_s8bg"]})
-    d = pd.DataFrame(rows)
-    band = pd.read_csv(MOD / "ladder_revalidated.csv")
-    band = band[band.bottom == "Bud0c"][["city", "band"]].drop_duplicates()
-    band["city"] = band.city.astype(str)
-    d = d.merge(band, on="city", how="left")
-    d.to_csv(OUT_ORDER, index=False)
-    print(f"    {len(d)} cities scored in both orderings -> {OUT_ORDER.name}")
+        print(f"[2:{stream}] running both orderings")
+        rows = []
+        drops = DropLog(f"ladder_order_{stream}")
+        for city, s in st.items():
+            city = str(city)
+            if city not in set(b0.city):
+                continue
+            b0c = b0[b0.city == city]
+            try:
+                ra = ladder_ordered(city, s, b0c, a.seed, ORDER_A)
+                rb = ladder_ordered(city, s, b0c, a.seed, ORDER_B)
+            except Exception as e:
+                drops.error(city, e)
+                continue
+            if not ra or not rb:
+                drops.skip(city, "ladder_ordered() returned None (no outer-ring stations, "
+                                 "or too few days)")
+                continue
+            rows.append({"city": city, "n_days": ra["n_days"],
+                         "rmse_Bud0": ra["rmse_Bud0"],
+                         "A_s2": ra["rmse_s2"], "A_s6": ra["rmse_s6"], "A_s6bg": ra["rmse_s6bg"],
+                         "B_s2": rb["rmse_s2"], "B_s2bg": rb["rmse_s2bg"],
+                         "B_s6bg": rb["rmse_s6bg"]})
+        drops.report(VERIFY / f"droplog_ladder_order_{stream}.json")
+        d = attach_meta(pd.DataFrame(rows))
+        d.to_csv(OUT_ORDER.with_name(f"ladder_order_variants_{stream}.csv"), index=False)
+        print(f"    {len(d)} cities scored in both orderings")
 
-    # the two quantities whose ORDER-ROBUSTNESS is the question
-    d["bg_after_8stn"] = gain(d.A_s8, d.A_s8bg)     # production position
-    d["bg_after_2stn"] = gain(d.B_s2, d.B_s2bg)     # moved one step earlier
-    d["stn3to8_no_bg"] = gain(d.A_s2, d.A_s8)       # production position
-    d["stn3to8_with_bg"] = gain(d.B_s2bg, d.B_s8bg)  # measured with a background present
-    d["first2"] = gain(d.rmse_Bud0, d.A_s2)
+        # the two quantities whose ORDER-ROBUSTNESS is the question
+        d["bg_after_6stn"] = gain(d.A_s6, d.A_s6bg)      # production position
+        d["bg_after_2stn"] = gain(d.B_s2, d.B_s2bg)      # moved one step earlier
+        d["stn3to6_no_bg"] = gain(d.A_s2, d.A_s6)        # production position
+        d["stn3to6_with_bg"] = gain(d.B_s2bg, d.B_s6bg)  # measured with a background present
 
-    print("\n=== does the ANSWER depend on the ORDER? (median % RMSE reduction) ===")
-    print(f"  the background, added AFTER stations 3-8 (production) : "
-          f"{d.bg_after_8stn.median():6.2f}%")
-    print(f"  the background, added BEFORE stations 3-8             : "
-          f"{d.bg_after_2stn.median():6.2f}%")
-    print(f"  stations 3-8, with NO background present (production) : "
-          f"{d.stn3to8_no_bg.median():6.2f}%")
-    print(f"  stations 3-8, with a background already present       : "
-          f"{d.stn3to8_with_bg.median():6.2f}%")
-    print(f"\n  endpoint check, both orders reach the same information set:")
-    print(f"    A final RMSE {d.A_s8bg.median():.4f}   B final RMSE {d.B_s8bg.median():.4f}"
-          f"   diff {abs(d.A_s8bg.median() - d.B_s8bg.median()):.2e}")
+        print(f"\n=== [{stream}] does the ANSWER depend on the ORDER? (median % RMSE reduction) ===")
+        for col, lab in (("bg_after_6stn", "the background, added AFTER stations 3-6 (production)"),
+                         ("bg_after_2stn", "the background, added BEFORE stations 3-6"),
+                         ("stn3to6_no_bg", "stations 3-6, with NO background present"),
+                         ("stn3to6_with_bg", "stations 3-6, with a background already present")):
+            print(f"  {lab:<56}: {d[col].median():6.2f}%")
+        gap = abs(d.A_s6bg.median() - d.B_s6bg.median())
+        print(f"  endpoint check: A final {d.A_s6bg.median():.4f}  B final {d.B_s6bg.median():.4f}"
+              f"  diff {gap:.2e}")
+        summary[f"order_{stream}_cities"] = int(len(d))
+        for col in ("bg_after_6stn", "bg_after_2stn", "stn3to6_no_bg", "stn3to6_with_bg"):
+            summary[f"order_{stream}_{col}"] = round(float(d[col].median()), 2)
+        summary[f"order_{stream}_endpoint_gap"] = round(float(gap), 3)
 
     # ── [3] bootstrap over CITIES ─────────────────────────────────────────────────────────
     print(f"\n[3] bootstrapping over cities, {a.boot} resamples")
@@ -211,7 +199,7 @@ def main() -> None:
     L = pd.read_csv(MOD / "ladder_revalidated.csv")
     L = L[L.bottom == "Bud0c"].copy()
     L["g_first2"] = gain(L.rmse_Bud0, L.rmse_Bud1)
-    L["g_stn3to8"] = gain(L.rmse_Bud1, L.rmse_Bud2)
+    L["g_stn3to6"] = gain(L.rmse_Bud1, L.rmse_Bud2)
     L["g_bg"] = gain(L.rmse_Bud2, L.rmse_Bud3)
 
     def boot_ci(v: pd.Series):
@@ -229,13 +217,13 @@ def main() -> None:
     M = pd.read_csv(MOD / "ladder_maiac.csv")
     M = M[M.bottom == "Bud0c"].copy()
     M["g_first2"] = gain(M.rmse_Bud0, M.rmse_Bud1)
-    M["g_stn3to8"] = gain(M.rmse_Bud1, M.rmse_Bud2)
+    M["g_stn3to6"] = gain(M.rmse_Bud1, M.rmse_Bud2)
     M["g_bg"] = gain(M.rmse_Bud2, M.rmse_Bud3)
 
     out = []
     for ladder_name, frame in (("ghap", L), ("maiac", M)):
         for label, col in (("first two sensors", "g_first2"),
-                           ("sensors three to eight", "g_stn3to8"),
+                           ("sensors three to six", "g_stn3to6"),
                            ("a background series", "g_bg")):
             m, lo, hi, n = boot_ci(frame[col])
             out.append(dict(ladder=ladder_name, stratum="pooled", step=label, n_cities=n,
@@ -248,14 +236,6 @@ def main() -> None:
 
     # Does the deep-tropical inversion survive an interval? Paired over cities, since the two
     # gains are measured on the SAME city and a difference of medians would ignore the pairing.
-    summary = {
-        "order_cities": int(len(d)),
-        "order_bg_after_8stn": round(float(d.bg_after_8stn.median()), 2),
-        "order_bg_after_2stn": round(float(d.bg_after_2stn.median()), 2),
-        "order_stn3to8_no_bg": round(float(d.stn3to8_no_bg.median()), 2),
-        "order_stn3to8_with_bg": round(float(d.stn3to8_with_bg.median()), 2),
-        "order_endpoint_gap": round(float(abs(d.A_s8bg.median() - d.B_s8bg.median())), 3),
-    }
     for ladder_name, frame in (("ghap", L), ("maiac", M)):
         dt = frame[frame.band == "deep_tropical"][["g_first2", "g_bg"]].dropna()
         if len(dt) >= 3:
@@ -268,16 +248,17 @@ def main() -> None:
             summary[f"inv_{ladder_name}_hi"] = round(hi, 2)
             summary[f"inv_{ladder_name}_frac_cities"] = int(round(100 * (v > 0).mean()))
             summary[f"inv_{ladder_name}_n"] = int(len(v))
-            summary[f"inv_{ladder_name}_excludes_zero"] = bool(lo > 0)
+            summary[f"inv_{ladder_name}_excludes_zero"] = bool(lo > 0 or hi < 0)
             print(f"\n  deep-tropical inversion, {ladder_name}: paired median advantage of the "
                   f"first two sensors over a background")
             print(f"    {np.median(v):+.2f} pp  [{lo:+.2f}, {hi:+.2f}]  n={len(v)}  "
                   f"| favours sensors in {100 * (v > 0).mean():.0f}% of cities  "
-                  f"| excludes zero: {lo > 0}")
+                  f"| excludes zero: {lo > 0 or hi < 0}")
 
     import json as _json
-    with open(MOD / "ladder_order_summary.json", "w", encoding="utf-8") as fh:
-        _json.dump(summary, fh, indent=2)
+    _tmp = MOD / "ladder_order_summary.json.tmp"           # gotcha #81: never truncate in place
+    _tmp.write_text(_json.dumps(summary, indent=2), encoding="utf-8")
+    os.replace(_tmp, MOD / "ladder_order_summary.json")
     print(f"\n    -> ladder_order_summary.json")
     bt.to_csv(OUT_BOOT, index=False)
     print(f"    -> {OUT_BOOT.name}")

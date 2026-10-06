@@ -1,4 +1,4 @@
-# Chapter 3. What is already known about Kandy's air
+# Chapter 3. Prior measurement, and the gap it leaves
 
 Kandy is not unmeasured. It is measured in a particular way, and the shape of that measurement
 record determines what a model can and cannot be checked against. This chapter sets out what

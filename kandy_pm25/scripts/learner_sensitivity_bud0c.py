@@ -27,33 +27,37 @@ sys.path.insert(0, str(REPO / "scripts"))
 MOD = REPO / "data" / "processed" / "modular"
 OUT = MOD / "learner_sensitivity_bud0c.csv"
 
-from modular_validation_all import FEATS, build_frame, ladder  # noqa: E402
+from modular_validation_all import ladder  # noqa: E402
 
 SEED = 20260823
 
 
 def main() -> None:
+    import argparse
+    import json
+    import os
     from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+    from sklearn.impute import SimpleImputer
     from sklearn.linear_model import Ridge
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
+    from ladder_frames import build_bud0_frame
+    from ladder_honesty_checks import effects
+    sys.path.insert(0, str(REPO))
+    from src.modular.city_meta import city_meta
+    from src.modular.runlog import DropLog
 
-    sample = pd.read_csv(MOD / "validation_sample.csv")
-    manifest = pd.read_csv(MOD / "openaq_manifest.csv")
-    st, pool = build_frame(sample, manifest)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    pool["city"] = pool.city.astype(str)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--stream", choices=("maiac", "ghap"), default="maiac")
+    a = ap.parse_args()
+    tag = "" if a.stream == "maiac" else "_ghap"
 
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
-    p = p.dropna(subset=geo_f + ["sat_level"])
-    feats = met + geo_f + ["sat_level"]
+    # 2026-09-25: the ONE shared frame builder. The old code dropped every row with ANY missing
+    # geography value (removing the censored city 2168 as well as 3147) and could not run on
+    # MAIAC, whose daily retrievals are missing on about half the days.
+    st, p, met, geo_f, sat_feats = build_bud0_frame(a.stream)
+    feats = met + geo_f + sat_feats
+    band = city_meta(list(st)).set_index("city").band
     print(f"Bud0c pool: {len(p)} city-days, {p.city.nunique()} cities, {len(feats)} features\n")
 
     makers = {
@@ -61,14 +65,19 @@ def main() -> None:
             max_iter=300, learning_rate=0.06, random_state=SEED),
         "HistGBM shallow": lambda: HistGradientBoostingRegressor(
             max_iter=100, learning_rate=0.15, max_depth=3, random_state=SEED),
-        # n_jobs=-1 with 68 features x 46 LOCO fits was killed for memory; capped deliberately
+        # sklearn >= 1.4 random forests accept NaN natively; n_jobs capped for memory
         "RandomForest": lambda: RandomForestRegressor(
             n_estimators=100, min_samples_leaf=10, max_depth=14,
             random_state=SEED, n_jobs=2),
-        "Ridge (linear)": lambda: make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+        # a linear model cannot take NaN: median imputation PLUS a missing-value indicator, so
+        # "no retrieval today" is information the model can use rather than a silent fill
+        "Ridge (linear)": lambda: make_pipeline(
+            SimpleImputer(strategy="median", add_indicator=True), StandardScaler(),
+            Ridge(alpha=1.0)),
     }
 
-    rows = []
+    rows, summ = [], {"stream": a.stream}
+    rng = np.random.default_rng(SEED)
     for name, mk in makers.items():
         out = []
         for city in sorted(p.city.unique()):
@@ -79,41 +88,53 @@ def main() -> None:
             out.append(pd.DataFrame({"city": city, "date": te.date.values,
                                      "bud0": m.predict(te[feats])}))
         b0 = pd.concat(out, ignore_index=True)
-        L = []
+        L, drops = [], DropLog(f"learner_{a.stream}_{name.split()[0]}")
         for city, s in st.items():
             city = str(city)
             if city not in set(b0.city):
                 continue
             try:
                 r = ladder(city, s, b0[b0.city == city], SEED)
-            except Exception:
-                r = None
+            except Exception as e:
+                drops.error(city, e)
+                continue
             if r:
                 L.append(r)
+            else:
+                drops.skip(city, "ladder() returned None")
+        drops.report(MOD / "verify_2026-09-25" / f"droplog_learner_{a.stream}_{name.split()[0]}.json")
         L = pd.DataFrame(L)
-        if L.empty:
-            print(f"  {name:<20} ladder failed"); continue
-        g1 = 100 * ((L.rmse_Bud0 - L.rmse_Bud1) / L.rmse_Bud0).median()
-        g2 = 100 * ((L.rmse_Bud1 - L.rmse_Bud2) / L.rmse_Bud1).median()
-        g3 = 100 * ((L.rmse_Bud2 - L.rmse_Bud3) / L.rmse_Bud2).median()
+        L["band"] = L.city.map(band)
+        e = effects(L, 4000, rng)
+        summ[name] = e
+        g1, g2, g3 = (e["pooled.first2"]["median"], e["pooled.s36"]["median"],
+                      e["pooled.bg"]["median"])
         ok = L.rmse_Bud3.notna()
         mono = (((L.rmse_Bud1 <= L.rmse_Bud0 + 1e-9) & (L.rmse_Bud2 <= L.rmse_Bud1 + 1e-9)
                  & ((L.rmse_Bud3 <= L.rmse_Bud2 + 1e-9) | ~ok))).mean()
+        pb, dt = e["pooled.bg_minus_first2"], e["deep_tropical.bg_minus_first2"]
         print(f"  {name:<20} n={len(L):>3}  Bud0c RMSE {L.rmse_Bud0.median():6.2f}   "
-              f"gains 0c->1 {g1:5.1f}%  1->2 {g2:4.1f}%  2->3 {g3:5.1f}%   monotone {100*mono:.0f}%")
+              f"gains {g1:5.1f} / {g2:4.2f} / {g3:5.1f}   bg-first2 {pb['median']:+6.1f} "
+              f"[{pb['lo']:+.1f},{pb['hi']:+.1f}]   DT {dt['median']:+6.1f} "
+              f"[{dt['lo']:+.1f},{dt['hi']:+.1f}]   monotone {100*mono:.0f}%", flush=True)
         rows.append(dict(learner=name, n_cities=len(L), bud0c_rmse=L.rmse_Bud0.median(),
-                         gain_0c_1=g1, gain_1_2=g2, gain_2_3=g3, monotone_pct=100 * mono))
+                         gain_0c_1=g1, gain_1_2=g2, gain_2_3=g3, monotone_pct=100 * mono,
+                         bg_minus_first2=pb["median"], bg_minus_first2_lo=pb["lo"],
+                         bg_minus_first2_hi=pb["hi"], dt_bg_minus_first2=dt["median"],
+                         dt_lo=dt["lo"], dt_hi=dt["hi"]))
 
     df = pd.DataFrame(rows)
-    df.to_csv(OUT, index=False)
+    out_csv = OUT.with_name(OUT.stem + tag + OUT.suffix)
+    df.to_csv(out_csv, index=False)
+    jp = out_csv.with_suffix(".json"); tmp = jp.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(summ, indent=2), encoding="utf-8"); os.replace(tmp, jp)
     print("\n=== SPREAD ACROSS LEARNERS (Bud0c) ===")
     for c, lab in [("bud0c_rmse", "Bud0c RMSE"), ("gain_0c_1", "Bud0c->Bud1"),
-                   ("gain_1_2", "Bud1->Bud2"), ("gain_2_3", "Bud2->Bud3")]:
+                   ("gain_1_2", "Bud1->Bud2"), ("gain_2_3", "Bud2->Bud3"),
+                   ("dt_bg_minus_first2", "DT bg-first2")]:
         v = df[c]
-        unit = "" if c == "bud0c_rmse" else " pp"
-        print(f"  {lab:<13} {v.min():6.2f} to {v.max():6.2f}   spread {v.max()-v.min():5.2f}{unit}")
-    print(f"\n  F.81 on the OLD Bud0 gave spreads of 1.8 / 0.1 / 3.3 pp.")
-    print(f"  wrote {OUT}")
+        print(f"  {lab:<14} {v.min():7.2f} to {v.max():7.2f}   spread {v.max()-v.min():5.2f}")
+    print(f"  wrote {out_csv}")
 
 
 if __name__ == "__main__":

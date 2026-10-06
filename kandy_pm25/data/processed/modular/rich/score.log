@@ -1,0 +1,22 @@
+    stream-complete filter (C7): dropping 1 city(s) ['3147'], 518 rows -- not in every admitted static stream
+    [maiac] frame 31,878 city-days, 47 cities, 68 Bud0c predictors
+coverage rule drops 0: []
+    Bud0c seed 0                 118 cities, 68 features
+    Bud0c seed 1                 118 cities, 68 features
+    Bud0c seed 2                 118 cities, 68 features
+    Bud0c seed 3                 118 cities, 68 features
+    Bud0c seed 4                 118 cities, 68 features
+    Bud0c seed 0                 118 cities, 81 features
+    Bud0c seed 1                 118 cities, 81 features
+    Bud0c seed 2                 118 cities, 81 features
+    Bud0c seed 3                 118 cities, 81 features
+    Bud0c seed 4                 118 cities, 81 features
+  r1_rich_over_base      n= 72  +13.13 cluster [+9.20, +16.19]
+  first2_rmse_r          n= 72   +8.88 cluster [+3.59, +15.28]
+  d_first2_rmse          n= 72   -0.69 cluster [-7.07, +1.71]
+  s36_rmse_r             n= 72   +0.24 cluster [+0.16, +0.70]
+  bg_rmse_r              n= 68  +35.60 cluster [+22.07, +58.40]
+  bgm2_rmse_r            n= 68  +21.67 cluster [+3.84, +40.65]
+  d_bgm2_rmse            n= 68   -2.83 cluster [-6.34, +3.92]
+  bgm2_exceed_r          n= 67  +45.40 cluster [+27.88, +58.27]
+exit 0

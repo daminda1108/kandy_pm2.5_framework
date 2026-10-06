@@ -1,8 +1,8 @@
 ---
-title: "An information-tiered decomposition for hourly kilometre-scale urban PM2.5: what it reconstructs, and what each further observation is worth, demonstrated at Kandy"
-author: "Daminda Alahakoon, University of Peradeniya, Sri Lanka"
+title: "An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, validation without local ground truth, and measurement priorities"
+author: "A. M. D. W. B. Alahakoon, Department of Environmental and Industrial Sciences, University of Peradeniya, Sri Lanka"
 date: "2026"
-geometry: margin=1.25cm
+geometry: margin=1.0cm
 fontsize: 12pt
 mainfont: "Times New Roman"
 sansfont: "Times New Roman"
@@ -10,150 +10,146 @@ monofont: "Times New Roman"
 colorlinks: false
 header-includes: |
   \usepackage{titling}
-  \setlength{\droptitle}{-1.6cm}
+  \setlength{\droptitle}{-1.75cm}
   \pretitle{\begin{center}\large\bfseries}
-  \posttitle{\par\end{center}\vspace{-0.8em}}
+  \posttitle{\par\end{center}\vspace{0.35em}}
   \preauthor{\begin{center}\normalsize}
-  \postauthor{\par\end{center}\vspace{-0.9em}}
+  \postauthor{\par\end{center}\vspace{0.1em}}
   \predate{\begin{center}\normalsize}
-  \postdate{\par\end{center}}
+  \postdate{\par\end{center}\vspace{0.35em}}
   \usepackage{titlesec}
-  \titlespacing*{\section}{0pt}{0.45em}{0.15em}
-  \setlength{\parskip}{0.18em}
-  \linespread{0.95}
+  \titlespacing*{\section}{0pt}{0.18em}{0.06em}
+  \setlength{\parskip}{0.06em}
+  \linespread{0.90}
   \setlength{\parindent}{0pt}
 ---
 
-**Undergraduate thesis, 2026.** Full thesis: 40,000 words, 35 figures, 10 chapters, with eight OSF
-pre-registrations lodged before the corresponding analyses were run.
+**Undergraduate research project report (ENS4998), 2026.** The report runs to
+{{claim:meta.words}} words, {{claim:meta.figures}} figures and {{claim:meta.tables}} tables, and
+rests on {{claim:meta.registrations}} pre-registrations lodged before the analyses they cover.
 
 ## The problem
 
-Most of the world's population breathes air nobody measures, and the shortage of instruments is
-worst where the air is dirtiest. Models fill the gap, and they are good. But they are tested where
-monitors are dense and then used where monitors are absent, so **the one transfer that matters is
-the one that cannot be scored**, and the usual answer to that doubt needs exactly the measurements
-whose absence created it.
+Fine particulate matter (PM2.5) carries the largest estimated burden of disease of any air
+pollutant, and monitoring is sparsest where concentrations are highest. Kandy is such a city: a
+valley settlement in the central highlands of Sri Lanka with 98,828 residents inside its municipal
+boundary (2012 census) and nearly 389,000 commuters entering on a typical weekday (World Bank,
+2020), so that most of those exposed to its air during the day do not live in it. It has no
+reference-grade PM2.5 monitor in operation and two low-cost sensors with public records. Estimating
+surface PM2.5 where it is not measured is harder than estimating the meteorological state: the
+observing network is thin, emissions are poorly quantified and independent inventories disagree,
+and a substantial fraction of the mass forms in the atmosphere rather than being emitted. Any PM2.5
+field for Kandy is therefore a model output that almost no local observation can evaluate.
 
-This thesis changes the question. Instead of asking how accurate a model is where its accuracy
-cannot be checked, it asks what the model may claim from the data it already has, then measures
-what each further source of data would be worth. Worth is defined concretely: how
-much the model's day-to-day error falls when that source is added, at a fixed point in a fixed
-order of adding them. This is a practical stand-in for value rather than a formal
-decision-theoretic calculation, and the thesis says so.
+## Aim
 
-## How the model is built
+To reconstruct PM2.5 over the Kandy basin at hourly and one-kilometre resolution for 2019 to 2023
+from data available everywhere; to establish what that reconstruction can and cannot be trusted to
+say; to determine the spatial scale below which it is no longer supported; and to rank the
+measurements that would most improve it.
 
-Concentration is split in two: a regional background that is the same everywhere in the city at any
-given hour, and a local increment on top of it that varies from place to place. Two design choices
-make the measurement possible.
+## What was tried first, and why it was abandoned
 
-**Conservation.** The map's spatial average always equals the city-wide estimate. If the model
-puts pollution in the wrong neighbourhood it cannot also invent more of it, so being wrong about
-location has a bounded cost.
+The work began as a machine-learning problem: learn the city-mean level from satellite and
+reanalysis data, and learn the within-city spatial pattern from cities that have dense networks. The
+second half did not survive testing. A cross-city neural model produced fields that were defensible
+in aggregate but spatially featureless; fine-tuning it on Kandy's two sensors reproduced those two
+points almost exactly while inflating the rest of the grid, having learned the sensor coordinates
+rather than the basin; a physics-informed network transferred between two distant cities but never
+became a usable component; five successive rebuilds of the regional background were each rejected
+against their own criteria; and a terrain-steered dispersion step, built specifically to place the
+local increment, was found to lower the ranking of neighbourhoods from
+{{claim:r2.rho_emission_surface}} to {{claim:r2.rho_with_atransport}} and is not used. Eight such
+approaches are documented in full, with what each one still established. Their common lesson set
+the design that followed: the information needed to place pollution inside a city is not present in
+the data available for a city like Kandy, so it must be imposed from physical reasoning and
+declared as an assumption rather than fitted and presented as a result.
 
-**Exact removal.** The model is built in tiers, each told which data sources it may use. Taking a
-source away reproduces the simpler tier exactly rather than approximately, because the model and
-the fitting procedure stay fixed and only the data changes. The gap between two tiers is therefore
-the effect of that data, not of having quietly changed the model as well.
+## The model
 
-## Three results
+Concentration on the kilometre grid is represented as a regional background, spatially uniform at
+any hour, plus a locally generated increment redistributed by a pattern of unit spatial mean:
 
-Measured across **{{claim:frame.cities}} cities in {{claim:frame.countries}} countries and
-{{claim:frame.city_days}} city-days**, each scored against monitors kept out of its own fit. Every
-panel city is a valley or basin publishing enough data to be scored, so the findings are bounded by
-that panel.
+$$\mathrm{PM}(x,y,t) = B(t) + \max(\Delta,0)\,P(x,y,t) + \min(\Delta,0) + \varepsilon(t)\,[P(x,y,t)-1], \qquad \Delta(t) = T(t) - B(t)$$
 
-**1. Free data is worth about as much as the first monitor a city buys.** Terrain, roads, land
-cover, night lights and population are free and available anywhere, and together they cut daily
-error by {{claim:step.geography}} per cent. The third through sixth monitors cut it by
-{{claim:step.bud1_bud2}} per cent, which is not a small effect but an absent one, and it is the
-finding that survives best when the learning algorithm is changed. Counting from one station up to
-eight shows the saturation arriving earlier still: the first station buys {{claim:stn.one_gain}}
-per cent and the second adds {{claim:stn.second_adds}} points.
+$T$, the basin-mean concentration, is a gradient-boosted model over reanalysis meteorology,
+re-anchored annually to a satellite-derived mean and shaped to the cycles of the two local sensors;
+$B$ is a rural floor with a seasonal shape; $P$ combines an emission proxy with a
+terrain-confinement term. Two properties follow by construction: the field averages to $T$, so
+misplacing material cannot create more of it, and each component declares which observations it may
+use, so withholding a data source reproduces the corresponding simpler model exactly. That second
+property is what turns the model into an instrument for measuring the worth of an observation.
 
-The largest single gain comes from elsewhere. A background series measured outside
-the urban core cuts error by {{claim:step.bud2_bud3}} per cent, and it is the instrument air
-quality programmes are least likely to fund. That series is a stand-in, built from each city's own
-outermost monitors rather than a true rural station, so it was rebuilt using a donor city the
-target never sees. An independent network recovers {{claim:donor.gain_reproduced_pct}} per cent of
-the gain, falling to {{claim:donor.reproduced_deep_tropical}} per cent in the group Kandy belongs
-to. What that establishes is that a background measurement carries real transferable information,
-not that a rural station would deliver this particular figure at Kandy. Two cautions apply to all
-of these figures: each is what a source is worth at one position in one order of adding them, and
-the cities are not independent, since {{claim:clust.largest_n}} share a national network.
-Resampling whole networks widens every interval by about half again and changes no conclusion.
+Because Kandy cannot evaluate its own field, the construction was tested on monitored valley and
+basin cities by withholding their observations and supplying only the data Kandy has. Across ten
+cities the seasonal cycle transfers well (correlations {{claim:scorecard.seasonal_r_lo}} to
+{{claim:scorecard.seasonal_r_hi}}), the daily cycle transfers unevenly
+({{claim:scorecard.diurnal_r_lo}} to {{claim:scorecard.diurnal_r_hi}}), and the median absolute
+level error is {{claim:scorecard.level_bias_median}} per cent. What transfers is the procedure;
+applying it to Kandy is an argument from resemblance, since Kandy is by construction the kind of
+city the test set excludes.
 
-**2. The right advice flips between climate zones.** In the deep tropics, two local sensors cut
-error by {{claim:maiac.deep_tropical_first2}} per cent against
-{{claim:maiac.deep_tropical_background}} per cent for the background series, reversing the order
-found by pooling all cities together. Comparing the two within each city and resampling over
-cities, the advantage is {{claim:inv.maiac.median}} points
-[{{claim:inv.maiac.lo}}, {{claim:inv.maiac.hi}}], favouring sensors in
-{{claim:inv.maiac.frac_cities}} per cent of that group. A programme following the pooled advice
-would buy the wrong instrument first. The defensible version is narrow: within this panel, local
-measurements beat the background stand-in in the tropical group, and how much of that reflects the
-atmosphere rather than the instruments used there is unresolved. The group holds thirteen cities,
-instrument type is closely tied to latitude, and this comparison was not pre-registered.
+## The reconstructed field, and what the checks at Kandy show
 
-**3. A satellite product trained on monitors hides what monitors are worth, and not where anyone
-would look for it.** Swapping a published product that had itself been fitted to ground monitors
-for a raw satellite retrieval barely moved the satellite's own contribution,
-{{claim:c1.step_fused_ghap}} against {{claim:c1.step_raw_aod}} per cent, but roughly doubled the
-step above it. **The contamination does not inflate the step it sits in. It deflates the step
-above.** A pre-registered test looking for extra skill inside the contaminated stream found none
-and would have called the problem harmless, because the signal had moved rather than grown. On the
-contaminated product the reversal in result 2 measures {{claim:inv.ghap.median}} points with an
-interval spanning zero, so the contamination had not shifted that finding, it had erased it.
+The annual basin mean ranges from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms
+per cubic metre over 2019 to 2023, above the World Health Organization annual guideline of 5 in
+every year. In {{claim:exposure.year}} it is {{claim:kandy.season_djf}} in December to February and
+{{claim:kandy.season_jja}} in June to August, the maximum falling in the north-east monsoon.
+Concentrations peak in the morning ({{claim:kandy.phase_morning}}) and evening
+({{claim:kandy.phase_evening}}) about a midday minimum ({{claim:kandy.phase_midday}}), with night
+values {{claim:kandy.night_over_midday}} times the midday level. In a regional episode in December
+2022 the basin mean averaged {{claim:kandy.episode_mean}} and peaked at
+{{claim:kandy.episode_peak}}, the whole domain rising together. Under the stated assumptions the
+decomposition assigns {{claim:partition.f}} of the concentration to the local increment, fixed by a
+physical constraint rather than assumed and ranging from {{claim:partition.f_lo}} to
+{{claim:partition.f_hi}} across years; this is a constrained split, not a source apportionment.
+Weighting by residential population raises exposure {{claim:exposure.uplift_pct}} per cent above the
+area mean. The timing is supported by an independent national record, which differs from the field
+by {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two separate years. The
+absolute level remains open: three low-cost records sit below the field, each carrying a downward
+calibration correction, and the discrepancy is reported rather than resolved. The uncertainty
+intervals are of the right width but wrongly centred, covering {{claim:kandy.cov90}} per cent of
+hours at the two sensors and {{claim:kandy.cov90_recentred}} per cent once each sensor's own offset
+is removed, because the field is an areal mean and a sensor is a point.
 
-## Where the model stops, and why that is itself a result
+## What each additional observation is worth
 
-Two survey sites three hundred metres apart fall inside a single model cell. Measured, they differ
-by a factor of {{claim:spatial.paired_obs_ratio}}. The model says they are identical, because it is
-being asked about the same pixel twice. The obvious explanation is a grid that is too coarse, and a
-pre-registered test **refuted** it: making the cells ten times finer moves the ratio by
-{{claim:s1.paired_delta_on_refinement}}. The variation lives inside cells rather than between them.
-Across the whole map, the spread within a typical cell,
-{{claim:s2.within_pixel_p90p10}}, is larger than the spread between cells,
-{{claim:s2.between_pixel_p90p10}}. No kilometre-scale product can say which part of a cell is
-worst, however it is built. What it can honestly report is the range a cell spans, which is the
-larger quantity and one that no gridded product currently publishes.
+Because every component declares its inputs, an observation can be withheld and the loss measured.
+Across {{claim:frame.cities}} monitored cities, each source was added in turn and daily error scored
+at withheld monitors. Pooled, a regional background series is worth most, at
+{{claim:step.bud2_bud3}} per cent; in the deep-tropical band to which Kandy belongs the ordering
+inverts, local sensors reducing daily error by {{claim:maiac.deep_tropical_first2}} per cent against
+{{claim:maiac.deep_tropical_background}} per cent for the background. Scored instead on detection of
+days above the World Health Organization daily guideline it inverts again, to
+{{claim:loss.inv.exceedance}} points [{{claim:loss.inv.exceedance.lo}},
+{{claim:loss.inv.exceedance.hi}}], favouring the background. The recommendation for Kandy therefore
+depends on what the city wants the field for, and the measurement that would resolve the most is a
+reference-grade instrument, which would fix the absolute level and anchor every low-cost sensor
+deployed thereafter.
 
-That limit was then tested rather than asserted. A learned spatial pattern was run with the
-benchmark, the detection limit and the pass mark all fixed before the model was written: benchmark {{claim:phase1.best_rho}}, smallest effect the
-experiment could detect {{claim:phase1.min_detectable}}, pass mark {{claim:phase2.bar}}. It reached
-{{claim:phase2.rho_learned}}. This is the sixth negative result on the question in this project and
-the first where the detection limit was fixed beforehand, so it bounds the answer instead of merely
-reporting an absence. The previous five could only have detected effects of
-{{claim:null.min_detectable_lo}} to {{claim:null.min_detectable_hi}}, which is why they said
-nothing. {{claim:tour.families}} further model families were then run on the same data, among them
-conventional land-use regression, a Gaussian process and a mixed model, and none beats the
-benchmark by more than the detection limit. Kriging and geographically weighted regression need
-measurements at the target city, and score below it even when handed that city's own stations. The
-limit belongs to the available information, not to one family of models.
+## Limitations
 
-## Demonstration
+The field is not supported below the kilometre scale. Two Kandy sites three hundred metres apart
+differ in measured PM10 by a factor of {{claim:spatial.paired_obs_ratio}} while falling within one
+model cell, and on cities with dense networks the spread inside a single cell
+({{claim:s2.within_pixel_p90p10}}) exceeds the spread between cells
+({{claim:s2.between_pixel_p90p10}}). A further {{claim:tour.families}} model families built on free
+covariates exceed a single land-cover layer ({{claim:phase1.best_rho}}) by no more than the
+detection limit of {{claim:phase1.min_detectable}}. The limitation is one of available information,
+not of the model class chosen. The study therefore claims neither a validated neighbourhood-scale
+map, nor a representation of atmospheric chemistry, nor an independently validated absolute level
+at Kandy: what is validated is a procedure, tested on monitored cities and applied to Kandy by
+analogy.
 
-Kandy, Sri Lanka: a valley city of 400,000 with two low-cost sensors and no working reference
-monitor. Under the stated assumptions the model assigns **{{claim:partition.f}}** of concentration
-to the local increment, fixed by a physical constraint rather than assumed and against an earlier,
-now retired figure of about a quarter. It moves between {{claim:field.f_form_calendar}} and
-{{claim:field.f_form_roll48}} depending on how the background window is defined. This is a split
-imposed by the model, not a measurement of sources: the
-increment is the part that varies across the map, which is not the same as material emitted inside
-Kandy, and the model has no chemistry that could tell them apart. Against two published records
-that played no part in building it, the field agrees to {{claim:nbro.diff_pct_2021}} and
-{{claim:nbro.diff_pct_2022}} per cent in two separate years. Those checks cover the city-wide level
-only: the model's timing is calibrated against Kandy's own sensors, so they test the modelled
-variation on top of an already anchored average, not the whole field.
-**The neighbourhood-scale map is not validated, and this thesis does not claim that it is**, for
-the reason the previous section gives.
+## Ongoing work and verification
 
-## How the work is done, and where it stands
-
-Every number is regenerated from its source file when the document is built, and the build fails if
-the prose and the data disagree. Writing the thesis moved eleven recorded quantities, four of which
-made the argument weaker and were kept anyway. Eight pre-registrations, fourteen of thirty
-predictions refuted, and one chapter on eight approaches that did not work.
+Three strands continue. A pre-registered experiment measuring how much within-city spatial skill
+each additional sensor buys, starting from none, is running; it has returned no verdict, and no
+result from it is quoted here. Four institutional data requests are in progress, of which two have
+been answered, one granting access in principle subject to a formal agreement. A measurement
+campaign for Kandy has been designed, costed and pre-registered, but remains under development and
+is not presented here as a recommendation. Every value in the report is regenerated from source at
+build time by a gate that refuses to build when prose and data disagree, and predictions were
+pre-registered before each analysis: {{claim:meta.refuted}} registered predictions were refuted.
 
 **Contact:** 11daminda08@gmail.com  ·  s20005@sci.pdn.ac.lk

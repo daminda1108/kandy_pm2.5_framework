@@ -38,9 +38,15 @@ sys.path.insert(0, str(REPO / "scripts"))
 from modular_validation_all import FEATS, build_frame, ladder      # noqa: E402
 from revalidate_ladder import coastal_flags                        # noqa: E402
 from src.modular.budgets import require_stream_coverage            # noqa: E402
+from src.modular.city_meta import attach_meta                      # noqa: E402
+from src.modular.runlog import DropLog                             # noqa: E402
+from src.modular.schemas import (AOD_RANGE, GEO_CENSORED, require_span_covers,    # noqa: E402
+                                 validate_daily_stream, validate_ladder_frame,
+                                 validate_static_stream)
 
 MOD = REPO / "data" / "processed" / "modular"
 OUT = MOD / "ladder_maiac.csv"
+VERIFY = MOD / "verify_2026-09-25"
 SEED = 20260823          # identical to the GHAP ladder, so the two are comparable
 
 
@@ -60,9 +66,11 @@ def fit_rung(pool, feats, label):
     return d
 
 
-def main() -> None:
-    print("=== the ladder on raw MAIAC AOD (re-deriving F.92 after F.95) ===\n")
+def build_maiac_frame():
+    """The merged frame the MAIAC ladder is fitted on, validated before anything is fitted.
 
+    Returns (st, p, met, geo_f). Split out of main() so the frame can be checked without
+    running the fit (scripts/tests/test_schemas.py)."""
     st, pool = build_frame(pd.read_csv(MOD / "validation_sample.csv"),
                            pd.read_csv(MOD / "openaq_manifest.csv"))
     doy = pool.date.dt.dayofyear
@@ -73,20 +81,31 @@ def main() -> None:
     pool["city"] = pool.city.astype(str)
 
     geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
+    geo = validate_static_stream(geo, name="bud0_static_geo", allow_null=GEO_CENSORED)
     geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
     p = pool.merge(geo, on="city", how="left")
 
     aod = pd.read_csv(MOD / "bud0_maiac_aod.csv")
     aod["city"] = aod.city.astype(str); aod["date"] = pd.to_datetime(aod.date)
+    aod = validate_daily_stream(aod, name="bud0_maiac_aod", column="aod", value_range=AOD_RANGE)
     p["date"] = pd.to_datetime(p.date)
-    p = p.merge(aod[["city", "date", "aod"]], on=["city", "date"], how="left")
     p = p[p.city.isin(set(geo.city))].copy()
+    require_span_covers(aod, p, name="bud0_maiac_aod")          # gotcha #85, before the merge
+    p = p.merge(aod[["city", "date", "aod"]], on=["city", "date"], how="left")
 
     # gotcha #85 -- assert the stream's VALUES before fitting anything on it.
     require_stream_coverage(p, "aod", unit="city", min_unit_fraction=0.10, min_units_covered=0.90)
+    p = validate_ladder_frame(p, met=met, static=geo_f, daily={"aod": AOD_RANGE},
+                              allow_null=GEO_CENSORED)
     cov = p.groupby("city").aod.apply(lambda s: s.notna().mean())
     print(f"    frame {len(p):,} city-days, {p.city.nunique()} cities | "
           f"AOD day coverage median {cov.median():.1%}\n")
+    return st, p, met, geo_f
+
+
+def main() -> None:
+    print("=== the ladder on raw MAIAC AOD (re-deriving F.92 after F.95) ===\n")
+    st, p, met, geo_f = build_maiac_frame()
 
     print("[fitting the decomposed bottom rung, leave-one-city-out]")
     rungs = {
@@ -97,6 +116,7 @@ def main() -> None:
 
     print("\n[scoring the full ladder from each bottom rung]")
     rows = []
+    drops = DropLog("ladder_maiac")
     for name, b0 in rungs.items():
         for city, s in st.items():
             city = str(city)
@@ -104,16 +124,18 @@ def main() -> None:
                 continue
             try:
                 r = ladder(city, s, b0[b0.city == city], SEED)
-            except Exception:
-                r = None
+            except Exception as e:
+                drops.error(f"{name}:{city}", e)
+                continue
             if r:
                 r["bottom"] = name
                 rows.append(r)
+            else:
+                drops.skip(f"{name}:{city}", "ladder() returned None")
+    drops.report(VERIFY / "droplog_ladder_maiac.json")
     L = pd.DataFrame(rows)
-    man = pd.read_csv(MOD / "openaq_manifest.csv"); man["city"] = man.cluster.astype(str)
-    L = L.merge(coastal_flags(), on="city", how="left").merge(
-        man[["city", "frac_reference", "band"]], on="city", how="left", suffixes=("", "_m"))
-    L["cls"] = np.where(L.frac_reference >= 0.5, "reference", "LCS")
+    # 2026-09-25: band, class and cluster from the shared metadata (A1).
+    L = attach_meta(L.merge(coastal_flags(), on="city", how="left"))
     L.to_csv(OUT, index=False)
     print(f"    {len(L)} rows -> {OUT.name}")
 
@@ -125,15 +147,15 @@ def main() -> None:
         f = lambda a, b: float((100 * (a - b) / a).median())
         return dict(source=lab, n=len(x),
                     first2=round(f(x.rmse_Bud0, x.rmse_Bud1), 1),
-                    next6=round(f(x.rmse_Bud1, x.rmse_Bud2), 1),
+                    stations3to6=round(f(x.rmse_Bud1, x.rmse_Bud2), 1),
                     background=round(f(x.rmse_Bud2, x.rmse_Bud3), 1))
 
     print("\n=== POOLED ladder, GHAP vs MAIAC ===")
-    print(f"  {'stream':<16}{'n':>4}{'+2 stns':>10}{'+6 more':>10}{'+background':>13}")
+    print(f"  {'stream':<16}{'n':>4}{'+stns 1-2':>10}{'+stns 3-6':>10}{'+background':>13}")
     out_rows = []
     for d, lab in [(g, "GHAP (fused)"), (L, "MAIAC (raw)")]:
         r = steps(d, lab); out_rows.append(r)
-        print(f"  {lab:<16}{r['n']:>4}{r['first2']:>9.1f}%{r['next6']:>9.1f}%"
+        print(f"  {lab:<16}{r['n']:>4}{r['first2']:>9.1f}%{r['stations3to6']:>9.1f}%"
               f"{r['background']:>12.1f}%")
 
     print("\n=== F.92 RE-DERIVED: the deep-tropical band (Kandy's own) ===")
@@ -142,11 +164,22 @@ def main() -> None:
         x = d[(d.bottom == "Bud0c") & (d.band == "deep_tropical")]
         f = lambda a, b: float((100 * (a - b) / a).median())
         s1, s3 = f(x.rmse_Bud0, x.rmse_Bud1), f(x.rmse_Bud2, x.rmse_Bud3)
-        verdict = "local stations WIN" if s1 > s3 else "background wins"
-        print(f"  {lab:<16}{len(x):>4}{s1:>9.1f}%{s3:>12.1f}%   {verdict}")
+        # The verdict is PAIRED within city (gotcha #91): median of (background gain minus
+        # first-two gain), city-bootstrap 95 % interval. The two medians are descriptive only.
+        dd = (100 * (x.rmse_Bud2 - x.rmse_Bud3) / x.rmse_Bud2
+              - 100 * (x.rmse_Bud0 - x.rmse_Bud1) / x.rmse_Bud0).dropna().to_numpy()
+        rng = np.random.default_rng(SEED)
+        bs = [np.median(rng.choice(dd, len(dd))) for _ in range(4000)]
+        lo, hi = np.percentile(bs, [2.5, 97.5])
+        med = float(np.median(dd))
+        verdict = ("local stations win" if hi < 0 else "background wins" if lo > 0
+                   else "undetectable")
+        print(f"  {lab:<16}{len(x):>4}{s1:>9.1f}%{s3:>12.1f}%   paired bg-first2 "
+              f"{med:+.1f} [{lo:+.1f}, {hi:+.1f}] -> {verdict}")
         out_rows.append(dict(source=lab + " deep_tropical", n=len(x),
                              first2=round(s1, 1), background=round(s3, 1),
-                             next6=np.nan))
+                             stations3to6=np.nan, paired_bg_minus_first2=round(med, 2),
+                             paired_lo=round(lo, 2), paired_hi=round(hi, 2)))
 
     pd.DataFrame(out_rows).to_csv(MOD / "ladder_maiac_comparison.csv", index=False)
     print(f"\nwrote {OUT.name} and ladder_maiac_comparison.csv")

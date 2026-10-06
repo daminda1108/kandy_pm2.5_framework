@@ -1,0 +1,20 @@
+{
+ "name": "curve_fullrecord",
+ "commit_at_freeze": "1e5f7124412bc12a3c9873f24ea6ee29f0fc3c7a",
+ "code": {
+  "scripts/openaq_archive.py": "bd03db7f13921170d2cd5990a3522db571d979f0e6dad33d4cf2ac70f6b6f868",
+  "scripts/spatial_curve_fullrecord.py": "8e3128b3bc2a2ce59f49192688befed974be0aa96e6a7d1d80f377fe97ce344e",
+  "scripts/night_guard.py": "22e6ef809612f2e68ce9a205f1a500751026477b687f0fe966f605cb54441cb9",
+  "scripts/night_window.sh": "1e4661e9ad4903f837a251d76783d4037e15dd239c746d9f9c9420271722a1c3",
+  "scripts/spatial_curve_ingest.py": "161ce1763d60bc156fa86a7c139085a6140ad709cdf9a3cb575c7bb8c0dfdee7",
+  "scripts/spatial_curve_freeze.py": "e538c6f84d161828d17dc80d3e9fa2a9a1f81045eda15d8560d8b28df3f63dad",
+  "scripts/spatial_curve_predictors.py": "cfc9db36d919ead90e35d011b730be52959966c58563553ab61b67f90df127ff",
+  "scripts/spatial_curve_terrain.py": "4240460d15a40a707049a6dc82245ac6cb57b6e5046364d228f7d3e4f9823e1c",
+  "scripts/spatial_curve_greybox.py": "a9eeb200148f99ff53889380c924239e3efd138c4ac823f7aa5300a882a62bdf",
+  "scripts/spatial_curve_analysis.py": "8a15efe434698473e7f26103e941c08886636f2d22aa9c5fcc341ff556a95ddf",
+  "scripts/build_lur_predictors.py": "0cc08f06acfdf0edfaf69f4cc0af7396e7f4db2adef2f81ee101dbe4826d6752"
+ },
+ "data": {},
+ "data_files": 0,
+ "data_combined_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

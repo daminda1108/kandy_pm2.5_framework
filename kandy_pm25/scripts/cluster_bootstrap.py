@@ -71,16 +71,19 @@ def attach_clusters(L: pd.DataFrame) -> pd.DataFrame:
     NOTHING and returns a frame of NaN countries rather than an error. That silent-empty-merge
     failure is the same family as gotcha #85, and it is why the match count is asserted below.
     """
-    s = pd.read_csv(MOD / "validation_sample.csv")
-    s["slug"] = s.slug.astype(str)
+    # 2026-09-25: from the shared metadata (src/modular/city_meta.py), which defines the SAME
+    # clusters -- CNEMC is one cluster (one operator, one fleet, one pipeline) and OpenAQ cities
+    # cluster by country -- and refuses a city with no metadata instead of letting a merge
+    # return NaN. The ladder outputs now carry src/band/cls themselves, which is what broke the
+    # old merge here (src_x / src_y).
+    sys.path.insert(0, str(REPO))
+    from src.modular.city_meta import city_meta
     L = L.copy()
     L["city"] = L.city.astype(str)
-    j = L.merge(s[["slug", "country", "src"]].drop_duplicates("slug"),
-                left_on="city", right_on="slug", how="left")
-    miss = int(j.country.isna().sum())
-    assert miss == 0, f"{miss} of {len(j)} cities carry no country; the merge key is wrong"
-    # CNEMC is ONE cluster regardless of the country column: one operator, one fleet, one
-    # pipeline. OpenAQ cities cluster by country, the coarsest grouping the metadata supports.
+    m = city_meta(L.city.unique())[["city", "country", "src", "cluster"]]
+    j = L.drop(columns=[c for c in ("country", "src", "cluster") if c in L.columns]).merge(
+        m, on="city", how="left")
+    assert j.country.notna().all() and j.cluster.notna().all()
     j["cluster_id"] = np.where(j.src.eq("CNEMC"), "CNEMC", j.src + "/" + j.country)
     return j
 

@@ -1,0 +1,17 @@
+outcome,moderator,cities,rho,lo,hi,p_perm,censored,countries,note
+reach_E3_km,relief_m,18,-0.252,-0.554,0.658,0.3028,0,7,EXPLORATORY
+reach_E3_km,site_range_m,18,0.053,-0.524,0.74,0.8342,0,7,EXPLORATORY
+reach_E3_km,slope_deg,18,-0.326,-0.591,0.558,0.1925,0,7,EXPLORATORY
+reach_E3_km,enclosure,18,-0.135,-0.505,0.617,0.595,0,7,EXPLORATORY
+cross_E3_k,relief_m,18,0.24,-0.517,0.806,0.3331,9,7,EXPLORATORY
+cross_E3_k,site_range_m,18,0.325,-0.404,0.754,0.1886,9,7,EXPLORATORY
+cross_E3_k,slope_deg,18,-0.044,-0.598,0.593,0.8591,9,7,EXPLORATORY
+cross_E3_k,enclosure,18,-0.065,-0.564,0.68,0.7975,9,7,EXPLORATORY
+rho_E3_k12,relief_m,16,-0.088,-0.718,0.494,0.7515,0,7,EXPLORATORY
+rho_E3_k12,site_range_m,16,-0.218,-0.771,0.465,0.4185,0,7,EXPLORATORY
+rho_E3_k12,slope_deg,16,0.132,-0.615,0.599,0.62,0,7,EXPLORATORY
+rho_E3_k12,enclosure,16,0.114,-0.72,0.563,0.6689,0,7,EXPLORATORY
+adv_E3_E1_k12,relief_m,16,-0.176,-0.753,0.684,0.51,0,7,EXPLORATORY
+adv_E3_E1_k12,site_range_m,16,-0.438,-0.788,0.292,0.0884,0,7,EXPLORATORY
+adv_E3_E1_k12,slope_deg,16,0.153,-0.69,0.724,0.5707,0,7,EXPLORATORY
+adv_E3_E1_k12,enclosure,16,0.198,-0.751,0.596,0.455,0,7,EXPLORATORY

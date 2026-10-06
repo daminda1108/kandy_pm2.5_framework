@@ -107,7 +107,9 @@ def fig_confounds():
     ax.set_xlim(0, 114); ax.set_xticks([0, 25, 50, 75, 100])
     ax.set_xlabel("share of each band's cities, by instrument class", fontsize=7.5)
     ax.grid(axis="x", color=GRID, lw=0.5, zorder=0)
-    ax.legend(fontsize=6.4, frameon=False, loc="lower right", handlelength=1.1)
+    # Below the axis, not inside it: inside, it covered the temperate row's count.
+    ax.legend(fontsize=6.4, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.22),
+              ncol=2, handlelength=1.1)
     ax.set_title("instrument class is confounded with latitude,\nand cannot be sampled away",
                  fontsize=7.5, loc="left", pad=6)
     save(fig, "F4_confounds")

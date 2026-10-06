@@ -78,6 +78,19 @@ RULES: list[tuple[str, str, str, str]] = [
     (WARN, "long-sentence", r"(?<=[.!?])\s+[^.!?]{320,}[.!?]",
      "sentence over 320 characters. Consider splitting."),
 
+    # A typed section number is correct in exactly one of the two theses built from the pool,
+    # and wrong in the other. assemble.py renders {{ref:label}} against whichever is building.
+    (ERROR, "typed-ref",
+     # [ \t] and not \s: "...numbering by chapter" at a line end followed by a numbered list
+     # item "4." on the next line is not a reference.
+     r"\b(?:Chapter|Section|Appendix)[ \t ]+(?:\d+(?:\.\d+)*|[A-H])\b",
+     "typed section reference. Use {{ref:label}}; its number differs between the theses."),
+
+    # Same reason: a fragment that is a chapter in one thesis is a section or an appendix in
+    # the other. {{this:label}} renders the right noun.
+    (ERROR, "typed-this", r"\b[Tt]his[ \t]+(?:chapter|appendix)\b",
+     "self-reference by level. Use {{this:label}} or {{This:label}}; the level differs."),
+
     (ERROR, "untokenised-number",
      r"(?<![\w.$#\-])(?:0\.\d{2,}|\d{1,3}\.\d{1,2}\s*(?:%|per cent))(?![\w])",
      "a number that looks computed but is not a {{claim:}} token."),
@@ -91,13 +104,30 @@ EXEMPT = [
     (re.compile(r"(?m)^\s*>.*$"), "block quote"),
     (re.compile(r"(?m)^<!--.*?-->", re.S), "comment"),
     (re.compile(r"\[@[^\]]+\]"), "citation"),
+    # The summary carries a YAML metadata block and display mathematics; the chapters carry
+    # neither. Both are markup, not prose, and linting them produces only false positives: a
+    # LaTeX length such as \linespread{0.95} reads as an untokenised number, and an equation
+    # has no sentence terminator, so the sentence-length rule joins the lead-in, the equation
+    # and the sentence after it into one apparent 400-character sentence.
+    (re.compile(r"\A---\r?\n.*?\r?\n---\r?\n", re.S), "yaml front matter"),
+    (re.compile(r"\$\$.*?\$\$", re.S), "display math"),
+    (re.compile(r"(?<!\$)\$[^$\n]+\$(?!\$)"), "inline math"),
 ]
 
 
 def blank_exempt(text: str) -> str:
-    """Replace exempt spans with spaces so offsets and line numbers are preserved."""
+    """Replace exempt spans with spaces so offsets and line numbers are preserved.
+
+    Newlines inside a span are kept. Blanking them too preserves the character offsets but
+    destroys the line count, so every violation after a multi-line exemption is reported
+    against a line some distance earlier and the fragment printed beside it belongs to a
+    different sentence.
+    """
+    def blank(m: re.Match) -> str:
+        return "".join("\n" if ch == "\n" else " " for ch in m.group())
+
     for pat, _ in EXEMPT:
-        text = pat.sub(lambda m: " " * len(m.group()), text)
+        text = pat.sub(blank, text)
     return text
 
 
@@ -173,9 +203,12 @@ def lint(path: Path) -> list[tuple[str, int, str, str, str]]:
 
 
 def main(argv: list[str]) -> int:
-    paths = [Path(a) for a in argv[1:]] or sorted(CHAPTERS.glob("*.md"))
+    # Default: every fragment in the pool and every thesis composition file. build_docx.py
+    # passes exactly the files one thesis includes.
+    paths = [Path(a) for a in argv[1:]] or (sorted((ROOT / "pool").rglob("*.md"))
+                                             + sorted((ROOT / "theses").rglob("*.md")))
     if not paths:
-        print(f"no chapters yet in {CHAPTERS.relative_to(ROOT)}")
+        print("nothing to lint")
         return 0
 
     total_err = total_warn = 0

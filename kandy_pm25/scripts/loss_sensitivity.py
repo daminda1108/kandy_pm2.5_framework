@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -59,8 +60,11 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 warnings.filterwarnings("ignore")
 
-from modular_validation_all import FEATS, build_frame, _affine  # noqa: E402
+from modular_validation_all import _affine                        # noqa: E402
+from ladder_frames import build_bud0_frame                       # noqa: E402
 from src.modular import shrinkage as sh                         # noqa: E402
+from src.modular.city_meta import attach_meta                   # noqa: E402
+from src.modular.runlog import DropLog                          # noqa: E402
 from ladder_order_and_bootstrap import fit_bud0c                # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
@@ -82,7 +86,7 @@ def losses(pred: np.ndarray, obs: np.ndarray) -> dict:
     out["tail"] = float(np.sqrt(np.mean(e[m] ** 2))) if m.sum() >= 5 else np.nan
     # balanced error at the guideline; undefined if the city never crosses it or always does
     yt, yp = obs >= WHO_24H, pred >= WHO_24H
-    if yt.all() or (~yt).any() is False or yt.sum() < 5 or (~yt).sum() < 5:
+    if yt.sum() < 5 or (~yt).sum() < 5:        # needs both classes to be defined
         out["exceedance"] = np.nan
     else:
         tpr = float((yp & yt).sum() / yt.sum())
@@ -154,50 +158,27 @@ def main() -> None:
     rng = np.random.default_rng(SEED)
 
     print("=== does the ladder's ordering survive a change of loss function? ===\n")
-    sample = pd.read_csv(MOD / "validation_sample.csv")
-    manifest = pd.read_csv(MOD / "openaq_manifest.csv") if (MOD / "openaq_manifest.csv").exists() \
-        else None
-    st, pool = build_frame(sample, manifest)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    pool["city"] = pool.city.astype(str)
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left")
-    if a.stream == "maiac":
-        # the daily raw retrieval, exactly as ladder_maiac.py admits it
-        aod = pd.read_csv(MOD / "bud0_maiac_aod.csv")
-        aod["city"] = aod.city.astype(str)
-        aod["date"] = pd.to_datetime(aod.date)
-        p["date"] = pd.to_datetime(p.date)
-        p = p.merge(aod[["city", "date", "aod"]], on=["city", "date"], how="left")
-        sat_feats = ["aod"]
-    else:
-        p = p.merge(sat, on="city", how="left")
-        sat_feats = ["sat_level"]
+    st, p, met, geo_f, sat_feats = build_bud0_frame(a.stream)      # the one shared builder
     b0 = fit_bud0c(p, met + geo_f + sat_feats)
     print(f"[1] Bud0c fitted for {b0.city.nunique()} cities on the {a.stream.upper()} stream")
 
     rows = []
+    drops = DropLog(f"loss_{a.stream}")
     for city, s in st.items():
         city = str(city)
         if city not in set(b0.city):
             continue
         try:
             r = ladder_multiloss(city, s, b0[b0.city == city], SEED)
-        except Exception:
+        except Exception as e:
+            drops.error(city, e)
             continue
         if r:
             rows.append(r)
-    d = pd.DataFrame(rows)
-    band = pd.read_csv(MOD / "ladder_revalidated.csv")
-    band = band[band.bottom == "Bud0c"][["city", "band"]].drop_duplicates()
-    band["city"] = band.city.astype(str)
-    d = d.merge(band, on="city", how="left")
+        else:
+            drops.skip(city, "ladder_multiloss() returned None (no outer ring or too few days)")
+    drops.report(MOD / "verify_2026-09-25" / f"droplog_loss_{a.stream}.json")
+    d = attach_meta(pd.DataFrame(rows))        # band/class from the shared metadata, 2026-09-25
     tag = "" if a.stream == "maiac" else "_ghap"
     out_csv = OUT.with_name(OUT.stem + tag + OUT.suffix)
     d.to_csv(out_csv, index=False)
@@ -244,25 +225,38 @@ def main() -> None:
         if not np.isfinite(m):
             continue
         inv[L] = dict(median=round(m, 2), lo=round(l95, 2), hi=round(h95, 2), n=n,
-                      favours_local=bool(m > 0), excludes_zero=bool(l95 > 0))
+                      favours_local=bool(m > 0), excludes_zero=bool(l95 > 0 or h95 < 0))
         print(f"    {L:<12} n={n:>2}   local minus background {m:>+8.2f} pp   "
               f"[{l95:>+7.2f},{h95:>+7.2f}]   {'favours local' if m > 0 else 'favours background'}")
 
     pd.DataFrame(table).to_csv(MOD / f"loss_sensitivity_steps{tag}.csv", index=False)
     print("\n=== the answer ===")
-    bg_biggest = all(out[f"a background series|{L}"]["median"] is not None
-                     and out[f"a background series|{L}"]["median"]
-                     >= out[f"first two sensors|{L}"]["median"] for L in ("rmse", "mae"))
+    # PAIRED within city (gotcha #91). Until 2026-09-25 this compared the median of one step
+    # with the median of another, which is a difference of medians.
+    paired_pool = {}
+    for L in LOSSES:
+        g1 = 100.0 * (d[f"Bud0_{L}"] - d[f"Bud1_{L}"]) / d[f"Bud0_{L}"]
+        g3 = 100.0 * (d[f"Bud2_{L}"] - d[f"Bud3_{L}"]) / d[f"Bud2_{L}"]
+        m, l95, h95, n = boot((g3 - g1).to_numpy())
+        if np.isfinite(m):
+            paired_pool[L] = dict(median=round(m, 2), lo=round(l95, 2), hi=round(h95, 2), n=n,
+                                  excludes_zero=bool(l95 > 0 or h95 < 0))
+            print(f"    pooled, background minus first two, {L:<11} {m:>+7.2f} "
+                  f"[{l95:>+7.2f},{h95:>+7.2f}]  n={n}")
+    bg_biggest = all(L in paired_pool and paired_pool[L]["lo"] > 0 for L in ("rmse", "mae"))
     red = {L: out[f"stations three to six|{L}"]["median"] for L in LOSSES}
     print(f"    Redundancy of stations three to six, by loss: "
           + ", ".join(f"{L} {v}" for L, v in red.items() if v is not None))
-    print(f"    Background largest under rmse and mae: {bg_biggest}")
+    print(f"    Background larger than the first two, paired, interval above zero, "
+          f"under both rmse and mae: {bg_biggest}")
 
     out_json = OUT_JSON.with_name(OUT_JSON.stem + tag + OUT_JSON.suffix)
-    with open(out_json, "w", encoding="utf-8") as fh:
-        json.dump(dict(cities=int(len(d)), boot=a.boot, seed=SEED, stream=a.stream,
-                       who_24h=WHO_24H, tail_quantile=TAIL_Q,
-                       steps=out, inversion=inv), fh, indent=2)
+    tmp = out_json.with_suffix(".json.tmp")               # gotcha #81
+    tmp.write_text(json.dumps(dict(cities=int(len(d)), boot=a.boot, seed=SEED, stream=a.stream,
+                                   who_24h=WHO_24H, tail_quantile=TAIL_Q, steps=out,
+                                   inversion=inv, paired_bg_minus_first2=paired_pool),
+                              indent=2), encoding="utf-8")
+    os.replace(tmp, out_json)
     print(f"\n-> {OUT.name}, loss_sensitivity_steps.csv, {OUT_JSON.name}")
 
 

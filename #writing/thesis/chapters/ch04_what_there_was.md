@@ -1,4 +1,4 @@
-# Chapter 4. What there was to work with
+# Chapter 4. The available data, and a deliberate constraint
 
 Chapter 3 established that Kandy has no continuous measurement record. This chapter sets out what
 it does have, what was obtained from elsewhere, and what was requested and never arrived. The
@@ -23,14 +23,15 @@ coverage without stating what each stream cannot do is a catalogue, not an argum
 
 ## 4.2 The data streams and their uses
 
-**Satellite aerosol retrieval** supplies a daily signal that correlates with column loading. It
-is the only stream that observes the atmosphere over Kandy directly at useful frequency. Its
+**Satellite aerosol retrieval** supplies a daily signal that correlates with column loading
+[@Lyapustin2018; @Levy2013]. It is the only stream that observes the atmosphere over Kandy
+directly at useful frequency. Its
 weaknesses are that it is absent under cloud, which in a monsoon climate is a substantial
 fraction of days, and that it carries no diurnal information whatever, because the satellite
 passes at a fixed local time.
 
-A satellite-derived annual concentration surface supplies the level. It is a fusion product
-and it is used here only as an annual anchor. Section 7.5 describes what happened when it was
+A satellite-derived annual concentration surface supplies the level [@Wei2023]. It is a fusion
+product and it is used here only as an annual anchor. Section 7.5 describes what happened when it was
 used as though it were an independent observation, which it is not.
 
 Reanalysis meteorology supplies wind, boundary-layer height, temperature and humidity at
@@ -47,12 +48,12 @@ cannot validate.
 
 Precipitation required a decision that is worth recording. The obvious choice, land-surface
 reanalysis precipitation, was tested against a representative gauge and rejected: it delivers
-approximately twice the gauge total at this site. Satellite precipitation radar lands within a
-few per cent of the same gauge and is used instead. Where it is absent the field reports nothing
+approximately twice the gauge total at this site. Satellite precipitation radar [@Huffman2020] lands
+within a few per cent of the same gauge and is used instead. Where it is absent the field reports nothing
 rather than falling back to the rejected product.
 
 Static geography supplies terrain, roads, land cover, vegetation, night lights and
-population. Individually each is a weak predictor. Collectively they are worth
+population [@Farr2007; @Elvidge2017; @Tatem2017]. Individually each is a weak predictor. Collectively they are worth
 {{claim:step.geography}} per cent on the ladder of Chapter 7, which is comparable to the first
 local instrument, and they are free everywhere on Earth. Chapter 9 reports that land cover
 measured over a coarse buffer is the strongest single spatial predictor in the entire set, which

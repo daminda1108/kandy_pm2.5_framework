@@ -1,0 +1,17 @@
+{
+ "name": "learners",
+ "commit_at_freeze": "9e1b10413ac732ebe9b05e32f4ecfb06aabfaf63",
+ "code": {
+  "scripts/ladder_v2_learners.py": "ff34d600a73e048ccd0c001c1b56169fca381b1c3af9db1aaf9a7c0bd6266d23",
+  "scripts/bud0_learners_kaggle.py": "6bf8d8381ccd376a50772c6215a3435eb9b4c14d921161f64646458475ee8447",
+  "scripts/make_learner_kernels.py": "7d5fd72a38b05030bf89bade4076ba4c95bfd64f523dbeb76a5adc01c9cccbc6",
+  "scripts/ladder_v2_rich.py": "b812a5112ecfeb3861ebd39235693b59607bed924d15ae2aa536bad2b6af3bb2",
+  "scripts/ladder_v2_confirm.py": "fa50e87049b4de3447fb85ada28c24077f5c820bced0c02b79cca2d700fbf3ba",
+  "scripts/ladder_v2.py": "c5dbdc467c57099e57f5c386beab8c1b5764d1bce5fe8776aecbe331261e65e8",
+  "scripts/ladder_frames.py": "fd1240621a7b61fb8bc2f83bc11ce8c17642d1e7e503c82d215931a4bb2b5fb2",
+  "scripts/freeze_manifest.py": "b684f08dc86eabfd3728db5cb49b04fd43994b77441f24f544fa61f30a849b3a"
+ },
+ "data": {},
+ "data_files": 0,
+ "data_combined_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

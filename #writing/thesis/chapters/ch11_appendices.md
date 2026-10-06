@@ -16,11 +16,9 @@ in which case the code changes with them.
 
 # Appendix B. Registered predictions and their outcomes
 
-Six pre-registrations were lodged before the corresponding analyses ran. Each stated its
-predictions and the condition under which each would be abandoned. The sixth registers a campaign
-that has not yet been deployed, so it has predictions and no outcomes.
-
-{{tbl:T7_5}}
+Every pre-registration lodged during this work, with its predictions and, where the analysis has
+run, its outcomes, is listed in {{tbl:T7_5}} in Section 10.4. It is not repeated here. The
+registrations whose analyses have not run have predictions and no outcomes.
 
 The registrations are held by a third-party service and are timestamped at creation rather than
 by the author. Their identifiers appear in the chapters that use them.

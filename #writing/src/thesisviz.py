@@ -104,11 +104,40 @@ def save(drawing, name: str, folder: Path = DIAGRAMS) -> Path:
 
 
 def save_fig(fig, name: str, folder: Path = FIGURES) -> Path:
+    # Print at the text-column width with lettering of at least 8 pt (2026-09-19). The same rule
+    # the analysis figures use: kandy_pm25/scripts/printfit.py.
+    import sys as _sys
+    _scripts = r"D:\ProjectCD\kandy_pm25\scripts"
+    if _scripts not in _sys.path:
+        _sys.path.insert(0, _scripts)
+    from printfit import fit_print
+    fit_print(fig)
     png = folder / f"{name}.png"
     fig.savefig(png, dpi=400)
     fig.savefig(folder / f"{name}.pdf")
     plt.close(fig)
     return png
+
+
+def natural_earth(res: str, category: str, name: str) -> Path:
+    """Path to a CACHED Natural Earth shapefile, or an error. Never a download.
+
+    cartopy's feature interface fetches a missing scale silently, which on a machine without
+    network access fails late and obscurely. Every map in the thesis goes through here, so a
+    missing layer stops the figure at the line that asked for it.
+    """
+    import cartopy
+    p = (Path(cartopy.config["data_dir"]) / "shapefiles" / "natural_earth" / category
+         / f"ne_{res}_{name}.shp")
+    if not p.exists():
+        raise FileNotFoundError(f"Natural Earth layer {p.name} is not cached; refusing to "
+                                f"download it. Expected at {p}")
+    return p
+
+
+def ne_geoms(res: str, category: str, name: str) -> list:
+    from cartopy.io import shapereader
+    return list(shapereader.Reader(str(natural_earth(res, category, name))).geometries())
 
 
 def gv_digraph(name: str, rankdir: str = "TB"):

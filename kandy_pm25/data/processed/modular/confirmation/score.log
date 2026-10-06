@@ -1,0 +1,15 @@
+    stream-complete filter (C7): dropping 1 city(s) ['3147'], 518 rows -- not in every admitted static stream
+    [maiac] frame 31,878 city-days, 47 cities, 68 Bud0c predictors
+union: 119 cities; scoring 72; dropped 4: [('oaq_BG_97', '7 stations < 10'), ('oaq_CZ_109', '183 driver-matched days < 200'), ('oaq_IT_115', '140 driver-matched days < 200'), ('oaq_IT_44', '143 driver-matched days < 200')]
+    Bud0c seed 0                 118 cities, 68 features
+    Bud0c seed 1                 118 cities, 68 features
+    Bud0c seed 2                 118 cities, 68 features
+    Bud0c seed 3                 118 cities, 68 features
+    Bud0c seed 4                 118 cities, 68 features
+  pooled.first2_rmse     n= 72   +8.53  cluster [+3.07, +25.12]
+  pooled.s36_rmse        n= 72   +0.22  cluster [+0.12, +0.50]
+  pooled.bg_rmse         n= 68  +41.10  cluster [+26.77, +62.84]
+  pooled.bgm2_rmse       n= 68  +24.58  cluster [+4.07, +47.80]
+  M1 |lat| slope +0.533 [-1.793, +1.493]
+-> D:\ProjectCD\kandy_pm25\data\processed\modular\ladder_v2\confirm_REGISTERED_summary.json
+exit 0

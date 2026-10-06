@@ -58,3 +58,7 @@ ipywidgets>=8.1
 
 # testing
 pytest>=8.0
+
+# workflow guards (2026-09-21)
+pandera>=0.33
+snakemake>=9.27

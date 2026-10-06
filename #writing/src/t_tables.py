@@ -72,43 +72,44 @@ def t3_1_literature():
              "particulate mass; no PM measurement"],
             ["Elangasinghe and Shanthini 2008 [@Elangasinghe2008]", "PM10, roadside",
              "25 sites, 3 h each, 2004 to 2006",
-             "110 to 4 ug/m3 over 300 m; R2 0.82 against traffic",
+             "110 at a garden entrance to about 4 ug/m3 300 m inside it; R2 0.82 against traffic "
+             "at 20 roadside sites",
              "ambient concentration; sites chosen for contrast, not representativeness"],
-            ["Premasiri 2010", "PM10, PM2.5", "5 fixed sites, 24 h",
-             "spread of about 3 times across the city",
-             "temporal behaviour; short campaign"],
-            ["Wickramasinghe 2011 [@Wickramasinghe2011]", "PM10, area representative",
-             "20 sites, 8 h",
-             "spread of about 4 times across sites",
-             "sub-daily variation; 8 h integration"],
+            # A row "Premasiri 2010, PM10 and PM2.5, 5 fixed sites" was removed 2026-09-19: the
+            # paper it named is a Colombo study (Fort and Colombo 7, around 2000), not Kandy.
+            ["Wickramasinghe 2011 [@Wickramasinghe2011]", "PM10 and bound PAHs",
+             "20 sites, 8 h each, 2008 to 2009",
+             "PM10 of 55 to 221 ug/m3, a spread of about 4 times across sites",
+             "sub-daily variation; daytime 8 h samples only"],
             ["Seneviratne 2017 [@Seneviratne2017]", "PM2.5 composition and sources",
              "Katugastota, positive matrix factorisation",
              "traffic 7.6 per cent, biomass burning 14.1 per cent of mass",
              "spatial distribution; a single site"],
-            ["Senarathna 2024 [@Senarathna2024]", "PM2.5, speciated",
-             "one site, one year",
-             "the only published speciated year for the city",
-             "spatial field; one location"],
+            ["Senarathna 2024 [@Senarathna2024]", "PM2.5, low-cost sensor",
+             "one site (NIFS), 2019",
+             "morning and evening peaks, afternoon minimum; weekly and monthly patterns",
+             "spatial field; one location and one low-cost instrument"],
             ["Priyankara 2021 [@Priyankara2021]", "respiratory admissions",
              "hospital records",
              "a measurable health signal in the district",
              "exposure; no concurrent PM field"],
-            ["Dhammapala 2022 [@Dhammapala2022]", "PM2.5, reference grade",
-             "BAM anchored record",
-             "an anchor for low-cost sensor calibration",
-             "the instrument is no longer operating"],
+            ["Dhammapala 2022 [@Dhammapala2022]", "PM2.5, low-cost sensors",
+             "island wide, including Akurana; anchored to the Colombo reference monitor",
+             "a reference-anchored check on low-cost records near Kandy",
+             "the reference monitor is in Colombo, not Kandy"],
             ["Nirmani 2025 [@Nirmani2025]", "PM2.5, daily",
              "NBRO record, 360 days per year, 2021 and 2022",
              "annual means of 19.6 and 22.7 ug/m3",
-             "meteorology was reanalysis, not station data"],
+             "meteorology was model output (Open-Meteo), not station observations"],
             ["Attanayake 2025 [@Attanayake2025]", "PM2.5, machine learning",
-             "island wide",
+             "24 low-cost sensors island wide, calibrated against reference monitors in Colombo and "
+             "at Torrington Park, Kandy",
              "a learned surface for Sri Lanka",
-             "trained where monitors are; Kandy is not one"],
+             "a national surface; the Torrington Park monitor is no longer operating"],
         ],
         note="No study in this record delivers a continuous field over the city. Each is a "
-             "point, a campaign, or a national surface trained elsewhere, which is the gap "
-             "Chapter 4 onwards addresses.")
+             "point, a campaign, or a national surface, which is the gap the rest of this "
+             "thesis addresses.")
 
 
 # ── Chapter 5: the attempts ───────────────────────────────────────────────────────────────
@@ -181,27 +182,87 @@ def t5_1_attempts():
 
 # ── Chapter 7: the registered record ──────────────────────────────────────────────────────
 
+REGISTRY = Path(__file__).resolve().parents[1] / "registrations.json"
+
+_WORDS = ("zero one two three four five six seven eight nine ten eleven twelve thirteen "
+          "fourteen fifteen sixteen seventeen eighteen nineteen twenty").split()
+_TENS = {20: "twenty", 30: "thirty", 40: "forty", 50: "fifty", 60: "sixty"}
+
+
+def _spell(n: int) -> str:
+    if n < len(_WORDS):
+        return _WORDS[n]
+    t, u = divmod(n, 10)
+    return _TENS[t * 10] + ("" if u == 0 else "-" + _WORDS[u])
+
+
 def t7_5_registrations():
-    """Every registered prediction and its outcome. Few undergraduate theses can print one."""
+    """Every registered prediction and its outcome, read from registrations.json.
+
+    The list used to be typed here, and it went stale twice: it stopped at six registrations
+    when there were eleven, and its note said fourteen refuted where its own rows gave eleven.
+    Every count now comes from the registry, and the note is composed from the same numbers, so
+    the table and its note cannot disagree with each other or with the record.
+    """
+    reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    if not reg.get("verified_against_osf"):
+        raise RuntimeError("registrations.json is not marked verified against OSF; "
+                           "refusing to print a registration table from an unchecked list")
+    recs = reg["registrations"]
+    run = [r for r in recs if r["refuted"] is not None]
+    pending = [r for r in recs if r["refuted"] is None]
+    for r in run:
+        if r["held"] + r["refuted"] != r["predictions"]:
+            raise ValueError(f"{r['osf']}: held + refuted != predictions")
+
+    rows = []
+    for r in recs:
+        label = f"{r.get('label', r['name'])} ({r['osf']})"
+        if r["refuted"] is not None:
+            rows.append([label, r["date"], str(r["predictions"]), str(r["held"]),
+                         str(r["refuted"])])
+            continue
+        conf = r.get("confirmatory")
+        if r["predictions"] == 0:
+            preds = "none; exploratory analysis only"
+        elif conf is not None:
+            preds = f"{r['predictions']} ({conf} confirmatory)"
+        else:
+            preds = str(r["predictions"])
+        state = r.get("pending_as", "not yet run")
+        rows.append([label, r["date"], preds, state, state])
+
+    n_pred = sum(r["predictions"] for r in run)
+    n_ref = sum(r["refuted"] for r in run)
+    zero = [r for r in run if r["refuted"] == 0]
+    tot = reg.get("_totals_over_analyses_that_have_run")
+    if tot and (tot["with_outcomes"], tot["predictions"], tot["refuted"]) != (
+            len(run), n_pred, n_ref):
+        raise ValueError("registrations.json: _totals block disagrees with its own rows")
+
+    campaign = [r for r in pending if r.get("kind") == "campaign"]
+    curve = [r for r in pending if r.get("kind") == "spatial_curve"]
+    if len(campaign) + len(curve) != len(pending):
+        raise ValueError("a pending registration has no 'kind'; the note cannot describe it")
+
+    note = (f"{_spell(len(recs)).capitalize()} registrations were lodged. In the "
+            f"{_spell(len(run))} whose analyses have run, {_spell(n_ref)} of "
+            f"{_spell(n_pred)} predictions were refuted, including several headline ones. "
+            f"{_spell(len(zero)).capitalize()} refuted nothing because what they predicted "
+            f"was a null, and the null held. A programme that never refuted anything would "
+            f"be recording hopes rather than testing predictions.")
+    if campaign:
+        note += (" The Kandy measurement design is still under development and is not "
+                 "reported in this thesis.")
+    if curve:
+        note += (f" The spatial learning curve and its {_spell(len(curve) - 1)} amendments "
+                 "were registered before any real-data scoring; that analysis is under way "
+                 "and nothing from it has been scored.")
     write(
         "T7_5_registrations",
         "Registered predictions, and their outcomes where the analysis has run",
         ["registration", "date", "predictions", "held", "refuted"],
-        [
-            ["Colombo zero-shot (nxqgb)", "2026-08-22", "4", "2", "2"],
-            ["Budget ladder re-validation (g6hqb)", "2026-08-23", "8", "3", "5"],
-            ["Sub-grid and streams (bkpyr)", "2026-09-01", "9", "6", "3"],
-            ["Chemistry (kx23c)", "2026-09-01", "4", "3", "1"],
-            ["Learned spatial pattern (2jyfg)", "2026-09-04", "5", "5", "0"],
-            ["Measurement campaign (ad3py)", "2026-09-06", "3 confirmatory, 2 exploratory",
-             "not yet run", "not yet run"],
-        ],
-        note="Fourteen of thirty predictions were refuted in the five registrations whose "
-             "analyses have run, including several headline ones. A registration that never "
-             "refutes anything is not testing a prediction, it is recording a hope. The sixth "
-             "is prospective: it registers a campaign that has not been deployed, and its "
-             "detection limits were what demoted that campaign's original headline hypothesis "
-             "to exploratory before any money was committed.")
+        rows, note=note)
 
 
 # ── generated from scored files ───────────────────────────────────────────────────────────
@@ -313,31 +374,8 @@ def t7_2_bands():
                "is scored in every pooled result and carries no latitude band.")
 
 
-def t9_2_network():
-    """The five strata of the proposed Kandy network.
-
-    Counts are claim tokens rather than typed numbers, so a change to --n-design in the design
-    script reaches this table instead of quietly contradicting it.
-    """
-    write("T9_2_network", "The proposed Kandy network, by stratum",
-          ["stratum", "sites", "instrument", "what it answers"],
-          [["A  anchor", tok("net.anchor"), "reference grade",
-            "the level discrepancy; and it calibrates every other unit in the network"],
-           ["B  design", tok("net.design"), "low cost",
-            "spans emission and flow physics together, so the model's gradients are straddled"],
-           ["C  paired", tok("net.paired"), "low cost",
-            "the within-cell distribution, at separations one model cell wide"],
-           ["E  vertical", tok("net.vertical"), "low cost",
-            "the floor-to-ridge gradient, which no monitoring network anywhere samples"],
-           ["D  receptor", tok("net.receptor"), "low cost",
-            "what susceptible people breathe; held out of all model fitting"]],
-          note=f"{tok('net.total')} sites in total. Candidates were screened to the "
-               f"{tok('net.cells_feasible')} of {tok('net.cells_total')} cells within servicing "
-               f"distance of a road before the design was optimised, so logistics constrains the "
-               f"candidate set and never scores a site. The design stratum spans the "
-               f"{tok('net.design_pct_lo')}th to {tok('net.design_pct_hi')}th percentile of the "
-               f"emission gradient, against the {tok('net.existing_pct_lo')}st to 100th that the "
-               f"existing records occupy.")
+# T9_2 (the proposed Kandy network, by stratum) was removed 2026-09-17: the measurement design is
+# still under development and is not presented in the thesis. Its source is in git history.
 
 
 def t9_1_next():
@@ -358,9 +396,12 @@ def t9_1_next():
             f"LADDER: {tok('maiac.deep_tropical_background')} per cent in this band, below "
             f"local; donor recovery falls to {tok('donor.reproduced_deep_tropical')} per cent "
             f"in this band"],
-           ["A campaign that sites monitors across land-use contrast",
-            "whether the spatial limit is support or design",
-            "REGISTERED NULL: the effect is bounded at the detection limit, not at zero"],
+           ["A network sited deliberately across land-use contrast",
+            "whether the spatial limit is support or siting",
+            f"REGISTERED NULL on a learned pattern, bounded at the detection limit and not at "
+            f"zero; and a panel test in which deliberate siting scores "
+            f"{tok('site.paired_median')} against convenience siting, paired within city. "
+            f"Not ranked as an acquisition"],
            ["Precipitation in the forecast drivers",
             "wet removal, absent from the current driver set",
             f"REGISTERED NULL: adding it moves the sensorless rung by "
@@ -380,7 +421,7 @@ def t9_1_next():
 BUILDERS = {
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
-    "T9_1": t9_1_next, "T9_2": t9_2_network,
+    "T9_1": t9_1_next,
 }
 
 

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -45,8 +46,11 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 warnings.filterwarnings("ignore")
 
-from modular_validation_all import FEATS, build_frame, _affine  # noqa: E402
+from modular_validation_all import _affine                        # noqa: E402
+from ladder_frames import build_bud0_frame, fit_loco             # noqa: E402
 from src.modular import shrinkage as sh                          # noqa: E402
+from src.modular.city_meta import attach_meta                    # noqa: E402
+from src.modular.runlog import DropLog                           # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
 OUT = MOD / "station_count_curve.csv"
@@ -55,24 +59,17 @@ SEED = 20260823          # the seed ladder_revalidated.csv was fitted under
 
 
 def fit_bud0c(pool: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
-    out = []
-    for city in sorted(pool.city.unique()):
-        tr, te = pool[pool.city != city], pool[pool.city == city]
-        assert city not in set(tr.city), "LOCO violated"
-        if len(tr) < 1000 or len(te) < 100:
-            continue
-        m = HistGradientBoostingRegressor(max_iter=300, learning_rate=0.06, random_state=SEED)
-        m.fit(tr[feats], tr.pm25_city)
-        out.append(pd.DataFrame({"city": city, "date": te.date.values,
-                                 "bud0": m.predict(te[feats])}))
-    return pd.concat(out, ignore_index=True)
+    """The one implementation lives in ladder_frames.fit_loco (identical settings)."""
+    return fit_loco(pool, feats, seed=SEED)
 
 
 def curve_for_city(city, st, b0c, seed, max_k):
     """RMSE against held-out stations as the fitting set grows one station at a time.
 
-    Identical to ladder(): same shuffle, same held-out third, same affine rescaling of the
-    sensorless prediction, same shrinkage toward the tier below. Only k varies.
+    Same shuffle, same held-out third and same affine rescaling of the sensorless prediction as
+    ladder(). ONE DIFFERENCE (corrected docstring, 2026-09-25): every k is shrunk toward the
+    SENSORLESS rung, whereas ladder() chains Bud2 onto the shrunk Bud1. So k = 2 reproduces the
+    ladder's Bud1 exactly, and k = 6 is close to but not identical to its Bud2.
     """
     rng = np.random.default_rng(seed)
     ids = np.array(sorted(st.station_id.unique()))
@@ -95,7 +92,6 @@ def curve_for_city(city, st, b0c, seed, max_k):
     rows = [dict(city=city, k=0, n_pool=len(pool), n_held=len(held),
                  rmse=float(np.sqrt(np.mean((base - obs) ** 2))))]
 
-    cur = base
     for k in range(1, min(max_k, len(pool)) + 1):
         j = pd.concat([p0, daily(pool[:k]).rename("fit")], axis=1).dropna()
         if len(j) < 30:
@@ -113,38 +109,37 @@ def curve_for_city(city, st, b0c, seed, max_k):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-k", type=int, default=8)
+    ap.add_argument("--stream", choices=("maiac", "ghap"), default="maiac",
+                    help="satellite stream for Bud0c. MAIAC is the headline stream (2026-09-25); "
+                         "F.102 as first run used GHAP and kept city 3147.")
     a = ap.parse_args()
+    tag = "" if a.stream == "maiac" else "_ghap"
+    out_csv = OUT.with_name(OUT.stem + tag + OUT.suffix)
+    out_json = OUT_JSON.with_name(OUT_JSON.stem + tag + OUT_JSON.suffix)
 
     print("=== is two the right number of sensors, or just Kandy's number? ===\n")
-    sample = pd.read_csv(MOD / "validation_sample.csv")
-    manifest = pd.read_csv(MOD / "openaq_manifest.csv")
-    st, pool = build_frame(sample, manifest)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    pool["city"] = pool.city.astype(str)
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
-    b0 = fit_bud0c(p, met + geo_f + ["sat_level"])
+    st, p, met, geo_f, sat_feats = build_bud0_frame(a.stream)
+    b0 = fit_bud0c(p, met + geo_f + sat_feats)
     print(f"    {b0.city.nunique()} cities on the corrected Bud0c rung")
 
     rows = []
+    drops = DropLog(f"station_count_{a.stream}")
     for city, s in st.items():
         city = str(city)
         if city not in set(b0.city):
             continue
         try:
             r = curve_for_city(city, s, b0[b0.city == city], SEED, a.max_k)
-        except Exception:
-            r = None
+        except Exception as e:
+            drops.error(city, e)
+            continue
         if r:
             rows += r
-    d = pd.DataFrame(rows)
-    d.to_csv(OUT, index=False)
+        else:
+            drops.skip(city, "curve_for_city() returned None")
+    drops.report(MOD / "verify_2026-09-25" / f"droplog_station_count_{a.stream}.json")
+    d = attach_meta(pd.DataFrame(rows))
+    d.to_csv(out_csv, index=False)
 
     base = d[d.k == 0].set_index("city").rmse
     d["gain"] = 100 * (d.city.map(base) - d.rmse) / d.city.map(base)
@@ -189,9 +184,7 @@ def main() -> None:
     # produced by ONE city moving 0.0 -> 33.5 while another falls 17.0 -> 0.1, so the city
     # sitting at the median changes. Paired within city the median gain is +0.14. The project's
     # standing rule, median of ratios and never a ratio of medians, is what catches this.
-    L = pd.read_csv(MOD / "ladder_revalidated.csv", dtype={"city": str})
-    bands = L[L.bottom == "Bud0c"][["city", "band"]].drop_duplicates()
-    db = d.merge(bands, on="city", how="left")
+    db = d          # band attached from the shared metadata (city_meta), 2026-09-25
     w = db[db.k > 0].pivot_table(index=["band", "city"], columns="k", values="gain")
     rng = np.random.default_rng(0)
     by_band = {}
@@ -269,9 +262,11 @@ def main() -> None:
         gain_3to6=round(six - two, 2) if np.isfinite(six) else None,
         gain_3to8=round(eight - two, 2) if np.isfinite(eight) else None,
     )
-    with open(OUT_JSON, "w", encoding="utf-8") as fh:
-        json.dump(summary, fh, indent=2)
-    print(f"\n-> {OUT.name}, {OUT_JSON.name}")
+    summary["stream"] = a.stream
+    tmp = out_json.with_suffix(".json.tmp")                # gotcha #81
+    tmp.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    os.replace(tmp, out_json)
+    print(f"\n-> {out_csv.name}, {out_json.name}")
 
 
 if __name__ == "__main__":

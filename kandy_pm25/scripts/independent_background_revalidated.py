@@ -30,6 +30,7 @@ Out:   data/processed/modular/independent_background_revalidated.csv
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import warnings
 from pathlib import Path
@@ -43,8 +44,10 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 warnings.filterwarnings("ignore")
 
-from modular_validation_all import FEATS, build_frame, ladder  # noqa: E402
+from modular_validation_all import ladder                       # noqa: E402
 import modular_validation_all as mv                            # noqa: E402
+from ladder_frames import build_bud0_frame                     # noqa: E402
+from src.modular.city_meta import attach_meta                  # noqa: E402
 
 MOD = REPO / "data" / "processed" / "modular"
 OUT = MOD / "independent_background_revalidated.csv"
@@ -102,28 +105,20 @@ def donor_daily(cid: str, src: str) -> pd.Series | None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--stream", choices=("maiac", "ghap"), default="maiac",
+                    help="satellite stream for Bud0c. MAIAC is the headline stream; the F.54 "
+                         "re-run of 2026-09-05 used GHAP and kept city 3147 (2026-09-25).")
+    ap.add_argument("--boot", type=int, default=4000)
     a = ap.parse_args()
+    tag = "" if a.stream == "maiac" else "_ghap"
+    out_path = OUT.with_name(OUT.stem + tag + OUT.suffix)
 
     print("=== independent background, re-run on the CORRECTED (Bud0c) bottom rung ===\n")
 
     print("[1] frame")
     sample = pd.read_csv(MOD / "validation_sample.csv")
-    manifest = pd.read_csv(MOD / "openaq_manifest.csv")
-    st, pool = build_frame(sample, manifest)
-    doy = pool.date.dt.dayofyear
-    pool["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
-    pool["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
-    met = [c for c in FEATS if c in pool.columns]
-    pool = pool.dropna(subset=met + ["pm25_city"])
-    pool["city"] = pool.city.astype(str)
-
-    geo = pd.read_csv(MOD / "bud0_static_geo.csv")
-    geo["city"] = geo.city.astype(str)
-    sat = pd.read_csv(MOD / "bud0_satellite_level.csv")
-    sat["city"] = sat.city.astype(str)
-    geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
-    p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
-    feats = met + geo_f + ["sat_level"]
+    st, p, met, geo_f, sat_feats = build_bud0_frame(a.stream)     # the one shared builder
+    feats = met + geo_f + sat_feats
     print(f"    {len(p)} city-days, {p.city.nunique()} cities, {len(feats)} Bud0c predictors")
 
     print("\n[2] fitting Bud0c, leave-one-city-out")
@@ -194,8 +189,9 @@ def main() -> None:
                          w_own=base.get("w_Bud3"), w_indep=alt.get("w_Bud3")))
 
     out = pd.DataFrame(rows)
-    out.to_csv(OUT, index=False)
-    print(f"\n    {len(out)} targets -> {OUT.name}")
+    out = attach_meta(out.drop(columns=["band"], errors="ignore"))   # shared metadata, 2026-09-25
+    out.to_csv(out_path, index=False)
+    print(f"\n    {len(out)} targets -> {out_path.name}")
     print(out.status.value_counts().to_string())
 
     ok = out[out.status == "ok"].copy()
@@ -212,17 +208,46 @@ def main() -> None:
     g["recovered_pct"] = (100 * g.indep / g.own).round(0)
     print(g.round(1).to_string())
 
-    own, ind = ok.gain_own.median(), ok.gain_indep.median()
-    print(f"\npooled  n={len(ok)}  own {own:.1f}%  independent {ind:.1f}%  "
-          f"recovered {100 * ind / own:.0f}%  | median donor {ok.d_km.median():.0f} km")
+    # PAIRED within city (gotcha #91). The "recovered X %" used until 2026-09-25 was
+    # median(indep) / median(own), a ratio of medians; it is kept below as description only.
+    rng = np.random.default_rng(a.seed)
 
-    # the confound the recovery fraction cannot separate: distance
+    def boot(v):
+        v = np.asarray(v, float); v = v[np.isfinite(v)]
+        idx = rng.integers(0, len(v), (a.boot, len(v)))
+        m = np.median(v[idx], axis=1)
+        return float(np.median(v)), float(np.percentile(m, 2.5)), float(np.percentile(m, 97.5))
+
+    diff = (ok.gain_indep - ok.gain_own).to_numpy()
+    md, lo, hi = boot(diff)
+    pos = ok[ok.gain_own > 1.0]                     # a ratio is only meaningful on a real gain
+    ratio = (100 * pos.gain_indep / pos.gain_own).to_numpy()
+    mr, rlo, rhi = boot(ratio)
+    own, ind = ok.gain_own.median(), ok.gain_indep.median()
+    print(f"\npooled  n={len(ok)}  median donor {ok.d_km.median():.0f} km")
+    print(f"  paired independent minus own background gain: {md:+.1f} pp [{lo:+.1f}, {hi:+.1f}]")
+    print(f"  median per-city recovery (cities with own gain > 1 pp, n={len(pos)}): "
+          f"{mr:.0f}% [{rlo:.0f}, {rhi:.0f}]")
+    print(f"  (descriptive only: median own {own:.1f}%, median independent {ind:.1f}%)")
+
     near = ok[ok.d_km <= ok.d_km.median()]
     far = ok[ok.d_km > ok.d_km.median()]
-    for lab, sub in (("nearer half", near), ("farther half", far)):
-        if len(sub):
-            print(f"  {lab:<13} n={len(sub):>2}  median {sub.d_km.median():5.0f} km  "
-                  f"recovered {100 * sub.gain_indep.median() / sub.gain_own.median():.0f}%")
+    summ = dict(stream=a.stream, n=int(len(ok)), donor_km_median=float(ok.d_km.median()),
+                paired_diff=dict(median=md, lo=lo, hi=hi),
+                recovery_per_city=dict(median=mr, lo=rlo, hi=rhi, n=int(len(pos))),
+                descriptive=dict(own_median=float(own), indep_median=float(ind)))
+    for lab, sub in (("nearer_half", near), ("farther_half", far)):
+        q = sub[sub.gain_own > 1.0]
+        if len(q) >= 4:
+            m_, l_, h_ = boot((100 * q.gain_indep / q.gain_own).to_numpy())
+            summ[lab] = dict(n=int(len(q)), km=float(sub.d_km.median()),
+                             recovery=dict(median=m_, lo=l_, hi=h_))
+            print(f"  {lab:<13} n={len(q):>2}  median {sub.d_km.median():5.0f} km  "
+                  f"per-city recovery {m_:.0f}% [{l_:.0f}, {h_:.0f}]")
+    import json as _json
+    jp = out_path.with_suffix(".json"); tmp = jp.with_suffix(".json.tmp")   # gotcha #81
+    tmp.write_text(_json.dumps(summ, indent=2), encoding="utf-8"); os.replace(tmp, jp)
+    print(f"  -> {jp.name}")
 
 
 if __name__ == "__main__":

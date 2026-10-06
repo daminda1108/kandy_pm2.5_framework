@@ -1,4 +1,4 @@
-# Chapter 9. What to build next
+# Chapter 9. What to measure next
 
 The measurement of Chapter 7 was undertaken to answer a practical question, and this chapter
 gives the answer. Everything here is ranked by what the evidence says an action is worth rather
@@ -23,8 +23,9 @@ maintenance, calibration burden, instrument reliability, compliance value, tempo
 coverage, nor the consequence of a decision made on the output. What follows therefore **informs**
 procurement rather than optimising it: it says which measurement this model can use most, not
 which purchase a programme should make once its own costs and obligations are counted. The
-distinction matters most where the two could diverge, and Section 9.7 shows one such place, where
-the cheapest element of a design and its most informative element are not the same.
+distinction matters most where the two could diverge, and a reference-grade instrument is the
+clearest case: no rung of the ladder priced one, the measurement-design argument below favours it,
+and Chapter 2 notes that it costs tens of thousands of dollars to install.
 
 **Take the free data first.** Terrain, roads, land cover, vegetation, night lights, population,
 reanalysis meteorology and satellite retrievals cost nothing and are available for every city.
@@ -79,7 +80,8 @@ which was never a rung. The case for making that local observation reference-gra
 measurement-design argument. A reference instrument would settle the level discrepancy of
 Section 7.8, where three of four independent records sit below the model and the one that matches
 carries an undocumented instrument. It would also anchor the calibration of any low-cost sensors
-deployed afterwards. That case is strong, and the
+deployed afterwards, against which their performance can be assessed on a published protocol
+[@Duvall2021]. That case is strong, and the
 {{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
 
 Do not expand the local network as a way of improving this model, and the redundancy starts
@@ -96,9 +98,9 @@ surviving three further losses, including the two that ask about episodes. Decli
 recommendation here whose cost consequence is unambiguous, since no cost model is needed to
 price an instrument that is not purchased.
 
-Two qualifications travel with it. This concerns monitors as networks actually place them, and a
-campaign designed across land-use contrast is a different proposition, recommended below for a
-different reason. And a pair buys something the ladder does not score: a second sensor is what
+Two qualifications travel with it. This concerns monitors as networks actually place them, and
+whether placing them deliberately across land-use contrast changes the spatial picture is a
+separate question, which Section 8.5 tests on the panel's own dense networks. And a pair buys something the ladder does not score: a second sensor is what
 makes a between-sensor comparison possible, which is how the calibration checks of Chapter 7 were
 obtained at all. The advice is that a second station does not improve the model, not that it is
 worthless.
@@ -107,7 +109,7 @@ worthless.
 
 ## 9.2 The measurement that would settle the most
 
-Beyond the ranking, three specific observations would each close a question this thesis leaves
+Beyond the ranking, two specific observations would each close a question this thesis leaves
 open.
 
 **A composition measurement at Kandy, and this is now the best-argued item on the list.**
@@ -131,15 +133,6 @@ structure a floor-based estimator needs in order to mean anything.
 And it would settle whether the local increment can be treated as fresh primary aerosol, which
 Section 7.10 showed is too simple because stagnation ages local precursors in place.
 
-**A campaign that sites monitors deliberately across land-use contrast.** Chapter 8 established
-that the spatial limit is a change of support rather than a data deficiency, and that a learned
-pattern does not beat the best single predictor by more than {{claim:phase1.min_detectable}} on
-the frame available. That frame is a convenience sample: regulatory and low-cost networks are
-sited for compliance and access. A campaign designed for the question would be a different
-experiment, and the registered null explicitly does not exclude it finding something. Section 9.7
-sets that campaign out in full, because it is the recommendation this thesis is most likely to be
-acted on and the one that most needs to be defensible.
-
 A regional background station. It ranks second for Kandy rather than first, and the reason to
 want one anyway is that it would close a question the panel can only bound. Section 7.2 rebuilt
 the background from a donor city the target never sees and recovered
@@ -160,6 +153,17 @@ applied at Kandy, and the authors attribute it to the two cities lying in differ
 zones. Two unrelated measurements, one conclusion, and Colombo does not become a Kandy donor by
 being close.
 
+**A network sited deliberately across land-use contrast is not on this list, and the reason is a
+measurement.** Chapter 8 established that the spatial limit is a change of support rather than a
+data deficiency, and that a learned pattern does not beat the best single predictor by more than
+{{claim:phase1.min_detectable}} on the frame available. That frame is a convenience sample, since
+regulatory and low-cost networks are sited for compliance and access, so the natural proposal is
+to site monitors on purpose. Section 8.5 tested that proposal on the panel's own dense networks:
+paired within city, deliberate siting scores {{claim:site.paired_median}} against convenience
+siting [{{claim:site.paired_lo}}, {{claim:site.paired_hi}}]. The interval does not exclude a
+modest advantage, so this is a bound and not a refutation, but it leaves no measured case for
+ranking deliberate siting as an observation this model would use.
+
 One further item belongs here even though it is an analysis and not an observation, because
 it needs no new data and it would sharpen the thesis's most policy-relevant result. Section 7.3
 reports that the measurement-priority ordering differs between bands and states that latitude is
@@ -172,9 +176,8 @@ Section 9.6 gives.
 
 ## 9.3 The construction step most worth revisiting
 
-One finding in this thesis points at a specific line of code rather than at an instrument.
-
-{{fig:dispersion}}
+One finding in this thesis points at a specific line of code rather than at an instrument. It is
+the result drawn in {{fig:dispersion}}, in Chapter 8.
 
 The dispersion solver was built to place the local increment by redistributing an emission
 surface through terrain-steered flow. Scored against held-out stations it **removes** rank
@@ -226,7 +229,9 @@ Three items, in decreasing order of what the evidence supports.
 **Precipitation in the forecast drivers.** The current driver set for the forecast tier contains
 no precipitation at all, which is a structural gap, not a measured deficiency. Wet removal
 is one of the principal loss processes for particulate matter and the model is currently blind to
-it in that mode.
+it in that mode. The ladder's driver set is a different case: it already held a daily rainfall
+total that was never used, and Section 7.2 reports the registered test of adding it, which found
+nothing.
 
 A per-lead skill curve. The forecast tier is presented as a demonstration rather than as a
 validated product, and it will remain so until skill is reported separately at each lead time.
@@ -254,313 +259,7 @@ difference between them is the difference between a belief and a bounded claim. 
 stating a detection limit in advance is a power calculation. The cost of not stating one, in this
 project, was four months.
 
-## 9.7 A measurement network for Kandy
-
-Everything above ranks which measurement to obtain. This says where to put it, because the two questions have
-different answers and the second is where a recommendation usually becomes unfalsifiable.
-
-### Purposes of the campaign
-
-**It is not for making the map finer.** Chapter 8 measured that a tenfold refinement of the grid
-moves the paired-site ratio by {{claim:s1.paired_delta_on_refinement}}, and Section 8.5 bounds
-what a learned pattern adds over a single free raster. A campaign sold as increased resolution
-would be spending against results this thesis already has.
-
-It is for four things. It anchors the level, where three of four independent records sit below the
-model and one matches. It measures how concentration is distributed within a single cell, which
-Chapter 8 argues is both the well-posed quantity and the larger one. It tests the flow physics the
-model imposes and has never validated, meaning the nocturnal drainage sink and the confinement
-term. And it establishes what susceptible people actually breathe, which is a different question
-and is answered in different places.
-
-⚠ The campaign was conceived with a fifth purpose, testing whether the spatial ceiling is a
-sampling artefact, and that purpose does not survive its own power calculation. The subsection
-below the figures explains why, because the finding is more useful than the campaign would have
-been.
-
-### The measurement that determines the design
-
-The fine emission surface spans a factor of sixty-five from its tenth to its ninetieth percentile
-across the domain. **The existing fixed records sit between the
-{{claim:net.existing_pct_lo}}st and hundredth percentile of that range.** The entire lower
-{{claim:net.existing_pct_lo}} per cent is unsampled, and one of the two low-cost sensors lies
-outside the modelled domain altogether. A network cannot recover a gradient it never straddles,
-and this is the most likely reason six searches for spatial structure found none.
-
-### Sampling the physics, not only the sources
-
-A design stratified on emissions samples where the sources are and learns nothing about what the
-atmosphere does with them. The sites are therefore selected to span flow as well as emission.
-
-The figure below is the resulting network, drawn on the terrain that determines it. Each site
-carries the group it belongs to, and the groups answer different questions rather than providing
-replication of the same one. What to look for is not coverage in the sense of an even scatter
-across the map, which a design optimised for a different purpose would show. It is the deliberate
-concentration of sites along the valley axis and up its sides, which is the gradient no existing
-record samples, and the pairs at short separation, which exist to measure the within-cell spread
-that Chapter 8 identifies as the well-posed quantity. Sites that a conventional siting rule would
-have chosen are shown for comparison, and the difference between the two is the argument of this
-section.
-
-{{fig:network}}
-
-**Nocturnal drainage.** Cold air runs downslope after sunset and pools. The diagnostic wind field
-varies threefold in nocturnal speed across this domain, and its convergence marks where that air
-accumulates. The model predicts a sink down-valley of the core and no instrument has ever tested
-that prediction.
-
-Confinement and inversion. The depth of a cell below its surroundings is what traps a
-nocturnal inversion, and the model's confinement term is built from it and has never been
-validated. Sky view factor would be the natural second covariate for the radiative cooling that
-forms an inversion; measured on this domain it is very nearly constant, so it is dropped rather
-than carried as a covariate that would dilute the others.
-
-The vertical gradient, which is the axis nobody samples. Section 5.5 records that the
-dynamic-transport null was diagnosed as a data problem and not a physics problem: monitored
-stations worldwide sit on the valley floor and never straddle the floor-to-ridge gradient, and
-the one panel city with several hundred metres of station relief showed the expected signs. Kandy
-has {{claim:kandy.relief_m}} metres of relief inside the domain. A deliberate transect from
-{{claim:net.vertical_lo}} to {{claim:net.vertical_hi}} metres above the local valley floor is the
-single most valuable physical addition available here, and it earns a group of sites of its own
-rather than being left to chance.
-
-Logistics enters as a constraint and never as an objective. Only
-{{claim:net.cells_feasible}} of the domain's {{claim:net.cells_total}} cells,
-{{claim:net.feasible_pct}} per cent, are close enough to a road to be serviced, and candidates
-outside that set are removed before the design is optimised. Making access an objective rather
-than a constraint is precisely how convenience sampling happens, and it is what this design
-exists to avoid.
-
-### The five groups of sites
-
-{{tbl:T9_2}}
-
-They are separate because they answer different questions, and because **a site used to fit a
-model cannot honestly validate it.** The receptor sites in particular are chosen for who is
-present rather than for what they would teach a model, and they are held out of all fitting.
-
-### Site selection against convention
-
-Proposing a design and asserting it is good is not an argument. Five designs were built on the
-same candidate grid with the same covariates and scored on the same measures, including the two
-a programme would most plausibly choose instead.
-
-{{fig:networkwhy}}
-
-**The textbook criterion endorses the convenience sample.** D-efficiency, the standard measure of
-how precisely a design estimates a regression's coefficients, rates the conventionally road-sited
-network at {{claim:net.deff.road}} and the existing Kandy network at {{claim:net.deff.existing}},
-against {{claim:net.deff.proposed}} for the proposed design. **It ranks the two networks already
-known to produce nulls above the one built to break them.** The road-sited design earns that
-score while sampling {{claim:net.cover.road}} percentile of the emission gradient, because
-D-efficiency rewards spread on the remaining covariates and is indifferent to collapse on the one
-that matters.
-
-The proposed design wins the measures that match the campaign's purpose. It spans
-{{claim:net.cover.proposed}} percentiles of the gradient against {{claim:net.cover.existing}} for
-the existing network, and its covariate distribution sits {{claim:net.ks.proposed}} from the
-domain's against {{claim:net.ks.random}} for a random draw and {{claim:net.ks.road}} for the
-conventional one.
-
-**The cost is real and is stated rather than buried.** The design gives up
-{{claim:net.deff_cost_pct}} per cent of D-efficiency against a D-optimal alternative, which puts
-it below a random draw on that measure alone. The justification is not that the criterion is
-wrong in general. It is that D-efficiency is defined relative to an assumed model, this thesis is
-a record of that assumption failing six times, and the campaign exists to find out whether the
-assumption can be rescued by better sampling. Buying coefficient precision for a model that does
-not work would be buying the wrong thing.
-
-The number of sites is set by where the design stops paying, not by a budget, and the
-saturation point is a range rather than a value. Between {{claim:net.saturation_lo}} and
-{{claim:net.saturation_hi}} sites the representativeness measure moves by less than its own
-seed-to-seed standard deviation of {{claim:net.saturation_seed_sd}}, so preferring one of those
-counts over another is not supported by the curve. Below that range the loss is real:
-cutting to eight costs {{claim:cost.ks_loss_pct_8}} per cent and cutting to six costs
-{{claim:cost.ks_loss_pct_6}} per cent. Averaging over five random restarts is what makes this
-readable, because a single restart produces a curve with a knee that is not there.
-
-### The campaign cannot answer the question it was designed around
-
-The design began from an assumption worth testing: that deliberate siting could break a ceiling
-convenience siting could not. Registering the analysis [OSF ad3py] meant computing, in advance,
-what the campaign could actually see. **The answer disqualifies its own headline question.**
-
-A single free map layer already reaches a rank correlation of {{claim:phase1.best_rho}}. Beating
-that, with {{claim:camp.n_fit}} sites available to fit a spatial pattern, would require a gain of
-between {{claim:camp.h1_gain_lo}} and {{claim:camp.h1_gain_hi}}, depending on how far the campaign
-pattern departs from the benchmark predictor. The panel study this campaign
-was meant to follow up resolved a gain of {{claim:camp.panel_limit}}. **Matching that in one city
-would need on the order of a hundred to three hundred fitting sites**, against the
-{{claim:camp.n_fit}} proposed.
-
-That is not a shortfall to note in a limitations paragraph. It means a campaign of this size
-**cannot settle whether the spatial ceiling is a sampling artefact**, and proposing it on that
-basis would repeat, with instruments and public money, the error Chapter 5 documents: an
-experiment that cannot see the effect it seeks, reporting its silence as evidence.
-
-**The spatial test is therefore demoted to exploratory before deployment**, reported with its
-bound attached, and the campaign is not to be described as resolving the spatial question under
-any outcome.
-
-What the campaign is well powered for is the physics and the level, and those become what it
-is for. The paired triplets resolve a within-cell ratio to a factor of
-{{claim:camp.h2_ratio_7d}} after a single week, against competing predictions of
-{{claim:net.pair_contrast_hi}} from the model and {{claim:spatial.paired_obs_ratio}} from the one
-existing observation, so that test is decisive almost immediately and
-its power comes from hours averaged rather than from sites installed. The drainage prediction is
-a sign test whose unit is the night and not the site, needing the down-valley sink to exceed
-the core on {{claim:camp.h4_nights90}} per cent of ninety nights. And one reference instrument
-settles the level discrepancy on its own.
-
-The vertical transect is demoted for the same reason as the spatial test: at five sites only a
-correlation of {{claim:camp.h3_vertical_mde}} or larger is visible, which is close to a perfect
-monotone relationship, so it is registered as exploratory and adding transect sites is the
-cheapest way to make it confirmatory later.
-
-This is what a pre-registration is for, and it is the second time in this thesis that computing a
-detection limit in advance changed what was worth doing rather than merely how it would be
-reported. The first time, in Chapter 8, it converted five uninformative nulls into one bounded
-claim. This time it stopped a campaign being sold for something it could not deliver, and it did
-so while the cost of changing course was still a paragraph.
-
-### Costs
-
-A recommendation without a price is not a recommendation, and the price here has a shape worth
-knowing.
-
-The low-cost network is {{claim:cost.n_lcs}} units plus {{claim:cost.spares}} spares, at a
-published vendor price of {{claim:cost.lcs_unit_usd}} US dollars each, so
-**{{claim:cost.lcs_total_usd}} dollars** in total. The reference anchor is the other line, and
-public statements put a regulatory-grade instrument at {{claim:cost.ref_lo_usd}} to
-{{claim:cost.ref_hi_usd}} dollars, which is a range from a published position rather than a
-quote. The instrument subtotal is therefore **{{claim:cost.total_lo_usd}} to
-{{claim:cost.total_hi_usd}} dollars**, and everything else, meaning mounting, power,
-connectivity, import duty, labour and a year of servicing, is left as a line item with no unit
-price, because none is published for Sri Lanka and a number typed there would be a guess.
-
-Two consequences follow, and the second is the useful one.
-
-**The anchor dominates, and it may not be a purchase.** It costs between one and four times the
-entire low-cost network. The national environmental authority has granted this project access in
-principle to a Kandy regulatory station carrying hourly concentration and full meteorology,
-subject to a formal agreement. If that completes, the largest line in the budget becomes a letter.
-
-And the obvious economy is not worth making. The design sites lost most of their
-justification when the spatial hypothesis was demoted, which invites cutting them. Cutting it from
-twelve sites to ten saves {{claim:cost.design_saving_usd}} dollars, under three per cent of the
-low-end subtotal. At this unit price no plausible re-scoping of a low-cost network changes the
-shape of the budget. The effort belongs on the agreement, not on trimming sensors.
-
-### The premise tested directly, and it does not hold
-
-The power calculation showed that one city cannot test whether deliberate siting breaks the
-spatial ceiling. **The panel can.** Every city with a dense network can be made into both designs
-by choosing which of its own stations to fit on, so the question that eighteen sites in Kandy
-could never answer is answerable on {{claim:site.cities}} cities and
-{{claim:site.stations}} stations at no cost beyond computation.
-
-Four fitting subsets were drawn from each city, the same model fitted on each, and every one
-scored against stations held out of it. A subset chosen across the covariate space reaches a
-median rank correlation of {{claim:site.rho_deliberate}} against
-{{claim:site.rho_convenience}} for one chosen the way compliance networks are sited, which looks
-decisive and is not.
-
-**Paired within city, deliberate siting scores {{claim:site.paired_median}} against convenience
-siting**, with an interval of {{claim:site.paired_lo}} to {{claim:site.paired_hi}}, and it wins
-in {{claim:site.wins}} of {{claim:site.cities}} cities. Fewer than half.
-
-⚠ The apparent advantage is the difference-of-medians artefact again. The gap between the two
-medians is {{claim:site.diff_of_medians}} while the paired median is negative, because the city
-sitting at the median is not the same city in the two arms. This is the second time in this
-chapter's supporting work that the two disagreed in sign, and on both occasions the difference of
-medians was the flattering one. Reporting it would have claimed that deliberate siting nearly
-doubles spatial skill.
-
-⚠ **The robustness check could not be run.** Scoring every method against one common held-out set
-would remove the confound that each design leaves a different remainder. On this panel it is
-arithmetically impossible: the median city has twelve stations, so a held-out third is
-{{claim:site.fixed_median_held}}, and a rank correlation on that many points can only take values
-{{claim:site.fixed_quantisation}} apart. Every paired median collapsed to exactly zero. The check
-was promised, run, and returned nothing, and that is a limit of the panel rather than a
-confirmation.
-
-### The remaining case for the design sites
-
-**Its founding justification is now gone twice over.** The power calculation said a campaign of
-this size could not detect a siting effect at Kandy; the panel says there is probably no siting
-effect to detect. The exploratory spatial test that survived the first finding does not survive
-the second, and **the campaign should no longer be described as testing the spatial ceiling in
-any form**.
-
-Two justifications remain and neither was the original intention.
-
-Those sites make the delivered exposure field checkable at more than the three locations the
-paired triplets provide, which matters because Appendix E projects a health burden through it.
-
-**And it would make Kandy the only deliberately sited city in a panel of
-{{claim:frame.cities}} convenience samples.** That is now a weaker argument than it was an hour
-ago, since the experiment above suggests deliberate siting does not produce better spatial
-prediction. What it would produce is a city whose network was not selected by the same process as
-every other city in the frame, which is worth something for future work on siting itself and is
-worth admitting is a thin reason to buy twelve instruments.
-
-The honest recommendation is therefore to keep those sites only if the exposure objective
-justifies them, and to stop justifying it by the spatial one. Section 8.4 of the plan shows the
-cost either way is under three per cent of the instrument budget, so this is a question about
-what the campaign claims rather than about what it costs.
-
-### Limits of the design
-
-It cannot narrow the intervention bound of Section 7.10, which runs from
-{{claim:chem.intervention_lo}} to {{claim:chem.intervention_hi}} per cent and needs filter
-sampling and chemical analysis rather than optical particle counters.
-
-It under-samples residential biomass burning. The design stratifies on a surface built from road
-network centrality, and the source apportionment of Chapter 3 attributes 14.1 per cent of mass to
-biomass burning against 7.6 per cent to traffic [@Seneviratne2017]. A source that is spatially
-decoupled from roads is under-represented by construction, and the honest response is to add
-residential sites on that ground rather than to pretend the proxy covers them.
-
-The receptor layer is drawn from a volunteer map whose completeness cannot be measured from
-itself, so {{claim:net.receptors_mapped}} is a lower bound and a missing school is invisible.
-
-And outdoor workers, who are among the most exposed people in the city, are not in the design at
-all, because they have no fixed location. Reaching them needs personal or mobile sampling, which
-is a different instrument and a different protocol. Their absence is a gap in this plan rather
-than a judgement that they matter less.
-
-### Precipitation, which was a gap and is now a measured null
-
-Table 9.1 listed precipitation as a structural gap with no measurement behind it, and that entry is
-now out of date. The driver set carries temperature, wind, boundary-layer height and two
-day-of-year terms, so wet removal was absent from the model's meteorology. On inspection the
-variable was not missing at all: `total_precipitation_sum` was already in the scored frame, pulled
-and merged and never referenced, because it was not in the feature list. A rung holding a driver
-its budget admits, in its own inputs, unused. That is the shape of the defect described in
-Section 7.6, which moved a headline by eight percentage points when it was found.
-
-It was registered [OSF z89kt] and tested with both arms fitted on one fixed set of
-{{claim:precip.cities_scored}} cities, identical seed and machinery, differing in one feature.
-Adding precipitation changes the sensorless rung by {{claim:precip.p1}} per cent
-[{{claim:precip.p1_lo}}, {{claim:precip.p1_hi}}], which is nothing, and the gains above it are
-unmoved: the first two sensors shift by {{claim:precip.first2.paired}} points paired within city.
-The redundancy null survives and the background remains the largest single gain.
-
-So there is no repeat of the earlier defect. The unused driver was unused harmlessly, and no
-published number in this thesis is overstated because of it. What the test establishes is narrow
-and worth stating exactly: an eleven-kilometre reanalysis daily rainfall total does not improve
-daily city-mean prediction on this panel. It is not evidence that wet removal does not matter, and
-a gauge network or a higher-resolution product remains untested.
-
-⚠ Two cautions travel with it. The coverage gate keeps {{claim:precip.cities_passing}} of the
-panel's cities, so these figures sit on a subset and are not comparable to the ladder reported in
-Chapter 7; the two arms are comparable to each other and to nothing else. And the deep-tropical
-margin, while it keeps its direction, roughly halves, from {{claim:precip.p5_without}} to
-{{claim:precip.p5_with}} points. That margin has now proved sensitive to the satellite stream, to
-the loss function and to the driver set, which is three demonstrations that it is the least robust
-quantity the recommendation rests on.
-
-## 9.8 Approaches that would not help
+## 9.7 Approaches that would not help
 
 Stated because these are the proposals most likely to be made.
 
@@ -570,15 +269,15 @@ which recovered information that was not in the inputs.
 A finer grid, for the reason given in Section 9.4.
 
 More monitors in the same city, sited as networks conventionally site them, for the reason
-given in Section 9.1. ⚠ This is not an argument against the campaign of Section 9.7. That
-campaign is a different proposition precisely because its sites are chosen for contrast rather
-than for compliance and access, and the measured redundancy of additional monitors says
-nothing about it.
+given in Section 9.1. Siting them deliberately across land-use contrast instead is a different
+proposition, and the measured redundancy of additional monitors says nothing about it; what does
+bear on it is Section 8.5, which finds no paired advantage for deliberate siting on the panel's
+dense networks.
 
 More cities in the panel, unless they are chosen to break the class-band association, which
 Chapter 2 established cannot be done with the cities that currently publish data.
 
-## 9.9 The sentence to carry away
+## 9.8 The sentence to carry away
 
 Two statements should survive any summary of this work, and they pull in opposite directions.
 

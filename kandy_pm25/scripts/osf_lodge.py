@@ -162,10 +162,32 @@ def main() -> None:
         "type": "registrations",
         "attributes": {"draft_registration": draft, "registration_choice": "immediate"}}})
 
-    # 7. VERIFY THE ARTEFACT, whatever the status code said
-    time.sleep(4)
-    v = req("GET", f"{API}/nodes/{node}/registrations/", h)
-    got = v.json().get("data", []) if v.ok else []
+    print(f"    POST {r.status_code}; OSF returned id "
+          f"{(r.json().get('data') or {}).get('id') if r.ok else None}")
+
+    # 7. VERIFY THE ARTEFACT, whatever the status code said. Twice (2026-09-23, 2026-09-28) OSF
+    # answered 201, logged `registration_initiated`, and never created the registration: the draft
+    # stayed a draft. Wait up to 7 minutes; if still nothing, re-submit ONCE from the SAME draft (a
+    # new project would duplicate the timestamped record), then verify again.
+    def listed():
+        v = req("GET", f"{API}/nodes/{node}/registrations/", h)
+        return v.json().get("data", []) if v.ok else []
+    got, t0 = [], time.time()
+    while not got and time.time() - t0 < 420:
+        time.sleep(15)
+        got = listed()
+    if not got:
+        print("    no registration after 7 min; re-submitting once from the same draft")
+        r = req("POST", f"{API}/nodes/{node}/registrations/", h, json={"data": {
+            "type": "registrations",
+            "attributes": {"draft_registration": draft, "registration_choice": "immediate"}}})
+        for _ in range(10):
+            time.sleep(6)
+            got = listed()
+            if got:
+                break
+    if len(got) > 1:
+        print(f"[!] {len(got)} registrations under {node}: {[g['id'] for g in got]}. Report both.")
     if got:
         reg = got[0]
         rid = reg["id"]

@@ -1,0 +1,255 @@
+{
+  "registered": {
+    "envelope_cities": 21,
+    "arm_cities": 8,
+    "arm_countries": 7,
+    "detection_limit": 0.28,
+    "cities": {
+      "5": {
+        "country": "TH",
+        "band": "deep_tropical",
+        "sites": 65,
+        "primary": true,
+        "k_scored": 7,
+        "inside": 0.7142857142857143,
+        "above": 0.0,
+        "below": 0.2857142857142857,
+        "median_gap_to_envelope_median": -0.2055297975606546,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": 3
+        }
+      },
+      "23": {
+        "country": "IN",
+        "band": "tropical",
+        "sites": 24,
+        "primary": true,
+        "k_scored": 4,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.12559007957465096,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "48": {
+        "country": "BR",
+        "band": "tropical",
+        "sites": 16,
+        "primary": false,
+        "k_scored": 2,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.36969424063842826,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "66": {
+        "country": "CO",
+        "band": "deep_tropical",
+        "sites": 17,
+        "primary": false,
+        "k_scored": 2,
+        "inside": 0.5,
+        "above": 0.0,
+        "below": 0.5,
+        "median_gap_to_envelope_median": -0.1591153410493668,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": 3
+        }
+      },
+      "100": {
+        "country": "HK",
+        "band": "tropical",
+        "sites": 14,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.0272238633558117,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "107": {
+        "country": "IN",
+        "band": "tropical",
+        "sites": 13,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 0.0,
+        "above": 0.0,
+        "below": 1.0,
+        "median_gap_to_envelope_median": -0.29398825785630944,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": 3
+        }
+      },
+      "115": {
+        "country": "CN",
+        "band": "tropical",
+        "sites": 12,
+        "k_scored": 0
+      },
+      "123": {
+        "country": "TW",
+        "band": "tropical",
+        "sites": 13,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": -0.045503409371461,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": null
+        }
+      }
+    }
+  },
+  "s70": {
+    "envelope_cities": 21,
+    "arm_cities": 9,
+    "arm_countries": 7,
+    "detection_limit": 0.28,
+    "cities": {
+      "5": {
+        "country": "TH",
+        "band": "deep_tropical",
+        "sites": 73,
+        "primary": true,
+        "k_scored": 7,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": -0.1726134734830386,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "23": {
+        "country": "IN",
+        "band": "tropical",
+        "sites": 28,
+        "primary": true,
+        "k_scored": 5,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": -0.0393020919336709,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "48": {
+        "country": "BR",
+        "band": "tropical",
+        "sites": 18,
+        "primary": false,
+        "k_scored": 3,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.27584942321784434,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "66": {
+        "country": "CO",
+        "band": "deep_tropical",
+        "sites": 17,
+        "primary": false,
+        "k_scored": 2,
+        "inside": 0.5,
+        "above": 0.0,
+        "below": 0.5,
+        "median_gap_to_envelope_median": -0.16510559142138076,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": 3
+        }
+      },
+      "100": {
+        "country": "HK",
+        "band": "tropical",
+        "sites": 14,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.18787878787878792,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": 3
+        }
+      },
+      "107": {
+        "country": "IN",
+        "band": "tropical",
+        "sites": 13,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 0.0,
+        "above": 0.0,
+        "below": 1.0,
+        "median_gap_to_envelope_median": -0.2545454545454544,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": null
+        }
+      },
+      "115": {
+        "country": "CN",
+        "band": "tropical",
+        "sites": 13,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 0.0,
+        "above": 0.0,
+        "below": 1.0,
+        "median_gap_to_envelope_median": -0.21030760172694207,
+        "first_k_beating_raster": {
+          "E3": null,
+          "E5": null
+        }
+      },
+      "123": {
+        "country": "TW",
+        "band": "tropical",
+        "sites": 13,
+        "primary": false,
+        "k_scored": 1,
+        "inside": 1.0,
+        "above": 0.0,
+        "below": 0.0,
+        "median_gap_to_envelope_median": 0.0,
+        "first_k_beating_raster": {
+          "E3": 3,
+          "E5": null
+        }
+      },
+      "124": {
+        "country": "IN",
+        "band": "tropical",
+        "sites": 12,
+        "k_scored": 0
+      }
+    }
+  }
+}

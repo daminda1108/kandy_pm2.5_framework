@@ -47,6 +47,11 @@ from modular_validation_all import FEATS, build_frame, ladder  # noqa: E402
 from src.modular.budgets import (  # noqa: E402
     DRIVERS_REANALYSIS, SATELLITE_LEVEL, STATIC_GEO, get,
 )
+from src.modular.city_meta import attach_meta  # noqa: E402
+from src.modular.runlog import DropLog  # noqa: E402
+from src.modular.schemas import restrict_to_stream_complete, validate_bud0_frame  # noqa: E402
+
+VERIFY = MOD / "verify_2026-09-25"
 
 SEED = 20260823
 
@@ -105,7 +110,11 @@ def main() -> None:
     geo = pd.read_csv(MOD / "bud0_static_geo.csv"); geo["city"] = geo.city.astype(str)
     sat = pd.read_csv(MOD / "bud0_satellite_level.csv"); sat["city"] = sat.city.astype(str)
     geo_f = [c for c in geo.columns if c not in ("city", "geo_n_stations")]
+    # 2026-09-25: a city absent from a static stream (3147) is excluded by name, not fitted
+    # with NaN geography (F.113); the frame is then validated structurally.
+    pool = restrict_to_stream_complete(pool, geo=geo, sat=sat)
     p = pool.merge(geo, on="city", how="left").merge(sat, on="city", how="left")
+    p = validate_bud0_frame(p, geo=geo, sat=sat, met=met, static=geo_f + ["sat_level"])
     print(f"    STATIC_GEO {len(geo_f)} predictors, cities matched "
           f"{p[geo_f[0]].notna().groupby(p.city).any().sum()}")
     print(f"    SATELLITE_LEVEL cities matched {p.sat_level.notna().groupby(p.city).any().sum()}")
@@ -131,6 +140,7 @@ def main() -> None:
 
     print("\n[5] scoring the full ladder from each bottom rung")
     rows = []
+    drops = DropLog("revalidate_ladder")
     for name, b0pred in rungs.items():
         for city, s in st.items():
             city = str(city)
@@ -138,19 +148,21 @@ def main() -> None:
                 continue
             try:
                 r = ladder(city, s, b0pred[b0pred.city == city], SEED)
-            except Exception:
-                r = None
+            except Exception as e:
+                drops.error(f"{name}:{city}", e)
+                continue
             if r:
                 r["bottom"] = name
                 rows.append(r)
+            elif r is None:
+                drops.skip(f"{name}:{city}", "ladder() returned None")
+    drops.report(VERIFY / "droplog_revalidate_ladder.json")
     L = pd.DataFrame(rows)
 
     cf = coastal_flags()
-    man = pd.read_csv(MOD / "openaq_manifest.csv")
-    man["city"] = man.cluster.astype(str)
-    L = L.merge(cf, on="city", how="left").merge(
-        man[["city", "frac_reference", "band"]], on="city", how="left", suffixes=("", "_m"))
-    L["cls"] = np.where(L.frac_reference >= 0.5, "reference", "LCS")
+    # 2026-09-25: band, class and cluster from the shared metadata (CNEMC cities used to be
+    # unbanded and classed LCS).
+    L = attach_meta(L.merge(cf, on="city", how="left"))
     L.to_csv(OUT, index=False)
     print(f"    {len(L)} rows -> {OUT.name}")
 

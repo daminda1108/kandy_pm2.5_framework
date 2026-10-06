@@ -1,0 +1,1028 @@
+# Kandy PM2.5 — Satellite-ML and Cross-City Spatial Estimation
+
+Undergrad thesis (Daminda Alahakoon, U. Peradeniya). **Redesigned 2026-05-08** — see [`docs/REDESIGN_2026-05-08.md`](docs/REDESIGN_2026-05-08.md) and [`docs/AUDIT_2026-05-08.md`](docs/AUDIT_2026-05-08.md).
+
+**Deployment pipeline (two stages):**
+- **Stage A — Temporal anchor.** Satellite-ML over Kandy. v1 daily XGBoost (2003–2025, KOALA-anchored) + v3 hourly LGBM/CatBoost/XGB blend with CV+ Mondrian conformal UQ (2018–2026, per-sensor FECT-anchored residual target).
+- **Stage B — Cross-city spatial residual learner.** ConvCNP (deepsensor) trained on N=3 source cities (Medellín, Chiang Mai, Kathmandu), predicts `pm25 − c_prior_scaled` against a per-city scaled GEOS-CF prior. Student-t(df=5) likelihood + per-(city × hour-of-day) Mondrian conformal UQ. Applied zero-shot at Kandy.
+
+Native resolution **1 km hourly**. Single target: **Kandy**.
+
+**Supporting experiments (documented, not in deployment pipeline):**
+- Cross-continental PINN transfer (Mel → ChiMai, FourierPINNV3 TD-PDE). Code in `src/stage2_transfer/`.
+- SharedTerrainAnsatz identifiability diagnostic (rigid Whiteman ansatz, all 6 params bound-saturated). Code in `src/stage3_pinn/models/shared_terrain_ansatz.py`.
+- PVAF v1 — Physics-based Valley Analogue Finder, source-city expansion tool. Code in `src/pvaf/`.
+
+> **🟢 [`CONTEXT.md`](CONTEXT.md) — read this first.** One page (<250 lines) of the load-bearing
+> facts: the model in one equation, the numbers you may quote, the numbers that are **retired**,
+> the evidence state per axis, the open questions, and the data situation. It is the fast path;
+> this file, `PROJECT.md` and the ledger stay authoritative. **Update it whenever a headline
+> number, a refutation or an open question changes.**
+
+## Session Protocol (READ FIRST)
+
+**Session start:** Output this briefing before responding:
+```
+Model: additive decomposition, [tiers current] | T-lock [state], QA [value]
+Partition: f ≈ [value], [how set]
+Shipped: preprint [state] | webapp [state] | release repo [state]
+Pending: [top 2 — mark user action vs model work]
+Git: [last commit message]
+```
+Quote from the NEWEST `## Current State` block only — the ones below it are archived
+narrative. **Never brief Stage A/B metrics as project status:** the ConvCNP zero-shot maps
+and the PINN work are supporting experiments with no production role, and the v1/v3 anchor
+R² is an internal component number, not the deliverable. **f ≈ 0.48**, not 0.244.
+Skip if first message is a quick question (<10 words) or `/session-start`.
+
+**Expert input:** When user pastes >200-word analytical block, list planned changes and confirm before coding.
+
+**Interruption recovery:** When [Request interrupted by user] occurs, stop and wait.
+
+**Session end:** When user signals done, say: "Want me to run /update-docs before we close?"
+
+**Skills:** `/session-start` `/update-docs` `/kaggle-status` `/kaggle-train [dir]` `/stage-report [1|2|3]` `/pop-sci [1|2|3]` `/handoff`
+
+## Context Hygiene
+
+1. Never read CLAUDE.md in full mid-session — Grep for specific sections.
+2. Cap all Bash output with `| head -100`. Training logs: last 20 lines only.
+3. Delegate to subagents for any task needing >3 file reads or >200 lines of output.
+4. Compact proactively at task boundaries, not reactively.
+5. Start fresh sessions for distinct task types. Use `/handoff` between sessions.
+6. **This file holds CURRENT state only.** When a `## Current State` block's conclusions have
+   been absorbed into a newer block, the gotchas, `PROJECT.md`/`PROJECT_ARCHITECTURE.md` or the
+   epistemic ledger, move it to the archived-state index (one table row + the SESLOG date) —
+   the narrative already lives in SESLOG and does not need to be here twice. Audited and
+   enforced 2026-08-06: the file had reached 1,301 lines against a ~250-line rule because ten
+   months of blocks had stacked up. Target: **keep it under ~900 lines and falling.**
+7. **Trim protocol (established 2026-09-21, first run 2,005 → 904 lines).** Run it whenever the
+   file passes **900 lines** or holds **more than 4 `## Current State` blocks**. Check with
+   `wc -l CLAUDE.md; grep -c '^## Current State' CLAUDE.md`.
+   1. **Commit first**, so the file is clean in git (`git status --short CLAUDE.md` prints nothing).
+   2. **Make a full copy** at `docs/claude_md_archive/CLAUDE_<date>_pre-trim.md` and check it is
+      identical (`cmp`, record the sha256).
+   3. **Check absorption before moving anything.** Every number a block tells you to *quote*
+      must already be in `CONTEXT.md`, the ledger or the gotchas. Grep for the key numbers and
+      F-codes. If one is missing, add it to `CONTEXT.md` **first**.
+   4. **Move, never delete.** Blocks go **verbatim** to the append-only
+      `docs/claude_md_archive/CLAUDE_archived_blocks.md`, using a script that refuses on a changed
+      sha256 or an unexpected heading, asserts that kept + moved lines reproduce the original
+      line for line, and writes through a temp file and `os.replace` (gotcha #81). Reuse
+      `docs/claude_md_archive/trim_claude_md.py` and edit its `RANGES`, `EXPECTED_SHA` and
+      `DATE`. **Never hand-delete long ranges with the Edit tool.**
+   5. **Leave a trace** for each block: one row in the Archived-state table, plus a one-line
+      pointer wherever a subsection used to be.
+   6. **Keep:** the newest 3–4 Current State blocks, everything still in progress (such as the
+      spatial curve), gotchas, hard rules, protocols and live paths. **Move:** absorbed Current
+      State blocks, superseded pending lists, and reference sections for retired stages.
+   7. **Commit both files together**, with the before and after line counts in the message.
+      `docs/` is gitignored, so use `git add -f`. Commit with `git commit -- <paths>` so a
+      parallel session's staged work is not swept in.
+
+### ⏸️ DEFERRED — carry forward (2026-08-12)
+| item | state | blocker / next action |
+|---|---|---|
+| **Commit-trailer strip** | backups exist: `backup/pre-trailer-strip-20260811-0029` (framework `e87d2ba` · release `b659f65` · webapp `725dd87`) | `git filter-branch` **blocked by the permission classifier**. Needs a Bash permission rule, or the user runs the three commands in SESLOG. Scope 63/64 · 10/10 · 46/301. |
+| **Zenodo DOI badge** | release `v1.1.0` published, integration enabled | Zenodo had **not indexed** at last check. Verify at `zenodo.org/account/settings/github/`; if the webhook did not fire, delete + recreate the release. Then add the badge to README + `doi:` to CITATION.cff. |
+| **Forecast drivers** | documented, not built | Add **ECMWF open data** (free, 0.25°, real-time, **includes precipitation** — the current CFAPI driver set has none) as a second driver; then Aurora's air-pollution checkpoint for a 3-member ensemble. Paper 2. |
+| **Supervisor email** | drafted | Name corrected to **Ranatunga**. User to send. |
+| **Data letters** | **ALL 3 SENT 2026-08-12** | FECT · MOSDAC awaiting reply (follow up 2026-09-02). |
+| 🟢 **CEA REPLIED 2026-08-12 — THE DATA EXISTS AND IS FREE FOR ACADEMIC USE** | formal process required | **Kandy regulatory AQMS, HOURLY, 2019 → 2026-05**: PM2.5, PM10, gases, and **full met including a rain gauge and wind speed/direction**. Known gap **2021-07 → 2022-10** (no funds to operate). Needs a letter on **university letterhead to the Director General**, copy DDG (Environmental Protection), scans emailed to dg@ / chedus@ / randd@ / AQ@cea.lk, then a **signed agreement via the R&D Unit**. Conditions: notify CEA in writing of any data "manipulation" and obtain authorisation first; cite CEA; send final outputs. Contact: Akila Jayasundara (SEO), Air Quality, Noise & Vibration Monitoring. |
+| 🔴 **PDN Uni runs its own islandwide microsensor network** | unexploited — and it is the user's OWN university | CEA named it alongside NBRO. Internal access should be far faster than any external request. **Chase this first.** |
+| ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
+| **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
+
+## Current State (updated 2026-09-28, 🟢 **LADDER v2 CONFIRMED ON 72 FRESH CITIES — OSF `ueyfr`, F.117**)
+
+Registration lodged 2026-09-28 04:24 UTC (OSF `ueyfr`, project `dm9zf`, pending OSF approval), before
+any confirmation OpenAQ PM2.5 was downloaded; scored ONCE on frozen `e6b744b` (27 files re-hashed).
+Record: `kandy_pm25/docs/confirmation_results_2026-09-28.md`; deviations `confirmation/DEVIATIONS.md` (E-1,
+execution only). Ingest audit 0.00 % silent loss (`confirm_ingest_audit.py`). 72 of 76 scored.
+
+- 🟢 **H1** first two stations **+8.5 % [3.1, 25.1]** (discovery +21.8 — retired as a headline) · **H2**
+  stations 3–6 **+0.22 [0.12, 0.50]** · **H3** background **+41.1 [26.8, 62.8]** · **H5** background − first
+  two, exceedances **+59.3 [33.9, 67.7]** — all supported. **H4** (two-sided) **+24.6 [4.1, 47.8]**: the
+  background outranks the first two stations; holds without CNEMC (+11.5 [1.4, 33.3], exploratory).
+- 🔴 **M1 latitude undetectable** (+0.53 [−1.79, +1.49]); the deep-tropical inversion stays exploratory.
+  Population 50/72 temperate, 63/76 reference; the background is a same-network series.
+- ⏭ Paper 1 results section (draft), then the thesis. Registry 8 run, 54 predictions, 30/18/5 (+1 two-sided).
+
+## Current State (updated 2026-09-27, 🔬 **VERIFICATION PASS + LADDER v2 REDESIGN · DISCOVERY DONE · CONFIRMATION REGISTRATION AWAITS THE USER**)
+
+User directives: re-run everything so every claim is right (2026-09-25), then *"redesign and redo
+whatever is not robust or scientific enough — I want the best"*; the old thesis is frozen, a new
+one will be written. Logs: `kandy_pm25/docs/verification_rerun_plan_2026-09-25.md` (defects, all
+re-runs) and `kandy_pm25/docs/redesign_ladder_v2_plan_2026-09-25.md` (redesign). Ledger **F.115**
+(verification) and **F.116** (redesign). `CONTEXT.md`'s ladder section and retired table rewritten.
+
+- 🔴 **Verification (F.115):** CNEMC cities were unbanded and classed LCS in every ladder output
+  (`src/modular/city_meta.py`); city 3147 still in two analyses and 2168 dropped in two others
+  (ONE frame builder now, `scripts/ladder_frames.py`); silent `except: continue` everywhere
+  (`src/modular/runlog.py`); four unpaired verdicts; the registry undercounted
+  (**48 predictions, 26 held, 17 refuted, 5 not tested**; was 38/25/13); D-7 is 23 of 47;
+  detection limits are per test (0.08–0.18, not a shared 0.130); cluster widening 1.15–2.21×.
+- 🔴 **The deep-tropical inversion was one station split and one learner seed.** Over 20 splits its
+  interval excludes zero in 3/20; under ladder v2 it is **−27.4 [−47.8, +11.8]** and reverses
+  prospectively. **Exploratory only; "4.2×" and "robust" retired.** Cannot be confirmed with public
+  data (4 fresh tropical cities).
+- 🟢 **Ladder v2** (commit **`ba0da66`**, manifest `docs/ladder_v2_freeze_manifest.json`): 21 splits,
+  5 learner seeds, cross-fitted shrinkage, urban-centre static geography
+  (`build_static_geo_grid.py`), 18 h completeness, one driver function with the chunk fix. Parity
+  with v1 to 1e-9. **Discovery (MAIAC, cluster 95 %):** first two stations **+21.8 [10.5, 52.9]**,
+  stations 3–6 **+0.54 [0.21, 0.80]**, background **+34.4 [15.4, 62.2]**, no pooled ordering, no
+  latitude effect.
+- ⏭ **Confirmation:** 76 fresh cities, 30 countries, cap 4 (user, 2026-09-26), frozen by hash;
+  predictors pulled (drivers 76/76, AOD 76/76); urban-centre geography building. Draft
+  registration `kandy_pm25/docs/prereg_ladder_v2_confirmation_DRAFT_2026-09-26.md` → **USER approves
+  the text → lodge on OSF → write `confirmation/REGISTERED.json` → `ladder_v2_confirm.py --ingest`,
+  then `--score`**. The scorer refuses to touch confirmation PM2.5 before that file exists.
+
+## Current State (updated 2026-09-19, 📚 **TWO THESES FROM ONE POOL · THESIS A BUILT AND GUIDELINE-COMPLIANT · B NEXT**)
+
+Department guidelines (ENS4998 Final Report Format + the APS style guide it cites) arrived
+2026-09-18. The old thesis measured **136 pages against a 40–75 limit**. User decisions: **rescope
+into two theses** — **A, the Kandy field (the ENS4998 submission)** and **B, what an observation is
+worth** — overflow to appendices **in full**, **APS numeric citations**, chapter-based figure and
+table numbering. Reg. no **S/20/005**, year 2026. Plan (approved):
+`kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md`.
+
+### 🟢 The machinery (build once, serves both)
+- **`#writing/pool/`**: the old chapters split into **93 labelled section fragments**
+  (`migrate_to_pool.py`, old number → label in `pool/labels.json`). **Edit fragments, never a thesis
+  build.** `thesis/chapters/` is now LEGACY (not built); retire it after B.
+- **`theses/{a,b}/thesis.md`** = composition file: headings + own prose + `{{include:pool/... shift=N}}`.
+  **`assemble.py --thesis a` numbers every heading** (chapters 1–4, appendices A, B…; ≤3 numbered
+  levels by construction) and resolves **`{{ref:label}}`** ("Chapter 3"/"Section 3.2"/"Appendix B")
+  and **`{{this:label}}`** ("this chapter/section/appendix") per thesis. **Lint ERRORs on any typed
+  "Chapter N"/"Section N.N"/"this chapter"; assemble does the same for captions.**
+- **`postprocess.py`**: roman front matter → Arabic from the contents, bottom-centre numbers,
+  Word TOC / List of Figures / List of Tables fields; then **Word COM** updates fields, exports PDF,
+  and **measures compliance** (body 40–75 Arabic pages before Appendix A, Intro ≤40 %, Results ≥30 %,
+  abstract one page). `build_docx.py --thesis a` exits 2 if non-compliant. pywin32 installed.
+- `reference.docx`: guideline margins, TNR (**theme fonts overridden** — pandoc headings were sans),
+  14 pt bold centred uppercase chapter titles, 11 pt headings. Symbols are italic maths and the two
+  core equations display maths (`typeset_symbols.py`); ⚠ glyphs removed.
+
+### 🟢 Thesis A — COMPLIANT (build 2026-09-19)
+**72 Arabic pages before appendices** (limit 75), Intro 19 %, Results 33 %, abstract 334 words on one
+page. 4 chapters + 11 appendices; 71 references. New A prose in `theses/a/`: abstract, aims and
+objectives, scope, **"The reconstructed field"** (the Kandy field had NO results section before),
+discussion, conclusions.
+
+### 🔴 Defects found and fixed on the way (the gates could not see them)
+- **~80 chapter-level refs** landed on only part of a split chapter → read in context and repointed
+  (`repoint_refs.py`); one promised a revisit that **never existed** (Abeyratne2006) → reworded.
+- **`F_episode` labelled a 55 µg/m³ line "WHO 24-h IT-1"** — WHO 2021 IT-1 is **75** (IT-2 50). Fixed.
+- **Figure `scales` printed the WRONG image** (a same-named `F9_scales` of temporal variation). Built
+  the intended `F8_contrast_window` in `f_chapters.py`.
+- **Four typed refs in captions** bypassed the lint. **Data sources uncited**: panel archives,
+  land cover, vegetation, water, GHSL; the geography sentence cited **WorldPop for a GHSL layer**.
+  11 data citations added to `references.bib` (DOI-sourced where a DOI exists); `CREDITS` table
+  in `visuals.py`.
+- "The admissibility rule that Chapter 6 states formally" was false even in the old thesis (the rule
+  is stated in the fine-tuning section and enforced in code) → reworded and repointed.
+
+### 🟢 Thesis B — COMPLIANT (build 2026-09-19)
+**73 Arabic pages before appendices**, Intro 14 %, Results 41 %, abstract 315 words on one page.
+Title *MEASURING WHAT AN AIR QUALITY OBSERVATION IS WORTH: AN INFORMATION-BUDGET APPROACH FOR
+CITIES WITHOUT MONITORS, DEMONSTRATED AT KANDY*. Body = panel ladder + checks + spatial nulls +
+Kandy priorities; appendices = Kandy setting, Kandy field construction and checks, further checks
+(estimator, confounds, siting, ten-city transfer), failed approaches, chemistry, software.
+- Title page name (user, 2026-09-19): **A. M. D. W. B. Alahakoon**, both theses.
+- Shared moves: A's field section → **`pool/kandy/field.md`** (label `s-kandy-field`); the siting
+  subsection split out as **`pool/ch08.../05b-s-deliberate-siting-tested-dense.md`**.
+- Verified both: no dangling printed refs, no raw citation keys; only framing fragments excluded
+  (old aim/structure, superseded abstract; A omits the old closing statement its Discussion replaces).
+
+### ⏭ Next
+1. **Human read of both**, especially the section seams (e.g. B's "B.1 The construction that
+   follows" reads oddly out of its original place).
+2. ~~The summary still carries the OLD title~~ **DONE 2026-09-19b** — rewritten for Thesis A.
+3. Retire `#writing/thesis/chapters/` (legacy, no longer built) — user's call.
+
+## Current State (updated 2026-09-12, 🔬 **THE SPATIAL LEARNING CURVE IS UNDERWAY — DATA BUILT, GATES PASSED, NOTHING SCORED**)
+
+The test the user asked for after questioning what the ladder measures: **how much spatial skill
+each additional sensor inside a city buys.** Registered **OSF [`rqn4y`](https://osf.io/rqn4y/)**
++ amendment 1 **[`26hp8`](https://osf.io/26hp8/)** (deep arms) + amendment 2
+**[`4whsc`](https://osf.io/4whsc/)** (terrain moderator, D-6, D-7; lodged 2026-09-11 13:36 UTC,
+before any real scoring). Plan `kandy_pm25/docs/spatial_learning_curve_plan_2026-09-11.md`.
+
+🔴 **NO ESTIMATOR HAS SCORED A REAL CITY YET. There is no result to quote, in the thesis, the
+summary or anywhere else. Say the test is registered and underway.**
+
+### What exists
+- **Frame frozen by the registered rule (D3).** 18 primary cities, 745 sites, 7 countries
+  (13 temperate, 4 subtropical, 1 tropical); 15 secondary; band arm 6. Stop rule passed (18 ≥ 10).
+  Sensitivity frame S-1 (70 % coverage) frozen beside it.
+- **Ingest complete**: 1,974 reference locations, 0 failed objects. **Predictors complete (D4)**:
+  1,141 sites, no missing values; 41 benchmark grids, 69,595 cells, no NaN.
+- **Terrain descriptors** for all 41 cities (`spatial_curve_terrain.py`): primary-frame relief
+  37–552 m, slope 1.7–12.9°, 4 cities enclosed on ≥ 4 of 8 rays, 8 on none.
+  ⚠ **3 of the 4 enclosed cities are Korean** — terrain is partly aliased with network.
+- **Gates green**: synthetic positive control PASS (E3 0.540 vs oracle 0.554 at k=35); leakage
+  self-test PASS after D-7.
+
+### 🔴 Two corrections and one failure, all declared before scoring
+- **D-6 — roads now from Geofabrik extracts, not live Overpass.** Overpass queued ~20 min/city
+  (13–16 h for the frame). 37 extracts, 9.05 GB, every file MD5-verified; minimum-cover set chosen
+  by polygon containment. **Cross-check on the two cities Overpass had finished: identical,
+  Spearman 1.000, zero difference.**
+- **D-7 — the leakage self-test was wrong, not the guard.** It failed at 2.03 because it compared
+  each instrument's mean over **its own** days and skipped the freeze's QC; 23 of 47 merged pairs (recounted 2026-09-25; the lodged text says 22)
+  are **replaced instruments, not concurrent twins**. Corrected → **PASS at 0.080** (0.699 without
+  the twin). ⚠ Margin under the 0.1 threshold is modest.
+- **🔴 E11 (TNP-D) FAILED its registered positive control** — three seeds at −0.027 / −0.104 /
+  −0.006 against oracle 0.635, training NLL pinned at the no-information value for 40k steps.
+  **Checked for a code defect first**: attention mask, target isolation and context path all
+  correct, and the same code learns a random plane (1.000) and a smooth field (0.974).
+  **The registered verdict stands: E11's real-data results are not interpreted.**
+- 🟢 **E10 (ConvGNP) PASSED all three primary seeds** — 0.610 / 0.599 / 0.604 vs oracle 0.635,
+  7.44 s/step on T4, step budget set by the registered timing rule.
+
+### 🔄 Progress 2026-09-15 — E0–E7 SCORED, E8/E9 RE-SCORING ON CPU, NO VERDICT COMPUTED
+🔴 **Still nothing to quote.** Scoring is complete for part of the design; no summary or verdict
+exists, and none may be written before every arm is merged.
+- **E0–E7: 78/78 city results** (37 registered + 41 S-1), every pickle parsed, in
+  `spatial_curve/city_cache_salvage/` and Kaggle dataset `kandy-spatial-city-cache`.
+- **E10** done (952,068 predictions). **E11** control failed → not interpreted.
+- **E8/E9 → D-8 (declared 2026-09-15): CPU ONLY.** TabPFN's default `inference_precision="auto"`
+  uses autocast on CUDA, float32 on CPU: 48 GPU values re-scored on CPU matched **8/48**, median
+  |Δρ| **0.073**, max 0.376; CPU vs itself **48/48 identical**. The 27 GPU-scored cities are
+  archived, NOT merged. Five CPU kernels `kandy-e89-cpu2-{r-a,r-b,s-a,s-b,s-c}` await
+  **TABPFN_TOKEN ticked in each editor + Save & Run All (accelerator None)**.
+- **Before the summary:** run `spatial_curve_tabpfn_consolidate.py` on the CPU outputs (merge_deep
+  reads only `pred_*`; resumed sessions leave `partial_*`) and give the summary run ONLY the
+  consolidated file. Then X-T, then write-up.
+- Fixes that made this possible: gotchas **#93** and **#95** (Kaggle secrets/subdirs/accelerator;
+  mgwr loky segfault → `n_jobs=1`, bit-identical; pinned dataset versions; `--only-clusters`).
+- Is D-8 to be lodged on OSF as an amendment? **User's call — not done.**
+
+## Archived state — the 2026-06 → 2026-09-14 arc (narrative in SESLOG)
+
+These were separate `## Current State` blocks. Their narrative is in `memory/SESLOG.md` at the
+dates given; the durable outcomes are already folded into the live blocks above, the gotchas,
+`PROJECT.md`, `PROJECT_ARCHITECTURE.md`, `CONTEXT.md` and the epistemic ledger
+(`F_epistemic_ledger.md`). Rows marked 📦 were archived on 2026-09-21 and their **full text is
+kept verbatim** in [`docs/claude_md_archive/CLAUDE_archived_blocks.md`](docs/claude_md_archive/CLAUDE_archived_blocks.md).
+
+| Arc | Outcome that survived | SESLOG |
+|---|---|---|
+| 📦 Thesis A Introduction fact-checked; every figure print-fitted (2026-09-19b block, archived 2026-09-27) | Kandy population **98,828** + **~389,000** commuters (now in `CONTEXT.md` §2); WHO IT-1 = 75; gotcha #96 | 2026-09-19 |
+| 📦 Sensor-placement proposal leaves the thesis (2026-09-17 block, archived 2026-09-27) | campaign excluded from the thesis (in `CONTEXT.md`); 48 unused claim keys = pending 0d | 2026-09-17 |
+| 📦 Pending 0g2, C7 in three ladder scripts (archived 2026-09-27) | superseded by **F.115/F.116** | 2026-09-23 |
+| 📦 Figure plan executed; registrations table reads the registry | T7_5 was wrong twice (quote **11 registrations, 13/38 refuted**); duplicate placement refused (gotcha #94) | 2026-09-14 |
+| 📦 Thesis and summary rewritten for a reader; visuals audited | "ladder" glossed at first use; 49 headings replaced; figure plan written | 2026-09-09d |
+| 📦 Precipitation driver unused harmlessly | **F.112**, OSF `z89kt`; P5 margin halves (+19.84 → +9.20) | 2026-09-09c |
+| 📦 Seventh spatial null: EO foundation embeddings | **F.111**, OSF `6udm3`; E3 +0.191 [−0.007, +0.355], undetectable | 2026-09-09b |
+| 📦 Two more reviewers; style tics measured; claims promoted and demoted | **F.110**; dispersion failure → headline; burden → Appendix E; f printed as 0.483 | 2026-09-09 |
+| 📦 Two submission blockers fixed; recommendation scoped to one loss | gauge does not identify `B`; **F.109** loss sign-flip | 2026-09-08 |
+| 📦 Outside review answered by computation | **F.104** cluster bootstrap · **F.105** seven families · **F.106** `s_rep` · **F.107** · **F.108** | 2026-09-07 |
+| 📦 Campaign designed, costed, registered; its premise refuted | **F.98–F.103**, OSF `ad3py`; saturation at ONE station; siting paired −0.044 | 2026-09-06 |
+| 📦 Two review rounds; hidden finding recovered | **F.97c**: GHAP inversion was a coin flip, MAIAC excludes 0 | 2026-09-05 |
+| 📦 Every number generated; sixth null registered | claims 224; OSF `2jyfg`; panel is 29 countries, Kandy relief 850 m | 2026-09-04 |
+| 📦 Audit + five registered tests | C1–C7; **F.89–F.96**; MAIAC replaces GHAP; local stations win in Kandy's band | 2026-09-01 |
+| 📦 New paper built end to end (28 pp) | f = 0.4828 (print 0.483); gauge within 0.6 %; eps0 3.69 | 2026-08-14 |
+| 📦 Literature-recovered Kandy ground truth | **F.64–F.69**; "~90 % vehicular" refuted as mass share; W11 opened | 2026-08-22 |
+| 📦 Model formulation (target architecture) | information-tiered grey-box; `MODEL_SPECIFICATION.md` | 2026-08-18 |
+| 📦 Budget-ladder validation, re-validated | **F.50–F.53, F.84–F.87**; `require_covers()`; step gains superseded by F.96 (see `CONTEXT.md`) | 2026-08-23 |
+| 📦 The three axes: measured evidence state | **F.55–F.62**; spatial ceiling; `Bud4` unsupported | 2026-08-19 |
+| Webapp narrative surface + mobile defects fixed | 904 px overflow was a LATCH not a styling slip; gotchas #78/#79 | 2026-08-11 |
+| **THE PARTITION RESOLVED BY PHYSICS — f ≈ 0.48** | coherence cap, ledger **F.43**; not tunable (0.477–0.502) | 2026-08-10 |
+| Partition route closes — capability stated, no sixth attempt | hourly split declared unidentifiable; **F.40/F.41** | 2026-08-07 |
+| Extension tier could not produce episodes — found, fixed | tail correction **F.37/F.39**; gotcha #76 | 2026-08-07 |
+| Both re-measurement routes closed; a shipped assumption contradicted | fuel crisis has the WRONG SIGN; **F.35/F.36** | 2026-08-07 |
+| The spatial estimator was wrong — found, fixed, validated | per-hour estimator, 6 of 9 significant; **F.32–F.34** | 2026-08-07 |
+| W7 closed, emails drafted, NBRO check refreshed | eps0 does NOT transfer; **F.30/F.31** | 2026-08-06 |
+| W10 closed, forecast intervals adaptive, INSAT reopens diurnal | e(t) evening lobe FITTED; **F.29** | 2026-08-06 |
+| Reviewer pass — 8 major defects fixed | floor ≥0.41 vs headline 0.25; **F.26–F.28** | 2026-08-06 |
+| A spatial ground truth for Kandy exists (CEA NO2 network) | 10 sites 2013–17; **F.23–F.25**, W4 closed | 2026-08-06 |
+| f estimated not assumed — five converging lines | hierarchical 0.392 [0.258,0.525]; **F.21/F.22** | 2026-08-06 |
+| Background arc closes — 5 rebuilds rejected, limitation surfaced | **F.18/F.19**; the gap is a MEASUREMENT | 2026-08-03 |
+| Decomposition shown over-determined | 4 constraints on 3 DOF; **F.17** | 2026-08-02 |
+| B(t) externally checked for the first time | NBRO ratio 1.12 to P25, daily r 0.37; **F.14** | 2026-08-01 |
+| A2 anomaly target tested — premise REFUTED; A4 closes on evidence | swing 0.696 < patch 0.787; **F.16** | 2026-08-01 |
+| Consolidation v3 built twice, both rejected — the seam is a LEVEL problem | **F.15**; background day-to-day is advected, not local | 2026-08-01 |
+| Literature sweep — GNN closed with an external number, competitor found | GraPhy < 0.16 sensors/mi2 (Kandy 0.023); EGU26-9786 to cite | 2026-08-01 |
+| Daily-B seam quantified; re-level built + REJECTED | `B > T` in 28.5% of hours; ledger **F.13** | 2026-07-27 |
+| Kandy webapp forecast tier shipped | demonstration tier, OOD ×1.35, seam closed; **F.12** | 2026-07-27 |
+| Panel expansion pre-registered + forecast leakage found | quote **+0.120**, never +0.223; gotcha #68 | 2026-07-27 |
+| Preprint claim audit — 13 defects | A4 → Option 3; gotchas #68/#69 | 2026-07-26 |
+| Weak-point pass — f disclosed as a prior | superseded 2026-08-06 by the five-line estimate | 2026-07-26 |
+| Audit arc — N=10 Bogotá, 5th spatial null, GEMS rejected | N=10 panel; gotchas #66/#67 | 2026-07-26 |
+| additive_v3 ε-floor shipped + UI U1/U3 | v3 = shipped tier; gotcha #65 | 2026-07-21 |
+| Rain arbitration — IMERG ships, ERA5-Land rejected | gotchas #63/#64 | 2026-07-21 |
+| Phase 5 Kandy propagation complete | extension tier 2024–26, B2 wind port; gotchas #61/#62 | 2026-07-21 |
+| Medellín "ideal deliverable" improvement loop | B2 wind = validated method; A2 rejected | 2026-07-19, 07-16 |
+| Forecast expansion validated at Medellín | F-K1/F-M0/F-M2 PASS | 2026-07-11 |
+| Public webapp v2 — core<periphery inversion FIXED | the **increment split**; gotcha #57 sibling | 2026-07-10 |
+| Public webapp shipped + engine audit | QA gate, reconstruction parity 0.0014 | 2026-07-05 |
+| Preprint rewrite + N=9 Medellín + presentation pass | spatial skill-law NULL; gotchas #58/#59 | 2026-07-02 |
+| Evidence-hardening round (sensitivity, ablation, N=8) | S1–S4 artefacts; additive vindicated +26% vs −0% | 2026-07-01 |
+| Kathmandu full-model validation + preprint built | best-in-panel showcase; gotcha #57 | 2026-06-30 |
+| Multi-city ground-truth validation (N=5) | the transfer design itself; gotcha #56 | 2026-06-27 |
+| SERENDIB / GeoAQ-Zero four-track ML arc | T-a PASS, U PASS, I partial, **S NULL** | 2026-06-13 (pts 1–5) |
+| W2 transboundary verdict | regional share is SEASONAL, not chronic | 2026-06-13 |
+| Deliverables: reports, release repo, model bible | the FOUR-target propagation rule; gotcha #55 | 2026-06-07 |
+
+**Do not re-derive these.** If a question here looks open, check `§ 4 Closed — do NOT re-litigate`
+and the ledger before spending anything on it.
+
+## Model & Stage Reference (stable — not session state)
+
+### 🎯 PRODUCTION — Additive background+increment decomposition ✅ HEADLINE (2026-06-05)
+**The deployable Kandy PM2.5 model.** Replaces the held ConvCNP zero-shot maps as the production spatial product. Full plan: `docs/kandy_production_plan_2026-05-29.md`; **additive reframe `docs/additive_background_increment_plan_2026-06-04.md`**; post-mortem `docs/post_mortem_2026-05-27.md`.
+
+- **🆕 HEADLINE MODEL (additive Lenschow 2001, 2026-06-05):** `PM(x,y,t) = B(t) + [T(t)−B(t)]·P_local(x,y,t)`. **B(t)** = regional/transboundary background = rural-VanD floor (P10 of ±0.45° box) × GEOS-CF daily seasonal shape (diurnally flat; GHAP seasonal r=0.86). **P_local** = unit-mean local pattern = normalised S_emit·M (headline) [·A_transport = scenario]. **Local fraction f=0.25** ⚠ **SUPERSEDED — see the top blocks: the coherence cap places f at 0.48 and refutes 0.244; the shipped model is unchanged but the claim is not** (B_annual=(1−f)·VanD_basin, 2019 B≈14.8) set from SOURCE APPORTIONMENT (World Bank 2022 >50% transboundary in S.Asia + Seneviratne 2017 Kandy PMF regional-dominated + rural-satellite ~15% lower bound; bracket [15%,<50%]) — NOT GHAP-calibrated → GHAP decile 1.18× independently CORROBORATES additive 1.12×. **Basin mean preserved exactly** (=VanD per year, G1 Δ=0.000). UQ: PI width = P_local·(T95−T05) [background shifts centre not width] + background bracket [ridge 10.5…rural P25]. Scripts `decomp/build_additive_background.py` (Phase 0 B), `decomp/build_additive_field.py` (Phase 1+2), output `data/processed/decomp/kandy_decomp_predictions_{year}_additive.parquet` + `additive_partition.csv`. **Why additive:** multiplicative T·S·M wrongly modulated the transboundary background by the local pattern; additive adds B uniformly, structures only the local quarter → honest intervention partition. G3 seasonal-contrast discriminator REFUTED (both forms grow contrast at the stable inter-monsoon peak) — additive adopted for physics+framing, not a field test. Exposure +6% (flatter), burden 2023 ≈423/yr [231–616], 291 avoidable.
+- **(superseded) multiplicative v1:** `PM = T·S_emit·M` (·A_transport scenario) + Mondrian conformal PI — now the ablation/scenario; the smooth T·S·M is retired as the headline.
+- **📊 CANONICAL FIGURE SUITE (LOCKED 2026-06-06, restyled YlOrRd 2026-06-06): `src/stage1_satml/decomp/paper_figures.py`** (+ `paperfig.py` helpers, `pubfig.py` style) → **`results/figures/paper_figures/` (F1–F13, png 400dpi + pdf).** THE publication figure set; supersedes `figure_suite.py`/`final_model_suite/` and the older `monograph/` figures (history). 13-figure narrative (setting→mechanism→spatiotemporal→validation/burden→episode). Locked conventions (user 2026-06-06): **YlOrRd** PM heatmaps on ONE shared **PowerNorm(γ=1.3) 10–40** scale (`pf.pm_norm()`); **inferno** reserved for pure emission-source maps; signed=RdBu, UQ=magma; **WindNinja quiver** + green **emission-intensity contours** (S_traffic); accumulation diagnostics (ventilation index VI=BLH·|u|, flux convergence −∇·(Cu)); SciencePlots+STIX; **A4-sized**. **F6 = per-season ERA5→WindNinja winds; F13 = average-vs-stagnation-episode side-by-side.** Per-season + episode fields precomputed by **`scripts/build_seasonal_episodic_fields.py`** → `data/processed/decomp/seasonal_episodic_fields.npz` (rebuild after any 4factor change). **CANONICAL STYLING: all heatmaps SQUARE** (`pf.square_heatmaps(fig)`) + **opaque legends** (framealpha 0.92) + **heatmaps carry NO location pins at all** — markers/labels live ONLY on F1. **F1 = full OSM reference map** (`_osm_layers()` via osmnx, cached `data/processed/decomp/osm_kandy/*.geojson`; hillshade + graticule + scale bar + N-arrow + Sri Lanka locator inset) and IS the one figure that keeps the **sensor pins** (NIFS/KOALA, FECT-Hantana). Deps: osmnx/geopandas/contextily/cartopy. **Single-timestamp nowcast: `scripts/nowcast_figure.py --ts "YYYY-MM-DD HH:MM" [--label "episode"]`** → `paper_figures/NOWCAST_*.png`; panel (a) scale **AUTO-SWITCHES by pollution level**: decider = field 98th-pct; if ≥ **35 µg/m³ (WHO IT-1)** → **turbo + FIXED universal 8–90**; else → **YlOrRd + per-hour adaptive**. Panel **(b) upper bound = ALWAYS YlOrRd**. **(c) overlays FECT Akurana ground obs**. `EPISODE_PM=35` tunable. **Validated against 3 documented Kandy-relevant transboundary episodes:** Nov 3–5 2019 → model basin 45/core 63; Dec 7–8 2022 → 56/67; Feb 28–Mar 3 2023 → 34/37. **F7/F8 read `_additive` (headline)**. Plan `kandy_pm25/docs/paper_figures_plan_2026-06-05.md`. Run `paper_figures.py --figs all`. Regen requires the data chain current (gotcha #53).
+  - **T(t)** = Stage A v3 **lag-free** GBM (LGBM-only) on exogenous drivers, conformal-wrapped, re-anchored per-year to bias-corrected Van Donkelaar, **+ diurnal+seasonal amplitude sharpening to the observed FECT swing (`scripts/sharpen_T_diurnal.py`)** — the lag-free GBM damps the swing to ~85%/72% (regression to mean); sharpening maps T(t)'s climatology onto the observed FECT bimodal diurnal (1.91×, 07/18 rush, deep-night low) + seasonal (Mar 1.68/Aug 0.55), annual mean preserved. Lag-free chosen because 2024 FECT coverage is 30.5% Akurana-only. Script `models/predict_T_anchor_v3.py` → **sharpen_T_diurnal.py**; output `data/processed/stage1_v3/T_anchor/T_kandy_hourly_{year}.parquet`.
+  - **S_emit(x,y)** = observed VanD V6.GL02.04 PM2.5 surface (2019–2023 mean), normalised to mean 1. Correct signs (city 1.09>1, highland<1) but weak ±10% contrast. Script `decomp/build_s_emit.py`.
+  - **M(x,y,t)** = `1 + κ·w(BLH_t)·c(x,y)`, confinement c=z-score(−delta_z), κ=0.15, H_ridge=300m (physical priors, uncalibrated). Script `decomp/build_m_confinement.py`.
+- **Level anchor (AREA-ANCHORED 2026-06-04 — area-vs-floor correction):** `L(year) = VanD_basin(year)` directly, **β≡1** (NO scale-up). KOALA 24.5 is a valley-**FLOOR** diagnostic (NIFS verified 7.2839/80.6322, ~27m above floor, near-core), NOT the basin-mean target. The old `β=1.2472` forced the AREA mean to a FLOOR point → double-counted floor enhancement, over-predicted the ventilated ridge ~2×. Two independent area products agree (VanD ~19.7, GHAP ~17.0, 2019) below KOALA-floor 24.5; FECT-Hantana ridge 10.5 → vertical gradient floor>area>ridge. Confinement M reproduces KOALA at NIFS pixel (~23.5 vs 24.5, **unforced**). Headline basin fell **26→~21**. Module `features/vandonkelaar.py` (`bias_factor`→1.0); regen chain `predict_T_anchor_v3`→`build_decomp_map`→`build_overlay_predictions`→`build_spatial_uq`. Fig `decomp/figure_area_anchor.py`.
+- **2023 results (headline year; 2024=proxy):** annual AREA mean **~21** (2019 19.7 / 2020 19.0 / 2021 17.0 COVID / 2022 18.7 / 2023 20.9), seasonal MAM>DJF>SON≈JJA, diurnal **6–7 LT peak / 13–14 LT trough** (Senarathna diurnal r=0.756, monthly r=0.836 PRESERVED), **night contrast 1.24× > day 1.11×**, 4factor core/edge 1.20× annual / 1.41× night, annual max ~30 / nocturnal ~32, neg q50 <0.5%, mean PI ~29. Assembly `decomp/build_decomp_map.py` (2.25M rows). Figures `decomp/figure_final_deliverable.py`, `heatmaps.py`.
+- **Exposure metrics (health framing, 2026-06-04):** area mean UNDER-states exposure — population clusters in the higher core. NTL-weighted (2023): area **21.0** → residential **21.5** → **dynamic/population-weighted 22.5** (health CSV 22.4, +7% uplift) → populated-core **21.9**. Health statements use the dynamic pop-weighted figure, NOT the area mean. Script `decomp/exposure_weighting.py` → `data/processed/decomp/exposure_weighting.csv`.
+- **Parallel floor-anchored constants (checked 2026-06-04):** (a) `KANDY_GEOS_CF_RATIO=0.536` (=24.5/45.7) is a FLOOR ratio but **firewalled** in the decomp — T(t) level is set by the additive VanD re-anchor, b_FECT absorbs ρ. No fix needed. (b) `CAMS_BIAS_FACTOR_FLAT=0.5984` (v1 22-yr daily XGBoost chronology) IS floor-anchored to KOALA → that superseded 2003–2025 series over-states the AREA level ~25%; flag if ever cited as area PM. (c) PVAF used "Kandy AREA mean 24.5" for source selection — also the floor value; superseded/exploratory.
+- **Senarathna 2019 (decomp@NIFS):** diurnal r=0.75, monthly r=**0.83**, March peak, evening 21 LT. Script `decomp/decomp_vs_senarathna.py`.
+- **Validation (`decomp/validate_decomp.py`):** **U5 independent PASS** — vs VIIRS NTL r=+0.68, vs delta_z −0.70; **U6 signs 2/2 PASS**; FECT pointwise documents over-prediction at elevated Hantana (obs 10.5 vs pred 19.9) — real, not a temporal error.
+- **🆕 U7 independent-product cross-check vs GHAP (2026-06-01):** GHAP/GlobalHighPM2.5 (Wei et al., 1 km, methodologically independent of VanD). **SEASONAL r=+0.909** [+0.75,+0.98] → STRONG independent corroboration; **LEVEL:** decomp(area) 17–20 ≈ GHAP(area) 17–19 **within 6%**, both BELOW KOALA-floor 24.5; **INTER-ANNUAL r≈0** → trend NOT corroborated (low-confidence); **fine-spatial r=+0.13**. **Lever 2 (M κ-calibration) = honest NEGATIVE** — δz-confinement ⟂ NTL-source collinear on valley floor → κ empirically unidentifiable → κ=0.15 kept as PRIOR. **Lever 3 spatial UQ** (`*_spuq.parquet`): fine ±13% gradient is only ~1.1σ at the tails. **Lever 4** robustness: spatial pattern corr ≥0.956 across κ/H_ridge envelope.
+- **DECISION (FINAL 2026-06-02, `docs/validation_arc_and_model_framing_2026-06-02.md`):** **ship the smooth `PM = T·S·M` field as the HEADLINE** (magnitude GHAP/KOALA-validated, diurnal Senarathna/GHAP-validated); present the **transport overlay `A_transport` as a physically-motivated SCENARIO, not a validated layer.** **Why:** across 300+ monitored valleys NO public network densely+deeply samples the floor-to-ridge gradient (monitors are floor-sited globally); the pooled confinement test on genuine-δz valleys gives floor/elevated ≈0.97 absolute with only a **weak ~10% morning-peaked diurnal modulation** — overlay DIRECTION weakly right, MAGNITUDE (1.25–1.41×) unsupported/overstated. City-centre/NBRO elevation-transect sensor is the ONLY validation path.
+- **Bowatte deliverables:** `decomp/compare_versions.py` → `results/figures/kandy_decomp/version_comparison.png`; 1-pager `docs/bowatte_meeting_brief.md`.
+- **🌬️ A_transport WIND from WindNinja diagnostic model (2026-06-05, [[project-windninja-transport]]):** the hand-rolled channelling+katabatic-drainage in `terrain_transport.py` is REPLACED by **WindNinja 3.12.2** mass-consistent diagnostic winds. Install `tools/wn/` (**gitignored**). Wind-class library (16 dir × 2 speed × day/night, 64×64) `scripts/build_windninja_library.py` → `data/processed/pinn_inputs/windninja_library.npz`; `terrain_transport.windninja_wind()` blends it, `solve_terrain` uses it (`USE_WINDNINJA=True`, analytical fallback kept). DEM `scripts/export_kandy_dem_utm.py`. Annual contrast **1.20–1.25×** (basin preserved). **KEY: drainage shifts the nocturnal MAX down-valley (N, Katugastota sink ~28 vs core ~26) — testable.** ERA6 unusable till 2027.
+- **🎯 Terrain transport overlay — CROSS-CITY CALIBRATED 2026-06-01** ([`reports/terrain_solver_calibration.md`](reports/terrain_solver_calibration.md)). The Tier-B terrain-aware advection-dispersion solver (`decomp/terrain_transport.py`) was calibrated against the dense station networks of **10 monitored valleys** — physics fixed, ML calibrates ~3 params only. **Cross-city spatial Pearson +0.49 ± 0.17**; calibration barely moved the hand-set priors (K0 120→124.88, DRAIN 8.0→8.14, SLOPE_K 0.060→0.062). **KEY: terrain-learnability ≠ regime-match.** **Overlay SHIPPED (2026-06-02) as the four-factor `A_transport`, smooth as ablation**; annual 1.27×/night 1.41× core/edge, basin-preserving. **A_transport carries a DIURNAL EMISSION-TIMING factor `e(t)`** (`src/stage1_satml/decomp/emission_profile.py`): amplitude `a(t)=clip(e(t)·18/(wind·BLH),0,0.5)`. e(t) = bimodal EDGAR road-transport profile (Crippa 2020), **Kandy `vehic`=0.85** ⚠ **the "~90% vehicular" provenance is REFUTED as a mass share — see F.66**; the measured PMF split at Katugastota is traffic 7.6%, biomass burning 14.1% (vs Colombo ~55–60%) + 10% domestic; morning(~07)/evening(~18) rush peaks ~2× overnight. **Fixes the met-only defect**. **Final 4-factor product BUILT** via `scripts/build_overlay_predictions.py` → `data/processed/decomp/kandy_decomp_predictions_{2019..2023}_4factor.parquet`. Demo `scripts/emission_timing_demo.py`; design+lit `docs/enhancement_diurnal_emissions_2026-06-02.md`.
+- **🚦 Congestion-weighted traffic EMISSION source (2026-06-04):** A_transport's source S(x,y) upgraded to a **bottom-up centrality-AADT × COPERT-EF** surface (`decomp/build_traffic_emission.py` → `S_traffic_kandy.npz`, core ~3.3× mean, log-tempered). Method = network-centrality traffic-volume estimate **betweenness (pass-by, r≈0.77 vs flow) + closeness (O-D trip-ends)** × class/speed emission factor lifted under congestion (Lowry 2014, Kazerani&Winter 2009, Borge 2017, Gately 2013, Plejdrup ESSD 2024 — in `references.bib`). Wired into `terrain_transport.py _grid_fields`. **MEASURED calibration NOT possible: TomTom verified to have ZERO traffic-flow coverage for Sri Lanka** → magnitude stays a literature-bounded prior in UQ. Figs `figX3_traffic_emission.png`.
+- **Dynamic-transport learning — TESTED, NULL (2026-06-01).** 3 independent diagnostics all refute a learnable dynamic-confinement signal. **Why (not missing data):** monitored stations are all urban-valley-FLOOR (δz 8–141m) → don't sample the vertical gradient. Chandigarh (only city w/ 700m station relief) shows the expected signs → physics right, data must SAMPLE the gradient. **Verdict: dynamic transport IMPOSED from the calibrated physics solver, NOT learned.** Scripts `scripts/diagnostic_transport_dynamics{,2}.py`, `diagnostic_elevation_contrast.py`. **Full arc synthesis: [`docs/findings_synthesis_post_convcnp_2026-06-01.md`](docs/findings_synthesis_post_convcnp_2026-06-01.md)** + [`docs/valley_pm25_variation_research.md`](docs/valley_pm25_variation_research.md). KEY META: physics-transfer > ML-transfer at this scale; binding constraint = data CONTENT, not volume/model.
+
+### ⚠ Research audit (2026-05-29) — `docs/audit_2026-05-29.md`
+Full Tier 1–3 sweep. **5 errors found, none corrupted the model** (bbox-shared features + b_FECT offset-absorption firewalled it): E1 FECT elevations (1538/1698→460/738), E2 Hantana coord (→7.265/80.625), E3 Akurana out-of-bbox, E4 "highland" narrative false, E5 Senarathna monthly coeffs May–Nov mis-transcribed (fixed → monthly r 0.73→0.83). **Verified sound:** T(t) core, b_FECT, GEOS ratio, β, KOALA 24.5, hourly+weekly coeffs, all 10 source-city coords. See gotcha #49.
+
+📦 **Retired-stage reference archived 2026-09-21** (Stage A v1 daily XGBoost, Stage A v2.1 daily
+RECAP, Stage B ConvCNP + PVAF, both supporting PINN experiments) is kept verbatim in
+`docs/claude_md_archive/CLAUDE_archived_blocks.md`. Headline numbers are in `PROJECT.md`.
+
+### Stage A v3 — Hourly RECAP residual learning ✅ COMPLETE (locked 2026-05-20)
+- **Architecture**: hourly residual target `pm25 − c_prior_anchored` where `c_prior_anchored = ρ·GEOS-CF + b_FECT[sensor]`. Per-sensor offset in `data/processed/stage1_v3/v3_station_constants.json` (Akurana b_FECT=−9.105, Hantana b_FECT=−13.749). Residual centred on −0.028 µg m⁻³ (H8 PASS by construction).
+- **Dataset**: 19,686 hourly rows × 43 cols (`data/processed/stage1_v3/dataset_v3_hourly.parquet`). 33 trainable features. NaN map: GEOS-CF 1.1%, ERA5 0.8%, CAMS 0.8%, MAIAC 84.5%, t925 100% (deferred).
+- **v3.0 production**: linear blend of LightGBM+CatBoost+XGBoost-quantile (0.46/0.48/0.06) + **CV+ Mondrian conformal**. Outputs `data/processed/stage1_v3/training/predictions_blend_v3.parquet`.
+- **Pooled hourly LOMO** (60 folds, 53 non-empty, 19,388 obs): **RMSE 7.76, R² 0.583, cov90 0.865, PI width 22.3, CRPS 2.9**.
+- **v3-extended (39 feat)**: RMSE 7.78, R² 0.581, cov90 0.867. Tier-1 features did NOT lift R². **Path A negative result.**
+- **Pre-reg gates**: H1 PASS (60% RMSE reduction); H2 cov90 **PASS (0.867)**; H3 R²≥0.60 **CLOSED AS HONEST NEAR-MISS at 0.581**; H4 (Embassy daily) PASS at 0.861; H7 **PASS**; H8 residual mean −0.028 **PASS**.
+- **Senarathna 2024 reproduction**: diurnal r=+0.865, morning peak 07 LT match, evening 18–19 LT (1h drift); weekly r=+0.783; monthly r=+0.41. Figures `results/figures/stage1_v3/`.
+- **TFT smoke (Val 2024)**: R² 0.447 — does not beat GBM blend. **Removed from production stack** (amendment #9).
+- **v3.1 lag-dropout**: R² 0.571 — **rejected as production**; retained as ablation.
+- **Pre-reg amendments**: #7 v3 lock; #8 H7 metric + CV+ Mondrian; **#9 (`docs/osf_prereg_stage1_v3_amendment_9.md`) locks v3.0 as production.**
+- **Key scripts**: `src/stage1_satml/features/build_dataset_v3_hourly.py`; `models/train_{lgbm,catboost,xgb}_v3.py`; `models/blend_v3.py`; `scripts/process_kandy_era5_t925_to_parquet.py`; `scripts/ingest_v3_gee_drive.py`; `scripts/gee_export_v3_kandy.py`.
+- **H3 closure path**: more ground sensor data. Architectural / feature-engineering levers exhausted within current data envelope.
+
+### Reanalysis prior (preprocessing inside Stage B, not a standalone stage)
+- GEOS-CF PM25_RH35_GCC × per-city row-mean scaling. **Kandy ratio = 0.536** (= 24.5 / 45.7). Locked in `config.py` as `KANDY_GEOS_CF_RATIO`.
+- v11 row-mean per-city ratios: Mel 0.8070, ChiMai 0.5933, KTM 0.5601, Kandy 0.536. Bogotá 0.807, MexCity 0.217 retained for reproducibility only.
+- Used inside Stage B as `c_prior_scaled = c_prior × city_ratio` to form the residual target `pm25 − c_prior_scaled`.
+
+### Tooling
+- **Kaggle kernel log** (MANDATORY): `docs/kaggle_kernel_log.md` — read at start of Kaggle sessions, update after every push/download.
+- **GPU protocol**: After every push → Kaggle UI → Edit → Accelerator → **GPU T4 x2** → Save.
+- **Kaggle tokens**: KGAT_ tokens in `d:/ProjectCD/API.txt`. Install: `echo -n "KGAT_..." > ~/.kaggle/access_token`. Push: `PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe kernels push -p <dir>/`
+- **409 Conflict**: metadata `id` doesn't match Kaggle slug.
+- W&B: `WANDB_PROJECT="kandy-pinn"`. Kaggle secret: `"wandb"`.
+- Plot style: `src/utils/plot_style.py`. `apply_style("ieee")`. STIX fonts.
+
+## Key Paths
+
+All paths are relative to `d:\ProjectCD\kandy_pm25\` unless stated otherwise.
+
+**Deliverables (2026-06-07; webapp 2026-07-05)**
+- **Public webapp (Kandy): `d:\ProjectCD\kandy_webapp\`** (own repo `daminda1108/kandy-pm25-explorer`, gitignored by parent) → https://daminda1108.github.io/kandy-pm25-explorer/. Static site (index.html/method.html/css + js/{app,store,field,overlay,timeline,wind,panels,download,util,**mapview**,**cities**,**showcase**}.js + data/ payload). Exporter `kandy_pm25/scripts/webapp_export.py --city` (re-run + QA gate after any additive_v2 change). **First-party JS/CSS URLs are versioned `?v=<ts>` — bump on each deploy** (browser module cache). Plans + audit: `kandy_pm25/docs/{deployment_plan_public_webapp_2026-07,webapp_v2_plan_2026-07-09,webapp_engine_audit_2026-07-05}.md`.
+- **Medellín deliverable app: `d:\ProjectCD\medellin_webapp\`** (own repo `daminda1108/medellin-pm25`, gitignored by parent) → https://daminda1108.github.io/medellin-pm25/. Standalone public-first app sharing the Kandy engine (`js/cities.js` + `window.CITY_ID`); payload at `data/` (built by `webapp_export.py --city medellin`); live forecast in `live/` + `.github/workflows/medellin-live.yml` (WAQI_TOKEN repo secret set). Plans `kandy_pm25/docs/medellin_{deliverable_plan_2026-07-14,first_improvement_plan_2026-07-13,showcase_plan_2026-07-11}.md`. Improvement scripts `kandy_pm25/scripts/medellin_{vandfree_level_test,a1_spatial_audit,b1_wind_diagnosis,b2_wind_recalibration,weather_validation,data_value_curve,showcase_s0,showcase_figures}.py` + `build_medellin_v16.py` + `score_convcnp_assim.py`; artifacts `results/figures/medellin_showcase/`.
+- Standalone release model: `d:\ProjectCD\kandy_pm25_release\` (own repo `daminda1108/kandy_pm25_model`, package `kandymodel/`, gitignored by parent). Entry points: `kandymodel/viz/paper_figures.py`, `scripts/nowcast.py`, `scripts/regenerate_all.py`.
+- Supervisor reports: `kandy_pm25/docs/reports/{kandy_model_briefing,kandy_model_technical_report}.{md,pdf}` + `_report_style.tex` (gitignored).
+- **Flagship preprint (2026-06-30, 22 pp):** `kandy_pm25/docs/reports/preprint_kandy.{md,pdf}` + style `_preprint_style.tex` + figures staged in `docs/reports/fig_preprint/` + builder `docs/reports/build_report.js` (`--src/--style`). Plans `docs/paper/{preprint_plan,evidence_hardening_plan}_2026-06-30.md`. China-arc doc `docs/reports/china_validation_arc.pdf`.
+- **Evidence-hardening artifacts (all `scripts/`, gitignored):** `sensitivity_analysis.py` (→S1), `ablation_scorecard.py` (→S2; ABLATE hook in `xichang_prod.build_field`), `independent_visibility.py` (→S3, VCBI METAR), `spatial_skill_law.py` (→S4, tested-NULL), `w2_transboundary_figure.py`, `regenerate_city.py` + `docs/REPRODUCE.md`. N=9 scorecard `results/figures/multicity/validation_scorecard.{png,csv}`. New cities in `city_config.py`: baoji/taian/yichang/**medellin**.
+- **Medellín analogue (2026-07-02, N=9):** `city_config.py` entry + `data/processed/pinn_inputs/medellin_terrain_core.npz` + `data/processed/decomp/S_traffic_medellin.npz` + `data/processed/decomp_medellin/`; ground `data/processed/stage2/medellin_perstation_v13.parquet` (24 stn), DEM `data/external/medellin/dem/medellin_dem.tif`. Run via `NO_WINDNINJA=1 xichang_prod.py --city medellin`. Held-out: 0.99/0.88/+6%/**ρ 0.78**.
+- **Audit arc + N=10 (2026-07-25/26, `scripts/`, whitelisted in `.gitignore`):** `score_additive_v3.py` · `alphaearth_spatial_test.py` · `panel_donor_solartime.py` · `add_cprior_to_perstation.py` · `build_additive_field_v3.py` (`--city`, `eps_mode: fitted|relative`). Bogotá assets: `data/processed/{decomp_bogota/, pinn_inputs/bogota_terrain_core.npz, decomp/S_traffic_bogota.npz}`. Docs: `docs/{production_audit_2026-07-25, data_and_ml_frontier_2026-07-25, sensorless_product_scope_2026-07-25}.md` + `docs/paper/a4_anchor_provenance_audit_2026-07-25.md`.
+- **Rain arbitration (2026-07-21, `scripts/`, gitignored):** `imerg_rain_arbitration.py` · `gee_export_imerg_gapfill.py` (Drive folders `MedellinIMERG`/`KandyIMERG`) · `download_gee_drive_outputs.py` (`_find_folder_ids` multi-folder scan). Exporter: `_imerg_hourly_rain()` + `_prefer_imerg_rain()` + per-city `imerg=` and `network_obs=` keys. IMERG archives: `data/external/tier_c/gpm_imerg/gpm_imerg_{2018..2026}.csv` (Kandy), `data/external/medellin/tier_c/med_gpm_imerg_{2018..2026}.csv`.
+- **Kandy Phase-5 propagation (2026-07-20/21, `scripts/`, gitignored):** `kandy_driver_tier_build.py` (extension T+B, FULL vs ERA5_ONLY, `sharpen_to_locked`, `_locked_b_over_t`) → `kandy_extension_fields.py` (→ `..._{2024,2025,2026}_additive_v2_drv.parquet`) → `b2_kandy_wind_prior.py` (θ=344.5° drainage axis). Exporter: `_apply_wind_calib()`. Frontend: `kandy_webapp/js/cities.js` `windCaveat` + `index.html` `#weather-note`. Bookend: `validation_scorecard.csv` + `validation_scorecard_prev_20260716.csv`.
+- **Forecast tier + background arc (2026-07-27 → 08-03, `scripts/`, ALL WHITELISTED):** `kandy_forecast_ood_widening.py` (k=1.35) · `kandy_forecast_pack_update.py` · `kandy_era5land_refresh.py` · `kandy_background_nbro_check.py` (B(t)'s first external check) · `kandy_f_reconciliation.py` (the coherence floor) · `kandy_background_{cap,relevel,v3,v4,v5}.py` (five rejected rebuilds; `build_additive_field_v2.py` carries `RELEVEL=False`) · `kandy_anomaly_target_test.py`. Webapp: `kandy_webapp/live/kandy_live.py` + `live/model/pack.json`. Ledger: **F.12–F.19**.
+- **Forecast arc (2026-07-11, `scripts/`, gitignored):** `forecast_native_t_retrain.py` (F-K1) · `gee_export_geoscf_forecast.py` (F-M0, Drive folder `GEOSCF_FCST`) · `forecast_backtest_m2.py` (F-M2). Docs `docs/forecast_{from_decomposition_research,expansion_exploration}_2026-07-10.md`.
+- **Pre-submission plan:** `docs/paper/pre_submission_fixes_and_spatial_roadmap_2026-07.md`. Prior expansion backlog `docs/paper/expansion_roadmap_2026-07.md`.
+- **Kathmandu full-model validation:** products `data/processed/decomp_kathmandu/`; figures `results/figures/kathmandu_paper_figures_v2/`; assets `data/processed/pinn_inputs/kathmandu_{windninja_library.npz,dem_utm90m.tif,terrain_core.npz}` + `data/processed/decomp/S_traffic_kathmandu.npz`.
+- Complete technical reference ("model bible"): `kandy_pm25/docs/model_reference/` (20 parts) + `kandy_pm25/docs/MODEL_REFERENCE_COMBINED.md`. Standing rule: keep in sync with every confirmed model addition (+ Appendix F ledger). See [[project-model-technical-reference]].
+- **🆕 Modular grey-box package (2026-08-19):** `src/modular/` (budgets · observation · constraints · shrinkage · tiers · production · emission · **schemas**) + `scripts/tests/test_modular*.py` (**68 tests**). **`schemas.py` (pandera, 2026-09-21)** checks frame STRUCTURE: unique (city, date) keys, stream date span checked against the frame before the merge (#85), static features non-null and constant within each city (C7), physical ranges. NaN exceptions are declared via `allow_null={col: reason}`. Wired into `ladder_maiac.py:build_maiac_frame()`; tests `scripts/tests/test_schemas.py` (13). Extend it to every ladder frame builder. Spec `docs/MODEL_SPECIFICATION.md`; preregs `docs/prereg_modular_validation_v2_2026-08-18.md`; remediation `docs/spatial_diurnal_remediation_plan_2026-08-19.md`. Validation scripts: `modular_validation_all.py`, `build_lur_predictors.py`, `lur_fit.py`, `pull_hourly_blh.py`, `diff_decomp.py`.
+- **🆕 Re-validation + evidence scripts (2026-08-22/23, `scripts/`, whitelisted):** `build_bud0_streams.py` (STATIC_GEO city aggregate + GHAP SATELLITE_LEVEL pull) · `revalidate_ladder.py` (the `Bud0a/b/c` decomposed ladder) · `learner_sensitivity_bud0c.py` · `colombo_zeroshot_test.py` + `colombo_zeroshot_bud0c.py` · `p4_identifiability.py` · `fit_s_exp.py` · `support_collapse_test.py` · `elangasinghe_spatial_test.py` · `ladder_support_test.py` · `tier2_robustness.py` · `bootstrap_v3_r2.py` · `palette_cvd_check.py` · `scripts/tests/test_budget_covers.py` (**74 tests**). Products in `data/processed/modular/`: `ladder_revalidated.csv`, `bud0_static_geo.csv`, `bud0_satellite_level.csv`, `p4_identifiability.csv`, `support_collapse.csv`, `s_exp_fit.csv`, `learner_sensitivity_bud0c.csv`, `colombo_zeroshot*.csv`, `lur_predictors_colombo.csv`, `elangasinghe_spatial_test.csv` (⚠ written to `data/processed/decomp/`, not `modular/`).
+- **🆕 Claim generators + paper-2 scripts (2026-09-04, `scripts/`, whitelisted):**
+  `colombo_donor_test.py` (F.63 re-run) · `nbro_pixel_check.py` (F.65 pixel lift) ·
+  `kandy_field_diagnostics.py` (ventilated hours, pre-cap excess, constraint sweep, contrast by
+  window) · `global_reference_census.py` (OpenAQ global pull, 20,179 locations) ·
+  `phase0_sector_surface.py` · `pull_industrial_landuse.py` (OSM industry) ·
+  `phase1_frame_and_power.py` · `phase2_learned_pattern.py` · `phase2_gauge_check.py`.
+  Products: `modular/{colombo_donor_test,global_reference_census,phase0_sector_surface,
+  phase1_predictor_ranking,phase2_learned_pattern}.csv`, `decomp/{nbro_pixel_check,
+  kandy_field_diagnostics,kandy_contrast_by_window}.csv`, `decomp/industry_{slug}.npz`,
+  `external/openaq/discovery/global_locations.csv`.
+- **🆕 Review-response scripts (2026-09-05, `scripts/`, whitelisted):**
+  `independent_background_revalidated.py` (F.54 re-run on the corrected `Bud0c` rung; donor-city
+  background through an identical chain) · `ladder_order_and_bootstrap.py` (**F.97**: ladder
+  reordering + bootstrap over CITIES + the paired deep-tropical inversion test on both satellite
+  streams). Products: `modular/{independent_background_revalidated,ladder_order_variants,
+  ladder_bootstrap}.csv` + `ladder_order_summary.json`.
+- **🆕 Spatial learning curve — execution (2026-09-13/15, `kandy_pm25/scripts/`):**
+  `spatial_curve_analysis.py` (E0–E7 + merge; `--city-cache`, `--only-clusters`, `--shard/--n-shards`,
+  `--score-only`; mgwr `n_jobs=1`; D-8 in `DEVIATIONS`) · `spatial_curve_dl_tabpfn.py` (E8/E9, **refuses
+  a visible GPU**, `--resume-from`) · `spatial_curve_tabpfn_consolidate.py` (one complete source per
+  city → `pred_tabpfn_consolidated_{frame}.parquet`) · `spatial_curve_kaggle_watch2.py`
+  (`--require-live`; download on terminal state). Kernel generators in
+  `data/processed/modular/spatial_curve/kaggle/`: `make_analysis_cpu_shards.py`,
+  `make_analysis_targeted.py`, `make_tabpfn_cpu_kernels.py`. **All 78 city results:**
+  `spatial_curve/city_cache_salvage/city_{registered,s70}_{cluster}.pkl`; GPU-era TabPFN outputs
+  (archived, NOT merged): `spatial_curve/shard_out/kandy-spatial-e89-tabpfn-all/`. Kaggle datasets
+  `kandy-spatial-dl-code`, `-dl-data`, `-city-cache` (78 pickles), `-tabpfn-resume` (GPU-era, do not use).
+- **🆕 Figure and map plan (2026-09-09):** `kandy_pm25/docs/figure_and_map_plan_2026-09-09.md` —
+  the visual audit and its plan. **EXECUTED 2026-09-14**: builders in `#writing/src/f_chapters.py`
+  (`F6_partition`, `F7_station_count`, `F7_losses`, `F7_cluster_bootstrap`, `F8_tournament`,
+  `F9_paired_trap`, redrawn `F1_1`/`F4_3`) and `d_schematics.py` (`D11_valley`, UTM 44N, reads
+  `pinn_inputs/kandy_dem_utm44n_90m_wide.tif` + `decomp/osm_kandy/rivers.geojson`); captions in
+  `build/assemble.py` `VISUALS`; `thesisviz.natural_earth()` is the cache-only loader. Records what was verified rather than assumed:
+  which GIS libraries are installed, that cartopy's Natural Earth cache is populated and every
+  needed feature loads offline, that all six proposed figures already have their data on disk, and
+  that **no prose anywhere names a figure by number** so renumbering is safe. Also holds the seven
+  proposed chapter titles.
+- **🆕 Thesis (2026-09-04/05):** `D:\ProjectCD\#writing\` — `thesis/chapters/ch00..ch11.md` (edit
+  these, never `build/thesis.md`) · `src/{thesisviz,d_flowcharts,d_schematics,d05_validation_protocol,f_chapters,t_tables}.py`
+  · `build/{make_reference_docx,lint,assemble,build_docx}.py` · `summary/{summary.md,build_summary.py}`.
+  Build: `python build/build_docx.py` (regenerates tables → lint → assemble → pandoc; **refuses**
+  on claim drift or a lint ERROR). Bibliography is shared with the paper at
+  `kandy_pm25/docs/paper/references.bib`.
+- **🆕 Campaign-design + chemistry scripts (2026-09-05/06, `scripts/`, whitelisted):**
+  `pull_kandy_receptors.py` (150 vulnerable-group receptors from OSM) ·
+  `design_sensor_network.py` (35 sites, 5 strata, cLHS over 7 physics covariates, 400 m access
+  screen) · `design_comparison.py` (5 designs, D-efficiency + coverage) ·
+  `plot_sensor_design.py` + `plot_design_justification.py` (Figs 9.4/9.5, portrait, hillshade +
+  contours) · `campaign_power.py` (F.100 detection limits) · `campaign_costing.py` (F.101) ·
+  `station_count_curve.py` (F.102, k = 1..8 pooled + band-stratified) ·
+  `siting_experiment.py` (F.103, `--fixed-holdout`, `--tag`) · `osf_lodge.py` ·
+  `chemistry_mechanism.py` (F.98a) · `species_partition_kandy.py` (F.98b, Fréchet bounds) ·
+  `independent_background_revalidated.py` (F.54 re-run) · `ladder_order_and_bootstrap.py` (F.97).
+  Products — in `decomp/`: `sensor_design_kandy.csv` + `sensor_design_summary.json` ·
+  `design_comparison.csv` · `design_saturation.csv` · `kandy_receptors{,_ranked}.csv` ·
+  `campaign_power.json` · `campaign_costing.{csv,json}` · `species_partition_kandy.csv` +
+  `species_partition_summary.json`. In `modular/`: `station_count_curve.{csv,json}` ·
+  `siting_experiment{,_fixed}.{csv,json}` · `chemistry_mechanism.csv` +
+  `chemistry_mechanism_summary.json` · `chemistry_origin_test.csv`.
+- **🆕 Campaign docs (2026-09-05/06):** `docs/sensor_placement_plan_2026-09-05.md`
+  (12 sections; §4 written against **40 CFR Part 58 App E** + **EPA/600/R-20/280**, which
+  corrected my own protocol from 2 weeks of co-location to EPA's **30-day minimum**) ·
+  `docs/prereg_kandy_campaign_2026-09-05.md` (**OSF [`ad3py`](https://osf.io/ad3py/)**, project
+  `r7a3w`, lodged blind before deployment) · `docs/prereg_chemistry_mechanism_2026-09-05.md`
+  (not lodged — user's call). Thesis §9.7 carries the design, the costing and both refutations.
+- **🆕 Paper-2 docs (2026-09-04):** `docs/learned_pattern_plan_2026-09-04.md` (plan + Phase 0/1/2
+  results) · `docs/prereg_learned_pattern_2026-09-04.md` (**OSF `2jyfg`**, project `dgtuq`) ·
+  `docs/paper/note_spatial_pattern_2026-09-04.md` (the write-up) ·
+  `docs/paper/TOKENISATION_BACKLOG.md` (what the claims gate does and does not protect).
+- **🆕 Paper-planning docs (2026-08-22/23, `docs/paper/`):** `rewrite_plan_2026-08-22.md` (**the active plan**) · `claims_audit_2026-08-22.md` (8 claims that moved + drafted replacement text) · `novelty_and_figures_2026-08-22.md` · `literature_positioning_2026-08-23.md`. Re-validation: `docs/revalidation_plan_2026-08-23.md`. Preregs: `docs/prereg_colombo_zeroshot_2026-08-22.md` (**OSF `nxqgb`**), `docs/prereg_revalidation_2026-08-23.md` (**OSF `g6hqb`**), `docs/prereg_subgrid_and_streams_2026-09-01.md` (**OSF `bkpyr`**, project `h8m9j` — C1/S3, S1, S2, R2, R3), `docs/prereg_chemistry_2026-09-01.md` (**OSF `kx23c`**, project `zvqp4` — C-H1..C-H4). **All 12 preregs are now git-tracked.**
+- **🆕 Papers read 2026-08-22:** `D:\ProjectCD\references\papers\` — `aaqr-21-10-oa-0266.pdf` (Dhammapala 2022, F.64) · `CLEAN Soil Air Water - 2025 - Nirmani...pdf` (F.65/F.67) · `1-s2.0-S2772416625001937-main.pdf` (Attanayake RF-CNN, F.65) · `aaqr-16-03-2015aac-0123.pdf` (Seneviratne 2017 Kandy PMF, F.66).
+
+**Infrastructure**
+- Root: `d:\ProjectCD\kandy_pm25\`
+- Config: `config.py` (all constants, paths, params)
+- Venv: `.venv\Scripts\python.exe` — always use this, not system Python
+- GEE project: `kandypinn`
+
+**Source code (narrative → directory mapping)**
+- Stage A (temporal anchor): `src/stage1_satml/` (features, models, visualization)
+- Stage B (cross-city ConvCNP): `src/stage3_pinn/{data,models,training}/`
+- Supporting cross-continental PINN: `src/stage2_transfer/`
+- Supporting SharedTerrainAnsatz diagnostic: `src/stage3_pinn/models/shared_terrain_ansatz.py`
+- Modular grey-box tiers: `src/modular/`
+- Utils: `src/utils/plot_style.py`
+
+Directory numbers (`stage1`, `stage2`, `stage3`) are workstream codes preserved to avoid breaking imports and Kaggle kernel paths. They do NOT line up 1-to-1 with narrative stage letters.
+
+**Stage A data & models**
+- Domain dataset: `data/processed/merged/dataset_daily.parquet` (8,401 rows × 49 features, 2003–2025)
+- Pixel dataset: `data/processed/merged/dataset_pixel_daily.parquet` (413,950 × 45 features)
+- PM2.5 predictions: `data/processed/merged/pm25_predictions_daily.parquet`
+- XGBoost models: `results/models/xgboost_kandy_pm25.ubj`, `xgboost_pixel_pm25.ubj`, `xgboost_q05/q50/q95.ubj`
+- Validation tables: `results/tables/koala_monthly_validation_2019.csv`, `model_benchmark_comparison.csv`, `monthly_cov_skill_table.csv`
+- Publication figures: `results/figures/publication/`
+
+**Decomposition production** — `PM = B + max(T−B,0)·P + min(T−B,0)` (+ ε-floor)
+- Source: `src/stage1_satml/decomp/{build_s_emit,build_m_confinement,build_decomp_map,heatmaps,decomp_vs_senarathna,validate_decomp,compare_versions}.py`; `src/stage1_satml/features/vandonkelaar.py`; `src/stage1_satml/models/predict_T_anchor_v3.py`
+- **Product advancement (2026-06-01):** `scripts/{gee_export_ghap_kandy,compare_decomp_ghap,calibrate_m_confinement,build_spatial_uq}.py`. Data: `data/processed/decomp/{ghap_kandy_monthly_2019_2022.parquet, u7_ghap_crosscheck.csv, m_confinement_calibration.json, kandy_decomp_predictions_{year}_spuq.parquet}`.
+- T(t): `data/processed/stage1_v3/T_anchor/T_kandy_hourly_{year}.parquet`; lag-free boosters `results/models/stage1_v3/lgbm_lagfree_q{05,50,95}.txt`; inference grid `data/processed/stage1_v3/inference_grid_{year}_s12451.parquet`
+- VanD levels: `data/processed/stage1_v3/vandonkelaar_kandy_annual.csv`; spatial `data/processed/decomp/S_emit_kandy.npz`; confinement `data/processed/decomp/M_confinement_kandy.npz`
+- Map: `data/processed/decomp/kandy_decomp_predictions_{year}_additive_v3.parquet` + `decomp_summary_{year}.csv`
+- Figures: `results/figures/kandy_decomp/{2019,2024}/` + `version_comparison.png` + `validation_fect_pointwise.csv`
+- Docs: `docs/kandy_production_plan_2026-05-29.md`, `docs/audit_2026-05-29.md`, `docs/post_mortem_2026-05-27.md`, `docs/bowatte_meeting_brief.md`
+
+📦 PINN, Tier C+ and PVAF paths: archived 2026-09-21 (`docs/claude_md_archive/CLAUDE_archived_blocks.md`).
+
+**Stage B multi-city per-station data (N=5 historical, N=3 active)**
+- Medellín: `data/processed/stage2/medellin_stage2_perstation.parquet` (59,138 rows, 11 stations)
+- ChiangMai: `chiangmai_stage3_perstation.parquet` (87,791 rows, 8 stations)
+- Kathmandu: `kathmandu_stage3_perstation.parquet` (122,046 rows, 45 stations)
+- Bogotá: `bogota_stage3_perstation.parquet` (145,586 rows, 19 stations)
+- Mexico City: `mexico_city_stage3_perstation.parquet` (354,651 rows, 32 stations)
+- Terrain NPZs: `data/processed/pinn_inputs/{medellin,chiangmai,kathmandu,kandy,bogota,mexico_city}_terrain_tpi_svf_100m.npz`
+- **v13 per-station parquets (canonical)**: `data/processed/stage2/{kathmandu,chiangmai,medellin}_perstation_v13.parquet` + `v13_city_constants.json`
+- Wide-footprint road kernels: `{city}_road_kernel_stations_100m.npz`; wide terrain `{city}_terrain_stations.npz`; VIIRS NTL `{city}_viirs_ntl_stations.npz`
+- **Kandy zero-shot pipeline (2026-05-23)**: `scripts/kandy_zero_shot_inference.py` · `conformal_calibrate_v14.py` · `kandy_heatmaps.py`; predictions `data/processed/kandy_zero_shot/kandy_predictions_20240101_0000_n8784.parquet`; figures `results/figures/kandy_zero_shot/`
+- Builders: `rebuild_perstation_extended.py --version v11` · `build_road_kernel_for_city.py --city` (needs User-Agent, gotcha #41) · `build_station_road_kernels.py` · `add_road_density_to_perstation.py --version v12` · `gee_export_source_cities.py` · `gee_export_source_city_terrain.py` · `merge_source_city_gee_met.py` · `download_gee_drive_outputs.py`
+
+**Raw data**
+- CAMS EAC4: `data/raw/cams/` (23 years)
+- ERA5 pressure levels: `data/raw/era5/pressure_levels/` (23 years, t925)
+- MERRA-2: `data/raw/merra2/merra2_pm25_daily.csv`
+- Van Donkelaar: `data/raw/van_donkelaar/`
+- Tier C raw: `data/external/tier_c/` (6 datasets)
+- ERA5 BLH hourly: `data/external/kandy/era5_hourly/kandy_era5_blh_hourly.parquet`
+
+**Project-level docs** (at `d:\ProjectCD\`)
+- `CLAUDE.md` — session instructions (this file)
+- `PROJECT.md` — detailed stage results, architecture, data inventory
+- `RESEARCH_PROJECT_DESIGN.md` — full research design, victory conditions
+- **🟢 `docs/README.md`** — **CANONICAL DOC INDEX. Read first to find current vs historical docs; holds the Open-threads ledger.**
+- `memory/SESLOG.md` — session history, all version results
+- `docs/kaggle_kernel_log.md` — all Kaggle kernel runs
+- `docs/research_sanity_check.md` — *(historical foundation, 2026-05-06)* now encoded in HARD RULES below.
+- *(historical, bannered: `docs/tier_c_hybrid_pinn_plan.md`, `docs/compass_artifact_*`, ~50 other pre-decomposition docs — see `docs/README.md`.)*
+
+## Key Commands
+
+```bash
+# Stage A v1 — train XGBoost + quantile models (from kandy_pm25/)
+python src/stage1_satml/models/train_xgboost.py --no-shap
+
+# Supporting cross-continental PINN — local training (testing only — production on Kaggle)
+python src/stage3_pinn/training/train.py --model v3 --epochs 1000 --wandb
+
+# Push Kaggle kernel
+PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe kernels push -p data/processed/stage2/kaggle_kernel_kandy_td_pinn_v7/
+
+# Regenerate publication figures
+python src/comparison/publication_figures.py --all
+```
+
+## Critical Gotchas (READ BEFORE CODING)
+
+1. **Target column**: `pm25_observed`, NOT `pm25`.
+2. **Date is the index**: parquet files use `date` as DataFrame index, NOT a column.
+3. **CAMS on ADS not CDS**: `ads.atmosphere.copernicus.eu/api`. NetCDF dims: `valid_time`, `latitude`/`longitude`.
+4. **GEE date range**: never hardcode day-31. Use first-of-next-month pattern.
+5. **TROPOMI**: GEE L3 is pre-filtered — no `qa_value` band.
+6. **sys.path**: `src/stageN_*/subdir/file.py` needs `parents[3]`. `reports/` uses `parent.parent`. `scripts/` are standalone.
+7. **CAMS never as feature**: it's the training label (y), never a predictor (X).
+8. **KOALA bias correction**: `apply_koala_monthly_correction()` = flat annual ×0.5984 (NOT monthly despite name). Labels: mean 36.7→21.9 µg/m³. Anchor: Senarathna et al. 2024, CJS 53(2):197-206 = **24.5225 µg/m³**.
+9. **Spatial CV R²=0.911 is an artefact** (naive baseline=0.994). Report ONLY as BC generation step.
+10. **Hantana ridge**: S/SSW (175-195°), 5-7 km. NOT SW (225°). Open corridor: WNW-NW (230-320°). TBI column: `terrain_blocking_idx`.
+11. **enso_mei dropped**: counterproductive (−0.009 R²). Only `mei_month_sin`/`cos` active. Do not re-add.
+12. **Pre-2003 rows intentionally dropped**: `year < 2003` filter in build_dataset.py. Do not restore.
+13. **Kaggle PINN inference**: ALWAYS on Kaggle. NEVER run FourierPINNV3 inference locally.
+14. **blh_norm = BLH_m / 2000.0** everywhere. `t_norm = h/24` (hour-of-day, NOT training fraction).
+15. **grid_sampler_2d_backward**: not differentiable for 2nd-order autograd. All `_interp_grid` outputs must be `.detach()`-ed before PDE residual calls.
+16. **KANDY has NO burning season.** Mar–Apr peaks = inter-monsoon stability + transboundary transport.
+17. **MERRA-2 as label rejected**: r(CAMS,MERRA-2)=0.177 over Kandy. Use ONLY as validation diagnostic.
+18. **FourierPINN v2 backbone incompatible with FourierPINNV3**: 0 keys transfer. Do not attempt to load.
+19. **409 Conflict on Kaggle push**: update `id` in kernel-metadata.json to match `kernels list` slug.
+20. **NPZ dates**: numpy.str_ — use `pd.Timestamp(str(d_str))` not `pd.Timestamp(d_str)`.
+21. **SVF is near-uniform across all cities** (~0.977–0.984): ridges are 5-10 km away, beyond the 2 km scan radius. **Drop SVF from SharedTerrainAnsatz** — use delta_z alone for F_valley. Do not re-add SVF.
+22. **CityConfig _REPO path**: `_REPO = Path(__file__).parents[3]` → resolves to `kandy_pm25/`. NOT parents[4]. File is at `src/stage3_pinn/data/city_config.py`.
+23. **Medellín spatial gradient anti-correlated with terrain**: r(delta_z, pm25_station_mean)=−0.328. High-elevation SIATA stations are cleaner (suburban, less traffic). Medellín is "out-of-regime control" — do not expect positive height-PM slope here.
+24. **Kathmandu GD Labs network**: dense 52-station network went live Oct 2025 only. Training window = Oct 2025–May 2026 (8 months). Covers post-monsoon + winter + pre-monsoon — sufficient for trapping-season physics.
+25. **P100 incompatible with Kaggle PyTorch** (sm_60 < sm_70 required). Use T4×2 or CPU fallback. All kernels include `_get_device()` capability check.
+26. **Kaggle dataset versions re-upload ALL files** (no incremental diff) AND **a version silently DROPS any file not in the bundle dir** — the May-26 v15.1 re-upload lost the v13 per-station parquets, so a 2026-07 kernel failed `FileNotFoundError` until `medellin_perstation_v13.parquet` was re-added. Keep large NPZs/parquets in one dataset; small CSVs in a separate lean dataset. **Mount path (2026-07): datasets mount at `/kaggle/input/datasets/<owner>/<slug>/`** — probe the dated path first + full-walk fallback. `datasets version -p` also needs an ABSOLUTE `-p`.
+27. **Medellin GEOS-CF gap**: station data Aug 2018–Aug 2019, but GEOS-CF only from Jan 2019. Filter Medellin to Jan 2019 onwards in any kernel using c_prior. Loses 34% of rows.
+28. **CorrectionNet inputs = physics features, NO (lat, lon)**: (sin_h, cos_h, sin_doy, cos_doy, blh_norm, delta_z_norm). lat/lon enable station memorisation → LOOCV collapses. blh_norm+delta_z_norm are OK because they're physics features, not location identifiers.
+29. **c_prior (GEOS-CF) systematically overestimates all cities**: Mel ×0.82, ChiMai ×0.53, KTM ×0.79. Formula `F_eff = 1 + positive` can only scale UP — degenerates when c_prior > city_mean. **Always scale c_prior before ansatz**: `c_prior_scaled = c_prior × (station_mean / c_prior_mean)`.
+30. **GEE GEOS-CF 2026 latency**: ~2–3 months. Completed GEE task does NOT mean data was available. Check EECU: full year ≈ 36–50 EECU. If EECU < 1.0 the collection had no data.
+31. **gitignore `data/` catches `src/stage3_pinn/data/`**: the `data/` rule matches any directory named `data` anywhere in the tree. Add `!src/stage3_pinn/data/` after the `data/` line before committing city_config.py and multicity_loader.py.
+32. **Kaggle `dataset_sources` in kernel-metadata.json is NOT applied via CLI push for existing kernels.** Always change the attached dataset via the Kaggle UI. CLI push only updates code. Sentinel in `_find_data_dir()` must point to a file unique to the target dataset.
+33. **Bogotá GEOS-CF city_ratio = 0.807** (16.5/20.4). **Mexico City ratio = 0.217** (21.2/97.4). Hardcoded in `GEOS_CITY_MEANS`/`STATION_CITY_MEANS`. MexCity 0.217 is real.
+34. **GEE ERA5-Land task description truncation**: `u_component_of_wind_10m` → `u_compon`. Files named `{city}_u_compon_{year}.csv`. `merge_source_city_gee_met.py` handles both prefixes. Do not rename.
+35. **OpenAQ S3 archive is public** — bucket `s3://openaq-data-archive/` accepts unsigned boto3. NO AWS credentials needed. The REST API key is for `/v3/locations` discovery only. Use `scripts/ingest_openaq_s3.py`. ⚠ **LIST keys — do not construct filenames** (they are daily, not monthly).
+36. **OpenAQ /v3/locations radius capped at 25 km** — use `bbox`. KTM (85.15,27.55,85.55,27.85), ChiMai (98.70,18.50,99.20,19.10), Medellin (−75.78,5.95,−75.35,6.55).
+37. **AirGradient LCS over-reads PM2.5 by 30–40%** vs reference monitors. Per-LCS coefficients in `data/external/openaq/processed/eda/{city}/calibration_coefficients.csv`. Apply `pm25_calibrated = (pm25_raw − intercept)/slope`. Median slopes: KTM 1.34, ChiMai 1.40. Drop LCS with calib r<0.5.
+38. **Reference vs LCS sensor types** in OpenAQ: AirNow + Air4Thai + Medellin (SIATA) = `reference`. AirGradient + PurpleAir = `lcs`. σ_obs should differ: reference ≈1.5, LCS ≈ obs × 0.30.
+39. **c_prior ratio MUST be row-mean, not timestamp-mean**: timestamp-mean weights every hour equally regardless of station count; for cities with growing station counts (KTM 9× growth) this drifts the ratio ~12% and inflates c_prior_scaled ~5 µg/m³. Use row-mean. v11: Mel 0.8070, ChiMai 0.5933, KTM **0.5601**.
+40. **deepsensor 0.4.2 has NO Student-t likelihood** as a config knob. Keep `het` likelihood but replace the Gaussian NLL with `-StudentT(df=5, loc=μ, scale=σ).log_prob(y).mean()`.
+41. **Overpass API rejects requests without a User-Agent**: returns 406. Set `headers={"User-Agent": "kandy-pm25-research/1.0 (academic; contact: <email>)"}` on every `requests.post`.
+42. **ConvCNP terrain bbox does NOT constrain station inclusion**: stations outside the terrain raster still train via per-station context. Wider rasters improve encoder coverage but are NOT required.
+43. **Road density must be sampled from a station-footprint kernel**, not the 15×15 km PINN grid — most stations fall outside it → road_density=0 by default. Use `{city}_road_kernel_stations_100m.npz`.
+44. **GEE "User memory limit exceeded" on 10-yr hourly ERA5 reductions**: use `tileScale=4`, per-image point-sample → `fc.reduceColumns(reducer.group(groupField=0))`, or a shorter window. **Critical sub-gotcha**: `groupField` is a SELECTOR INDEX, NOT a column name. Quarterly chunking is the standard fix.
+45. **FECT Kandy data is via PurpleAir API, NOT OpenAQ /v3**: Sri Lankan PurpleAir nodes are not federated. PVAF Block D correctly returns `n_stations_25km=0, monitoring_tier=M3` for Kandy. Check PurpleAir map before discarding M3 candidates.
+46. **CNEMC HeQinWill timestamp format changed mid-archive**: `2022-2023` ISO; `2024-2026` compact `2024-01-15T0000`. `pd.to_datetime(errors='coerce')` silently drops ~50% of rows. Regex-normalise first.
+47. **CNEMC `area` field ≠ city name for prefecture-level entries**: Xichang stations are tagged `凉山彝族自治州`. The v15 "Datong" cluster is actually Jincheng (renamed 2026-05-26 across all scripts). GEE tasks submitted with `datong_*` auto-route to `jincheng/`.
+48. **GitHub codeload tarball `curl -C -` resume is unreliable**: dynamic tarballs per request → truncated gzip despite "resumed successfully". Download fresh in one stream with `--retry 5 --retry-delay 10`, verify gzip integrity end-to-end.
+49. **FECT sensors are VALLEY/SUBURBAN, not highland** (audit 2026-05-29). SRTM-verified: Akurana 12451 = **~460 m, 7.366N/80.618E (OUT of the PINN bbox)**; Hantana TR4 33495 = **~738 m, 7.265N/80.625E**. NEVER describe FECT as "highland" or cite 1538/1698 m. `build_dataset_v3_hourly.py` corrects these at source.
+50. **GHAP PM2.5 on GEE — band `b1` is ALREADY µg/m³, do NOT apply the 0.1 scale.** Asset `projects/sat-io/open-datasets/GHAP/GHAP_{D1K,M1K,Y1K}_PM25`. GHAP is the **independent** 1 km reference for U7; quasi-independent → agreement = corroboration NOT validation.
+51. **Level anchor is AREA-not-FLOOR (2026-06-04): never force the basin MEAN to KOALA 24.5.** KOALA/NIFS is a valley-FLOOR/near-core point (7.2839 N/80.6322 E, ~27 m above floor), NOT the basin area mean. `features/vandonkelaar.py` `bias_factor`→**1.0**, β≡1. Evidence: two independent AREA products agree (VanD ~19.7, GHAP ~17.0) ~25–30% BELOW KOALA; FECT-Hantana RIDGE reads 10.5 → gradient floor 24.5 > area ~17–20 > ridge 10.5. Shape is β-invariant. Regen chain after any anchor change: `predict_T_anchor_v3`→`build_decomp_map`→`build_overlay_predictions`→`build_spatial_uq`.
+52. **KOALA 24.5 is the Jan–Dec 2019 NIFS annual mean ONLY — never propagate it as a per-year reference line.** It was NOT re-measured 2020–2023. In any per-year plot/CSV show KOALA as a single 2019 marker, not an axhline. FECT-Hantana ridge 10.5 is a 2018–23 sensor mean (a horizontal line is defensible there).
+53. **Additive-headline regen chain:** `predict_T_anchor_v3.py` → **`scripts/sharpen_T_diurnal.py`** (diurnal+seasonal amplitude bias-correction; preserves annual mean) → `build_decomp_map.py --year Y` → `scripts/build_overlay_predictions.py` → `scripts/build_spatial_uq.py` → `build_additive_field.py` → `exposure_weighting.py` + `health_burden.py` → figures (`paper_figures.py --figs all`). Basin mean preserved (verify G1 Δ<0.05). **sharpen_T_diurnal MUST run after predict_T_anchor (it overwrites the T_anchor parquets in place).**
+54. **Kandy is bimodal-rush; deep night is NOT the minimum — the MIDDAY trough is (CORRECTED 2026-08-07, ledger F.38).** Observed FECT diurnal, normalised 2019–2023: morning peak 07 (1.41), evening 18–19 (1.25), **midday trough 14 (0.725)**, deep night 00–04 (0.865). **Night runs ~15% ABOVE midday**, and the model reproduces it (1.110 vs observed 1.145). The previous wording — "deep-night ≈ daily MINIMUM" — is **WRONG** and caused a correct model behaviour to be read as a defect. In figures use deep-night `[0-5]` and morning-rush `[6-9]` separately. Kathmandu is NOT a Kandy analog.
+55. **Standalone release repo lives at `d:/ProjectCD/kandy_pm25_release/`** (own git repo `daminda1108/kandy_pm25_model`, gitignored by parent). Package `kandymodel/`. Imports are `kandymodel.*`, root depth `parents[1|2]` (NOT `parents[3]`). To PORT a confirmed change: copy the local file, rewrite imports `src.stage1_satml.* → kandymodel.*`, fix `parents[3]→parents[1|2]`, retest (`paper_figures.py --figs f3,f13` + `scripts/nowcast.py` must stay byte-identical), commit to BOTH repos. Release `data/`+`results/` are gitignored → clone needs `regenerate_all.py`. GitHub metadata via stored cred: `printf "protocol=https\nhost=github.com\n\n" | git credential fill` → PAT → `curl api.github.com`.
+56. **`build_station_terrain.resample_dem` returns NORTH-up arrays (row 0 = north).** The multi-city pipeline pairs it with ASCENDING lat + `origin="lower"` → every terrain-derived layer flips N–S. **Fix: `[::-1]` row-flip at each `resample_dem` call site.** Applied in `build_xichang_core_terrain`, `xichang_prod._solver_grids`, `xichang_paper_figures._elev_grid`. Affects only the city-generalised pipeline, NOT the locked Kandy decomp.
+57. **Additive form goes slightly NEGATIVE under extreme emission contrast (Kathmandu).** When a clean season drives [T−B]→0 and P_local is very high-contrast (KTM `S_traffic` core/edge **8.27×** vs Kandy ~1.2×), the lowest-emission ridge pixels go slightly negative. Station/floor pixels stay positive → station-level skill unaffected. **Fix = physical floor: clip at 0 at RENDER time** (`xichang_paper_figures.field()`). Cities with >~3× contrast want a non-negative-increment formulation. SEPARATE bug same run: `_pred_at_stations` used `RegularGridInterpolator(fill_value=None)` → a far out-of-box station extrapolated to −15,000; fixed to `fill_value=np.nan`+dropna.
+   - **SIBLING FIX — core<periphery INVERSION under NEGATIVE increment (2026-07-09, supervisor-flagged).** When hourly T dips BELOW daily B (**38.5% of Kandy hours**), [T−B]<0 and multiplying a core-high pattern by a negative number makes the CORE render CLEANER than the rural edge. **Fix = increment SPLIT**: `PM = B + max(T−B,0)·P_local + min(T−B,0)` — the local pattern structures only the accumulation above background; ventilation below background is spatially UNIFORM. Basin mean preserved EXACTLY (G1 Δ=0.000); midday core<periphery **38.2%→0.0%**. Also applied to the webapp reconstruction. **Diurnal-B investigated + REJECTED as insufficient.** Propagation COMPLETE 2026-07-16 (paper figures → `paper_figures_v2/`; release `kandymodel/` c28d785; model reference §IV.1.3b + ledger F.10; 8 cities re-scored, no regression; split invariants tested).
+   - **V3 EXTENSION — the ventilated-hour pattern FLOOR (additive_v3, 2026-07-21).** The split rendered ventilated hours PERFECTLY FLAT; Medellín ground truth shows they aren't. Production adds a bounded, mean-zero floor `+ε(t)(P−1)`, `ε(t)=max(0,ε0−max(T−B,0))`. Mean-zero ⇒ **T-lock EXACT**; ε0≥0 + accumulation-side P ⇒ **cannot re-invert the core**; structured hours BYTE-IDENTICAL to the split; ε0=0 recovers v2 (**re-verified 2026-08-18, F.47: 5.7e-14**). **Fundamentally ≠ the rejected A2.** ε0 fitted at Medellín → Kandy **ε0 = 3.69** (⚠ the older 2.573 is superseded — it scales with mean accumulation, which the coherence cap moved). Kandy effect: flat hours 56.6%→45.3%, annual means + pop-weighted exposure unchanged (+0.2%), inversion 0.0%. **Paper figures NOT regenerated — unnecessary** (annual-mean field 99.99% corr v2↔v3). Canonical `assemble_year()` param **`EPS_FLOOR`**. Three impl traps in `docs/model_accuracy_plan_2026-07-21.md` §2 (P from q95 not q50; bounded-climatology substitution on flat hours; **never clip the parquet at 0** — gotcha #65).
+58. **Pandoc `\ref{}` does NOT resolve in the preprint build — use hardcoded figure numbers.** pandoc-crossref is NOT installed. In-text callouts use hardcoded numbers, so **removing/inserting any figure shifts all later callouts** — re-map them. After any figure change verify the PDF has zero `Fig.~`/`??`/`ef{fig` artifacts. Also: heredoc `\rho`/`\ref` in bash gets `\r`-mangled — edit those strings via the Edit tool.
+59. **Emission surface is a PROXY for the local-emission spatial pattern, NOT a source inventory — and the model does not cap total PM at traffic.** `S_emit`/`S_traffic` only sets the SHAPE of the local increment; the LEVEL is carried by T(t), pinned to total observed PM (all sources). Diurnal timing e(t) is source-mix-aware (per-city `emix`). The traffic-centrality proxy assumes local combustion co-locates with the road network — ⚠ **the Kandy "~90% vehicular" justification is REFUTED (F.66): traffic is 7.6% of measured PM2.5 mass, biomass burning 14.1%; what IS measured is that traffic dominates the local increment's sub-daily TIMING (F.23)** — the proxy empirically recovers held-out rank across mixed-source cities (Medellín 0.78, Tai'an 0.68), but **misplaces fine hotspots where a major source is spatially decoupled** (Yichang). A source-resolved (sector-weighted) surface exists in `src/modular/emission.py` but is NOT wired into production.
+60. **ERA5-Land `total_precipitation` on GEE is ACCUMULATED since 00 UTC (daily reset), not per-hour — de-accumulate before any hourly use.** Summing raw hourly values gives ~12× true rainfall. Correct: `tp[h] − tp[h−1]` within each UTC day, `tp[00h]` as-is, clipped ≥0. (ERA5 non-Land hourly tp is already per-hour.) Even de-accumulated, ERA5-Land is NOT gauge-accurate for a steep-valley area mean — see #63.
+61. **A driver-anchored EXTENSION tier must inherit the LOCKED monthly B/T ratio — a flat background silently kills the local field (user-caught).** With a flat `(1−f)×annual` background, Kandy July-2026 came out at B/T **1.34** with only **18.6%** of hours above background (locked years: 0.79 / **70.2%**) → the field renders almost featureless. Fix: `_locked_b_over_t()` in `kandy_driver_tier_build.py` → 92.3% accumulation hours. Sibling: the driver GBM **damps the diurnal amplitude** → apply `sharpen_to_locked`. Check BOTH on every new extension year.
+62. **A self-checking live system needs its own liveness check — silence reads as "no data yet".** The Medellín live scoreboard logged 10 issuances and **0 observations for ~a week** without erroring: WAQI's SIATA mirror drifted to a ~6 h delay and the 3 h staleness filter rejected every station. Fix: window **12 h** (safe because each value is keyed to its own measurement hour) + log every station-hour with ≥3 reporters + emit obs AGE diagnostics on every skip. Rule: any scheduled ingest needs an alarm on "N consecutive runs with zero rows", not just on exceptions.
+63. **GPM IMERG is the rain source, NOT ERA5-Land tp — and a "gauge" reference must match the geometry you are checking.** Settles #60. IMERG V07 (`precipitation` = a RATE in mm/hr on 30-min steps → hourly mm = mean of the two rates) lands at **0.98×** the DoM representative station (Katugastota 2108 mm) at Kandy; de-accumulated ERA5-Land is **2.10×** there, 3.6× at Medellín, and **1.8× IMERG on the SAME box** → a model wet bias, not just geometry. TWO traps: (a) the project record's Medellín "gauge ~2,000 mm" was WRONG (floor gauge = 1,500–1,800) — **verify a reference before it drives a ship/no-ship call**; (b) at Medellín the reference is a valley-FLOOR gauge while IMERG is an AREA mean → ratio >1 is EXPECTED (same area-vs-floor confound as #51). Medellín ships IMERG labelled **basin average**; Kandy ships it plainly. **Where IMERG is absent the exporter ships JSON `null` and the panel omits the row** — never fall back to the rejected product. (Bare `NaN` is invalid JSON — emit `None`.)
+64. **`_find_folder_id` returning `files[0]` silently loses exports — Drive allows duplicate folder names.** GEE writes successive exports into *different* same-named folders. `download_gee_drive_outputs.py` now scans EVERY matching folder (`_find_folder_ids`, first copy wins on duplicate filenames). Also: `Export.table.toDrive` names the file from `fileNamePrefix`, so a per-city prefix will NOT match a consumer glob — check the glob after any new export.
+65. **Never clip a field at 0 in the parquet when a downstream consumer derives its ANCHORS from that field.** The webapp exporter sets T05/T50/T95 = the shipped field's per-hour basin mean, so a clipped parquet hands it an anchor that no longer matches the one the field was built with — the client reconstruction then cannot reproduce the field (surfaced as a stubborn 0.55 µg/m³ QA failure that survived three unrelated "fixes", and it bit **q05** on deep-ventilation hours). Every consumer already clamps at render, so store RAW values: that keeps `mean(field) == anchor` exactly. Siblings: recovering P by inverting the split **explodes** where the increment is tiny → invert only where the increment is healthy and substitute a bounded (month, hour) climatology elsewhere; and recover P from the **q95** side, never q50.
+66. **"Inside the field of regard" ≠ usable — for any geostationary sensor check the VIEWING GEOMETRY and the SCAN-WINDOW/local-hour overlap BEFORE pursuing access (GEMS rejected).** GEMS sits at **128.2°E** vs Kandy **80.6°E** → **VZA 55.1°**, AOD pixel **~13 km**, so the entire 15×15 km domain is **≈1.1 pixels**; and its scan window overlaps Kandy's sunlit hours only **07:30–13:15 LT** — missing the 14 LT trough, the 18 LT evening peak and the whole night. Compute both from orbital geometry (`cos γ = cos φ · cos Δλ`, then `tan VZA = R_s sin γ / (R_s cos γ − R_e)`) and the target's solar-zenith window — minutes, and decisive. Fine at Chiang Mai (VZA 40°) and Xichang (43°).
+67. **Selecting a regional data tile BY CITY NAME is a landmine; select it by geography.** `citypack.vand_tile` read `VAND_SA if self.slug == "medellin" else VAND_ASIA` — silently wrong the moment a second American city was added. The Asia tile spans lat −10..60 N, so a tropical American city's LATITUDE selection succeeds and only LONGITUDE is empty; it dies six frames later inside scipy as `ValueError: cannot reshape array of size 0`. Fixes: (a) choose the tile from the city's **own longitude**; (b) make the selector **raise on an empty result**, printing tile vs requested bounds. Any `if slug == "..."` in a data-resolution path is the same bug waiting. Sibling: older `*_stage3_perstation` parquets lack `c_prior` → `scripts/add_cprior_to_perstation.py`.
+68. **A model calibrated on a record cannot be scored against that record — check provenance BEFORE quoting any "improvement".** Production `T(t)` is trained on the FECT residual target AND amplitude-sharpened to FECT, so its agreement with FECT (seasonal **0.976**, daily **0.682**) is **in-sample fit against its own calibration target**. The sensorless anchor (0.78 / 0.41) is out-of-sample. Differencing them measures the calibration, not the information gain. **Rule: before quoting a delta between two model variants, establish for EACH whether the scoring data was used to fit it.**
+69. **NaN is not a measured null — never report an uncomputed metric as a confirmed negative.** The preprint claimed Chandigarh's spatial skill "duly vanishes", but `rho` is computed only `if len(common) >= 4` and Chandigarh (n=4) → **NaN**. The **−0.80** in the older project record is an N=4/N=5-era value and must not be resurrected. **When a table says "—" and the prose says "vanishes", the prose is wrong.** Sibling: the entire exposure/health block was quoting v1-era numbers while the pipeline had moved to v3 — **re-read the CSV before every submission, never trust the prose**.
+70. **A fix to a DERIVED artefact must live inside the code that derives it.** The background re-level was applied as a standalone pass over the B parquets, then the rebuild chain regenerated B from scratch and silently discarded it. Nothing errored; it surfaced only because the LOCKED years came back bit-identical. The fix now lives inside the builder behind a `RELEVEL` flag. **Rule: before writing a correction to a file, ask which script owns that file's contents; if any script regenerates it, the correction belongs there.** Same family as #65 — and rebuilding `additive_v2` without `additive_v3` left the exporter reading a stale field against fresh anchors and **failed the QA gate at 5.61 µg/m³** against a 0.25 tolerance. Never ship on a partial rebuild.
+71. **`git fetch` before declaring a scheduled job dead.** Across an entire session I reported the hourly Kandy live Action as "not committing since 2026-07-25" and reasoned from that. The Action was fine — the remote had live-bot commits through 2026-08-01T17:27Z. I was reading a **local clone that had never been fetched**. Any claim about remote state — commits, CI, releases, issues — requires a fetch first.
+72. **A build flag must not change the physics; and a "neutral" normalisation can make a term inert.** (a) Running the extension build as `--years 2026` left the driver frame holding only 2026, whose 36 GEOS-CF rows tripped a `len(ref) < 1000` fallback to `shape = ones` — the background lost its daily modulation and the year jumped to **100% accumulation hours in every month**. A CLI flag meant to select *which years to build* changed *how they were built*. `_prior_reference()` now loads the reference years independently and **raises instead of silently flattening**. (b) The dilution factor was normalised **within each day**, which makes it arithmetically incapable of lowering the midday background — the one thing it was added for. **If a modulation is normalised over the same window it is meant to redistribute within, it does nothing.**
+73. **A descriptor derived from the target's own outcome LEAKS, even when the target is held out of the prediction.** The city-graph donor kernel scored 0.860 with `peakiness` — the amplitude of the city's *own* diurnal shape — among its similarity features. LOO excluded the target's shape from the *prediction* but not from the *descriptor used to choose donors*. Removing it, plus `log_stations`, cut the honest gain to +0.017. **Admissibility rule: a descriptor may be used only if it exists for a target with NO local observations.** Sibling of #68.
+74. **Never average a skill-vs-baseline percentile across metrics.** The anchor-sensitivity script first reported "beats 47% of random pairs → REPRESENTATIVE". That was the mean of **10%** (RMSE), **23%** (level bias) and **97%** (seasonal r): two opposite effects cancelling to a meaningless middle. **Report per metric, always.**
+75. **Before concluding "the intervals are too narrow", separate CENTRING from WIDTH.** The shipped 90% interval covers 72.4% at the FECT pixels. Observations fall below the lower bound in 25.7% of hours and above the upper in 1.9% — a one-sided failure with a median offset of +5.85. Removing each sensor's own median offset restores **91.5%**. The width was right; the field is an area mean and the sensors are points (#51 geometry). ⚠ **2026-08-22 (F.65): the NBRO Kandy record does NOT show this offset** — the standing prediction that any Kandy point measurement will read ~40% below the model held for three LCS records and failed for one non-LCS record. Treat the direction as open.
+76. **A tier can pass every AGGREGATE check and still be unusable — always test the TAIL separately.** The 2024–2026 driver tier matched the anchored years on annual mean, monthly means, seasonal shape, diurnal swing and phase. It was nonetheless broken: hours above 55 µg/m³ fell from ~85/yr to **0.5/yr**, with a hard ceiling at the **99.2nd percentile**. A user spotted it from the maps because **every diagnostic in the suite was a mean**. Causes compound: a quantile GBM predicts **leaf averages** and **cannot extrapolate**; the tier is **lag-free** so multi-day episodes cannot build; and `sharpen_to_locked()` corrects only the climatologies. **Fix:** measure the damping by leave-one-year-out, then invert it **indexed by quantile**. Validated: p99 44.6→54.9 vs truth 54.9; hours>55 1.8→88.2 vs 84.8. ⚠ It fixes **how often** episodes occur, **not when**.
+77. **Never report an outward-facing action as done without verifying the artifact — and confirm you are in the right repository.** In one session I reported a push as successful **three times** when it had not happened: twice because `cmd; echo "pushed"` runs the echo regardless of exit status, and once because the `cd` had not persisted so I verified the **framework repo** while believing I was in the webapp. **The check is `git rev-list --count origin/main..HEAD` (0 = pushed) plus grepping `origin/main` for the specific commit subject, run with `git -C <path>`.** Related: setting `core.compression 0` while diagnosing a slow upload makes every subsequent upload *larger*.
+78. **A canvas with an explicit pixel width can LATCH wide and never shrink.** `fitCanvas()` writes `cv.style.width` from the parent's measured width; if it ever measures while the parent is wide, that width sticks and can never come back down. On the live explorer: **904 px of horizontal overflow at a 375 px viewport** after any viewport change, while a *fresh* mobile load was fine. **Fix belt-and-braces: `canvas { max-width: 100% }` AND clamp the measured target to `document.documentElement.clientWidth`.** Sibling lesson: audit a responsive layout by *changing* the viewport, not by loading at each size.
+79. **Measure a saving before quoting it.** I reported that de-duplicating in-flight `getScalars` fetches would recover "~1.3 MB". After shipping, requests fell 15 → 8 and total transfer was **unchanged at 4053 KB** — the duplicates had been served from browser cache. The fix is still right but the headline number was invented from a request count. **A count is not a cost.** In the same audit I also called eager year-loading a defect when `app.js` already deferred it — read the code before reporting the diagnosis.
+80. **[RESOLVED 2026-08-18 by the F.49 paired rebuild — reproducibility now 0.000e+00. The lesson stands.] A stored product can go stale against its own builder, and every gate we own is blind to it (F.47).** Re-running `build_v3_from_v2` for 2022 from the STORED inputs reproduced the model bit-exactly — and differed from the **shipped** parquet by up to **2.06 µg/m³ on 2,370 of 8,760 hours**. **Why nothing caught it:** the discrepancy is a **mean-preserving spatial redistribution**, so the T-lock holds *exactly*, and the G1 gate, the exporter QA, the 18 invariant tests and every annual/seasonal/diurnal diagnostic are invariant to precisely this class of error. **The determinism claim was verified for the RELEASE repo and never for the framework's own products.** Fix: a reproducibility check that rebuilds from stored inputs and diffs against disk. ⚠ Repairing this needs a **v2+v3 rebuild together** with the exporter QA re-run. Sibling of #70: **I also spent a round diagnosing the stale artefact as if it were the code, published a wrong cause (the pattern clip — inert), edited four files including the public README, and reverted them. Run the builder; do not reason about it.**
+81. **🔴 NEVER open a file in truncating mode as part of a read-modify-write (2026-08-22 — this wiped CLAUDE.md).** `io.open(path, "w", ...)` truncates the file the instant it is opened. In a one-liner of the form `io.open(p,"w",...).write(transform(s))`, Python evaluates the `open` **before** the argument, so if the transform or the encode raises, the file is already empty and the content is gone. That is exactly how `CLAUDE.md` — untracked, with no backup and no shadow copy — went to **0 bytes**. It was recoverable only because its full text happened to be in the session context. **Rules: (a) write to a temp file and `os.replace()` it in; (b) never use the Bash/Python route for an in-place edit when the Edit tool will do it; (c) `errors="surrogateescape"` on the read AND the write when a file may hold lone surrogates.** And **git-track the context files** so the next slip is a `git checkout` away.
+82. **🔴 An admissibility check that only prevents CHEATING UP is half a check — a rung that UNDER-uses its budget inflates every gain above it (2026-08-23, F.84).** `Budget.require()` raised when a tier touched a stream it did not admit, and said nothing when a tier quietly failed to use what it had. The scored `Bud0` used **one of the three streams its budget admits** (7 meteorological drivers; no satellite level, no static geography) while the spec AND its own pre-registration both said otherwise. Because every ladder gain is measured against the rung below, the headline `Bud0→Bud1` was inflated **25.6% → 17.9%** and the Colombo test was scored against a strawman. **Fix shipped: `Budget.require_covers()`** asserts a tier uses every stream it admits; omissions must be declared via `allow=` at the call site. **Rule: for any tiered/ablation design, assert coverage in BOTH directions, and check the implementation against the registration — not just against the spec.**
+83. **`q50_blend` in `predictions_blend_v3.parquet` is ALREADY the absolute prediction, not the residual (2026-08-23, F.82).** The v3 architecture is residual learning (`pm25 − c_prior_anchored`), so the natural reconstruction is `q50_blend + c_prior_anchored` — which gives **R² = −3.56**. The stored column is post-reconstruction: `q50_blend` alone gives **0.5814**, matching the recorded 0.581. **Verify any recomputed v3 metric against 0.581 before trusting it.**
+85. **A stream's TEMPORAL coverage must be checked against the frame it will be merged into — never inherited from a different stream's pull.** The MAIAC AOD pull for C1 copied its year range (2019–2022) from the GHAP pull it was replacing. That was harmless for GHAP, which enters as a **time-invariant annual scalar**, and fatal for MAIAC, which enters as a **daily series**: the ladder frame actually spans 2021-08 → 2026-08, is 86% post-2023, and **36 of its 48 cities start after 2022**. Merged coverage came out at a **median of 0.0% of days**, so the `Bud0c-raw` rung was fitted on an essentially empty column — and `HistGradientBoostingRegressor` accepted the all-NaN feature and returned a clean, plausible −0.41% without a single warning. **Check `frame.date.min()/max()` against the stream before pulling, and assert non-trivial post-merge coverage before fitting.** Fifth instance in one session of the same failure family — a stream that looks present and silently is not (F.84 under-powered tier · C7 city missing a stream · C1 fused product · #46-style mixed dates · this).
+84. **Windows Python cannot resolve `/tmp` even though Git Bash can — and `cmd; echo done` masks the real exit status.** A patch script written to `/tmp` and run through the venv python silently no-ops (file not found from Python's view) while bash reports success. Two consequences hit in one session: an edit appeared to apply and did not, and a killed background job reported exit 0 because a trailing `echo` followed it. **Use the scratchpad or a repo path for anything Python must read, and never put a bare `echo` after a command whose status you need** (the sibling of gotcha #77).
+86. **🔴 A FIGURE can publish a retired number even when every prose gate is green — `paper_figures.py` still reads the PRE-CAP background (2026-09-03).** The canonical July suite's `f3_decomposition` reads `B_background_hourly_{y}.parquet`, dated 2026-06-05, instead of `..._{y}_v2.parquet`, dated 2026-08-18. Regenerated today it renders the **retired 25–28% local share**; reading the post-cap file gives B **10.97** against a basin mean **21.04**, i.e. **47–50%**, matching `partition.f` = 0.483. `paperfig.ADD` is also still `_additive_v2` while production ships `_additive_v3` — immaterial for an annual mean, material for any single hour. **Why nothing caught it:** `build_claims.py` and the submission gate check PROSE; nothing reads pixels out of a PNG. **Rules:** (a) before reusing any figure, diff its file date against the field it draws — the July suite predates both the coherence cap and the F.49 rebuild; (b) a figure script is a consumer like any other, so gotcha #70 applies to it; (c) new paper figures read the shipped `_additive_v3` field and the `_v2` background — see `scripts/paper2026_figures_d.py`, which exists for this reason.
+87. **Two scorings of one city will silently both reach print — pick one per paper.** `paper2026_fig8_kathmandu.py` computes spatial ρ **0.428** over 40 stations while the canonical `validation_scorecard.csv` gives **0.392** over 39. Both are defensible and neither is wrong; publishing both would put two ranks for one city in one document. The claim is now sourced from the scorecard alone and the figure carries no rank on its face. **Before tokenising a metric, grep for another artefact that computes the same quantity.**
+
+88. **🔴 A DataFrame column named `T`, `first` or `last` is unreachable by attribute — and the wrong thing is returned SILENTLY (2026-09-04).** `df.T` is the transpose, `df.first`/`df.last` are methods. `j.T < j.Bpost` returns a transposed frame rather than a boolean mask and only fails several lines later inside an unrelated call; `d.first.notna()` raises `'function' object has no attribute`. Both were hit in one session. **Rename the column at load (`t_first`, `tot`) rather than reaching for `df["T"]`** — bracket access works but leaves the trap in place for the next edit. Same family as the pandas-method shadowing that makes `df.count`, `df.size`, `df.mean` unusable as column names.
+
+90. **🔴 A build that CONSUMES a derived artefact must REGENERATE it — the claims gate protects values, not structure (2026-09-05).** `build_docx.py` ran the claims gate, the linter and the assembler, and read the table `.md` files that `t_tables.py` writes **without ever running it**. So a structural edit to a table (its note, its columns, its caption) silently did not reach the document, while every `{{claim:}}` token inside that table still resolved correctly and **all six gates stayed green**. Caught only by editing a table note and watching the *old* note appear in the build. **The gate checks the numbers in the cells; nothing checks that the table itself is current.** Fix: the build now runs `t_tables.py` first and refuses to continue if it fails. Third instance of the same family: #70 (a correction written to a derived file that the builder regenerates), #86 (a figure script drawing a retired input). **Rule: for every artefact the build reads, ask which script writes it, and either run that script in the chain or fail loudly if its output is older than its source.**
+
+89. **🔴 An HTTP error is not evidence that nothing happened — verify the artifact, not the status code (2026-09-04).** Posting an OSF registration returned 500 twice, 502 twice, then 403 three times across eight attempts. **One of the 500s had succeeded.** The registration existed while the client reported failure, and the subsequent 403s were the already-consumed draft — so a naive retry loop would have been harmless here but a "create it again" fallback would have produced a duplicate registration with a later timestamp, destroying the only thing a pre-registration is for. **Query the collection (`/nodes/{id}/registrations/`) before concluding a POST failed.** Gotcha #77 for outward-facing writes, restated for APIs: the check is the artifact.
+
+91. **🔴 A DIFFERENCE OF MEDIANS IS NOT AN EFFECT — pair within unit, always (2026-09-06, twice in one session).** The siting experiment's median table read cLHS **0.257** against convenience **0.143**, apparently a doubling; **paired within city it is −0.044 [−0.095, +0.118], winning 19 of 43.** They point OPPOSITE ways and the unpaired one is the flattering one. The station-count sweep did the same thing hours earlier: the temperate band showed **+12.91 pp** as a difference of medians and **+0.14 pp** paired. Both times what caught it was the project's own standing rule, *median of ratios and never a ratio of medians*. **Why it happens:** cities differ enormously in baseline skill, so an unpaired comparison is dominated by WHICH cities each arm happened to score well on. **Rule: any A-vs-B comparison across a panel is computed as the median of the within-unit difference, bootstrapped over units; a difference of medians may be shown for description but never quoted as the effect.** Sibling of #74 (never average a percentile across metrics).
+
+92. **A tier's station range must be read out of the CODE before it is written in prose (2026-09-06, F.102).** The second ladder rung is `b2 = pool[:6]` — stations **3 to 6** — and it was described as "three to eight" in **nine places** across the thesis, the claim generator and the spec. The two ranges are not interchangeable: their paired gains have **opposite signs** (+0.75 vs −0.49 pp). Same session, the same file's `SENSOR_PAIR` docstring revealed that `Bud1 = 2` was **the Kandy budget, not a measured optimum** — saturation is at ONE station. **Third instance of spec, pre-registration and implementation disagreeing** (F.84, gotcha #85). **Rule: before tokenising any tier's size, print the slice the code actually takes.**
+
+93. **🔴 A KAGGLE `kernels push` SILENTLY DETACHES THE NOTEBOOK'S SECRETS, and dataset SUBDIRECTORIES never upload (2026-09-13).** Four separate run failures in one day, all from the same class of silent Kaggle behaviour, none of which raises anything:
+   - **(a) Secrets are per-NOTEBOOK, and a CLI push drops the attachment.** Five E8/E9 fold kernels all ERRORed inside `UserSecretsClient().get_secret("TABPFN_TOKEN")` with a `ConnectionError` — the misleading symptom of a secret that is simply *not attached to that notebook*. After the user re-attached it by hand, **my own re-push wiped the attachment again**. **Rule: after any `kernels push`, the secret must be re-ticked in the editor (Add-ons -> Secrets); prefer ONE kernel over N so there is one attachment to maintain, and run it from the UI once the secret is on.** Sibling of #32 (`dataset_sources` is likewise not applied by a CLI push).
+   - **(b) A dataset version uploads only files at the ROOT — a subdirectory is dropped without a word.** 15 E10 `pred_*.parquet` files staged under `preds/` produced `pred_files: 0` in the kernel, so the merge scored **no deep arms at all** while the run exited 0 and looked healthy. **Flatten everything to the dataset root, and verify against the PUBLISHED file listing before pushing the kernel that consumes it**, not against the local staging directory.
+   - **(c) `datasets version -p <abs path>` fails with `[Errno 2]` unless the mirrored directory already exists** under `%TEMP%\.kaggle\uploads\<drive>_\...`. Create it first.
+   - **(d) The Python client authenticates AT IMPORT TIME and its status is an ENUM.** `import kaggle` calls `authenticate()`, so a dropped TLS connection kills a long-running poller before any retry of yours can see it — **wrap the import, not just the calls**. And `kernels_status()` stringifies as `KernelWorkerStatus.RUNNING`, so a terminal-state test against a bare `"COMPLETE"` never fires and the poller spins forever. Compare the last dotted component.
+   - **(e) A CLI push with no `accelerator` field can be assigned a P100** (sm_60), which the
+     PyTorch build does not support -- the 2026-09-13 push landed on one and the kernel's own
+     capability guard refused to run (gotcha #25). Put `"accelerator": "nvidiagpuT4V2"` in
+     `kernel-metadata.json` -- **but that is NOT enough: kaggle 2.1.2 SILENTLY DROPS the field.**
+     Verified by `kernels_pull --metadata` after a push: `enable_gpu: True`, `accelerator:
+     <ABSENT>`, and the run was handed a P100 twice in a row. **The accelerator must be set in
+     the UI** (Edit -> Accelerator -> GPU T4 x2 -> Save), exactly as the GPU Selection Protocol
+     below already says; the metadata field is a hint the CLI does not transmit. Same family as
+     #32 (`dataset_sources` not applied via CLI push). Note the failure surfaced as a bare
+     `ERROR` status with `failureMessage: null`: **read the kernel log before blaming the
+     secret**, or the wrong fix gets applied -- the capability guard runs BEFORE the secret is
+     read, so a P100 failure says nothing about whether the token is attached.
+   - **(f) A wrapper that collects inputs by filename from ALL of `/kaggle/input` picks up files
+     from datasets you did not mean as that input (2026-09-23).** The E8/E9 CPU kernels gathered
+     every `partial_*`/`pred_*` TabPFN parquet for resume. **`kandy-spatial-dl-data` v8 ships a
+     GPU-era `partial_tabpfn_registered_run1.parquet`**, so the D-8 guard refused every run 14 s in.
+     A bare `SystemExit` prints no traceback, so the log just stopped. **Fixed in
+     `make_tabpfn_cpu_kernels.py`:** GPU-era files are excluded at the copy step and named in the
+     log and `cpu_summary.json`, and an assert keeps them out of the resume dir. Verified by a local
+     simulation of the wrapper (`scratchpad/sim_kernel.py` pattern) and a 3-task CPU smoke run of
+     the scorer.
+   - **(g) 🔴 AN UNPINNED `pip install` SILENTLY CHANGED THE ESTIMATOR, AND A BARE `except`
+     TURNED EVERY FAILURE INTO NaN (2026-09-24).** The E8/E9 wrapper ran `pip install tabpfn`.
+     **tabpfn 9.0.0** had been released, with new weights behind a separate licence, so every fit
+     raised `TabPFNLicenseError`. `predict_all` wraps each fit in `except Exception: None`, so
+     **5 kernels ran ~27 h and "completed" with 0 finite rows in 130,000+**. Exit codes were 0 and
+     the watcher counted files, not values. 9.x is also a *different model* from the registered one
+     (amendment 3 names 8.5.0 with v3 weights). **Fixed in `make_tabpfn_cpu_kernels.py`:**
+     `tabpfn==8.5.0` is pinned; a **canary fit** runs before any scoring and refuses on the wrong
+     version or no finite output (verified: 8.5.0 passes, 9.0.0 refuses); the run refuses at the end
+     on any all-NaN output. The consolidator refuses any city with no finite E8/E9 value (it refused
+     all 71 real ones). **Rules: pin every package in a kernel install. Count FINITE values, not
+     rows. A silent fallback needs a loud aggregate check downstream.**
+   **The shared lesson is #77 restated for Kaggle: verify the ARTIFACT — the published file list, the attached secret — never the exit status of the push.**
+
+94. **🔴 A COUNT TYPED INTO PROSE, OR A VISUAL PLACED TWICE, PASSES EVERY GATE (2026-09-14).** The
+   thesis stated the registration count as **eight** (ch10), **six** (Appendix B) and implied
+   **six** in Table 7.5 while `registrations.json` held **eleven**, and the table note said
+   *fourteen of thirty* against rows summing to **eleven**. Separately, **T7_5, `panel`, `pipeline`
+   and `dispersion` were each placed twice**, printing twice under one number. Nothing caught
+   either: counts in words are not `{{claim:}}` tokens, and the assembler happily re-placed a
+   token it had already placed. **Fixes:** the table and its note are generated from the registry;
+   `assemble.py` now **refuses a second standalone placement** — refer inline instead. **Rule: a
+   count that appears in the document comes from exactly one generated source; prose points at it
+   rather than restating it.** Family of #90 (structure the gates cannot see).
+
+95. **🔴 A LIBRARY'S OWN PROCESS POOL, INSIDE YOUR WORKERS, CAN HANG A KAGGLE RUN FOR A WHOLE SESSION (2026-09-15).**
+   Three 43–44-site cities (clusters 7, 13, 24) ran **11+ hours twice** without finishing, while
+   neighbours finished in 15 min and locally the same city takes **~20 min**. A 40-min probe kernel
+   with `faulthandler` stack dumps found it: **mgwr defaults `n_jobs=-1`** and runs its local fits
+   through a **joblib/loky pool**; inside our own worker processes on 4 vCPUs the process
+   **segfaulted**, and in the real runs a dead pool worker left the parent in
+   `wait_result_broken_or_wakeup` forever. **Fix:** `Sel_BW(..., n_jobs=1)` and `GWR(..., n_jobs=1)` —
+   verified **bit-identical** (bandwidth and every prediction, 8 real fitting sets). Same family as the
+   ProcessPoolExecutor stall (2026-09-13). **Rule: before parallelising at the process level, grep
+   every estimator for `n_jobs`/`Parallel`/`Pool` and pin it to 1.** Siblings found the same days:
+   - **(a) A Kaggle kernel stays attached to the dataset VERSION current at its creation.** Re-pushing
+     `kandy-spatial-analysis-s*` after publishing a fix still ran the pre-fix script; a probe kernel
+     created afterwards saw the fix. **A code-dataset fix needs NEW kernel slugs** (or a UI version bump).
+   - **(b) A status read right after a push can be the PREVIOUS run's terminal state**, so a watcher
+     that downloads on the first `COMPLETE` it sees records a run that has not started.
+   - **(c) A function-local `import os` makes `os` local to the whole function** — `os.replace` then
+     raised UnboundLocalError after every city finished (9.6 h, 8 processes). The temp-file cache
+     write (gotcha #81) is what made those results recoverable. AST-scan for shadowing local imports.
+   - **(d) Running two frames IN SEQUENCE inside one kernel lets one slow process idle the rest** —
+     v2-s0's S-1 frame never started. Run frames concurrently, and name cities explicitly
+     (`--only-clusters`) rather than slicing a size-ordered list.
+   - **(e) The Windows console (cp1252) raises `UnicodeEncodeError` inside the Kaggle client** on
+     downloads and when printing Kaggle logs — run with `PYTHONUTF8=1 PYTHONIOENCODING=utf-8`.
+96. **🔴 A FIGURE'S LETTERING IS WHAT PRINTS, NOT WHAT THE CODE SAYS — and only a visual pass finds
+   collisions and content errors (2026-09-19).** pandoc shrinks any image wider than the 6.02 in
+   column, so 7 pt drawn on a 9.6 in canvas printed at ~4 pt; `bbox_inches="tight"` then widens a
+   canvas that `fit_print` had already narrowed (legends outside the axes). Measure from the text
+   objects × `min(1, 6.02 / saved_width)` (`scratchpad` `print_audit.py` pattern), never by OCR —
+   numerals-only boxes read ~1 pt small. Raising fonts to the floor then collides labels, and the
+   visual pass that caught those also caught **four content errors no gate sees** (a censoring flag
+   indexed after a sort, a stale rung range, a band drawn at the wrong threshold, a reference to a
+   table in another document). **Rule: after any figure change, view every figure at print scale.**
+   Sibling trap in this environment: the Bash tool turns `\n` inside a heredoc'd Python string
+   into a real newline, which broke four edits — write patch scripts with the Write tool and use
+   raw strings.
+97. **🔴 AN ESTIMATE FROM ONE RANDOM SPLIT AND ONE LEARNER SEED IS ONE DRAW, NOT A RESULT (2026-09-25,
+   F.115/F.116).** Every ladder number came from one station split (one seed chooses the held-out
+   stations AND the order stations are "acquired") and one HGB seed (which, above 10,000 rows, sets
+   scikit-learn's automatic early-stopping split). Across 20 splits the headline deep-tropical
+   interval excluded zero in **3 of 20**; one learner seed alone moved the first-two gain **11→23 %**.
+   The city bootstrap cannot see either: it resamples which cities are scored, never refits.
+   **Rules: average every per-unit effect over the random design choices (splits, seeds) BEFORE
+   bootstrapping units; report the spread over draws; never quote a single-draw interval as the
+   evidence.** The project's own hard rule already said "3-seed runs"; the ladder never followed it.
+98. **🔴 `pd.date_range(start, end, freq="QS")` DOES NOT START AT `start` (2026-09-27).** It begins at
+   the first quarter start AFTER `start` and ends at the last one before `end`. `pull_city` used it to
+   chunk ERA5 BLH requests, so the head and tail partial quarters of every city's window were never
+   requested; the rows existed with NaN BLH and the ladder's driver `dropna` removed them silently.
+   It cost ~5 % of city-days, and I had attributed the gap to "ERA5 not yet published". **Rule: build
+   chunk edges as `[start, *inner, end]` (`pull_openaq_drivers._bounded_quarters`), and whenever a
+   window has NaNs at its ends, check the chunking before blaming the source.**
+99. **🔴 A FEATURE AVERAGED OVER THE SCORING SITES DESCRIBES THE SCORING SITES (2026-09-25, B1).**
+   `STATIC_GEO` was the mean of 60 predictors over each city's monitoring sites, and a third of those
+   sites are the held-out stations that score it. It holds no PM2.5, so it cannot leak the target
+   value, but monitor sites are ~**50 % denser** than their urban centre and near-point road features
+   rank cities almost independently of random points (ρ ≈ 0). A city without monitors has no sites.
+   **Rule: a "sensorless" feature must be computable where there are no sensors: sample the city
+   (`build_static_geo_grid.py`, GHSL urban centre), never the network.** Sibling of #73.
+
+100. **🔴 OSF CAN ANSWER 201 AND NEVER CREATE THE REGISTRATION (2026-09-23 and 2026-09-28).** The POST
+   returns 201, the project log shows `registration_initiated`, and the draft stays a draft: no
+   registration ever appears (amendment 3 waited 5 days). Both times a single re-POST from the SAME draft
+   created it at once (`4qs9c`, `b379r`) and no duplicate appeared. `osf_lodge.py` now waits 7 min and
+   re-submits once from the same draft. **Never create a new project to retry**, and after any lodge
+   verify the node lists exactly one registration. Sibling of #89 (the opposite failure).
+
+## Pending Tasks (updated 2026-09-19)
+
+Narrative/history for everything below lives in `memory/SESLOG.md`.
+This section is the FORWARD list only.
+
+### 0. 🔴 IMMEDIATE (updated 2026-09-12)
+0. ✅ **Summary rewritten for Thesis A (2026-09-19b), 3 pages.** Rebuild it after any Thesis A
+   change (it reads `build/a/thesis.md`). The standing rules below still apply.
+   `#writing/summary/summary.md` → `build_summary.py`. 3 pages, Times New Roman, **12 pt body and
+   nothing smaller**, comprehension over compression (user ruling). ⚠ **The spatial learning curve
+   is stated as UNDERWAY and nothing more** — registered and running, no number, no direction, no
+   hint of an outcome, because none exists (see the 2026-09-12 Current State block).
+   Traps that have each cost a build: a `%` comment in the YAML breaks xelatex and leaves a **stale
+   PDF** that looks like success (assert "wrote summary.pdf"); `\selectfont` cannot run before
+   `egin{document}`; measure **where the space went** before cutting content — twice the overflow
+   was the title block, not the prose.
+0a. **CONTINUE AND FINISH THE SPATIAL LEARNING CURVE** — everything is built and gated; what
+   remains is scoring and writing. In order:
+   1. ~~licence, weights, E0–E7 scoring, E10 kernels~~ **DONE 2026-09-13/15** (78/78 cities; E10 952,068 preds);
+   2. **USER: start the five `kandy-e89-cpu2-*` kernels** — tick `TABPFN_TOKEN` in each editor,
+      accelerator None, Save & Run All (D-8: E8/E9 are CPU-only). ✅ **2026-09-23: the 14-second
+      crash is fixed and version 3 is pushed to all five** (gotcha #93f). Their current ERROR is the
+      expected missing secret after the push. 🔴 **2026-09-24: THAT RUN PRODUCED NOTHING**
+      (gotcha #93g: tabpfn 9.0.0, 0 finite rows). **Version 5 is pushed to all five** with 8.5.0
+      pinned, the canary and the all-NaN refusal. **USER: tick TABPFN_TOKEN, accelerator None,
+      Save & Run All, again.** ⚠ r-b's shards g4 and g7 hit the **12 h wall** last time. Outputs
+      survive a timeout, so cities left unfinished need a second, targeted wave. Real 8.5.0 speed
+      on Kaggle is not yet measured (3.5 s per task locally).
+      🟢 **2026-09-25: VERSION 5 WORKS, BUT WAVE 1 IS PARTIAL.** Canary OK and every row finite.
+      Six shards hit the 12 h wall (Kaggle speed is about **6 s per task**, not 3.5). Outputs are in
+      `shard_out/kandy-e89-cpu2-*`; the all-NaN run is in `shard_out/_archive_v3_allnan_tabpfn900_2026-09-23/`.
+      **Complete: registered 28/37, S-1 36/41.** Remaining **14 cities, about 12,600 tasks**:
+      registered 24, 10, 32, 47, 66, 140, 156 (107 and 115 have NO splits, so nothing to score);
+      S-1 13, 24, 37, 48, 156.
+      **WAVE 2 STARTED 2026-09-28 (was postponed 2026-09-25).** Steps as run:
+      (1) `kaggle datasets create -p <abs>/spatial_curve/kaggle/tabpfn_cpu_wave1_dataset` (34 flat
+      `_cpu_` files, 981 KB, metadata present). The first attempt uploaded every file but **never
+      created the dataset**, so check the published listing afterwards; (2) push
+      `kaggle/tabpfn_cpu_w2-reg` and `tabpfn_cpu_w2-s70` (new slugs `kandy-e89-cpu3-{reg,s70}`,
+      generated with `make_tabpfn_cpu_kernels.py --wave 2`, resume dataset attached, outputs tagged
+      `_cpu_w2_`); (3) USER ticks the secret, sets accelerator None, runs. The heaviest shard is
+      about 4,200 tasks (~7 h). Resume was verified locally on the real files: each shard skips its
+      64 complete city-frames. Then consolidate all 7 kernel folders with
+      `--cities .../data_dataset/cities.parquet --splits-dir .../data_dataset`, and run
+      `spatial_curve_run_summary.py --preflight`.
+      🔴 **2026-09-25: CPU scoring is NOT reproducible ACROSS MACHINES.** 80 wave-1 tasks re-scored
+      on the laptop (same code, data, tabpfn 8.5.0 and seed) matched Kaggle's values in **1/80**,
+      median |Δρ| 0.012, max 0.29. D-8's "48/48 identical" was within ONE machine. Amendment 3's
+      justification "reproducibility on any machine" is therefore **overstated**: disclose it in
+      Paper 1's methods and the ledger. The cause (PyTorch build or CPU instruction set) is not
+      isolated. **Decision: wave 2 runs on Kaggle, the same environment as wave 1, so no city mixes
+      machines.**
+      🟢 **Amendment 3 (D-8) REGISTERED 2026-09-28 as OSF `4qs9c`** (project `79qkw`). The 09-23 POST
+      never created a registration (the draft stayed a draft). It was re-submitted from the same draft
+      with a dated §5 disclosing wave 1, the tabpfn-9.0.0 void run and the cross-machine 1/80 result,
+      and correcting "reproducible on any machine". Pending approval: **verify it is listed after
+      48 h** (a pending registration vanished once).
+      🟢 **WAVE 2 RUNNING on Kaggle (user, 2026-09-28).**
+   3. download E8/E9 outputs → `scripts/spatial_curve_tabpfn_consolidate.py` (one source per city);
+   4. summary run on Kaggle CPU: all 78 city pickles (`kandy-spatial-city-cache`) + E10 preds +
+      ONLY the consolidated E8/E9 file (`merge_deep` reads `pred_*` only);
+   5. decide whether to lodge **D-8** on OSF as an amendment (user's call);
+   6. run **X-T**, the exploratory terrain moderator (`spatial_curve_moderators.py`);
+   7. **write it up**: new Chapter 8 section, §7.2 scope statement, §9.7, abstract, summary,
+      Appendix B. ✅ The registrations table already reads `registrations.json` (2026-09-14):
+      scoring the curve means setting `held`/`refuted` on `rqn4y`/`26hp8` there and nothing else.
+   8. **fix the `excludes_zero` flag in the loss-sensitivity script** (wrong-sided for negative
+      intervals) before any loss figure or claim reads it again.
+   ⚠ **E11 is not interpreted** whatever its real-data numbers look like (control failed; the
+   failure is the model on the registered task, not the code).
+0b. **THE THESIS NEEDS A HUMAN READ END TO END.** 43,713 words, 566 claims, gates green, four
+   rounds of outside review answered, and a full humanisation pass. Every mechanical check runs on
+   every build; **none of them checks that a number is meaningful, only that it is current** — and
+   F.108 proved the claims gate cannot catch an English clause that names the wrong thing.
+   ⚠ Three mechanical rewrites broke the sense in the style pass and were repaired by hand.
+   User action, and the critical path for the thesis itself.
+0c. ~~Figure and map plan~~ **DONE 2026-09-14** (`8ac0b56`). Remaining from it: small locator
+   insets for `transect` and `withinpixel` (not ordered). **Push `8ac0b56`** — verify with
+   `git -C D:/ProjectCD rev-list --count origin/main..HEAD` (gotcha #77).
+0d. ~~Remove the sensor-placement proposal from the thesis~~ **DONE 2026-09-17** — see the
+   2026-09-17 Current State block. Open: whether to retire the 48 now-unused `net.*`/`cost.*`/`camp.*`
+   claim generators (user's call).
+0e. **Send the CEA letter** — still the first scientific step: Kandy has no public monitor, and the
+   first local stations are the most robust gain on the ladder (**+21.8 %**, F.116). ⚠ The old
+   rationale "local stations worth **4.2×** the background" is **RETIRED** (F.115/F.116): the ladder
+   no longer ranks local stations above a background in Kandy's band. Also the largest cost
+   decision (F.101: 10,000–40,000 USD).
+0f. **Get a local quote in rupees.** Import duty is the single largest unknown.
+0g. **Circulate the paper** to the four readers — user action, unchanged.
+0g2. 📦 Superseded by F.115/F.116; archived 2026-09-27 (`docs/claude_md_archive/CLAUDE_archived_blocks.md`).
+0h. ~~CLAUDE.md over target~~ **DONE 2026-09-21** (2,005 → ~940 lines) and **2026-09-27** (1,097 → ~1,000;
+   three blocks moved). ⚠ Still ~100 lines over 900: the gotchas list is the bulk; trim retired-stage
+   gotchas next time. ⚠ `CONTEXT.md` is also over its own limit (333 lines against 250).
+
+📦 Superseded IMMEDIATE lists (2026-08-23 → 2026-09-09d): archived 2026-09-21.
+
+### 1. Preprint / manuscript — critical path, ENTIRELY USER ACTION ★★★★★
+The 28 pp manuscript in `kandy_pm25/docs/paper/` is built and adversarially reviewed.
+**Phase 9, circulation to the four readers, is the user's step.** Then Zenodo DOI → submit.
+- **🆕 BEFORE SUBMISSION (mandatory):** (a) **cite and position EGU26-9786** (CICERO/HISP/MoH/Oslo — Sri Lanka 1 km *daily* PM2.5, 2020–2023); (b) **name CEA explicitly** in the public-data survey; (c) **🆕 add Nirmani 2025 and Attanayake 2025** — they now carry the only independent Kandy checks the paper has (F.65).
+- **Uncommitted:** `scripts/spatial_skill_law.py` has the Bogotá slug fix.
+- **Optional:** one genuine tropical **South/SE-Asian** analogue would dent the China-heavy critique more than Bogotá did.
+- **Audit boundary (not re-verified):** Kandy descriptive claims (0.4 M residents, ~500 m elevation) and the OSF prereg text itself.
+
+### 1b. Two papers, not one (2026-08-22 publication view)
+**(A)** the methods / value-of-information paper — 47 cities, budget ladder, three confounds caught by registered gates, two measured ceilings. **Needs no Sri Lankan data; strong and novel.**
+**(B)** the Kandy application — weaker alone, strong once A exists.
+The current manuscript sits between them and should be **split rather than defended**.
+
+### 2. Post-preprint engineering ★★☆☆☆ — the top three are CLOSED BY MEASUREMENT
+~~Anomaly-target GBMs~~ **DONE, NOT ADOPTED (F.16).** ~~Consolidation v3~~ **BUILT FIVE TIMES, ALL REJECTED (F.13/F.15/F.17/F.18)** — do not attempt a sixth reformulation. ~~f-partition~~ **RESOLVED BY PHYSICS (F.43), f ≈ 0.48.**
+4. **UI U3 remainder / U4** — date-time picker, timeline redesign, mobile sheet, chart kit, guided tour (`docs/webapp_ui_overhaul_plan_2026-07-21.md`).
+5. **FNO WindNinja emulator** — methods contribution; improves an *unscored* layer, so it cannot move a validated number.
+6. **Forecast polish (paper 2):** clean per-lead skill curve (needs the archived GEOS-CF forecast pull extended to Oct2022–Sep2024) · per-lead k(lead) instead of one 1.35 · score the forecast's **B component** against the logged NBRO regional stations · Aurora as a benchmarked alternative driver.
+
+### 2b. 🔬 WEAK-POINT REGISTER (opened 2026-08-06)
+| | item | status |
+|---|---|---|
+| ~~W1~~ | shipped interval never coverage-tested | **CLOSED** (F.25) width correct, centring by design |
+| ~~W2~~ | anchor pair hand-picked → flatters panel? | **CLOSED** (F.24) level conservative, seasonal +0.01 optimistic |
+| ~~W3~~ | 7-source data survey never re-verified | **CLOSED** — and found the NO₂ spatial network |
+| ~~W4~~ | `KOALA_ANCHOR` 4 s.f. unsupported | **CLOSED** — prose corrected in 5 places |
+| ~~W5~~ | FECT calibration itself unvalidated | **CLOSED / CORROBORATED 2026-08-22 (F.64)** — Akurana 17.8 vs a BAM-anchored ~18–19 |
+| 🟡 **W6** | **REOPENED then NARROWED 2026-08-22 (F.66 → F.71).** F.23 corroborated the vehicular **timing** (3.67× rush ratio) and said so; the **mass** share was never tested. Katugastota PMF gives traffic **7.6%** / biomass **14.1%**, but a 20-site study resolves it by geography: traffic **predominant in the urban core**, firewood **co-dominant there, dominant rurally**. **Never restate "~90% vehicular"**; defensible core `emix` is **`vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4`**. | narrowed |
+| ~~W7~~ | ε-floor transferred from n=1 city | **CLOSED as a measured limitation** (F.30) — eps0 does NOT transfer; Kandy's value sits inside a pooled bracket, not contradicted but not determined |
+| ~~W8~~ | f a distrusted prior | **CLOSED** (F.21/F.22, then F.43) |
+| 🔴 **W11** | **NEW 2026-08-22 (F.65)** — three of four independent Kandy point records sit **below** the model (LCS, all carrying a downward calibration), one matches (undocumented instrument). A **level** discrepancy on the axis called strong. **Report as open; do not resolve by picking the agreeing record.** | OPEN |
+| ~~W10~~ | e(t) evening lobe misplaced | **CLOSED** (F.29) — fitted; prior's evening/morning ratio 0.97 REFUTED (measured 2.14) |
+Also standing, by design not oversight: `A_transport` entirely unscored · panel selected by similarity not data quality · panel does not bracket Kandy · **`Bud4` is a declared design assumption, not a validated rung (F.60/F.61)**.
+
+### 3. 🎯 THE ONE THING THAT UNBLOCKS EVERYTHING — a local measurement
+Routes, **re-ordered 2026-08-22 by measured value**:
+- **⚫ Torrington Park BAM-1020, Kandy (F.65) — DEFUNCT (user, 2026-08-22).** It anchored two published Kandy records but no longer operates. **Do not re-propose it.**
+- 🔴 **RE-RANKED 2026-09-28 (F.117).** The F.92/F.96 ordering ("local stations 4.2× the background in Kandy's band"; "GHAP deflates a local station by half") is **RETIRED** (one split, one seed; F.115/F.116). Confirmed on 72 mainly temperate cities: first two stations **+8.5 %**, a same-network background **+41.1 %**, and the background ranks higher (exceedances +59.3). Latitude dependence **undetectable**, so for Kandy's band the two stay **complementary, not ranked**.
+- **NBRO regional background** — still worth having (no free substitute; F.63 ruled out Colombo at r 0.60 vs a 0.92 benchmark), and the channel demonstrably works since it supplied the F.65 series. Second priority for Kandy, not first.
+- **CEA Kandy AQMS** — granted in principle 2026-08-12, hourly 2019→2026-05 incl. full met; blocked on a letter + R&D agreement. Gap 2021-07→2022-10.
+- **⚠ CEA passive NO₂ — DEMOTED.** It will **not** fix `P_local`: the spatial ceiling is measured and information-limited (F.56/F.61). Its value is the `f` partition and local activity tracing only.
+- **Mobile campaign** — 4–8 drive days per segment (~34 calendar days full-domain) and it **still needs one fixed reference to anchor to**.
+
+### 3b. Parked by dependency
+- **SIATA portal registration** (user email) for Medellín ground data past Sep-2024.
+- ~~Medellín health panel~~ — **DROPPED** 2026-07-25 (user: Kandy only).
+
+### 4. Closed — do NOT re-litigate (each has a recorded reason)
+Spatial-skill ceiling is **information-limited**, now established **six** independent ways:
+tiny within-city signal (~±10% at Kandy) · emission≠concentration vs ground truth ·
+Track-S learned-pattern null (ρ≈0.14) · dynamic-transport null (monitors floor-sited) ·
+**AlphaEarth EO-embedding null** · **a full LUR predictor set moving pooled ρ from +0.273 to +0.275 (F.61)**.
+Also closed: **GEMS** (viewing geometry + scan window, #66) · A2 multiplicative amplitude ·
+diurnal-B · κ calibration · ConvCNP assimilator · **GNN/PINN *at* Kandy** (GraPhy loses to IDW
+below ~0.16 sensors/mi²; Kandy sits at 0.023) · diffusion downscaling · **Colombo as a
+background donor (F.63)** · **the civil-vs-solar-time diurnal hypothesis (F.62, refuted by
+construction)**.
+
+### 5. Genuinely open housekeeping
+1. **`docs/stage_c_data_dictionary.md`** — still documents the v11 schema; add `road_density`, `ntl_log` + provenance/QC. Low value now that ConvCNP is retired, but stale.
+2. **Bootstrap CIs on the v3-extended pooled R²** — still a single-run point estimate (0.581).
+3. **Senarathna comparison figures** — refresh against v3-extended numbers.
+4. **`config.py` constants** — locked (`KOALA_ANCHOR=24.5225`, `KANDY_GEOS_CF_RATIO=0.536`, `STATION_CITY_MEANS`, `GEOS_CITY_MEANS`, `CITY_RATIOS`); verify periodically. Quote KOALA as "about 24.5", never as a figure Senarathna 2024 prints.
+5. **The monograph** (`docs/paper/monograph/`) — complete main text, halted by choice. Resume only if a thesis-length document is required.
+
+Foundational reading: [`docs/REDESIGN_2026-05-08.md`](docs/REDESIGN_2026-05-08.md) ·
+[`docs/AUDIT_2026-05-08.md`](docs/AUDIT_2026-05-08.md) · doc index [`docs/README.md`](docs/README.md).
+
+## HARD RULES
+
+- **No workarounds for missing tools — get the optimal thing.** If a task needs a library, dataset, font, or tool we don't have, INSTALL/ACQUIRE it rather than substituting a degraded stand-in. Only fall back when the proper thing genuinely cannot be made to work — and say so explicitly. Default to the optimal result, not the convenient one.
+- **When in doubt, VERIFY — never guess.** If uncertain about a fact, parameter, method, constant, API, or whether a claim is correct, do NOT fabricate or assume. Surface the doubt (a one-line note), then resolve it with web research against authoritative sources before proceeding. Guessing on numbers/methods is a correctness failure; an extra search is cheap. Applies especially to literature values, emission/health/physics parameters, and "is this the right approach" questions.
+- **🆕 Git-track the context files.** `CLAUDE.md`, `PROJECT.md`, `PROJECT_ARCHITECTURE.md`, `README.md`, `memory/SESLOG.md` and `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` are **tracked and committed** (user directive, 2026-08-22, after CLAUDE.md was destroyed by a bad in-place write — gotcha #81). Data, results, figures and checkpoints stay out of git. Commit context-file changes at the end of any session that edits them.
+- **Single target: Kandy.** Nuwara Eliya and Badulla are NOT in the deployment pipeline.
+- **NEVER report Spatial CV R²=0.911** as a spatial modelling result — it is a label-construction artefact.
+- **PyTorch raw autograd** for the supporting cross-continental PINN experiment. Never suggest DeepXDE.
+- **TD-PDE only for the cross-continental PINN experiment** (∂C/∂t + u·∇C = ∇·(K∇C) − v_d·C + S). QSS abandoned. Never revert.
+- **Stage B is ConvCNP residual learner (deepsensor)** — predicts `pm25 − c_prior_scaled`, NOT pm25 directly. **No PDE constraint at the spatial step.** SharedTerrainAnsatz iteration cancelled. PINN spatial work cancelled.
+- **Native resolution: 1 km hourly.** No 100 m / 30 min headline. No presentation disaggregation step.
+- **KANDY_PINN_BBOX** ≠ **KANDY_BBOX**. Always use KANDY_PINN_BBOX (15×15 km). Never the 40 km satellite bbox.
+- **Supporting cross-continental PINN experiment** is NOT a feeder for Stage B.
+- **Anchor framing at Kandy:** "consistency anchors pending field validation," NEVER "validation." KOALA/Senarathna/MAIAC double as upstream calibration anchors → not independent. ⚠ **The NBRO and RF-CNN records (F.65) ARE independent** — they may be called checks, with their caveats attached.
+- **3-seed runs with bootstrap CIs on every reported r.** Single-run point estimates are uninterpretable.
+- **Coverage / calibration reported alongside every r/RMSE.** UQ is a contribution.
+- **"Few-shot transfer" framing, not "meta-learning."** N=3 is too small for a meta-learning claim.
+- **"Sim2Real" only if Phase 1 actually runs (decision gate).**
+- **No PINN spatial work after 2026-05-08.** Cut definitively.
+- **README.md, PROJECT.md, CLAUDE.md are single-source-of-truth.** All other docs cross-reference; no number is restated.
+- **NEVER use "sequential data assimilation"** — correct term if used: "multi-fidelity cascaded framework" (Peherstorfer et al. 2018), but verify it actually applies before citing.
+- **Stage B framing:** ALWAYS "exploratory cross-city transfer," NEVER "validated spatial model."
+- **Persistence-dominance defence:** when SHAP (56.8% lags) is raised, the canonical rebuttal is the Senarathna diurnal r=+0.865 — lag-1h has no hour-of-day phase, so persistence-only cannot produce that pattern. Plus +8.0% reanalysis ablation.
+- **Sensor expansion is THE binding constraint going forward.** Architectural and feature-engineering levers are exhausted within N=2.
+- **🆕 An admissible descriptor must exist for a target with NO local observations** (gotcha #73). Anything derived from the target's own outcome — including for donor selection — leaks.
+- **🆕 Admissibility is checked in BOTH directions (2026-08-23, F.84).** `require()` stops a tier using a stream it is not entitled to; **`require_covers()` stops a tier silently under-using its budget**, which inflates every gain measured above it. Any new tier or ablation asserts both, and any deliberate omission is declared via `allow=` at the call site. **And the implementation is checked against the PRE-REGISTRATION, not only against the spec** — all three disagreed and nobody noticed for five days.
+- **🆕 Value of information is a property of the information AND the estimator (2026-08-23, F.88).** Never write "even a linear model reproduces it". On the 68-feature `Bud0c` a linear baseline collapses and the first rung reads 50% instead of 12%. The defensible claim is **robust across non-linear estimators**.
+- **🆕 A tier's claim tier is set by its evidence, not its position in the ladder.** `Bud0`–`Bud3` are validated; **`Bud4` is a declared design assumption** and must be labelled as such wherever it appears.
+
+## Doc Update Protocol (what goes where)
+
+When running `/update-docs`, route information as follows:
+
+| Information type | Destination |
+|---|---|
+| **A headline number, a refutation, or an open question changing** | **CONTEXT.md** *(tracked, <250 lines — keep it tight; prune as hard as you add)* |
+| Current stage status (1-line summary per stage) | **CLAUDE.md** Current State |
+| Pending tasks (active only, top 7) | **CLAUDE.md** Pending Tasks |
+| New gotcha / hard rule discovered | **CLAUDE.md** Gotchas or Hard Rules |
+| Session narrative (what happened, decisions made) | **SESLOG.md** new dated entry |
+| Kernel run result (gates, metrics, root cause) | **SESLOG.md** + `docs/kaggle_kernel_log.md` |
+| **How** a component is built (maths, module map, flow, invariants, tests) | **PROJECT_ARCHITECTURE.md** *(tracked)* |
+| **What** came out (stage results, metrics, epistemic status) | **PROJECT.md** |
+| Completed version results (v1–vN history) | **SESLOG.md** only (not CLAUDE.md) |
+| Data inventory, download status | **PROJECT.md** |
+| New file paths created this session | **CLAUDE.md** Key Paths (if actively used) |
+| Model/claim change a reader of the paper would need | **model reference + ledger `F_*`**, then rebuild COMBINED |
+| Anything a stranger reading the repo would see | **README.md** *(tracked — check it for refuted claims)* |
+| A doc becoming current or historical | **`docs/README.md`** index |
+| User preference / workflow feedback | `memory/` auto-memory (feedback type) |
+
+**Rule**: CLAUDE.md shows only *current* state; history lives in SESLOG. `PROJECT_ARCHITECTURE.md`
+owns *how it is built*, `PROJECT.md` owns *what came out* — where a number appears in both,
+PROJECT.md wins.
+
+**`README.md` and `PROJECT_ARCHITECTURE.md` are public.** A claim that changes internally has to
+be checked against them in the same pass, or the repo ends up publicly asserting something the
+project has already refuted. That is exactly what happened to the local/regional partition
+between 2026-06-08 and the 2026-08-06 doc audit.
+
+## Compact Instructions
+
+**Before compacting** (always, no exceptions): append a compact-checkpoint entry to `memory/SESLOG.md`:
+```
+### COMPACT CHECKPOINT — YYYY-MM-DD HH:MM
+**Decisions made:**
+- [list key architectural/strategic decisions from this conversation]
+**Current kernel:** [slug, status, last known gate values]
+**Blocker / next action:** [one line]
+```
+Then compact. This ensures no decision context is lost across compactions.
+
+When prioritizing what to keep in context: current kernel gate results, pending tasks, decisions. Drop: file exploration outputs, verbose training logs, resolved bugs, version history.
+
+## Directory Rules
+
+1. Model source code → `kandy_pm25/src/`. Utility scripts → `scripts/`. Reports → `reports/`.
+2. Data → `kandy_pm25/data/`. Results/figures → `kandy_pm25/results/`. Never outside these.
+3. Papers → `references/papers/`. Design docs → `docs/`. Old artifacts → `archive/`.
+4. Never put loose `.py` files in `kandy_pm25/` root.

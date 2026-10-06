@@ -1,0 +1,60 @@
+{
+  "registered": {
+    "full_record": {
+      "primary": 23,
+      "primary_sites": 960,
+      "primary_countries": 9,
+      "primary_by_band": {
+        "temperate": 16,
+        "subtropical": 5,
+        "deep_tropical": 1,
+        "tropical": 1
+      },
+      "secondary": 21,
+      "band_arm": 8,
+      "tropical_or_deep_in_frame": 8
+    },
+    "registered_one_year": {
+      "primary": 18,
+      "primary_sites": 745,
+      "primary_countries": 7,
+      "primary_by_band": {
+        "temperate": 13,
+        "subtropical": 4,
+        "tropical": 1
+      },
+      "secondary": 15,
+      "band_arm": 6,
+      "tropical_or_deep_in_frame": 6
+    }
+  },
+  "_s70": {
+    "full_record": {
+      "primary": 23,
+      "primary_sites": 982,
+      "primary_countries": 9,
+      "primary_by_band": {
+        "temperate": 16,
+        "subtropical": 5,
+        "deep_tropical": 1,
+        "tropical": 1
+      },
+      "secondary": 22,
+      "band_arm": 9,
+      "tropical_or_deep_in_frame": 9
+    },
+    "registered_one_year": {
+      "primary": 19,
+      "primary_sites": 784,
+      "primary_countries": 7,
+      "primary_by_band": {
+        "temperate": 14,
+        "subtropical": 4,
+        "tropical": 1
+      },
+      "secondary": 17,
+      "band_arm": 8,
+      "tropical_or_deep_in_frame": 8
+    }
+  }
+}

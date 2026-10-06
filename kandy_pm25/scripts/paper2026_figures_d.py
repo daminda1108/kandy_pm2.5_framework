@@ -86,7 +86,18 @@ def _map(ax, Z, lats, lons, *, cmap, norm=None, vmin=None, vmax=None, terrain=No
         ax.contour(te, extent=text, origin="lower", levels=[600, 800, 1000, 1200],
                    colors="#00000040", linewidths=0.35)
         ax.set_xlim(ext[0], ext[1]); ax.set_ylim(ext[2], ext[3])
-    ax.set_xticks([]); ax.set_yticks([])
+    # Two coordinate ticks per axis so a reader can locate the domain; inner panels of a grid
+    # keep the ticks but drop the labels (2026-09-19; the maps previously carried none).
+    xt = [x for x in (80.60, 80.65) if ext[0] < x < ext[1]]
+    yt = [y for y in (7.25, 7.30) if ext[2] < y < ext[3]]
+    ax.set_xticks(xt); ax.set_yticks(yt)
+    ax.set_xticklabels([f"{x:.2f}°E" for x in xt])
+    ax.set_yticklabels([f"{y:.2f}°N" for y in yt], rotation=90, va="center")
+    ax.tick_params(length=2, pad=1.5)
+    try:
+        ax.label_outer()
+    except Exception:                                                       # noqa: BLE001
+        pass
     for s in ax.spines.values():
         s.set_visible(True); s.set_linewidth(0.6); s.set_color(INK)
     return im

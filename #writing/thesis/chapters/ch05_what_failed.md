@@ -1,4 +1,4 @@
-# Chapter 5. What was tried and did not work
+# Chapter 5. Eight approaches that did not work
 
 This chapter is longer than the one describing the model that did work, and it is placed before
 it, not in an appendix. The reason is that the pattern across these eight attempts turned
@@ -39,8 +39,8 @@ contrast with Section 5.8 is the chapter's conclusion.
 ## 5.1 A physics-informed network transferred between continents
 
 **What was expected.** A neural network constrained to obey an advection-diffusion-deposition
-equation should learn a representation of transport that is a property of the physics rather
-than of the city it was fitted in. If so, a network trained where data is plentiful could be
+equation [@Raissi2019] should learn a representation of transport that is a property of the
+physics rather than of the city it was fitted in. If so, a network trained where data is plentiful could be
 transferred to a city where it is not, and the physical constraint would carry the transfer.
 
 What happened. A time-dependent formulation was fitted at Medellin, reaching a coefficient
@@ -65,8 +65,8 @@ imposes.
 ## 5.2 A rigid physical form fitted across cities
 
 **What was expected.** If a single parameterised form for valley confinement, taken from the
-mountain meteorology literature, could be fitted jointly across several cities, the fitted
-parameters would characterise valley behaviour in general and could be applied to a new valley.
+mountain meteorology literature [@DeWekker2015; @Stull1988], could be fitted jointly across
+several cities, the fitted parameters would characterise valley behaviour in general and could be applied to a new valley.
 
 What happened. Two of the form's six parameters, a trapping depth and a valley shape
 exponent, were driven onto their bound constraints by the fit. Cross-validated skill was uneven:
@@ -93,15 +93,15 @@ the class it describes.
 
 ## 5.3 A conditional neural process trained across cities
 
-**What was expected.** A neural process trained on several cities with dense monitoring should
-learn to map from covariates to a spatial field, and could then be applied to a city it had
-never seen. This is the most direct machine-learning attack on the problem and it is what most
+**What was expected.** A neural process trained on several cities with dense monitoring
+[@Gordon2020] should learn to map from covariates to a spatial field, and could then be
+applied to a city it had never seen. This is the most direct machine-learning attack on the problem and it is what most
 readers would try first.
 
 What happened. The model was built, trained across three source cities, and applied to Kandy
 producing a full year of hourly fields. Cross-city correlation reached 0.599 on average
-[ledger v14]. Calibrated intervals were obtained by conformal post-processing and covered close
-to their nominal rate at all three source cities.
+[ledger v14]. Calibrated intervals were obtained by conformal post-processing
+[@Vovk2005; @Romano2019] and covered close to their nominal rate at all three source cities.
 
 Then the output was examined. The fields were smooth. They were consistent with the annual mean,
 they reproduced the seasonal cycle, and the diurnal cycle had roughly the right shape. They
@@ -168,7 +168,8 @@ third tested whether transport dynamics could be learned from the monitored pane
 that they could not, for the reason that the monitors are all sited on valley floors and
 therefore never sample the vertical gradient. The fourth applied a general-purpose
 earth-observation embedding, and found nothing. The fifth built a full land-use regression
-predictor set, {{claim:lur.predictors}} predictors at {{claim:lur.total_stations}} stations
+predictor set [@Wang2012LUR], {{claim:lur.predictors}} predictors at
+{{claim:lur.total_stations}} stations
 across {{claim:lur.cities}} cities, and moved the pooled rank correlation from 0.273 to 0.275
 [ledger F.61].
 
@@ -289,7 +290,7 @@ What it established. A bounded claim, which none of the five nulls in Section 5.
 That is a different kind of statement from "no spatial signal was found". It says what was
 excluded and, by implication, what was not. An effect smaller than the detection limit remains
 entirely possible, and a campaign that sited monitors deliberately across land-use contrast
-would be a different experiment with a different answer.
+would be a different experiment; Section 8.5 runs the nearest version of it the panel allows.
 
 Two further results came out of the same work and both are used later. The conservation
 constraint holds to {{claim:phase2.gauge_drift}} across degenerate cases including a saturated

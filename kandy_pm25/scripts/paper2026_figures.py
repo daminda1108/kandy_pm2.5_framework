@@ -22,6 +22,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
@@ -46,6 +47,7 @@ plt.rcParams.update({
 
 
 def save(fig, stem):
+    fit_print(fig)
     for ext in ("png", "pdf"):
         fig.savefig(OUT / f"{stem}.{ext}")
     plt.close(fig)
@@ -54,15 +56,16 @@ def save(fig, stem):
 
 # ── F1: the paired-site figure ────────────────────────────────────────────────────────────
 def fig_paired():
-    fig, ax = plt.subplots(1, 3, figsize=(7.2, 2.6),
-                           gridspec_kw={"width_ratios": [1.05, 1.0, 1.25], "wspace": 0.42})
+    fig, ax = plt.subplots(1, 3, figsize=(7.2, 2.9),
+                           gridspec_kw={"width_ratios": [1.0, 0.9, 1.25], "wspace": 1.0})
 
     # (a) the pair itself, on a log axis because 27.5x will not show linearly beside 1.1x
     a = ax[0]
     obs_hi, obs_lo = 110.0, 4.0
-    series = [("observed\n(3 h, kerbside)", obs_hi, obs_lo, OBS),
-              ("model,\nas shipped", 1.0, 1.0 / v("spatial.paired_model_ratio"), MODEL),
-              (f"model,\n{v('subgrid.fine_res_m')} m", 1.0, 1.0 / v("s1.paired_fine_94m"), FINE)]
+    # Short tick labels (2026-09-19): at print size the longer ones ran together.
+    series = [("survey\nPM10", obs_hi, obs_lo, OBS),
+              ("model\n1 km", 1.0, 1.0 / v("spatial.paired_model_ratio"), MODEL),
+              (f"model\n{v('subgrid.fine_res_m')} m", 1.0, 1.0 / v("s1.paired_fine_94m"), FINE)]
     for i, (lab, hi, lo, col) in enumerate(series):
         hi_n, lo_n = (hi / lo, 1.0) if i else (obs_hi / obs_lo, 1.0)
         a.plot([i, i], [lo_n, hi_n], color=col, lw=6, solid_capstyle="butt", alpha=.85, zorder=2)
@@ -88,10 +91,11 @@ def fig_paired():
     # Coarse -> fine, left to right: the claim is about REFINING, so the reading order should
     # follow the argument rather than the numeric value of the resolution.
     b.invert_xaxis()
-    b.set_xticks(xs); b.set_xticklabels([f"{int(x)} m" for x in xs], fontsize=7)
+    b.set_xticks(xs); b.set_xticklabels([f"{int(x)}" for x in xs], fontsize=7)
+    b.xaxis.set_minor_formatter(plt.NullFormatter())
     b.set_ylim(0.85, 60); b.set_yticks([1, 2, 5, 10, 30])
     b.set_yticklabels(["1", "2", "5", "10", "30"])
-    b.set_xlabel("model resolution", fontsize=7.5)
+    b.set_xlabel("model resolution (m)", fontsize=7.5)
     b.set_ylabel("paired-site ratio", fontsize=7.5)
     b.grid(color=GRID, lw=0.5, zorder=0)
     b.set_title("(b)  refining the physics\ndoes not close it", fontsize=7.5, loc="left", pad=6)
@@ -101,7 +105,7 @@ def fig_paired():
     stages = [("raw emission,\n94 m", v("s1.contrast.raw_E_fine_94_m")),
               ("+ tempering", v("s1.contrast.log1p_tempering")),
               ("+ dispersion", v("s1.contrast.dispersion_94_m")),
-              ("+ solve 238 m", v("s1.contrast.solve_at_238_m_(production)")),
+              ("+ solve 238 m", v("s1.contrast.solve_at_238_m_production")),
               ("+ report 998 m", v("s1.contrast.report_at_998_m"))]
     yy = np.arange(len(stages))[::-1]
     c.barh(yy, [s[1] for s in stages], color=FINE, height=.62, zorder=2)
@@ -122,16 +126,16 @@ def fig_ladder():
     n_band = x.band.value_counts().to_dict()
     n_cls = x.cls.value_counts().to_dict()
 
-    fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.9),
-                           gridspec_kw={"width_ratios": [1.15, 1.0], "wspace": 0.3})
+    fig, ax = plt.subplots(1, 2, figsize=(7.2, 3.1),
+                           gridspec_kw={"width_ratios": [1.3, 1.0], "wspace": 0.3})
 
     # (a) the pooled ladder
     a = ax[0]
-    steps = [("+ static\ngeography", v("step.geography"), "#4D9221"),
-             ("+ satellite\nlevel", v("step.satellite"), "#4D9221"),
-             ("+ 2 local\nsensors", v("step.bud0c_bud1"), MODEL),
-             ("+ 6 more\nsensors", v("step.bud1_bud2"), MODEL),
-             ("+ regional\nbackground", v("step.bud2_bud3"), "#762A83")]
+    steps = [("geo-\ngraphy", v("step.geography"), "#4D9221"),
+             ("satel-\nlite", v("step.satellite"), "#4D9221"),
+             ("2 local\nsensors", v("step.bud0c_bud1"), MODEL),
+             ("stations\n3 to 6", v("step.bud1_bud2"), MODEL),
+             ("back-\nground", v("step.bud2_bud3"), "#762A83")]
     xs = np.arange(len(steps))
     a.bar(xs, [s[1] for s in steps], color=[s[2] for s in steps], width=.66, zorder=2)
     for i, (lab, val, _) in enumerate(steps):
@@ -139,10 +143,8 @@ def fig_ladder():
     a.set_xticks(xs); a.set_xticklabels([s[0] for s in steps], fontsize=6.8)
     a.set_ylabel("median RMSE reduction (%)", fontsize=7.5)
     a.set_ylim(0, 48); a.grid(axis="y", color=GRID, lw=0.5, zorder=0)
-    a.set_title(f"(a)  what each increment buys   ·   n = {v('frame.cities')} cities",
+    a.set_title(f"(a)  what each increment buys, {v('frame.cities')} cities",
                 fontsize=7.5, loc="left", pad=6)
-    a.text(3, 6.2, "indistinguishable\nfrom zero", ha="center", fontsize=6.4, color=MUTE,
-           style="italic")
     # The colours carry meaning -- free/global vs local instrument vs regional -- and a reader
     # cannot decode that from the bars alone.
     from matplotlib.patches import Patch
@@ -174,7 +176,7 @@ def fig_ladder():
     top = max(first[0], back[0])
     b.plot([-w / 2, -w / 2, w / 2, w / 2], [top + 3.0, top + 5.0, top + 5.0, top + 3.0],
            color=OBS, lw=1.0, clip_on=False)
-    b.text(0, top + 6.2, "local wins here", ha="center", fontsize=6.6, color=OBS, weight="bold")
+    b.text(0.35, top + 6.2, "local wins here", ha="center", fontsize=6.6, color=OBS, weight="bold")
 
     save(fig, "F2_ladder")
     print(f"  (instrument class n: {n_cls})")

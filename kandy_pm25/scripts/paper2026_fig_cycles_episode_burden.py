@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 from src.stage1_satml.decomp import pubfig  # noqa: E402
 from figdata import emit  # noqa: E402
+from printfit import fit_print  # noqa: E402  (print at column width, 2026-09-19)
 
 DEC = ROOT / "data" / "processed" / "decomp"
 OBS = ROOT / "data" / "processed" / "stage1_v3" / "dataset_v3_hourly.parquet"
@@ -101,7 +102,8 @@ def fig_cycles() -> None:
                label="sensors")
     ax[1].axhline(1.0, color=GREY, lw=0.6, zorder=0)
     ax[1].axvspan(12, 16, color=GREY, alpha=0.12, zorder=0)
-    ax[1].annotate("afternoon\nminimum", xy=(14, 0.80), ha="center", fontsize=6.4, color=INK)
+    # Above the band's data, where no line runs: at 0.80 the label sat on both traces.
+    ax[1].annotate("afternoon\nminimum", xy=(14, 1.22), ha="center", fontsize=8, color=INK)
     ax[1].set_xticks(range(0, 24, 4))
     ax[1].set_xlabel("hour, local time")
     ax[1].set_title("(b)  diurnal shape, night above midday", loc="left")
@@ -119,6 +121,7 @@ def fig_cycles() -> None:
              "calibration rather than skill.",
              ha="center", fontsize=6.3, color=GREY, style="italic")
     fig.tight_layout()
+    fit_print(fig)
     for e in ("png", "pdf"):
         fig.savefig(OUT / f"F_cycles.{e}", bbox_inches="tight")
     plt.close(fig)
@@ -137,7 +140,7 @@ def fig_episode() -> None:
     fld = ep[ep.time == peak].pivot(index="lat", columns="lon", values="pm25_q50")
 
     fig = plt.figure(figsize=(7.2, 3.1))
-    gs = fig.add_gridspec(1, 2, width_ratios=[1.0, 1.35], wspace=0.42)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.0, 1.35], wspace=0.85)
 
     ax0 = fig.add_subplot(gs[0])
     # Adaptive range for this hour. A fixed 10 to 110 scale renders the basin as one flat
@@ -161,20 +164,28 @@ def fig_episode() -> None:
     ax1 = fig.add_subplot(gs[1])
     lt = hourly.index + pd.Timedelta(hours=LT)
     ax1.plot(lt, hourly.values, color=MODEL, lw=1.3)
-    ax1.axhline(55, color=INK, lw=0.8, ls=(0, (4, 2)))
-    ax1.annotate("WHO 24 h interim target 1", xy=(lt[1], 56.5), fontsize=6.2, color=INK)
+    # WHO 2021 24-hour interim targets for PM2.5: IT-1 75, IT-2 50 ug/m3 (verified 2026-09-18
+    # against WHO's own Q&A). The line was previously drawn at 55 and labelled IT-1, which is
+    # neither. A legend in the empty lower-left corner rather than labels on the lines: the
+    # trace crosses 50 several times, so any on-line label collides with it somewhere.
+    for level, name, style in ((75, "WHO 24-h interim target 1 (75)", (0, (5, 2))),
+                               (50, "WHO 24-h interim target 2 (50)", (0, (1, 1.5)))):
+        ax1.axhline(level, color=INK, lw=0.9, ls=style, label=name)
+    ax1.legend(loc="lower left", fontsize=6.2, frameon=True, framealpha=0.92)
     ax1.scatter([peak + pd.Timedelta(hours=LT)], [hourly.max()], s=26, color=INK, zorder=5)
     ax1.annotate(f"{hourly.max():.1f}", xy=(peak + pd.Timedelta(hours=LT), hourly.max()),
                  xytext=(6, 3), textcoords="offset points", fontsize=6.6)
     ax1.set_ylabel("basin mean (µg m$^{-3}$)")
-    ax1.set_title(f"(b)  episode mean {hourly.mean():.1f} µg m$^{{-3}}$ over 48 h", loc="left")
+    ax1.set_title(f"(b)  episode mean {hourly.mean():.1f} µg m$^{{-3}}$ over 48 h", loc="left", fontsize=7.5)
     ax1.grid(axis="y", zorder=0)
     ax1.tick_params(top=False, right=False, which="both", labelsize=6.5)
     for sp in ("top", "right"):
         ax1.spines[sp].set_visible(False)
     import matplotlib.dates as mdates
     ax1.xaxis.set_major_locator(mdates.HourLocator(interval=12))
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d %b %H:%M"))
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d %b\n%H:%M"))
+
+    fit_print(fig)
 
     for e in ("png", "pdf"):
         fig.savefig(OUT / f"F_episode.{e}", bbox_inches="tight")
@@ -212,11 +223,15 @@ def fig_burden() -> None:
                          [r.ci_high - r.attributable_deaths_per_yr]],
                    fmt="none", ecolor=INK, capsize=4, lw=0.9, zorder=4)
     for rect, v in zip(b, vals):
-        ax[1].text(rect.get_x() + rect.get_width() / 2, v + 18, f"{int(v)}",
-                   ha="center", fontsize=7.2)
+        # Beside the bar top, not above it, so the error bar does not strike through it.
+        ax[1].text(rect.get_x() + rect.get_width() * 0.97, v + 12, f"{int(v)}",
+                   ha="right", va="bottom", fontsize=7.2)
     ax[1].set_ylim(0, 720)
     ax[1].set_ylabel("deaths per year")
-    ax[1].set_title(f"(b)  {int(r.year)} burden, population {int(r.population):,}", loc="left")
+    # The WorldPop count for the 15 km modelled domain, not the municipal population (98,828 in
+    # the 2012 census); the thesis quotes both, so the figure must say which it is (2026-09-19).
+    ax[1].set_title(f"(b)  {int(r.year)} burden, domain population {int(r.population):,}",
+                    loc="left")
     ax[1].grid(axis="y", zorder=0)
 
     for a in ax:
@@ -225,6 +240,7 @@ def fig_burden() -> None:
             a.spines[sp].set_visible(False)
 
     fig.tight_layout()
+    fit_print(fig)
     for e in ("png", "pdf"):
         fig.savefig(OUT / f"F_burden.{e}")
     plt.close(fig)

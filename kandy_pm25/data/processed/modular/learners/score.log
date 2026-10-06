@@ -1,0 +1,14 @@
+    stream-complete filter (C7): dropping 1 city(s) ['3147'], 518 rows -- not in every admitted static stream
+    [maiac] frame 31,878 city-days, 47 cities, 68 Bud0c predictors
+    Bud0c seed 0                 118 cities, 68 features
+    Bud0c seed 1                 118 cities, 68 features
+    Bud0c seed 2                 118 cities, 68 features
+    Bud0c seed 3                 118 cities, 68 features
+    Bud0c seed 4                 118 cities, 68 features
+    Bud0c seed 0                 118 cities, 72 features
+    Bud0c seed 1                 118 cities, 72 features
+    Bud0c seed 2                 118 cities, 72 features
+    Bud0c seed 3                 118 cities, 72 features
+    Bud0c seed 4                 118 cities, 72 features
+-> D:\ProjectCD\kandy_pm25\data\processed\modular\ladder_v2\learners_REGISTERED_summary.json
+exit 0

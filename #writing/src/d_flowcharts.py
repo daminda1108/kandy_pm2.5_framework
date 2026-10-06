@@ -30,26 +30,33 @@ def d1_pipeline():
     that shows the whole thing at once; every later diagram expands one box of it.
     """
     g = gv_digraph("D1", rankdir="TB")
-    g.attr(nodesep="0.35", ranksep="0.40", splines="polyline")
+    # nodesep 0.22, not 0.35: at 0.35 the row of four inputs drew 6.8 in, and the column shrank
+    # the 9 pt edge label to 7.9 pt (measured 2026-09-19).
+    g.attr(nodesep="0.22", ranksep="0.40", splines="polyline")
 
     with g.subgraph() as s:
         s.attr(rank="same")
-        s.node("drv", "Reanalysis drivers\nwind, boundary layer,\ntemperature, humidity",
+        # Box text wrapped to about 18 characters a line (2026-09-19): four boxes side by side at
+        # the old line length drew the diagram 9.6 inches wide, and the 6-inch column shrank its
+        # 11 pt text to about 7 pt.
+        s.node("drv", "Reanalysis drivers\nwind, boundary\nlayer, temperature,\nhumidity",
                fillcolor=C["fill2"])
-        s.node("sat", "Satellite\naerosol optical depth\nand annual level", fillcolor=C["fill2"])
-        s.node("geo", "Static geography\nterrain, roads, land cover,\npopulation, night lights",
+        s.node("sat", "Satellite\naerosol optical\ndepth and\nannual level", fillcolor=C["fill2"])
+        s.node("geo", "Static geography\nterrain, roads,\nland cover,\npopulation,\nnight lights",
                fillcolor=C["fill2"])
         s.node("obs", "Local sensors\ntwo, low cost", fillcolor="#fbe3de")
 
-    g.node("anchor", "T(t)  temporal anchor\nboosted trees on drivers,\n"
-                     "anchored to the satellite level")
-    g.node("bg", "B(t)  regional background\nrural floor and seasonal shape,\n"
-                 "capped so it cannot exceed the total")
-    g.node("pat", "P(x,y,t)  local pattern\nemission proxy times confinement,\n"
-                  "normalised to unit spatial mean")
-    g.node("field", "PM(x,y,t) = B + max(inc,0)P + min(inc,0) + e(t)(P-1)",
+    g.node("anchor", "T(t)  temporal anchor\nboosted trees on\ndrivers, anchored to\n"
+                     "the satellite level")
+    g.node("bg", "B(t)  regional\nbackground: rural\nfloor and seasonal\n"
+                 "shape, capped below\nthe total")
+    g.node("pat", "P(x,y,t)  local pattern\nemission proxy times\nconfinement, with\n"
+                  "unit spatial mean")
+    g.node("field", "PM(x,y,t) = B + max(inc,0)P\n+ min(inc,0) + e(t)(P-1)",
            fillcolor=C["fill2"], shape="box", style="rounded,filled")
-    g.node("out", "Hourly field at 1 km\nwith calibrated intervals",
+    # "uncertainty intervals", not "calibrated": the interval check finds them the right width
+    # but wrongly centred at the Kandy sensors (72 per cent coverage for a nominal 90).
+    g.node("out", "Hourly field at 1 km\nwith uncertainty intervals",
            fillcolor=C["fill2"], shape="box", style="rounded,filled")
 
     g.edge("drv", "anchor")
@@ -62,8 +69,8 @@ def d1_pipeline():
     g.edge("pat", "field")
     g.edge("field", "out")
 
-    gv_note(g, "The level is carried by T(t) and is what the observations constrain. The "
-               "pattern only decides where\nthe material sits, and because it has unit mean it "
+    gv_note(g, "The level is carried by T(t) and is what the observations constrain.\nThe "
+               "pattern only decides where the material sits, and because it\nhas unit mean it "
                "cannot change how much of it there is.")
     return g, "D1_pipeline"
 
@@ -196,12 +203,13 @@ def d9_acquisition():
 
     with g.subgraph() as s:
         s.attr(rank="same")
-        s.node("trop", "Deep tropics\nBUY TWO LOCAL SENSORS FIRST\nthen a regional background",
+        s.node("trop", "Deep tropics\nLOCAL SENSORS FIRST\nthen a regional background",
                fillcolor="#fbe3de")
         s.node("other", "Elsewhere\nBUY A REGIONAL BACKGROUND FIRST\nthen local sensors",
                fillcolor="#fbe3de")
 
-    g.node("never", "Do not buy monitors three to eight.\nThey are worth nothing measurable.",
+    # Stations three to six (the rung is pool[:6]); "three to eight" was wrong (gotcha #92).
+    g.node("never", "Stations three to six added no\nmeasurable accuracy in any band.",
            fillcolor="#efefef", color=C["muted"], fontcolor=C["muted"])
 
     g.edge("start", "free")
@@ -211,9 +219,10 @@ def d9_acquisition():
     g.edge("trop", "never", style="dashed", color=C["muted"])
     g.edge("other", "never", style="dashed", color=C["muted"])
 
-    gv_note(g, "The ordering inverts between the two branches, and the pooled recommendation "
-               "is the wrong one for\nthe tropics. A programme in Colombo or Kandy following "
-               "the pooled advice would buy the\nwrong instrument first.")
+    # Judged on daily city-mean accuracy only: on exceedance detection the deep-tropical
+    # ordering reverses (F.109), and the diagram must not hide that (2026-09-19).
+    gv_note(g, "For daily city-mean accuracy, the pooled ordering is the wrong one for the deep "
+               "tropics.\nFor detecting exceedances, the deep-tropical ordering reverses again.")
     return g, "D9_acquisition"
 
 
