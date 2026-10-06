@@ -1604,6 +1604,8 @@ statement, and should disclose that the *locked* tier is exactly flat on ~25% of
 
 ## F.43 — ✅ THE COHERENCE CAP: the partition is fixed by physics, and f is ~0.48
 
+> ⚠ **F.124 (2026-10-06):** f is a bound set by T's amplitude under the cap, 0.433–0.492 across cap day/statistic choices; not "fixed by physics".
+
 An external reviewer supplied the argument that eight internal attempts had missed: **local
 sources emit continuously, so at an emitting location the local increment is strictly
 positive at every hour** — rain changes removal, not emission. Therefore `B ≤ T` always, and
@@ -6265,6 +6267,8 @@ losses (v2):** background − first two is a tie on RMSE but +27.5 [2.7, 55.0] o
 
 ## F.117 — 🟢 ladder v2 CONFIRMED on 72 fresh cities: first stations help (less than discovery said), a same-network background helps more, latitude undetectable
 
+> ⚠ **F.124 (2026-10-06):** H4/H5's ordering comes from rung construction (calibration-only first stations vs same-day background). Like for like, background − first two is −0.22 [−0.60, +0.04]; both ≈ +58 %.
+
 **Registered:** OSF `ueyfr` (project `dm9zf`), 2026-09-28 04:24:22 UTC, before any OpenAQ PM2.5 of the
 76 confirmation cities was downloaded (CNEMC on disk, disclosed). Frozen code `e6b744b`, 27 files
 re-hashed identical before the single scoring run. Deviation E-1 (execution only: parallel ingest;
@@ -6323,6 +6327,8 @@ under-informed Bud0" is answered for these streams. Record: `docs/rich_baseline_
 
 ## F.119 — 🔬 the spatial learning curve, scored: cities split, deep prior flat, siting irrelevant, reach ~1 km
 
+> ⚠ **F.124 (2026-10-06):** X5 interval [0.00, 0.00] was a pooling bug (per-k values in F.124); "cities split" not supported (3/18 cross after Holm); detection limit 0.51 with the empirical SD.
+
 OSF `rqn4y` + `26hp8` + `4whsc` + `4qs9c`; scored once 2026-09-28 after the preflight (E8/E9 CPU-only,
 consolidated from 7 kernels, all finite). Primary frame 18 cities / 7 countries, detection limit 0.28.
 **Held:** X2 (kriging/RK beats the free raster by k ≤ 35 in 11/18 cities), X3 (ridge LUR saturates at k = 3,
@@ -6372,6 +6378,8 @@ two-station background; the background's advantage is, if anything, larger with 
 
 ## F.123 — 🔬 the spatial curve on full records: tropical cities qualify and look like temperate ones (test B, 2026-10-05)
 
+> ⚠ **F.124 (2026-10-06):** 3/23 cities cross after Holm, not 15/23; tropical − other −0.22 [−0.45, +0.02]; detection limit 0.35; GHAP benchmark ≈ built-up raster.
+
 OSF `fu59b`, scored once 2026-10-05 (E0–E7; deep arms not re-run). **F1:** with each site's full record the frame
 grows to **23 primary cities** (960 sites, 9 countries; registered 18 / 745 / 7), including the first deep-tropical
 city (Bangkok, 65 sites); band arm 8 (6). **F2:** X1–X7 repeat the registered verdicts **except X4**, now refuted:
@@ -6399,3 +6407,59 @@ intervals exclude zero** in the registered frame (18 cities; min p 0.088, site r
 **0 of 16** on full records (23 cities; min p 0.111, slope vs E3 skill at k = 12, ρ +0.38). Undetectable at ρ ≈ 0.5;
 terrain partly aliased with network (3 of 4 enclosed cities Korean). Outputs `spatial_curve{,_full}/analysis/moderators_terrain.csv`.
 
+## F.124 — 🔴 external review: the ladder's ordering is a property of HOW stations are used; spatial-curve and partition claims narrowed (2026-10-06)
+
+An adversarial code review written as an outside referee would, with every finding answered by computation. Plan and full
+log: `docs/review_remediation_plan_2026-10-06.md`. **Registered results stand as registered; what changes is what they
+mean.** Everything below is post-hoc and EXPLORATORY (a fresh registered Test C was declined: no fresh dense pool).
+
+**(1) The rungs were not compared like for like (R1–R4).** In `ladder_v2.rungs` the first two / six stations only fit an
+intercept and slope to Bud0 — their reading never enters that day's prediction — while the background rung uses its
+stations' SAME-DAY reading, and from more stations. `scripts/ladder_v2_review.py` puts every stream on equal terms (each
+regressed with Bud0 against stations 3–6, same-day, cross-fitted shrinkage; parity with ueyfr 2.8e-14). Union, n = 100:
+first two same-day **+58.8 % [44.9, 69.0]**, registered background +57.7, a background from two stations +57.2, the mean of
+two other stations +59.0; **background − first two −0.22 [−0.60, +0.04]** (exceedance −0.11 [−2.49, 0.00]); confirmation
+cities alone −0.15 [−0.82, +0.23]; prospective (every stream keeps reporting) +0.03 [−0.40, +1.00]. Same cities,
+registered construction: +13.7 / +40.8 / +22.6. ⇒ **H4/H5's ordering is produced by use, not by information. Two
+same-day stations of any kind cut daily error by ~58 %; used as a calibration only, ~9–14 %.** **Full networks (L2, 111 union cities, outer set ~10 stations):** two outer stations match the first two
+(P10 −0.84 [−1.43, −0.29]; mean +0.07 [−0.38, +0.22]); the all-outer background leads by **+2.48 [1.14, 3.72]**
+(exceedance +3.74 [1.42, 6.95]; prospective +2.37 [0.89, 4.11]) against +27.9 under the registered construction on
+the same cities: a small COUNT effect, no KIND effect, ~90 % of the ordering is use. **Leave-one-NETWORK-out Bud0 (L3):** registered gains grow slightly (confirmation
+first two **+13.3 %** vs 8.5, background +42.5 vs 41.1, H4 +25.9 vs 24.6) — leave-one-city-out flattered Bud0
+modestly; like for like unchanged (−0.21 [−0.55, +0.13]). H2 (+0.2) is close to
+guaranteed by construction (two stations already fix a two-parameter map). Quote H1–H5 as "as constructed"; never
+"a background is worth more than local stations".
+
+**(2) Spatial learning curve (F.119/F.123).** (a) **Bug S1:** the X5 summary pooled cLHS − random over every estimator,
+including E0/E1, which do not depend on the sites chosen, so 42–44 % of differences are exactly 0 and the interval was
+[0.00, 0.00]. Per estimator and k (kriging): registered k=3 +0.013 [−0.062, +0.061], full k=3 0.000 [−0.049, +0.046],
+k=5 −0.024 [−0.042, +0.024]. X5's substance survives (two-sided, every k). (b) **"Cities split" is not supported:** a
+Fisher-z random-effects analysis finds no significant between-city heterogeneity on full records (Q p 0.06–0.26,
+I² 0.23–0.42); only 2/23 cities are individually distinguishable; with a Holm correction **3/23** (full) and 3/18
+(registered) cities cross the raster, not 15/23 and 11/18. (c) Tropical − other, kriging − raster, k=3: **−0.22
+[−0.45, +0.02]** (full) — "inside the temperate envelope" becomes "no difference resolved; the point estimate favours the
+raster in the tropics". (d) The registered detection limits assumed SD 0.20; the empirical SD is 0.31/0.37, giving
+**0.35** (full) / **0.51** (registered), not 0.24/0.28. (e) **Satellite benchmark** (GHAP annual 1 km at 1,506 sites):
+rank skill +0.125 vs built-up +0.097; GHAP − raster +0.018 [−0.143, +0.170]; kriging k=3/5/8 − GHAP +0.012/+0.002/−0.017.
+Neither free products nor 3–8 stations rank neighbourhoods usefully (ρ ≈ 0.1–0.15). (f) "Reach ~1 km" is the first
+distance bin's resolution.
+
+**(3) The local fraction (F.43).** f ≈ 1 − mean(daily min T)/mean(T) wherever the cap binds (49–75 % of hours), so it is
+a bound set by T's amplitude, not identified by data. The production cap uses UTC days (05:30 local). Across day
+boundary (UTC/local) and statistic (min, 2nd-lowest, 3-h running min, P10): **f 0.433–0.492** (production 0.483;
+reproduced exactly). Quote "about 0.45–0.5, a bound under the coherence cap", never "fixed by physics".
+
+**(4) Humidity (K1).** The FECT label uses Barkjohn with RH fixed at 80 %. With hourly ERA5 RH (07 89 %, 14 69 %, 19 87 %,
+02 94 %) the normalised diurnal peak/trough falls **1.82 → 1.62** (~11 % less swing); the sensor-level f proxy is
+unchanged (0.547 → 0.545). A full kappa-Köhler correction inverts the cycle (over-correction). The diurnal shape the
+model is sharpened to cannot be fixed without co-location against a reference (CEA).
+
+**(5) Off-the-shelf baseline at Kandy (K9).** NBRO Kandy obs 19.6/22.7 (2021/22); GHAP at that pixel 17.6/18.8 (−10/−17 %);
+model 19.7/22.1. The chain beats GHAP at the one reference-like record (one site, instrument undocumented).
+
+**(6) Health burden (K7).** GEMM (ages 25+, age-specific) was applied to the all-age crude rate over the whole domain;
+correction needs GBD age-specific baselines (author download). Burden stays an illustrative appendix.
+
+Scripts: `ladder_v2_review.py`, `spatial_curve_x5_erratum.py`, `spatial_curve_reanalysis.py`,
+`spatial_curve_satellite_benchmark.py`, `kandy_f_sensitivity.py`, `kandy_rh_sensitivity.py`. Claims `v2.*` in
+`build_claims.py` (`registered_v2`).

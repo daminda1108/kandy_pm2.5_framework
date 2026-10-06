@@ -93,6 +93,25 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
+## Current State (updated 2026-10-06, 🔴 **EXTERNAL REVIEW: THE LADDER'S ORDERING IS A CONSTRUCTION ARTEFACT; SPATIAL CLAIMS NARROWED**)
+
+Adversarial code review + remediation, all post hoc / exploratory (Test C declined by the author: no fresh dense pool).
+Plan and full log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`; ledger **F.124**; thesis change list
+`kandy_pm25/docs/thesis_change_list_2026-10-06.md` (~128 items).
+- 🔴 **Ladder (R1):** Bud1/Bud2 use stations only as an intercept+slope recalibration of Bud0; Bud3 reads the background
+  SAME-DAY. Like for like (`scripts/ladder_v2_review.py`, parity 2.8e-14): first two same-day **+58.8 % [44.9, 69.0]**,
+  background +57.7, **background − first two −0.22 [−0.60, +0.04]** (n 100). **Never say a background beats local
+  stations; quote H1–H5 "as constructed".** Robust finding: same-day reading ≈ +58 % vs calibration-only ≈ +9–14 %. Full networks (L2): kind of station
+  nothing; a ~10-station background +2.5 [1.1, 3.7] over two same-day stations (a count effect).
+- 🔴 **Spatial curve:** X5 [0.00, 0.00] was a pooling bug (per-k ±0.05); **3/23** cities cross after Holm (not 15/23);
+  heterogeneity n.s.; tropical − other −0.22 [−0.45, +0.02]; detection limits **0.35/0.51**; GHAP ≈ built-up (ρ ≈ 0.1).
+- 🟡 **Kandy model:** f **0.433–0.492** across cap choices (UTC-day cap; daily-min bias); hourly-RH Barkjohn cuts diurnal
+  peak/trough 1.82 → 1.62; GHAP reads −10/−17 % at NBRO where the model is within 3 %; GEMM misapplied to all ages (needs
+  GBD download, user).
+- ✅ Paper 1 reference draft revised (abstract, §2.3.6, §2.7.9, §3.1.8, §3.6.5, §4, §5); new Figs 3b/7b; 111 `v2.*`
+  claim keys (`build_claims.py` `registered_v2`), gate 683 OK.
+- ⏳ L2 (full-network frame) and L3 (leave-one-network-out Bud0) running/queued.
+
 ## Current State (updated 2026-10-05, 🟢 **CONFIRMED; ROBUST TO BASELINE, LEARNER AND STATION CAP; SPATIAL CURVE RE-RUN ON FULL RECORDS**)
 
 Four registered tests scored ONCE each, 2026-09-28/29, every one behind a parity or preflight gate.
@@ -661,6 +680,15 @@ python src/comparison/publication_figures.py --all
    Escape it: `\#writing/build/a/`. Sibling for publication: **all four repos are PUBLIC** (framework, release, two
    webapps); before pushing, scan for secrets and for infrastructure notes, and keep operating records local-only
    (`.gitignore` block "Local-only operating records").
+
+104. **🔴 REGISTRATION FIXES HOW A COMPARISON IS RUN, NOT WHETHER IT COMPARES LIKE WITH LIKE (2026-10-06, F.124).** The
+   registered H4/H5 ("background > first two") compared a rung that uses its stations only to recalibrate Bud0 with a rung
+   that reads its stations on the day. Frozen code, parity gates, split-averaging and pairing all passed, and the ordering
+   was still an artefact: used the same way, the two are equal (−0.22 [−0.60, +0.04]). Siblings in the same review: a
+   summary that pooled estimators which cannot differ (X5 [0.00, 0.00]); a first-pass crossing rule on 10-site Spearman
+   values (15/23 → 3/23 after Holm). **Rule: before registering, write down for every arm WHICH data it sees AND WHEN it
+   sees them, and check the arms differ only in the factor under test; print a test's per-unit values before trusting
+   a pooled interval of exactly zero.**
 
 ## Pending Tasks (updated 2026-10-06)
 

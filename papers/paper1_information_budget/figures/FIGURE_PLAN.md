@@ -108,6 +108,19 @@ Status tags: `PLANNED` · `BUILT` (script runs, figure viewed) · `FINAL` (print
 - Draft captions in `CAPTIONS.md`. **Remaining before FINAL:** the author agrees the captions; the figures are
   checked at the target journal's column width.
 
+## Changes required by the external review (2026-10-06, F.124)
+- **Fig. 3, 4, 5** show the registered ordering (H4/H5). Keep them as the registered record, but every caption
+  must say the rungs differ in use (calibration vs same-day), and the text must not read them as a ranking of
+  observations.
+- **New Fig. 3b — like for like.** A forest plot of the four same-day arms (first two, background as registered,
+  background from two stations, mean of two outer stations) beside the registered first-two and background rungs,
+  union cities (n = 100), with the paired differences. Data: `ladder_v2/review_registered_loco_summary.json` and
+  `review_full_loco_summary.json`. This becomes the paper's headline figure.
+- **Fig. 7 / Fig. 8** (spatial curve): drop the "cities split" strip and the min–max envelope; show per-density
+  Fisher-z random-effects estimates with intervals, the Holm crossing count (3/23) and the GHAP benchmark line.
+  Data: `spatial_curve{,_full}/analysis/{reanalysis,satellite_benchmark}.json`.
+- **Supplementary S4** — X5 per estimator and k (erratum), from `x5_erratum.json`.
+
 ## Supplementary figures
 - **Fig. S1** — Station-count curve, k = 1..8 pooled and by band (§3.2, F.102/F.116).
 - **Fig. S2** — Spatial-curve reach by distance bin (§3.6, X7), both frames.

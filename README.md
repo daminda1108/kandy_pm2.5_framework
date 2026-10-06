@@ -36,10 +36,10 @@ Framework before their data were retrieved (72 scored).
 
 | Registered endpoint | Result | Verdict |
 |---|---|---|
-| H1 first two local stations (% reduction in daily RMSE) | **+8.5** [3.1, 25.1] | supported |
+| H1 first two local stations, used to recalibrate the free estimate (% reduction in daily RMSE) | **+8.5** [3.1, 25.1] | supported |
 | H2 stations three to six | **+0.22** [0.12, 0.50] | supported (inside the registered ±1 bound) |
-| H3 background series | **+41.1** [26.8, 62.8] | supported |
-| H4 background minus first two, ordinary days | **+24.6** [4.1, 47.8] | ordering found: background ahead |
+| H3 background series, read on the day | **+41.1** [26.8, 62.8] | supported |
+| H4 background minus first two, ordinary days | **+24.6** [4.1, 47.8] | ordering found, **as constructed** (see below) |
 | H5 the same on WHO-guideline exceedance days | **+59.3** [33.9, 67.7] | supported |
 | M1 dependence on latitude | +0.53 [−1.79, +1.49] per degree | undetectable (few dense tropical networks) |
 
@@ -49,21 +49,32 @@ improved 13 %); under three other learners, including TabPFN and a 14-day recurr
 gradient boosting (OSF [`jea58`](https://osf.io/jea58/)); and with each city's full station network rather than
 12 stations (OSF [`mhgna`](https://osf.io/mhgna/); background minus first two +32.0 [11.6, 50.5]).
 
+**What the ordering means — a post-hoc correction (2026-10-06).** An external-style review of the code found that
+the registered rungs use their stations differently: the local stations only recalibrate the free estimate, while
+the background is read on the day being predicted. Re-scored with every stream used the same way
+(`kandy_pm25/scripts/ladder_v2_review.py`, reproducing the registered results to 3e-14), two stations read on the
+day cut daily error by about **58 %** whichever stations they are, and background minus first two is **−0.22
+[−0.60, +0.04]** (100 cities). On full networks a background summarising about ten stations adds a further 2.5 points [1.1, 3.7]: a small
+effect of how many stations are read, not of which kind. The registered verdicts stand as registered, but the
+ordering is a property of how the rungs were built: what a monitor-less city gains is the daily reading, not a particular kind of station.
+
 **Within-city maps.** A separate registered spatial learning curve (OSF [`rqn4y`](https://osf.io/rqn4y/) and
 amendments; extended on full station records as OSF [`fu59b`](https://osf.io/fu59b/)) asks how well a city can
 rank its own neighbourhoods as stations are added. On full records (23 cities in 9 countries, including Bangkok)
-cities split: in 15 interpolation overtakes a free built-up land-cover layer, 8 of them with three stations; in
-8 it never does. One station informs about a kilometre around it, siting by design gains nothing over random
-siting, and tropical cities fall within the range of temperate ones at the resolvable effect size. No public
+the registered rule counted 15 cities where interpolation overtakes a free built-up land-cover layer; a post-hoc
+re-analysis finds the between-city differences mostly within sampling noise, with **3 of 23** crossing after a Holm
+correction. At three to eight stations neither interpolation nor a free surface (built-up land cover, or the GHAP
+satellite PM2.5 product) ranks neighbourhoods usefully (rank correlation about 0.1); siting by design gains nothing;
+tropical cities cannot be distinguished from temperate ones (−0.22 [−0.45, +0.02] on the z scale). No public
 covariate, learned pattern or foundation-model embedding beat a single built-up covariate by more than its test
 could detect.
 
 **Discipline.** Every test above was registered before its data were scored, its code frozen by hash, and run
 behind a gate that had to reproduce the previous registered result exactly. Across the project's register, 105
 registered predictions have been scored: 66 held and 23 were refuted, and the refutations are reported. Two
-striking exploratory results did not survive split-averaging and pairing, which is itself one of the paper's
-findings. Records: `kandy_pm25/docs/*_results_2026-*.md`; registrations `kandy_pm25/docs/prereg_*.md`;
-evidence ledger `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (F.117–F.123).
+striking exploratory results did not survive split-averaging and pairing, and one registered ordering did not
+survive a like-for-like comparison; both are reported as findings in their own right. Records: `kandy_pm25/docs/*_results_2026-*.md`; registrations `kandy_pm25/docs/prereg_*.md`;
+evidence ledger `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (F.117–F.124; the review and its log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`).
 
 ---
 

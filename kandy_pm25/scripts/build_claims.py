@@ -2019,6 +2019,127 @@ def identifiability(c: Claims) -> None:
 # ── driver ────────────────────────────────────────────────────────────────────────────────
 
 
+def registered_v2(c: Claims) -> None:
+    """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
+    New keys under `v2.*`; the older ladder keys are left in place (they state what the
+    superseded files say) and docs/thesis_change_list_2026-10-06.md maps old to new."""
+    L2 = MOD / "ladder_v2"
+
+    def put(tag, v, stat, n, src, led, note=""):
+        c.add(tag + ".median", v["median"], stat=stat, n=n, source=src, ledger=led, note=note)
+        lo, hi = v.get("cluster", [v.get("lo"), v.get("hi")])[:2] if "cluster" in v else (v["lo"], v["hi"])
+        c.add(tag + ".lo", lo, stat="2.5th percentile, two-level cluster bootstrap", n=n, source=src, ledger=led)
+        c.add(tag + ".hi", hi, stat="97.5th percentile, two-level cluster bootstrap", n=n, source=src, ledger=led)
+
+    f = L2 / "confirm_REGISTERED_summary.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8")); src = f.name
+        names = {"first2_rmse": "H1 first two stations, as a calibration (% daily RMSE)",
+                 "s36_rmse": "H2 stations three to six, as a calibration (points)",
+                 "bg_rmse": "H3 same-network background series (%)",
+                 "bgm2_rmse": "H4 background minus first two, as constructed (points)",
+                 "bgm2_exceed": "H5 the same, balanced exceedance error at 15 ug/m3 (points)"}
+        for arm in ("reconstruction", "prospective"):
+            for key, lab in names.items():
+                v = S[arm].get(f"pooled.{key}")
+                if v:
+                    put(f"v2.conf.{arm[:4]}.{key}", v, f"median over confirmation cities; {lab}",
+                        v["n"], src, "F.117")
+        m = S["reconstruction"]["moderator.bgm2_rmse"]["abs_lat"]
+        put("v2.conf.m1_abslat", {"median": m["est"], "lo": m["lo"], "hi": m["hi"]},
+            "M1 slope of H4 on |latitude| (points per degree), median regression", 68, src, "F.117")
+        c.add("v2.conf.n_cities", S["config"]["scored"], stat="confirmation cities scored",
+              n=S["config"]["scored"], source=src, ledger="F.117")
+    f = L2 / "rich_REGISTERED_summary.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        v = S["reconstruction.confirmation.r1_rich_over_base"]
+        put("v2.rich.bud0_gain", v, "richer sensorless rung over the base rung (% daily RMSE)", v["n"],
+            f.name, "F.118")
+    f = L2 / "learners_REGISTERED_summary.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for L, lab in (("L1", "TabPFN"), ("L2", "14-day GRU"), ("L3", "HGB + ventilation physics")):
+            v = S.get(f"{L}.reconstruction.confirmation.skill_vs_L0")
+            if v:
+                put(f"v2.learn.{L}_vs_hgb", v, f"{lab} Bud0 skill relative to gradient boosting (%)",
+                    v["n"], f.name, "F.120")
+    f = L2 / "fullnet_endpoints.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for N in ("N1", "N2", "N3", "N4", "N5"):
+            put(f"v2.fullnet.{N}", S[N], f"full-network ladder endpoint {N} ({S[N]['key']})", S[N]["n"],
+                f.name, "F.122")
+
+    # spatial curve, with the review's corrections
+    for frame, tag, led in (("spatial_curve", "reg", "F.119"), ("spatial_curve_full", "full", "F.123")):
+        a = MOD / frame / "analysis"
+        p = a / "x5_erratum.json"
+        if p.exists():
+            S = json.load(open(p, encoding="utf-8"))
+            for k in ("3", "5", "8"):
+                v = S["E3"]["by_k"].get(k)
+                if v:
+                    put(f"v2.curve.{tag}.x5_e3_k{k}", v, f"cLHS minus random siting, kriging, k={k} (rho)",
+                        v["cities"], p.name, led, note="corrects the registered pooled X5 interval (bug S1)")
+        p = a / "reanalysis.json"
+        if p.exists():
+            S = json.load(open(p, encoding="utf-8"))
+            h = S["S4_holm_crossover"]
+            c.add(f"v2.curve.{tag}.holm_crossing", h["crossing"], stat="cities whose kriging beats the "
+                  "built-up raster at some k after a Holm correction", n=h["cities"], source=p.name, ledger=led)
+            c.add(f"v2.curve.{tag}.mde_empirical", S["S7"]["limit_with_empirical_sd"],
+                  stat="detection limit with the empirical SD of per-city differences", n=S["S7"]["countries"],
+                  source=p.name, ledger=led)
+            t3 = S["S6_tropical_minus_other"].get("3")
+            if t3:
+                v = t3["dz_kriging_minus_raster_diff"]
+                put(f"v2.curve.{tag}.trop_minus_other_k3", {"median": v["est"], "lo": v["lo"], "hi": v["hi"]},
+                    "tropical minus other cities, kriging minus raster, Fisher-z, k=3",
+                    t3["n_trop"] + t3["n_other"], p.name, led)
+        p = a / "satellite_benchmark.json"
+        if p.exists():
+            S = json.load(open(p, encoding="utf-8"))
+            for key in ("GHAP", "GHAP_minus_E1", "E3k3_minus_GHAP"):
+                put(f"v2.curve.{tag}.{key.lower()}", S[key], f"satellite 1 km PM2.5 benchmark: {key} (rho)",
+                    S[key]["cities"], p.name, led)
+
+    # Kandy partition sensitivity (review K-a/K-c) and humidity (K-b)
+    p = REPO / "data" / "processed" / "decomp" / "f_sensitivity.csv"
+    if p.exists():
+        d = pd.read_csv(p).groupby(["day", "stat"]).f.mean()
+        c.add("v2.f.cap_min", float(d.min()), stat="lowest 2019-2023 mean f across cap day/statistic choices",
+              n=len(d), source=p.name, ledger="F.124")
+        c.add("v2.f.cap_max", float(d.max()), stat="highest 2019-2023 mean f across cap day/statistic choices",
+              n=len(d), source=p.name, ledger="F.124")
+    p = REPO / "data" / "processed" / "decomp" / "rh_sensitivity.csv"
+    if p.exists():
+        d = pd.read_csv(p).set_index("variant")
+        for v in ("constant_rh80", "barkjohn_hourly_rh"):
+            c.add(f"v2.rh.{v}.peak_to_trough", float(d.loc[v, "peak_to_trough"]),
+                  stat="FECT normalised diurnal peak/trough ratio", n=2, source=p.name, ledger="F.124")
+
+    # ladder re-analysis (review L1-L3), once run
+    for fr, bud in (("registered", "loco"), ("full", "loco"), ("registered", "lono")):
+        p = L2 / f"review_{fr}_{bud}_summary.json"
+        if not p.exists():
+            continue
+        S = json.load(open(p, encoding="utf-8"))
+        for arm in ("reconstruction", "prospective"):
+            blk = S.get(f"{arm}.union.symmetric", {})
+            for key in ("gL2s_rmse", "gBGall_rmse", "gBG2_rmse", "gM2_rmse", "BGallmL2s_rmse",
+                        "BG2mL2s_rmse", "M2mL2s_rmse", "BGallmL2s_exceed"):
+                v = blk.get(key)
+                if v:
+                    put(f"v2.review.{fr}_{bud}.{arm[:4]}.{key}", v,
+                        f"same-day symmetric arm {key} (exploratory, review L1)", v["n"], p.name, "F.124")
+        if bud == "lono":
+            v = S.get("reconstruction.union.registered_all", {}).get("first2_rmse")
+            if v:
+                put("v2.review.lono.first2_rmse", v, "first two (calibration) with leave-one-network-out Bud0",
+                    v["n"], p.name, "F.124")
+
+
 def cluster_bootstrap(c: Claims) -> None:
     """F.104 -- cities are not independent units, so resample CLUSTERS."""
     f = MOD / "cluster_bootstrap.json"
@@ -2363,6 +2484,7 @@ def build() -> dict:
     donor(c)
     identifiability(c)
     cluster_bootstrap(c)
+    registered_v2(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

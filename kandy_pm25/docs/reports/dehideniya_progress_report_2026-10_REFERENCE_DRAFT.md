@@ -67,12 +67,27 @@ than drop them.
 **Confirmation on 72 fresh cities (OSF `ueyfr`):**
 | question | result (median % RMSE gain [95 % cluster CI]) |
 |---|---|
-| first two stations over no sensors | **+8.5 [3.1, 25.1]** |
+| first two stations over no sensors (used only to recalibrate) | **+8.5 [3.1, 25.1]** |
 | stations 3–6 | +0.2 (negligible) |
 | background, given six stations | **+41.1 [26.8, 62.8]** |
-| background minus first two | **+24.6 [4.1, 47.8]**: the background is worth more |
+| background minus first two | **+24.6 [4.1, 47.8]** as constructed (see below) |
 | same, for exceedance days | **+59.3** |
 | does the ordering change with latitude? | not detectable (only 4 low-latitude cities) |
+
+**A flaw I found afterwards, by reviewing my own code (2026-10-06):** the two rungs do not use their
+stations the same way. The first two stations only correct the level and scale of the sensorless estimate (an
+intercept and slope), so their daily readings never enter a day's prediction; the background is read on the day.
+When I re-scored every stream the same way (post hoc, reproducing the registered numbers exactly):
+| arm, read on the day (100 cities) | % RMSE gain |
+|---|---|
+| first two stations | **+58.8 [44.9, 69.0]** |
+| background (as registered) | +57.7 [46.4, 67.4] |
+| background from only two stations | +57.2 |
+| background minus first two | **−0.22 [−0.60, +0.04]** |
+
+So the registered "background is worth more" is a property of how I built the rungs. What actually matters is
+whether a station's reading is used on the day (~58 %) or only as a calibration (~9–14 %); the kind of station
+does not. The registered results stand as registered, but I now interpret them this way.
 
 **Robustness checks, each registered separately:**
 - **Richer sensorless baseline** (`b379r`): adding CAMS forecast PM2.5, terrain, fires, TROPOMI NO₂ and rainfall
@@ -94,26 +109,34 @@ than drop them.
   - Choosing sites carefully (cLHS) gave no detectable gain over random siting.
 - A re-run on each station's full record (`fu59b`, October) grew the frame to 23 cities in 9 countries, including
   Bangkok, the first deep-tropical city:
-  - 15 of 23 cities now beat the raster, 8 of them with only three stations.
-  - Eight tropical cities sit inside the range of the temperate curves, within a detection limit of 0.28.
+  - Under the registered rule 15 of 23 cities beat the raster. A re-analysis I did afterwards shows most of that
+    is sampling noise (each city is scored on as few as 10 held-out sites): only **3 of 23** cross after a Holm
+    correction, and the differences between cities are not significant.
+  - Tropical vs other cities: −0.22 [−0.45, +0.02] (Fisher z); not distinguishable, but if anything worse.
+  - A summary bug: the registered siting comparison (cLHS vs random) reported [0.00, 0.00] because it pooled
+    estimators that cannot differ. Corrected per estimator, it is about ±0.05: still no gain from careful siting.
+  - A satellite PM2.5 product (GHAP) ranks neighbourhoods no better than the land-cover layer (ρ ≈ 0.1).
   - One registered prediction failed: the "within-cell ceiling". In London and Bangkok, stations sharing a 1 km cell
     disagree with each other more than chance.
-- **What this means for Kandy:** a handful of reference stations is the right order of magnitude, but the data do
-  not support a specific number.
+- **What this means for Kandy:** with a handful of stations, expect to get the city's level and its day-to-day
+  changes, not a reliable neighbourhood map.
 
 ## 5. What I think is solid, and what is not
 **Solid:**
 - leave-one-city-out sensorless baseline;
 - randomisation and repeats;
 - registration and parity gates;
-- results stable across baselines, learners and network size.
+- results stable across baselines, learners and network size;
+- the main finding after the correction: a station's value lies in its daily reading.
 
 **Weak or open:**
 - The panel is mostly temperate and regulatory-grade. Kandy is tropical, so the transfer to Kandy is an
   extrapolation.
 - The "background" rung is built from the same network, so it is a proxy for a true regional background. An
   independent network 30–300 km away recovers about 71 % of it.
-- The rung models are deliberately simple: affine and linear.
+- The rung models are deliberately simple: affine and linear, and (my main error) the registered rungs were not
+  built alike; the corrected comparison is post hoc, not registered.
+- The spatial curve's per-city scores are noisy (10 held-out sites in most cities).
 - Uncertainty comes from bootstrapping over cities, not from a probabilistic model.
 
 ## 6. Questions for you
@@ -124,14 +147,16 @@ than drop them.
    transfer-learning or domain-adaptation approach I should try for a target city (Kandy) unlike most training
    cities? For example: importance weighting, or hierarchical models with city-level covariates.
 3. **Rung models.** Should the station rungs use partial pooling across cities (a hierarchical calibration) instead
-   of a separate affine fit per city?
+   of a separate affine fit per city? And is the like-for-like re-analysis (same-day use for every stream) the
+   right correction, or would you frame the comparison differently, e.g. as data-denial experiments from data
+   assimilation?
 4. **Extrapolating to the tropics.** With few low-latitude cities, how would you quantify how far the result can be
    trusted for Kandy? For example, a covariate-shift diagnostic, or conformal intervals under shift.
 5. **Spatial mapping.** For small, irregular station sets (5–50 sites per city), is there a better approach than
    regression kriging, which wins most often? One neural process passed its positive control and one failed.
 
 ## 7. Next steps
-- Finish the full-record spatial curve (running now) and write up the method paper (Paper 1).
+- Rewrite Paper 1 around the corrected finding (same-day reading vs calibration) and the narrowed spatial results.
 - My main supervisor is arranging institutional Kandy data (CEA monitoring) for validation.
 - The sensor-placement proposal waits until the method is concluded.
 - A review paper in atmospheric science (topic to agree).

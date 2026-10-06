@@ -3,7 +3,7 @@
 **Read this first.** One page of what is true, what is refuted, and what is open.
 Everything here is distilled from `CLAUDE.md`, `PROJECT.md`, the epistemic ledger
 (`kandy_pm25/docs/model_reference/F_epistemic_ledger.md`) and `memory/SESLOG.md` — those stay
-authoritative. **Keep this file under 250 lines.** Last updated **2026-09-28**.
+authoritative. **Keep this file under 250 lines.** Last updated **2026-10-06** (external review, F.124).
 
 ---
 
@@ -39,7 +39,17 @@ Package: `kandy_pm25/src/modular/` (68 tests). Spec: `kandy_pm25/docs/MODEL_SPEC
 
 ---
 
-## 🟢 The ladder: CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`, F.117; discovery F.115/F.116)
+## 🔴 READ FIRST — external review 2026-10-06 (F.124)
+The registered rungs were **not like for like**: first two / six stations enter only as an intercept+slope calibration of
+Bud0, the background enters with its **same-day** reading. Put on equal terms (`ladder_v2_review.py`, parity 2.8e-14):
+first two same-day **+58.8 % [44.9, 69.0]**, background +57.7, background − first two **−0.22 [−0.60, +0.04]** (n 100).
+**Never say a background is worth more than local stations.** H1–H5 are quoted "as constructed". The robust result is
+**same-day observation ≈ +58 % vs calibration-only ≈ +9–14 %**; kind does not matter; on full networks a ~10-station background adds +2.5 [1.1, 3.7] over two same-day stations (count).
+Spatial curve: X5 interval was a bug; only **3/23** cities cross after Holm (not 15/23); tropical − other −0.22
+[−0.45, +0.02]; detection limit 0.35/0.51; GHAP ≈ built-up raster. f: **0.433–0.492** across cap choices.
+Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
+
+## 🟢 The ladder: CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`, F.117; discovery F.115/F.116) — ordering superseded by F.124
 
 **Status.** Ladder v2 (frozen `e6b744b`; 21 station splits, 5 learner seeds, cross-fitted shrinkage,
 urban-centre geography, ≥ 18 h station-days, cluster bootstrap) was scored ONCE on 76 fresh cities
@@ -63,13 +73,12 @@ exceedances (tail −2.7 [−10.3, +3.7]). Exploratory: H4 holds without CNEMC (
 ⚠ The background rung is the **daily 10th percentile of the same network's other stations** — never call it a
 rural or regional monitor. An independent network 30–300 km away recovers **71 % [44, 82]** of it per city.
 🟢 **Robust to baseline (`b379r`, F.118: +CAMS/terrain/fires/NO2/rain, Bud0 +13 %, all verdicts survive) and learner (`jea58`, F.120: TabPFN/GRU/physics, all 12 directional verdicts hold, none beats HGB; H4 unresolved under TabPFN).** 🟢 **Robust to the station cap (`mhgna`, F.122, 2026-10-05): full networks (median 17 stations, 75 cities) — every verdict holds; background +46.0, background − first two +32.0 [11.6, 50.5].**
-Registry: 17 lodged; 92 predictions over 12 run: 56 held, 22 refuted, 6 not tested, 8 two-sided/exploratory.
 
 ## 2. Numbers you may quote
 
 | quantity | value | source |
 |---|---|---|
-| local fraction **f** | **0.4828** (≈0.48); honest range across constraint forms **0.482–0.547** | coherence cap, F.43. ⚠ **A constrained decomposition, NOT observed source apportionment**, and **local increment ≠ locally emitted primary material** (no chemistry). **Never say "removing local sources would remove half the problem".** |
+| local fraction **f** | **≈0.48** (production); **0.433–0.492 across cap day/statistic choices** (F.124) and **0.489–0.547** across window forms — a bound under the coherence cap, not identified by data | coherence cap, F.43. ⚠ **A constrained decomposition, NOT observed source apportionment**, and **local increment ≠ locally emitted primary material** (no chemistry). **Never say "removing local sources would remove half the problem".** |
 | ε-floor `eps0`, Kandy | **3.69** | F.57 (scales with mean accumulation) |
 | T-lock accuracy | field runs **+0.39 to +0.56%** above anchor → say *"to within 0.6 per cent"* | 2026-08-14 build |
 | basin annual means | 2019 **19.75** · 2020 **19.09** · 2021 **17.08** · 2022 **18.76** · 2023 **21.04** | `scalars_*.json` |
@@ -87,6 +96,8 @@ Registry: 17 lodged; 92 predictions over 12 run: 56 held, 22 refuted, 6 not test
 
 | retired | why | use instead |
 |---|---|---|
+| **"background outranks the first two stations"** (H4 +24.6, H5 +59.3) | rung construction: calibration-only vs same-day (F.124) | like for like −0.22 [−0.60, +0.04]; quote H4/H5 "as constructed" |
+| **"cities split: 15/23 cross the raster"**, **"tropical inside the temperate envelope"**, X5 **[0.00, 0.00]**, limit **0.24/0.28** | crossing labels within sampling noise; envelope rule uninformative; pooling bug; SD assumed | **3/23** after Holm; tropical − other −0.22 [−0.45, +0.02]; per-k X5; limit **0.35/0.51** (F.124) |
 | **f = 0.244 / 25.3%** | superseded by the coherence cap | **f ≈ 0.48** |
 | `eps0 = 2.573` | pre-cap | **3.69** |
 | **"Kandy ~90% vehicular"** | **REFUTED as a mass share (F.66)** | *traffic dominates local **timing**; it is a minority of local **mass*** |

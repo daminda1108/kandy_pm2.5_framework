@@ -52,3 +52,19 @@ candidate tested, with median and 95 % interval; filled markers are registered t
 exploratory. The orange tick is the smallest effect each test could detect; no candidate's interval reaches
 it. The embeddings' partial-correlation test (E3) is tested against zero on a different scale and is reported
 in Table 3.5 instead.
+
+## Fig. 3b — like for like (added 2026-10-06, F.124; post hoc)
+**What a station is worth depends on whether its reading is used on the day.** (a) Median reduction in daily RMSE over
+the free estimate, with two-level cluster 95 % intervals, on the 100 cities with at least eight pool stations. Grey:
+the registered rungs on the same cities, where the first two stations only recalibrate the free estimate and the
+background is read on the day. Coloured: every stream read on the day, each regressed with the free estimate against
+stations three to six. (b) Paired within-city differences between the same-day arms, reconstruction (filled) and
+prospective (open); the shaded band is ±1 point. Source: `ladder_v2/review_registered_loco_summary.json`.
+
+## Fig. 7b — how much of the spatial curve is noise (added 2026-10-06, F.124; post hoc)
+(a) Each primary city's kriging-minus-built-up-raster difference at three stations on the Fisher-z scale, with a 95 %
+interval from its site count (optimistic). Between-city heterogeneity and the number of cities that cross the raster
+after a Holm correction over densities are printed above. Tropical cities in orange. (b) Median within-city rank
+correlation of the GHAP 1 km satellite PM2.5 surface and the built-up raster, and paired differences against kriging
+at three, five and eight stations (two-level country bootstrap). GHAP may have been trained on these monitors, so its
+value is an upper bound. Source: `spatial_curve_full/analysis/{reanalysis,satellite_benchmark}.json`.

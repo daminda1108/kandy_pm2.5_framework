@@ -44,6 +44,22 @@ Intervals are two-level cluster 95 % unless marked (city) = city bootstrap.
 | full − re-applied cap, H4 (paired) | +3.18 | [−0.40, +9.54] | 68 | REG mhgna N6 secondary | same |
 | full networks: cities with a background rung | 72 of 75 | — | — | REG mhgna secondary | same |
 
+## Post-hoc like-for-like ladder (F.124, `ladder_v2/review_registered_loco_summary.json`)
+
+| claim | number | interval | n | status | source |
+|---|---|---|---|---|---|
+| first two stations read on the day | +58.8 % | [44.9, 69.0] | 100 | EXPL (post hoc) | §3.1.8; F.124 |
+| background (registered construction), same-day | +57.7 % | [46.4, 67.4] | 100 | EXPL | same |
+| background from two outer stations | +57.2 % | [46.5, 65.9] | 100 | EXPL | same |
+| mean of two outer stations | +59.0 % | [49.5, 67.6] | 100 | EXPL | same |
+| background − first two, same-day (RMSE) | −0.22 | [−0.60, +0.04] | 100 | EXPL | same |
+| same, exceedance / prospective | −0.11 [−2.49, 0.00] / +0.03 [−0.40, +1.00] | — | 97 / 100 | EXPL | same |
+| same cities, registered construction: first two / background / difference | +13.7 / +40.8 / +22.6 | — | 101 | parity 2.8e-14 vs ueyfr | same |
+| full networks: background (all outer) − first two, same-day | +2.48 | [1.14, 3.72] | 109 | EXPL | `review_full_loco_summary.json` |
+| full networks: two outer (P10) − first two / mean of two − first two | −0.84 / +0.07 | [−1.43, −0.29] / [−0.38, +0.22] | 109 | EXPL | same |
+| full networks: same, exceedance / prospective (all outer − first two) | +3.74 [1.42, 6.95] / +2.37 [0.89, 4.11] | — | 105 / 109 | EXPL | same |
+| full networks, same cities, registered: first two / background / difference | +10.7 / +44.9 / +27.9 | — | 111 | EXPL | same |
+
 ## Bounded spatial tests (within-city Spearman, paired vs built-up benchmark 0.301)
 
 | claim | number | interval | n | status | source |
@@ -67,7 +83,14 @@ Intervals are two-level cluster 95 % unless marked (city) = city bootstrap.
 | cities cross the raster (full records) | 15 of 23; 8 at k = 3 | — | 23 | REG fu59b X2 held | same |
 | within-cell ceiling exceeded | London −0.28, Bangkok −0.57 ceilings | — | 3 with ceiling | REG fu59b X4 refuted | same |
 | terrain moderates the curve (X-T) | 0 of 32 intervals exclude 0; min p 0.09 | — | 18 / 23 | EXPL (amendment 2) | `analysis{,_full}/moderators_terrain.csv` |
-| tropical arm vs temperate envelope | none above; 3 of 8 partly below | MDE 0.28 | 8 | EXPL fu59b F3 | `F3_tropical_arm.json` |
+| tropical arm vs temperate envelope | none above; 3 of 8 partly below | MDE 0.28 | 8 | EXPL fu59b F3; superseded below | `F3_tropical_arm.json` |
+| X5 corrected (kriging, cLHS − random), full, k = 3 / 5 | 0.000 / −0.024 | [−0.049, +0.046] / [−0.042, +0.024] | 23 | erratum (F.124) | `x5_erratum.json` |
+| heterogeneity between cities, full records | Q p 0.06–0.26; I² 0.23–0.42; 2/23 individually ≠ 0 | — | 23 | EXPL post hoc | `reanalysis.json` |
+| cities cross after Holm correction | 3 of 23 (full); 3 of 18 (registered) | — | — | EXPL post hoc | same |
+| tropical − other, kriging − raster, k = 3 (z) | −0.22 | [−0.45, +0.02] | 7 vs 21 | EXPL post hoc | same |
+| detection limit with empirical SD | 0.35 (full) / 0.51 (registered) | — | 9 / 7 countries | EXPL post hoc | same |
+| GHAP satellite benchmark, rank skill | +0.125 | [−0.031, +0.297] | 23 | EXPL post hoc (GHAP may have seen these sites) | `satellite_benchmark.json` |
+| kriging k = 3 − GHAP | +0.012 | [−0.181, +0.153] | 23 | EXPL post hoc | same |
 
 ## Panel and data
 
@@ -88,5 +111,7 @@ Intervals are two-level cluster 95 % unless marked (city) = city bootstrap.
 | GHAP halves the value of a local station | v2 paired +2.3 [−0.6, +16.9] (F.117 addendum) | GHAP tilts the ordering, EXPL |
 | first two stations ≈ 22 % as a headline | discovery, band-balanced | 8.5 % CONF |
 | saturation at ONE station | in-sample shrinkage (F.116 addendum) | second station +0.93 |
-| "no pooled ordering" | superseded by confirmation | H4 +24.6 |
+| "no pooled ordering" | superseded by confirmation | H4 +24.6 as constructed |
+| "a background is worth more than the first local stations" (H4/H5 as a finding about observations) | construction: calibration vs same-day (F.124) | same-day −0.22 [−0.60, +0.04]; quote H4/H5 "as constructed" |
+| "cities split: 15 of 23 cross"; "tropical inside the temperate envelope"; X5 [0.00, 0.00]; limits 0.24/0.28 | first-pass rule, envelope rule, pooling bug, assumed SD (F.124) | 3/23 after Holm; −0.22 [−0.45, +0.02]; per-k X5; 0.35/0.51 |
 | TabPFN "reproducible on any machine" | 1/80 across machines | deterministic within one environment (4qs9c §5) |

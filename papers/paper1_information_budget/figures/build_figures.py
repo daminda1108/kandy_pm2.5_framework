@@ -443,7 +443,95 @@ def fig1() -> None:
     save(fig, "fig1_design")
 
 
-FIGS = {"1": fig1, "2": fig2, "3": fig3, "4": fig4, "5": fig5, "6": fig6, "7": fig7, "8": fig8, "9": fig9}
+# ── Fig. 3b (review F.124): like for like ─────────────────────────────────────────────────────────
+def fig3b() -> None:
+    S = load(LV2 / "review_registered_loco_summary.json")
+    reg = S["reconstruction.union.registered_samecities"]
+    sym = S["reconstruction.union.symmetric"]
+    pro = S["prospective.union.symmetric"]
+    rows = [  # label, (block, key), colour, marker, filled
+        ("first two, recalibration only (registered H1)", reg["first2_rmse"], "#999999", "s", True),
+        ("background, read on the day (registered H3)", reg["bg_rmse"], "#999999", "D", True),
+        ("first two, read on the day", sym["gL2s_rmse"], "#000000", "o", True),
+        ("background as registered, read on the day", sym["gBGall_rmse"], "#0072B2", "o", True),
+        ("background from two outer stations", sym["gBG2_rmse"], "#E69F00", "o", True),
+        ("mean of two outer stations", sym["gM2_rmse"], "#009E73", "o", True),
+    ]
+    diffs = [("background − first two, both on the day", sym["BGallmL2s_rmse"], pro["BGallmL2s_rmse"]),
+             ("background (two stations) − first two", sym["BG2mL2s_rmse"], pro["BG2mL2s_rmse"]),
+             ("mean of two outer − first two", sym["M2mL2s_rmse"], pro["M2mL2s_rmse"]),
+             ("background − first two, exceedance loss", sym["BGallmL2s_exceed"], pro["BGallmL2s_exceed"])]
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH, 3.0), gridspec_kw={"width_ratios": [1.25, 1]})
+    n = len(rows)
+    for i, (lab, e, col, mk, f) in enumerate(rows):
+        y = n - 1 - i
+        a.plot(e["cluster"], [y, y], color=col, lw=1.2)
+        a.plot(e["median"], y, marker=mk, color=col, ms=5, mfc=col if f else "white")
+        a.text(e["cluster"][1] + 1.5, y, f"{e['median']:+.1f}", va="center", fontsize=7.5)
+    a.axhline(n - 2.5, color="#BBBBBB", lw=0.6, ls="--")
+    a.set_yticks(range(n)); a.set_yticklabels([r[0] for r in rows][::-1], fontsize=7.5)
+    a.set_xlim(0, 85); a.set_xlabel("% reduction in daily RMSE over the free estimate")
+    a.set_title(f"(a) gains, {sym['gL2s_rmse']['n']} cities (grey: registered construction)", fontsize=8, loc="left")
+    m = len(diffs)
+    for i, (lab, e, p) in enumerate(diffs):
+        y = m - 1 - i
+        b.plot(e["cluster"], [y + 0.12] * 2, color="#000000", lw=1.2)
+        b.plot(e["median"], y + 0.12, "o", color="#000000", ms=4.5)
+        b.plot(p["cluster"], [y - 0.12] * 2, color="#0072B2", lw=1.2)
+        b.plot(p["median"], y - 0.12, "o", color="#0072B2", ms=4.5, mfc="white")
+    b.axvline(0, color="#555555", lw=0.8)
+    b.axvspan(-1, 1, color="#EEEEEE", zorder=0)
+    b.set_yticks(range(m)); b.set_yticklabels([d[0] for d in diffs][::-1], fontsize=7.5)
+    b.set_xlabel("paired difference, points of gain")
+    b.set_title("(b) same-day arms, paired", fontsize=9, loc="left")
+    b.legend(handles=[Line2D([], [], color="#000000", marker="o", lw=1.2, label="reconstruction"),
+                      Line2D([], [], color="#0072B2", marker="o", mfc="white", lw=1.2, label="prospective")],
+             fontsize=7, frameon=False, loc="lower center", bbox_to_anchor=(0.5, 1.07), ncol=2)
+    fig.tight_layout()
+    save(fig, "fig3b_like_for_like")
+
+
+# ── Fig. 7b (review F.124): how much of the spatial curve is noise ───────────────────────────────
+def fig7b() -> None:
+    import numpy as np
+    import pandas as pd
+    d = SC / "spatial_curve_full"
+    R = pd.read_csv(d / "analysis" / "reanalysis_city.csv")
+    R = R[(R.k == 3) & R.primary].sort_values("d")
+    sb = load(d / "analysis" / "satellite_benchmark.json")
+    rn = load(d / "analysis" / "reanalysis.json")
+    fig, (a, b) = plt.subplots(1, 2, figsize=(WIDTH, 3.2), gridspec_kw={"width_ratios": [1.3, 1]})
+    se = np.sqrt(R["var"].to_numpy())
+    for i, (dz, s, band) in enumerate(zip(R.d, se, R.band)):
+        col = "#D55E00" if band in TROP else "#000000"
+        a.plot([dz - 1.96 * s, dz + 1.96 * s], [i, i], color=col, lw=0.9)
+        a.plot(dz, i, "o", color=col, ms=3)
+    a.axvline(0, color="#555555", lw=0.8)
+    a.set_yticks([]); a.set_xlabel("kriging − built-up raster at 3 stations (Fisher z)")
+    h = rn["S3_heterogeneity_by_k"]["3"]
+    a.set_title(f"(a) cities, k = 3: heterogeneity p = {h['p_Q']:.2f}; "
+                f"{rn['S4_holm_crossover']['crossing']}/{rn['S4_holm_crossover']['cities']} cross (Holm)",
+                fontsize=8, loc="left")
+    a.legend(handles=[Line2D([], [], color="#000000", marker="o", label="non-tropical"),
+                      Line2D([], [], color="#D55E00", marker="o", label="tropical")], fontsize=7,
+             frameon=False, loc="lower right")
+    items = [("GHAP satellite surface", sb["GHAP"]), ("built-up raster (E1)", sb["E1"]),
+             ("GHAP − raster", sb["GHAP_minus_E1"]), ("kriging k=3 − GHAP", sb["E3k3_minus_GHAP"]),
+             ("kriging k=5 − GHAP", sb["E3k5_minus_GHAP"]), ("kriging k=8 − GHAP", sb["E3k8_minus_GHAP"])]
+    for i, (lab, e) in enumerate(items):
+        y = len(items) - 1 - i
+        b.plot([e["lo"], e["hi"]], [y, y], color="#0072B2", lw=1.2)
+        b.plot(e["median"], y, "o", color="#0072B2", ms=4.5)
+    b.axvline(0, color="#555555", lw=0.8)
+    b.set_yticks(range(len(items))); b.set_yticklabels([x[0] for x in items][::-1], fontsize=7.5)
+    b.set_xlabel("rank correlation / paired difference")
+    b.set_title(f"(b) free surfaces, {sb['cities']} cities", fontsize=9, loc="left")
+    fig.tight_layout()
+    save(fig, "fig7b_spatial_noise")
+
+
+FIGS = {"1": fig1, "2": fig2, "3": fig3, "3b": fig3b, "4": fig4, "5": fig5, "6": fig6, "7": fig7,
+        "7b": fig7b, "8": fig8, "9": fig9}
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

@@ -10,10 +10,13 @@ The registered statistic for X5 (site selection by conditioned Latin hypercube a
 came out at 0.00 [0.00, 0.00] in the registered run and again on full records. As coded, the statistic
 pools every estimator, including those that never use the fitting stations (the free raster E1 and the
 uniform city E0), and takes medians of a rank statistic with few distinct values across replicates. Both
-features pin the median at zero. Restricted to the estimators that use the fitting stations and averaged
-over the 100 replicates, the paired difference between the two siting designs lies within ±0.012 in every
-case. The verdict, that site selection by design gains nothing resolvable, is unchanged
-[F.119; Section 3.6.2].
+features pin the median at zero, so the reported interval is an artefact (erratum, F.124). Recomputed for
+kriging alone with the registered two-level bootstrap, two-sided, per number of stations k: registered
+frame +0.013 [−0.062, +0.061] (k = 3), −0.019 [−0.042, +0.028] (k = 5), −0.013 [−0.054, +0.002] (k = 8);
+full records 0.000 [−0.049, +0.046], −0.024 [−0.042, +0.024], 0.000 [−0.018, +0.024]. The median over
+estimators and densities stays within ±0.012, but the intervals are of the order of ±0.05. The verdict, that
+site selection by design gains nothing resolvable, is unchanged [F.119, F.124; Sections 3.6.2, 3.6.5;
+`spatial_curve_x5_erratum.py`].
 
 ## S3.2 Supporting exploratory analyses of within-city structure
 
