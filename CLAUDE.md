@@ -722,8 +722,7 @@ This section is the FORWARD list only.
 0a2c. **Exploratory follow-ups from the design audit (F.121), not registered:** precipitation test with IMERG incl. CNEMC
    (B1), Premasiri pixel test (B2), hourly-BLH sensitivity (B3), station-frame spatial nulls on the full networks; X-T on
    the full-record frame.
-0a3. **OSF approvals (checked 2026-10-05):** `ueyfr`, `4qs9c`, `b379r`, `jea58` approved and public; **`mhgna`, `fu59b`
-   still pending** — re-check after 48 h (a pending registration vanished once, gotcha #100).
+0a3. ✅ **OSF approvals:** all public, including `mhgna` and `fu59b` (verified 2026-10-07, API 200).
 0a4. ✅ **2026-09-25 verification-pass edits reviewed and committed** (2026-10-05); `excludes_zero` is two-sided everywhere.
 0a5. Optional, declared exploratory in `b379r`: drop-one attribution of the rich rung's +13 %.
 0b. **THE THESIS NEEDS A HUMAN READ END TO END.** 43,713 words, 566 claims, gates green, four
