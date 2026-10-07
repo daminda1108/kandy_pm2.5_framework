@@ -350,7 +350,10 @@ I list these because they shaped the design, and because you may see others like
    decomposition with priors that gives f a posterior.
 3. **Uncertainty in the Kandy model.** Is it worth building structural uncertainty (f, confinement, emission proxy,
    calibration slope) into the intervals before the CEA data, or only after?
-4. **Thesis scope.** Lead with the method study, with the Kandy model as the application? Or the reverse?
+4. **Thesis scope (decided; your comment welcome).** The thesis keeps the Kandy reconstruction as its subject, under
+   the title *An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction,
+   validation without local ground truth, and measurement priorities*. The information-budget study supplies the
+   evidence for the measurement priorities (in an appendix) and is written up separately as the methods paper.
 5. **Target journal for Paper 1, and the review-paper topic.**
 
 ## 10. Questions for you, by area

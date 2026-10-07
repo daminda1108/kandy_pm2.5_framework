@@ -326,6 +326,44 @@ VISUALS: dict[str, tuple[str, str]] = {
         "{{claim:kandy.episode_peak}}. The dashed and dotted lines are the World Health "
         "Organization 24-hour interim targets 1 and 2; they are daily values drawn against an "
         "hourly trace for scale, not an hourly standard."),
+    # 2026-10-07: replacements for the ladder-v1 figures (src/f_paper1.py copies the Paper 1 builds).
+    "confirmation": (
+        "FA_confirmation",
+        "The registered confirmation on fresh cities, with the rungs as constructed. Each endpoint carries the "
+        "reconstruction arm (filled), the prospective arm (open) and the discovery estimate (grey, exploratory), "
+        "with two-level cluster 95 per cent intervals. The shaded band is the equivalence bound registered for "
+        "stations three to six. The first stations enter only as a recalibration of the sensorless estimate and "
+        "the background is read on the day, so the background-minus-first-two rows compare two uses of "
+        "observations, not two kinds."),
+    "robustness": (
+        "FA_robustness",
+        "The registered verdicts under a richer sensorless baseline, three other learners and full station "
+        "networks. Each panel is one endpoint and each row one variant, with the base result drawn as a "
+        "reference line."),
+    "likeforlike": (
+        "FA_like_for_like",
+        "What a station is worth when its reading is used on the day it is taken. (a) Median reduction in daily "
+        "error over the sensorless estimate; grey rows are the registered rungs on the same cities, coloured rows "
+        "read every stream on the day. (b) Paired within-city differences between the same-day arms, "
+        "reconstruction (filled) and prospective (open); the shaded band is one point either side of zero. "
+        "A post hoc re-analysis of the registered data."),
+    "stationdaily": (
+        "FA_station_count_daily",
+        "Reduction in daily error as stations are added, when each station is read on the day (black) and when "
+        "it is used only to recalibrate the sensorless estimate (grey), with two-level cluster 95 per cent "
+        "bands, on cities with full station networks. A post hoc re-analysis."),
+    "spatialcurve": (
+        "FB_spatial_curve",
+        "The registered spatial learning curve: the median within-city rank correlation at held-out sites as "
+        "stations are added, for each estimator, on one-year records (solid) and full records (dashed), and the "
+        "first number of stations at which kriging beats the built-up raster in each city under the registered "
+        "rule. A post hoc re-analysis shows that most of the per-city crossings lie within sampling noise."),
+    "spatialnoise": (
+        "FB_spatial_noise",
+        "How much of the spatial curve is sampling noise. (a) Each city's kriging-minus-raster difference at "
+        "three stations on the Fisher-z scale with a 95 per cent interval from its site count; tropical cities in "
+        "orange. (b) The rank skill of a satellite PM2.5 surface and of the built-up raster, and kriging at three, "
+        "five and eight stations against the satellite surface. A post hoc re-analysis."),
 }
 
 # Source credits, appended to the captions of figures that DISPLAY third-party data: maps drawn
