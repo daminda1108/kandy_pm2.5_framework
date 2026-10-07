@@ -264,3 +264,25 @@ reads 17 lodged / 14 run / 23 of 105 refuted. (3) New gated tables `T7_1_ladder_
 `T9_1_next_v2` built from `v2.*` claims, beside the old ones. Build: claims 881 fresh, 99 sources, 43,014 words, 42
 figures, 9 tables, abstract 339 words — assembles. ⚠ **Thesis A is assembled from `#writing/pool/`, not
 `thesis/chapters/`**; the change list's line numbers refer to `thesis/chapters`, whose text the pool files carry.
+
+## 5. Review extension (2026-10-07)
+
+**(b1) Panel-data ingestion review (subagent, read-only).** Like-for-like equality of the arms is robust to every data
+problem tested (span > 50 km: −0.26; ≥ 50 % LCS: −0.33; clean subset of 60 cities: −0.29), but three bugs:
+1. **CNEMC timestamps are China Standard Time stored as UTC** (`cnemc_extract_panel.normalise_ts`, `utc=True` on
+   offset-free strings; city309 diurnal minimum at labelled 17 h). CNEMC days are local days, drivers are UTC days → 8 h
+   misalignment for the CNEMC cities' Bud0. CNEMC median same-day gain 71.8 % vs OpenAQ ~51 % — the pooled +58 % level
+   moves with the network mix and the CNEMC side is probably inflated.
+2. **~35 % of CNEMC rows are duplicate station-hours**, never removed; `complete_station_days` counts rows, so 1–2.5 %
+   of station-days pass the 18 h rule on fewer real hours.
+3. **OpenAQ duplicate feeds:** 7 station pairs in 4 cities with 100 % identical hourly values.
+Design weaknesses: single-linkage 25 km clustering chains (40/79 OpenAQ "cities" span > 50 km, up to 491 km);
+uncalibrated low-cost sensors mixed in (21 % confirmation, 38 % discovery; 23/79 cities ≥ 50 % LCS); 49 co-located pairs
+(< 100 m); the ≥ 10-station gate runs before the 18 h filter; MAIAC covers a median ~48 % of PM days.
+Fine: units, OpenAQ timezone, driver coverage, the QS-chunking fix.
+→ **Sensitivity `ladder_v2_review.py --clean`** (CNEMC Asia/Shanghai → UTC, duplicate station-hours dropped, duplicate
+feeds dropped) RUNNING; registered code untouched.
+
+**Burden interval (found by the thesis rewrite).** `health_burden.py:91–104` passes the field's q05/q95 exposure through
+the CENTRAL GEMM, so [237–632] is field spread with NO response-function uncertainty. CONTEXT.md, the ledger (F.110
+text), and the Dehideniya report said the opposite; all corrected 2026-10-07.

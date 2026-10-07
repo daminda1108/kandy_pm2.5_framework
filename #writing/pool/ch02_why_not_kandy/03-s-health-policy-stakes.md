@@ -10,8 +10,10 @@ admissions for respiratory disease in 2019 [@Priyankara2021]. The annual mean co
 the basin ranges from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms per cubic
 metre across the anchored years, above the World Health Organization annual guideline of 5
 micrograms per cubic metre throughout [@WHO2021]. {{ref:s-exposure-weighting}} gives the
-population exposure implied by the delivered field, and {{ref:app-attributable-burden-projection}}
-the burden projection with its interval.
+population exposure implied by the delivered field. {{ref:app-attributable-burden-projection}}
+gives a burden projection, which is illustrative only: its interval carries only the uncertainty
+of the response function, and the response function, defined for adults, was applied to deaths at
+all ages.
 
 *Policy.* Prioritising interventions requires a spatially resolved field. A municipality deciding
 whether to reroute heavy vehicles, restrict open burning or relocate a bus terminus needs to know
@@ -25,13 +27,15 @@ regional background from a locally generated increment, of which only the increm
 influenced by a local authority. For Kandy, under the background and minimum-increment
 assumptions set out in {{ref:s-partition-constraint-rather-than}}, the constrained decomposition
 assigns {{claim:partition.f}} of modelled concentration to the local increment and the remainder
-to the regional background. This fraction is derived from a physical constraint rather than
-assumed. It is a property of the decomposition, not a measurement of where material was emitted:
+to the regional background. This fraction is a bound set by a non-negativity constraint on the
+local increment rather than a value identified by data, and it ranges from
+{{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across reasonable forms of that constraint. It is
+a property of the decomposition, not a measurement of where material was emitted:
 the increment is defined by spatial structure and timing, so it includes particulate mass formed
 inside the basin from any precursors and excludes regionally formed mass whatever its origin.
 
-The fraction therefore implies a larger scope for local action than the value of about one
-quarter assumed in earlier versions of this work. It does not imply that eliminating every local
+Across that range the fraction implies a larger scope for local action than the value of about
+one quarter assumed in earlier versions of this work. It does not imply that eliminating every local
 source would remove about half the concentration, because the model contains no chemistry and
 part of the increment is formed in the atmosphere rather than emitted. The decomposition is a
 constrained split, not a source apportionment, and {{ref:s-partition-constraint-rather-than}}

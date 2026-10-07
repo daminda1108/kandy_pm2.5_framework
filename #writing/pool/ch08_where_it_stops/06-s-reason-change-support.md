@@ -60,7 +60,16 @@ Read together the three give a conditional claim, not a universal one, and the c
 worth carrying: **given the globally available covariates that a city with no monitors can
 obtain, sub-kilometre structure cannot be placed, even though it exists and is large.** A
 campaign that measured the structure directly would not be bound by this
-[@Schneider2017; @Gressent2020; @Kamigauti2024], although {{ref:s-six-negative-results-their}} finds that siting the
+[@Schneider2017; @Gressent2020; @Kamigauti2024], although {{ref:s-deliberate-siting-tested-dense}} finds that siting the
 fitting stations deliberately, without measuring the structure itself, does not escape it. The
 claim is a limit on inference from a particular information set and not a
 statement about the ultimate predictability of urban air.
+
+The station-based side of the same question points the same way. In the registered spatial
+learning curve of {{ref:s-what-stations-buy-map}}, a station informs roughly the kilometre around
+it, beyond which a held-out site is predicted no better than by the city mean. That kilometre is
+the width of the analysis's first distance bin, so it bounds the resolution of the statement from
+above and is not a measured correlation length. On full station records the registered prediction
+that no estimator would exceed a city's within-cell ceiling was refuted, because in two cities
+stations sharing one cell predicted each other worse than chance. Neighbouring points inside a
+cell can disagree strongly, which is the change-of-support statement seen from the stations.

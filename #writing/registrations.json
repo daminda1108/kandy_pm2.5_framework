@@ -223,7 +223,7 @@
       "descriptive": 2,
       "kind": "run",
       "status": "run 2026-10-05: N1, N2, N3, N5 held (4/4); N4 two-sided, ordering found (background > first two, +32.0); N6 two-sided: H4 change +2.4 excludes 0 vs ueyfr, includes 0 vs re-applied cap. F.122",
-      "osf_visibility": "pending OSF approval (checked 2026-10-05)"
+      "osf_visibility": "public, approved (verified 2026-10-07)"
     },
     {
       "osf": "fu59b",
@@ -238,7 +238,7 @@
       "descriptive": 0,
       "kind": "run",
       "status": "run 2026-10-05: F1 frame 23 primary (Bangkok deep-tropical); F2 X1-X7: 6 of 7 stated expectations repeated, X4 refuted (negative within-cell ceilings, London and Bangkok); F3 tropical arm inside the temperate envelope within MDE 0.28. F.123",
-      "osf_visibility": "pending OSF approval (checked 2026-10-05)"
+      "osf_visibility": "public, approved (verified 2026-10-07)"
     }
   ],
   "_known_discrepancies": [

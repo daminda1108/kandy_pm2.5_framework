@@ -2119,6 +2119,24 @@ def registered_v2(c: Claims) -> None:
             c.add(f"v2.rh.{v}.peak_to_trough", float(d.loc[v, "peak_to_trough"]),
                   stat="FECT normalised diurnal peak/trough ratio", n=2, source=p.name, ledger="F.124")
 
+    # F.117 addendum: paired MAIAC - GHAP on background minus first two (discovery, v2 estimator, exploratory)
+    pm = L2 / "maiac_s21_b5_crossfit_c18_grid_dv2_percity_reconstruction.csv"
+    pg = L2 / "ghap_s21_b5_crossfit_c18_grid_dv2_percity_reconstruction.csv"
+    if pm.exists() and pg.exists():
+        import numpy as _np
+        sys.path.insert(0, str(REPO / "scripts"))
+        import ladder_v2 as _L
+        m = pd.read_csv(pm, index_col=0); g = pd.read_csv(pg, index_col=0)
+        j = (m.bgm2_rmse - g.bgm2_rmse).dropna()
+        cl = m.cluster.reindex(j.index).astype(str).to_numpy()
+        b = _L.boot_cluster(j.to_numpy(), cl, _np.random.default_rng(20260823), 4000)
+        put("v2.ghap.maiac_minus_ghap_bgm2", {"median": float(j.median()), "lo": float(_np.percentile(b, 2.5)),
+                                              "hi": float(_np.percentile(b, 97.5))},
+            "paired MAIAC minus GHAP, background minus first two (discovery, exploratory)", len(j),
+            f"{pm.name} vs {pg.name}", "F.117 addendum")
+        c.add("v2.ghap.share_positive", float((j > 0).mean() * 100), stat="per cent of cities with MAIAC − GHAP > 0",
+              n=len(j), source=pm.name, ledger="F.117 addendum")
+
     # ladder re-analysis (review L1-L3), once run
     for fr, bud in (("registered", "loco"), ("full", "loco"), ("registered", "lono")):
         p = L2 / f"review_{fr}_{bud}_summary.json"
@@ -2148,6 +2166,10 @@ def registered_v2(c: Claims) -> None:
                     put("v2.review.k.day_second_over_first", v, "second daily station over the first (points)",
                         v["n"], pk.name, "F.124")
         if bud == "lono":
+            v = S.get("reconstruction.confirmation.registered_all", {}).get("first2_rmse")
+            if v:
+                put("v2.review.lono.conf.first2_rmse", v, "confirmation cities: first two (calibration) with "
+                    "leave-one-network-out Bud0", v["n"], p.name, "F.124")
             v = S.get("reconstruction.union.registered_all", {}).get("first2_rmse")
             if v:
                 put("v2.review.lono.first2_rmse", v, "first two (calibration) with leave-one-network-out Bud0",

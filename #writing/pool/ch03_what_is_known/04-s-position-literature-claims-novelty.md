@@ -33,8 +33,9 @@ sensors within a region, using an advection-diffusion model and a loss defined o
 air quality categories weighted by population and vulnerability. It is a more sophisticated
 treatment of the placement question than anything attempted here. It also differs in three ways
 that determine what each can answer. It optimises placement within a fixed class of instrument,
-where this thesis prices dissimilar streams against one another, so that free terrain data and a
-rural monitor and a satellite retrieval are compared on one axis. It is applied in a region that
+where this thesis prices dissimilar streams against one another, so that free geography, a
+satellite retrieval, local stations and a background series built from the same network are
+compared on one axis. It is applied in a region that
 already has regulatory monitors, where the design here exists to serve cities that have none. And
 it is demonstrated on one region over six weeks, where the measurement here is made across a
 multi-city panel.
@@ -62,17 +63,26 @@ Admissibility is asserted in code in both directions, so a tier can neither use 
 not entitled to nor silently fail to use one it is. {{ref:s-defects-found-audit-rather}} records what the absence of the
 second check cost, which is the argument for it.
 
-Two of the empirical results are new as findings, independently of the framework that
-produced them. That the ordering of acquisition priorities differs between latitude bands, and
-that a monitor-trained covariate deflates the measured value of the rung above it rather than
-inflating its own, are both statements about the world that a reader could act on, and neither
-depends on accepting anything else in this thesis.
+One empirical result is new as a finding, independently of the framework that produced it, and
+one methodological result is new as a lesson. The finding is that, for a daily city-mean
+estimate, the value of a station lies mainly in its reading entering the estimate each day:
+stations used only to recalibrate a sensorless estimate recover a small fraction of what the same
+stations recover when read daily, and stations of different kinds read the same way are worth
+about the same. The lesson is that a registered comparison can be run exactly as written and
+still compare unlike things. The registered ladder of this work compared rungs that used their
+stations in different ways, and the ordering it found between a background series and the first
+local stations disappears when they are used alike ({{ref:s-like-for-like}}).
+Pre-registration fixes how a test is run; it does not check whether its arms differ only in the
+factor under test. Two results reported in earlier drafts as findings, an ordering of acquisition
+priorities that differed between latitude bands and a monitor-trained covariate deflating the
+value of the rung above it, did not survive averaging over station splits and pairing within
+city, and are no longer claimed.
 
 One further boundary belongs here because it is easy to overstate. Leakage from ground monitors
 into satellite-derived products is a known hazard in this field, and careful work on model
 evaluation already addresses it, including through spatial cross-validation designed to stop
 nearby monitors inflating apparent skill [@Just2020]. What {{ref:s-effect-monitor-trained-covariate}} adds is not the
-observation that leakage exists. It is that the same contamination behaves differently when the
-quantity being measured is the marginal value of an observation rather than a model's accuracy,
-because it displaces the effect onto a neighbouring term where a test aimed at the contaminated
-stream will not find it.
+observation that leakage exists, and it adds less than earlier drafts claimed. When the quantity
+being measured is the marginal value of an observation, a monitor-trained covariate tilts the
+measured ordering of observations toward the background series; whether it also changes the
+measured value of the first local stations is not resolved.

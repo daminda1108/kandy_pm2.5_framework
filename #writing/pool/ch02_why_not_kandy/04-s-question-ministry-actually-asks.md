@@ -8,9 +8,12 @@ be trusted?
 The options differ in cost and in what they provide. A reference monitor costs tens of thousands
 of dollars to install and requires trained staff and consumables indefinitely. A pair of low-cost
 sensors costs a few hundred dollars [@Morawska2018], but introduces a calibration problem that must
-then be solved. A rural background station costs about as much as an urban one but serves no
-local constituency, which is likely to make it the most difficult of the three to fund. A mobile
-campaign requires staff time rather than capital, and produces a snapshot rather than a record.
+then be solved. A background station outside the city costs about as much as an urban one but
+serves no local constituency, which is likely to make it the most difficult of the three to fund.
+A mobile campaign requires staff time rather than capital, and produces a snapshot rather than a
+record. The options also differ in how their observations can be used: a fixed station that
+reports continuously can enter an estimate every day, whereas a campaign can only calibrate it
+once, and {{ref:s-marginal-predictive-value-each}} shows that this difference matters more than the kind of station.
 
 The literature on monitoring-network design mostly addresses where to place sensors of one kind
 within a region, often one that is already monitored [@Verghese2022; @Choi2026], and provides
@@ -24,5 +27,7 @@ recover this quantity, although numerical weather prediction measures it routine
 data-denial experiments [@Samrat2025].
 
 {{ref:ch-model}} describes a construction in which the quantity can be recovered, and
-{{ref:s-recommendation-inverts-tropics}} reports the measurement. For Kandy, the result differs
-from the one a global average would suggest.
+{{ref:s-marginal-predictive-value-each}} reports the measurement. For Kandy's climatic band
+nothing in that measurement is confirmed separately, and the evidence does not rank a local
+station network against a regional background series: the two are complementary, and what
+matters most is that their readings reach the estimate daily.

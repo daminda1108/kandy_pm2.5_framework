@@ -168,6 +168,62 @@ def summarise(C, rng, nboot, cols):
     return out
 
 
+# ── data-QA sensitivity (--clean) ───────────────────────────────────────────────────────────
+def _install_clean_cnemc():
+    """CNEMC archive timestamps carry no offset and are China Standard Time, but cnemc_extract_panel.normalise_ts
+    stored them as UTC. Re-read them as Asia/Shanghai, convert to UTC (so the day matches the UTC-day drivers), and
+    drop duplicate (station, hour) rows (~35 % of rows) before the daily aggregation."""
+    import glob
+    import modular_validation_all as mva
+
+    def stations_cnemc_clean(slug: str) -> pd.DataFrame:
+        frames = []
+        for f in sorted(glob.glob(str(mva.PANEL / "cities" / slug / "*.parquet"))):
+            try:
+                frames.append(pd.read_parquet(f, columns=["station_id", "pm25", "datetime_utc"]))
+            except Exception:                                                       # noqa: BLE001
+                continue
+        if not frames:
+            return pd.DataFrame()
+        d = pd.concat(frames, ignore_index=True)
+        d["pm25"] = pd.to_numeric(d.pm25, errors="coerce")
+        t = pd.to_datetime(d.datetime_utc, errors="coerce", utc=True).dt.tz_localize(None)   # naive wall clock
+        t = t.dt.tz_localize("Asia/Shanghai", ambiguous="NaT", nonexistent="NaT").dt.tz_convert("UTC")
+        d["hour"] = t.dt.tz_localize(None).dt.floor("h")
+        d = d.dropna(subset=["pm25", "hour"]).drop_duplicates(["station_id", "hour"])
+        d["date"] = d.hour.dt.floor("D")
+        return d[(d.pm25 > 0) & (d.pm25 < 1000)][["station_id", "date", "pm25"]]
+
+    mva.stations_cnemc = stations_cnemc_clean
+    print("  [clean] CNEMC: Asia/Shanghai -> UTC, duplicate station-hours dropped", flush=True)
+
+
+def _drop_duplicate_feeds(st: dict, p: pd.DataFrame):
+    """Drop a station whose daily series is identical to another station's in the same city (same feed under two
+    IDs), keeping the first ID. City means in `p` are recomputed from the remaining stations' complete days."""
+    dropped = 0
+    out = {}
+    for c, s in st.items():
+        w = s.pivot_table(index="date", columns="station_id", values="pm25")
+        ids = list(w.columns); keep = []
+        for i in ids:
+            dup = False
+            for j in keep:
+                both = w[[i, j]].dropna()
+                if len(both) >= 30 and (both[i] - both[j]).abs().max() < 1e-9:
+                    dup = True; break
+            if not dup:
+                keep.append(i)
+        dropped += len(ids) - len(keep)
+        out[c] = s[s.station_id.isin(keep)]
+    cc = pd.concat([s.groupby("date").pm25.mean().rename("pm25_c").reset_index().assign(city=c)
+                    for c, s in out.items()], ignore_index=True)
+    cc["date"] = pd.to_datetime(cc.date)
+    p = p.drop(columns=["pm25_city"]).merge(cc, on=["city", "date"], how="inner").rename(columns={"pm25_c": "pm25_city"})
+    print(f"  [clean] dropped {dropped} duplicate-feed stations", flush=True)
+    return out, p
+
+
 # ── main ────────────────────────────────────────────────────────────────────────────────────
 def main():
     ap = argparse.ArgumentParser()
@@ -177,19 +233,26 @@ def main():
     ap.add_argument("--bag", type=int, default=5)
     ap.add_argument("--boot", type=int, default=4000)
     ap.add_argument("--limit", type=int, default=0, help="smoke test: first K eligible cities")
+    ap.add_argument("--clean", action="store_true",
+                    help="data-QA sensitivity (2026-10-07 ingestion review): CNEMC local time -> UTC, CNEMC "
+                         "duplicate station-hours removed, OpenAQ exact-duplicate feeds dropped")
     a = ap.parse_args()
     t0 = time.time()
     if a.frame == "full":
         import ladder_v2_fullnet as lf
         lf._point(FN / "mirror_full")
+    if a.clean:
+        _install_clean_cnemc()
     import ladder_v2_confirm as lvc
     frame, meta, conf_cities, dropped = lvc.union("maiac")
     st, p, met, geo_f, sat = frame
+    if a.clean:
+        st, p = _drop_duplicate_feeds(st, p)
     feats = met + geo_f + sat
-    tag = f"review_{a.frame}_{a.bud0}" + (f"_smoke{a.limit}" if a.limit else "")
+    tag = f"review_{a.frame}_{a.bud0}" + ("_clean" if a.clean else "") + (f"_smoke{a.limit}" if a.limit else "")
     print(f"[{tag}] union {len(st)} cities, confirmation {len(conf_cities)}", flush=True)
 
-    cache = OUTD / f"review_bud0_{a.frame}_{a.bud0}_b{a.bag}.parquet"
+    cache = OUTD / f"review_bud0_{a.frame}_{a.bud0}{'_clean' if a.clean else ''}_b{a.bag}.parquet"
     if cache.exists() and not a.limit:
         b0 = pd.read_parquet(cache); b0["date"] = pd.to_datetime(b0.date)
         print(f"  Bud0 from cache {cache.name}", flush=True)

@@ -32,7 +32,7 @@ whatever the background happens to be. For any other background *B*′ that is p
 setting *P*′ = (*C* − *B*′) / (*T* − *B*′) gives a pattern that also averages to one and reproduces exactly
 the same field, so the condition is satisfied by every candidate background rather than by one.
 What it fixes is the anchor and the scale of the pattern. It says nothing about how the anchor
-divides into a background and an increment. That division is settled by the constraint in
+divides into a background and an increment. That division is bounded by the constraint in
 {{ref:s-partition-constraint-rather-than}} and by the way *B* is built in {{ref:s-information-budget}}, and how much the resulting fraction moves
 when those choices are varied is reported there rather than assumed away.
 

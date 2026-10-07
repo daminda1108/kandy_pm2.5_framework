@@ -9,7 +9,9 @@ they concentrate in the higher-concentration core [@Tatem2017; @Elvidge2017]. Fo
 basin mean is {{claim:exposure.area}} micrograms per cubic metre, the residential-weighted mean
 is {{claim:exposure.residential}}, and the population-weighted mean is
 {{claim:exposure.dynamic}}. That is an uplift of {{claim:exposure.uplift_pct}} per cent over the
-area mean, and any health statement should use the weighted figure.
+area mean, and any health statement should use the weighted figure. The weighting changes where
+the concentration is counted, not its level, so it inherits the open level question of
+{{ref:s-checks-kandy-carry-weight}} unchanged.
 
 Projecting that exposure through a published concentration-response function gives an
 attributable mortality figure. That projection is reported in **{{ref:app-attributable-burden-projection}}** and not here,

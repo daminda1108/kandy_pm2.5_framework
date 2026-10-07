@@ -78,6 +78,8 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch08_where_it_stops/06-s-reason-change-support.md shift=1}}
 
+{{include:pool/ch08_where_it_stops/07b-s-what-stations-buy-map.md shift=1}}
+
 {{include:pool/ch09_what_next/00-ch-measure-next.md shift=1}}
 
 {{include:pool/ch09_what_next/01-s-measurement-priority-ordering.md shift=1}}

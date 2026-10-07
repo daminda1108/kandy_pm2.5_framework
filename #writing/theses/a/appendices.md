@@ -1,11 +1,18 @@
 # The value of each information source, measured across the panel {#a-app-panel}
 
-{{ref:a-results}} uses one conclusion from the work in {{this:a-app-panel}}: that in the latitude band
-Kandy belongs to, a local observation is worth more than a regional background series for daily
-city-mean accuracy, and that the ordering reverses for exceedance detection. {{This:a-app-panel}}
-carries the measurement behind it in full, from the positioning of the method in the literature,
-through the guarantees that make withholding an observation an exact measurement, to the results
-across the panel and every check made on them.
+The measurement priorities for Kandy in {{ref:a-results}} and {{ref:a-discussion}} rest on one body of
+evidence: what each kind of observation is worth to a daily city-mean estimate, measured across a panel
+of well-monitored cities by withholding observations and scoring the result. {{This:a-app-panel}}
+carries that evidence in full. It sets out the panel and the position of the method in the literature,
+the information budgets and the guarantees that make withholding an observation an exact measurement,
+and the design of the measurement. It then reports the registered confirmation on cities that had not
+been seen, its registered robustness tests, and a later re-analysis that changes how the registered
+ordering must be read. The conclusion that the main text uses is that a station whose reading reaches
+the estimate on the day it is taken is worth several times more than the same station used only to
+recalibrate a free estimate, and that, used that way, the kind of station makes no resolvable
+difference. No ordering of local stations against a background series, and nothing specific to the
+deep tropics, is established. The section on the model across ten cities, which validates the
+reconstruction rather than prices observations, closes the appendix before the summary.
 
 {{include:pool/ch04_what_there_was/03-s-borrowed-panel.md}}
 
@@ -17,13 +24,23 @@ across the panel and every check made on them.
 
 {{include:pool/ch07_making_sure/02-s-marginal-predictive-value-each.md}}
 
-{{include:pool/ch07_making_sure/03-s-recommendation-inverts-tropics.md}}
+{{include:pool/ch07_making_sure/13-s-registered-confirmation.md}}
+
+{{include:pool/ch07_making_sure/14-s-registered-robustness.md}}
 
 {{include:pool/ch07_making_sure/04-s-dependence-estimator.md}}
 
-{{include:pool/ch07_making_sure/05-s-effect-monitor-trained-covariate.md}}
+{{include:pool/ch07_making_sure/15-s-like-for-like.md}}
+
+{{include:pool/ch07_making_sure/16-s-station-count-daily.md}}
+
+{{include:pool/ch07_making_sure/17-s-leave-one-network-out.md}}
+
+{{include:pool/ch07_making_sure/03-s-recommendation-inverts-tropics.md}}
 
 {{include:pool/ch07_making_sure/06-s-three-confounds-pooled-numbers.md}}
+
+{{include:pool/ch07_making_sure/05-s-effect-monitor-trained-covariate.md}}
 
 {{include:pool/ch07_making_sure/07-s-model-across-ten-cities.md}}
 

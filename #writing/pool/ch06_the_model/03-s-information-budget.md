@@ -33,4 +33,8 @@ a stream is invisible in a pooled median and shifts it.
 
 The sensorless tier as finally specified carries {{claim:bud0c.n_features}} predictors, of which
 {{claim:bud0c.n_geo_features}} are static geography. {{ref:s-dependence-estimator}} shows that this width is not
-incidental to the results.
+incidental to the results. In the redesigned version of the ladder that the confirmation tests
+used, the same geographic predictors are computed at random points in each city's urban centre
+rather than averaged over its monitoring sites, because a predictor that a city without monitors
+cannot compute is not sensorless. The tier's prediction is the median over five learner seeds,
+and a station-day enters only if at least eighteen of its twenty-four hours are present.

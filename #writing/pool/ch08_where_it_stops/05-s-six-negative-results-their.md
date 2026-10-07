@@ -117,11 +117,21 @@ linear mixed model with a city random intercept is indistinguishable from ridge 
 The oracle families are the more interesting result. With the target city's own stations visible,
 inverse distance weighting reaches {{claim:tour.oracle_idw}}, geographically weighted regression
 {{claim:tour.oracle_gwr}} and kriging {{claim:tour.oracle_krige}}. All three sit below the
-benchmark's {{claim:tour.benchmark}}, which is obtained with no local observation at all. A city
-that has a network, using the methods designed for exactly that case, ranks its own stations worse
-than a single free raster ranks a city it has never seen. {{ref:s-five-attempts-find-spatial}} reported the same thing for
-inverse distance weighting alone; it holds for the geostatistical and locally weighted families
-too.
+benchmark's {{claim:tour.benchmark}}, which is obtained with no local observation at all. On this
+frame a city that has a network, using the methods designed for exactly that case, ranks its own
+stations no better than a single free raster ranks a city it has never seen.
+{{ref:s-five-attempts-find-spatial}} reported the same thing for inverse distance weighting alone.
+
+The oracle arm is a leave-one-out ranking of every station in a city, which is not the design of
+the registered spatial learning curve of {{ref:s-what-stations-buy-map}}. There a fixed set of
+held-out sites is scored from a controlled number of fitting stations, and under the registered
+first-pass rule kriging or regression kriging overtook the raster at some density in most cities.
+The two analyses are closer than that contrast suggests. At three fitting stations the curve puts
+kriging and the raster at a similar low skill, and once the per-city comparisons are corrected for
+multiple testing only {{claim:v2.curve.full.holm_crossing}} of twenty-three cities show
+interpolation clearly ahead. Both analyses therefore say that a few stations do not rank a city's
+neighbourhoods better than a free layer, and the curve adds that only the few networks with
+several dozen stations reach a moderate ranking.
 
 A claim that nothing beat one free raster is only as good as a reader's ability to check it, so
 {{fig:tournament}} puts every family on one axis. The left panel is the paired comparison, with the

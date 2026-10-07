@@ -19,8 +19,11 @@ records rather than a data route.
 
 A national research organisation's regional stations. These supply the external check used in
 {{ref:s-checks-kandy-carry-weight}}, obtained through a published paper rather than directly. A direct request would
-provide the regional background that {{ref:s-marginal-predictive-value-each}} measures as the largest single gain on the
-ladder, and {{ref:s-measurement-priority-ordering}} ranks it accordingly.
+provide a genuine regional background series. The ladder of {{ref:s-marginal-predictive-value-each}} never measured
+such a series: its background is a proxy built from other stations of the same city's own network,
+and an independent network recovers only part of what that proxy is worth. The value of a regional
+background at Kandy is therefore suggested by the panel rather than measured, and
+{{ref:s-measurement-priority-ordering}} lists it on those terms.
 
 The university's own islandwide sensor network. Identified late and not pursued within this
 work. It is the cheapest route of the four and it is internal.

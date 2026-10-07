@@ -32,7 +32,9 @@ What it established. A bounded claim, which none of the five nulls in {{ref:s-fi
 That is a different kind of statement from "no spatial signal was found". It says what was
 excluded and, by implication, what was not. An effect smaller than the detection limit remains
 entirely possible, and a campaign that sited monitors deliberately across land-use contrast
-would be a different experiment; {{ref:s-six-negative-results-their}} runs the nearest version of it the panel allows.
+would be a different experiment; {{ref:s-deliberate-siting-tested-dense}} runs the nearest version of it the panel allows,
+and the registered spatial learning curve of {{ref:s-what-stations-buy-map}} repeats it under a
+fixed held-out design.
 
 Two further results came out of the same work and both are used later. The conservation
 constraint holds to {{claim:phase2.gauge_drift}} across degenerate cases including a saturated

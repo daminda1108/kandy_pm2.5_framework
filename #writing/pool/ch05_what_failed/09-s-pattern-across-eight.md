@@ -14,4 +14,13 @@ specific attempts in one project, and the sample is neither large nor independen
 ordering is consistent enough to have changed how the remaining work was done, and the practice
 described in {{ref:s-pre-registration-working-practice}} is the direct consequence.
 
+The strongest instance came after these eight. The ladder's discovery results were declared
+exploratory, its predictions were registered, and it was scored once on cities whose data had not
+been retrieved. The first-rung gain came back at less than half its discovery value, and the
+registration is what made that shrinkage a finding rather than an embarrassment. The same
+practice also showed its limit. Registration fixed how the comparison was run, but it did not
+check that the arms being compared used their observations in the same way, and a later review
+found that they did not [ledger F.124]. Declaring the analysis first protects against choosing it
+after the data; it does not protect against declaring the wrong comparison.
+
 {{tbl:T5_1}}

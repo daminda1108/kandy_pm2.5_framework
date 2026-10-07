@@ -100,9 +100,10 @@ Concentrations peak in the morning ({{claim:kandy.phase_morning}}) and evening
 values {{claim:kandy.night_over_midday}} times the midday level. In a regional episode in December
 2022 the basin mean averaged {{claim:kandy.episode_mean}} and peaked at
 {{claim:kandy.episode_peak}}, the whole domain rising together. Under the stated assumptions the
-decomposition assigns {{claim:partition.f}} of the concentration to the local increment, fixed by a
-physical constraint rather than assumed and ranging from {{claim:partition.f_lo}} to
-{{claim:partition.f_hi}} across years; this is a constrained split, not a source apportionment.
+decomposition assigns {{claim:partition.f}} of the concentration to the local increment. That share
+is a bound set by a physical constraint, that local sources emit at every hour, and it ranges from
+{{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across reasonable forms of the constraint; it is a
+constrained split, not a source apportionment.
 Weighting by residential population raises exposure {{claim:exposure.uplift_pct}} per cent above the
 area mean. The timing is supported by an independent national record, which differs from the field
 by {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two separate years. The
@@ -115,17 +116,20 @@ is removed, because the field is an areal mean and a sensor is a point.
 ## What each additional observation is worth
 
 Because every component declares its inputs, an observation can be withheld and the loss measured.
-Across {{claim:frame.cities}} monitored cities, each source was added in turn and daily error scored
-at withheld monitors. Pooled, a regional background series is worth most, at
-{{claim:step.bud2_bud3}} per cent; in the deep-tropical band to which Kandy belongs the ordering
-inverts, local sensors reducing daily error by {{claim:maiac.deep_tropical_first2}} per cent against
-{{claim:maiac.deep_tropical_background}} per cent for the background. Scored instead on detection of
-days above the World Health Organization daily guideline it inverts again, to
-{{claim:loss.inv.exceedance}} points [{{claim:loss.inv.exceedance.lo}},
-{{claim:loss.inv.exceedance.hi}}], favouring the background. The recommendation for Kandy therefore
-depends on what the city wants the field for, and the measurement that would resolve the most is a
-reference-grade instrument, which would fix the absolute level and anchor every low-cost sensor
-deployed thereafter.
+The design was developed on {{claim:frame.cities}} monitored cities and then tested once on
+{{claim:v2.conf.n_cities}} fresh cities registered before their data were retrieved. Two stations
+used only to recalibrate the free estimate reduced daily error by
+{{claim:v2.conf.reco.first2_rmse.median}} per cent; a background series read day by day reduced it by
+{{claim:v2.conf.reco.bg_rmse.median}} per cent; both held under a richer free baseline, other learners
+and full station networks. A later review of the design found that this comparison was not like for
+like. Read on the day, two stations of any kind reduced error by
+{{claim:v2.review.registered_loco.reco.gL2s_rmse.median}} per cent and the background's advantage
+vanished ({{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.median}} points). One station read
+daily is worth {{claim:v2.review.k.day1.median}} per cent, two {{claim:v2.review.k.day2.median}} and
+five {{claim:v2.review.k.day5.median}}, against about {{claim:v2.review.k.cal2.median}} per cent for any
+number used only as a calibration. For Kandy the priority is therefore continuous stations whose
+readings reach the estimate every day, of whatever kind the regulatory agencies operate, with one of
+reference grade to fix the absolute level and to anchor every low-cost sensor deployed thereafter.
 
 ## Limitations
 
@@ -135,7 +139,10 @@ model cell, and on cities with dense networks the spread inside a single cell
 ({{claim:s2.within_pixel_p90p10}}) exceeds the spread between cells
 ({{claim:s2.between_pixel_p90p10}}). A further {{claim:tour.families}} model families built on free
 covariates exceed a single land-cover layer ({{claim:phase1.best_rho}}) by no more than the
-detection limit of {{claim:phase1.min_detectable}}. The limitation is one of available information,
+detection limit of {{claim:phase1.min_detectable}}. A registered experiment adding stations one at a
+time found that three to eight stations rank neighbourhoods no better than free surfaces, and after a
+correction for multiple testing interpolation clearly overtook a land-cover layer in only
+{{claim:v2.curve.full.holm_crossing}} of 23 cities. The limitation is one of available information,
 not of the model class chosen. The study therefore claims neither a validated neighbourhood-scale
 map, nor a representation of atmospheric chemistry, nor an independently validated absolute level
 at Kandy: what is validated is a procedure, tested on monitored cities and applied to Kandy by
@@ -143,9 +150,9 @@ analogy.
 
 ## Ongoing work and verification
 
-Three strands continue. A pre-registered experiment measuring how much within-city spatial skill
-each additional sensor buys, starting from none, is running; it has returned no verdict, and no
-result from it is quoted here. Four institutional data requests are in progress, of which two have
+Three strands continue. The regulatory monitor at Kandy, once its data are released, will allow the
+level, the humidity correction of the low-cost sensors and the daily shape to be checked against a
+reference instrument. Four institutional data requests are in progress, of which two have
 been answered, one granting access in principle subject to a formal agreement. A measurement
 campaign for Kandy has been designed, costed and pre-registered, but remains under development and
 is not presented here as a recommendation. Every value in the report is regenerated from source at

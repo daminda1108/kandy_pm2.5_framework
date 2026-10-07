@@ -85,7 +85,7 @@ rural or regional monitor. An independent network 30–300 km away recovers **71
 | T-lock accuracy | field runs **+0.39 to +0.56%** above anchor → say *"to within 0.6 per cent"* | 2026-08-14 build |
 | basin annual means | 2019 **19.75** · 2020 **19.09** · 2021 **17.08** · 2022 **18.76** · 2023 **21.04** | `scalars_*.json` |
 | pop-weighted exposure uplift | **+9%** over the area mean (21.0 → 23.0) | `exposure_weighting.csv`, regenerated 2026-09-04 (the retired figure was +7%, computed on a pre-rebuild field) |
-| burden 2023 | **431/yr**, **response-function-conditional** interval [237–632], 300 avoidable | `health_burden.py`. ⚠ The interval carries ONLY the published CRF uncertainty: **not** the field, the population weighting or the W11 level discrepancy. Never call it a total uncertainty interval. |
+| burden 2023 | **431/yr** [237–632], 300 avoidable — **illustrative** | `health_burden.py`. ⚠ **Corrected 2026-10-07:** the interval is the field's q05/q95 exposure through the CENTRAL GEMM (`health_burden.py:91–104`), so it carries **no** response-function uncertainty, nor population, W11 or structural uncertainty; GEMM is also applied to all ages (should be 25+). Never call it a total uncertainty interval. |
 | KOALA anchor | *"about 24.5"* — a valley-**FLOOR** point, never the basin mean | Senarathna 2024 |
 | diurnal (FECT, normalised) | morning **07 = 1.41** · evening **18–19 = 1.25** · **midday trough 14 = 0.725** · night 00–04 = 0.865 | F.38 |
 | exporter QA | reconstruction **0.0014** µg/m³ (tol 0.25) · wind parity **0.0005** m/s | 2026-08-22 |
@@ -130,7 +130,7 @@ rural or regional monitor. An independent network 30–300 km away recovers **71
 | **embeddings' median rho 0.327 > benchmark 0.301** | unpaired; **paired it is -0.028**, 21/47 | the paired value is the effect (F.111, gotcha #91 third time) |
 | **f = 0.4828** | the 4th digit is unsupported: f moves 0.035 across anchored years and 0.058 across window forms | **0.483**, three significant figures (F.110) |
 | **the dispersion step as a working component** | it LOWERS neighbourhood rank from **0.371** to **0.274**, 3/10 cities improve | the measurement framework works better than the spatial model (F.110) |
-| **the burden figure as a result** | its interval carries only response-function uncertainty | **Appendix E**, an illustrative projection (F.110) |
+| **the burden figure as a result** | its interval is field q05/q95 through the central response function only (corrected 2026-10-07); GEMM applied to all ages | **Appendix E**, an illustrative projection (F.110) |
 | **"unit mean makes level and pattern separately identifiable"** | the gauge holds for **every** admissible `B`: set `P'=(C-B')/(T-B')` | it identifies the ANCHOR; `B` needs §6.6's constraints (F.108/blocker) |
 | **"buy a local sensor first" stated without a loss** | flips sign on episodes: tail **-20.8**, exceedance **-15.9 [-38.1, -1.54]** (F.113) | true for a **daily city mean**; the background wins on exceedance (F.109) |
 | **f sensitivity quoted as one range** | there are **THREE** axes: anchored years **0.466-0.501** · `F_min` sweep **0.482-0.509** · **window form 0.489-0.547** | name the axis with the range (F.108) |

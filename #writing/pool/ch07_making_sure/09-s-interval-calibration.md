@@ -21,8 +21,19 @@ diagnosis: the misses are one-sided, {{claim:kandy.miss_below}} per cent below a
 {{claim:kandy.median_offset}} micrograms per cubic metre. Removing each sensor's own offset
 restores coverage to {{claim:kandy.cov90_recentred}} per cent.
 
-The width was right and the centring was wrong, and the cause is the change of support of
-{{ref:ch-model-stops}} rather than a failure of the calibration procedure.
+The width is about right and the centring is not. The cause of the offset is not settled. It may
+be the change of support of {{ref:ch-model-stops}}, in which case the interval is correct for the
+areal quantity it describes. It may instead be an upward level bias of the model at these points,
+for which the constant-humidity correction of the sensor record is one candidate mechanism, and
+{{ref:s-checks-kandy-carry-weight}} sets out the evidence on each side. The check cannot
+distinguish the two, because the sensors that score the interval are the same sensors that
+calibrated the anchor; a co-located reference monitor would.
+
+The interval is also incomplete. Its width comes from the anchor's conformal quantiles and the
+spread of the local pattern, and the background enters through a fixed band. It omits the
+uncertainty of the confinement strength, of the local fraction, of the emission proxy and of the
+sensor calibration slope ({{ref:s-comparing-areal-model-point}}), so a coverage near nominal for
+the anchor would still understate the uncertainty of the field.
 
 ### External identification of the representativeness error {#s-external-identification-representativeness-error}
 

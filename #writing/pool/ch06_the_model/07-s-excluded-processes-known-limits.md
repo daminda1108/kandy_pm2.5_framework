@@ -13,3 +13,36 @@ And its emission proxy is a proxy. The surface sets only the shape of the local 
 level is carried by *T*(*t*), which is pinned to total observed concentration from all sources.
 A source that is spatially decoupled from the road network is therefore misplaced rather than
 omitted, and {{ref:ch-model-stops}} gives the measured consequence at a city where that happens.
+
+### Limits of the Kandy sensor record {#s-limits-kandy-sensor-record}
+
+Three further limits concern the low-cost sensor record that shapes *T*(*t*), and each was
+identified by an external review of the chain.
+
+**The humidity correction uses a constant relative humidity.** The sensors are corrected with the
+Barkjohn equation [@Barkjohn2021], whose humidity term was evaluated at a fixed relative humidity
+of eighty per cent rather than at the hourly value. Over-reading by an optical sensor follows the
+humidity cycle, which at Kandy is high at night and in the early morning and lowest in the
+afternoon, so a constant term leaves part of that cycle in the corrected record, and the
+sharpening step then imposes it on *T*(*t*). Recomputing the correction with hourly reanalysis
+humidity lowers the ratio of the morning peak to the afternoon trough of the normalised diurnal
+cycle from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}, about a tenth less swing. A full hygroscopic
+growth correction applied on top inverts the cycle, which is implausible for a valley whose diurnal
+cycle is set by the boundary layer, so it over-corrects. The true diurnal shape therefore lies
+somewhere between these versions and cannot be fixed without co-locating the sensors with a
+reference monitor. The shipped field has not been rebuilt with the hourly correction, because
+the reference record that would decide between the versions is expected from the Central
+Environmental Authority. Because the local fraction is a function of the diurnal amplitude of *T*
+({{ref:s-partition-constraint-rather-than}}), this limit reaches the partition as well.
+
+**The sensor record is used three times.** The same two sensors train the anchor, set the width of
+its conformal interval and supply the diurnal and seasonal profile to which it is sharpened. The
+van Donkelaar surface sets both the annual level and the background. Agreement between the model
+and either source is therefore calibration, not validation, and {{ref:s-checks-kandy-carry-weight}}
+separates these shared inputs from the records that are independent of them.
+
+**The sharpening step makes two simplifying assumptions.** It treats the hour-of-day and
+month-of-year factors as independent, so a diurnal cycle whose shape changes with the season is
+represented by one shape scaled by month. And it pools a valley sensor with a ridge sensor at
+different elevations into one profile, although the two need not share a diurnal shape.

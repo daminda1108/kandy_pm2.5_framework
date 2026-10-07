@@ -7,7 +7,7 @@ available predictor at a range of buffer radii, from a few hundred metres up to 
 against held-out monitors. If sub-kilometre structure were the thing being recovered, skill would
 be highest at the smallest radius and fall away as the buffer widened. It does the opposite. Skill
 rises with radius and peaks at {{claim:phase1.best_radius_km}} kilometres, which is coarser than
-the cell the model reports on, and {{ref:s-implications-radius-result}} draws the consequence for resolution.
+the cell the model reports on, and the rest of this section draws the consequence for resolution.
 
 {{fig:radius}}
 
@@ -27,3 +27,9 @@ ratio.
 
 A more useful direction is the opposite one: report the within-cell distribution rather than a
 cell value, which {{ref:s-reason-change-support}} shows is both well-posed and the larger of the two quantities.
+
+The station-based evidence agrees. In the registered spatial learning curve of
+{{ref:s-what-stations-buy-map}} a station informs roughly the kilometre around it, which is the
+width of that analysis's first distance bin and so an upper bound on resolution rather than a
+measured length. Neither the covariates nor a few stations carry information below the scale of a
+cell, and adding resolution to the reporting grid cannot supply it.

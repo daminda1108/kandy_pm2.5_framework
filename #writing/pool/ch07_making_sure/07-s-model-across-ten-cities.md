@@ -2,7 +2,8 @@
 
 The ladder measures what an observation is worth. It does not say how well the model performs, and
 those are different questions. This section answers the second one across the ten cities where the
-full model was built rather than the forty-eight where only the ladder was run. Three axes are
+full model was built, rather than the many more cities of the discovery, confirmation and
+full-network panels where only the ladder was run. Three axes are
 scored separately: how well the model reproduces the seasonal cycle, how well it reproduces the
 daily cycle, and how far its annual level sits from the observed one. The figure below gives all
 three for every city, with the axes kept apart rather than combined into a single score. Reading

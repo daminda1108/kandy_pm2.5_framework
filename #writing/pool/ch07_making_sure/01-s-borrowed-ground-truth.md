@@ -9,14 +9,23 @@ has, and the model is then scored against the monitors that were taken away from
 
 The reduction is what makes the test informative. Scoring a model that has seen thirty monitors
 measures a capability the target city will never possess, and reporting that number as though it
-described the target is the most common way this class of model is oversold. The panel comprises
-{{claim:frame.cities}} cities across {{claim:frame.countries}} countries and
-{{claim:frame.city_days}} city days, with a median of {{claim:frame.med_held_stations}} withheld
-stations and {{claim:frame.med_days_per_city}} scored days per city. Where those cities are is
-mapped in {{fig:panel}}, in {{ref:s-borrowed-panel}}.
+described the target is the most common way this class of model is oversold.
 
-Kandy contributes nothing to this panel. It supplies no training data at any tier, which is what
-allows the measurement to be applied to it.
+The procedure is applied to the panels described in {{ref:s-borrowed-panel}}. The discovery panel
+comprises {{claim:frame.cities}} cities across {{claim:frame.countries}} countries; where those
+cities are is mapped in {{fig:panel}}. Its results were used to design the tests and are reported
+as exploratory. The registered confirmation scored {{claim:v2.conf.n_cities}} fresh cities grouped
+into thirty clusters, and each city's effect is the median over between six and twenty-one random
+choices of which stations are withheld and which are used. A further registered test repeated the
+confirmation on the full networks of seventy-five cities, with a median of seventeen stations each.
+
+Kandy contributes nothing to any of these panels. It supplies no training data at any tier, which
+is what allows the measurement to be applied to it.
+
+The table below describes the discovery panel by latitude band as it was first scored. Two of its
+features have since been corrected: the cities of the Chinese national network, shown there
+without a band, are now assigned to their bands, and that network is classed as reference
+monitoring rather than low-cost, which changes the class composition of the bands.
 
 {{tbl:T4_3}}
 
@@ -33,24 +42,40 @@ regime with the least reference monitoring is the regime that most needs a senso
 the cities that could best represent Kandy are the cities least able to appear. Where a claim
 depends on the panel being representative, it is not made.
 
-What transfers is an ordering, not a magnitude. The quantity carried to Kandy is which
-observation is worth more than which, and orderings survive shifts in level that would invalidate
-a transferred number. No statement in {{ref:s-measurement-priority-ordering}} depends on Kandy's own error falling by any
-particular percentage.
+What transfers is an ordering, not a magnitude, and only an ordering that was confirmed. The
+quantity carried to Kandy is which observation is worth more than which, and orderings survive
+shifts in level that would invalidate a transferred number. No statement in
+{{ref:s-measurement-priority-ordering}} depends on Kandy's own error falling by any particular
+percentage. The confirmed orderings are, moreover, orderings of the rungs **as constructed**: the
+first local stations enter the registered ladder only as a recalibration of the sensorless
+estimate, while the background is read on the day. {{ref:s-marginal-predictive-value-each}}
+reports what happens when the two are used the same way, and the answer is that they are worth
+about the same.
 
-The transfer is made within a matched group of cities, not from the pool. Kandy is matched on the
-variables that plausibly govern the ordering rather than against the panel as a whole. It is read
-against the deep-tropical band, which {{ref:s-recommendation-inverts-tropics}} shows reverses the pooled result, and against the
-group of cities whose instruments are low-cost, since Kandy's are low-cost and {{ref:s-three-confounds-pooled-numbers}} shows
-that the class of instrument changes what an added sensor is worth. A pooled number would be the wrong number twice over.
+An earlier draft transferred the result within a matched group of cities: the deep-tropical
+band, which was then thought to reverse the pooled ordering, and the cities whose instruments are
+low-cost. Neither match survives. The deep-tropical reversal rested on one random split of the
+stations and one learner seed, and averaged over splits it is not distinguishable from zero; the
+registered confirmation found the dependence of the effects on latitude undetectable. The
+class-of-instrument argument rested on a classification that counted the Chinese national
+reference network as low-cost. No band-specific or class-specific ordering is established, and
+none is carried to Kandy.
 
-The panel matches Kandy on the one structural variable it was selected for and on no others by
-design. Every panel city is a valley or basin, which is the feature the construction depends
-on, and this is a selection criterion rather than a finding. The panel contains no coastal city,
-so nothing here supports a coastal application.
+The transfer therefore rests on the confirmation population, and Kandy lies outside its bulk.
+Only four of the confirmation cities are tropical, and most are served by regulatory reference
+networks, while Kandy is deep-tropical and has only low-cost sensors. Nothing in the confirmation
+contradicts the pooled orderings for a city like Kandy, and nothing confirms them there either.
 
-What would break the transfer is stated so that it can be checked. If Kandy's ordering is
-governed by something the band does not capture, the recommendation is wrong. {{ref:s-recommendation-inverts-tropics}} names
-the candidate, the amplitude of the regional seasonal cycle, and {{ref:s-measurement-would-settle-most}} gives the analysis that
-would test whether the band is standing in for it. Until that is run, the transfer rests on Kandy
-resembling its band, which is an assumption with evidence behind it and not a demonstration.
+Only the ten-city analogue panel used to score the full model ({{ref:s-model-across-ten-cities}})
+was selected for physical similarity: every member is a valley or basin, which is the feature the
+construction depends on, and this is a selection criterion rather than a finding. The ladder
+panels were selected on network metadata, with no terrain rule. No panel contains a valley-floor
+city in the deep tropics with only low-cost monitoring, and the analogue panel contains no coastal
+city, so nothing here supports a coastal application.
+
+What would break the transfer is stated so that it can be checked. If the value of a same-day
+reading at Kandy is governed by something the confirmation population does not span, such as the
+amplitude of the regional seasonal cycle or the error structure of low-cost sensors, the pooled
+ordering may not hold there. {{ref:s-measurement-would-settle-most}} gives the measurement that
+would test it directly. Until then the transfer is an assumption with evidence behind it and not a
+demonstration.

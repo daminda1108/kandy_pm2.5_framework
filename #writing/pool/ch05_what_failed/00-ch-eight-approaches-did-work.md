@@ -10,7 +10,7 @@ The last of those is the column that matters, and it varies enormously between t
 
 {{dia:timeline}}
 
-The eight are not of equal weight and the chapter does not present them as though they were. Four
+The eight are not of equal weight and {{this:ch-eight-approaches-did-work}} does not present them as though they were. Four
 changed the design of the model that followed. Four established something narrower, either
 closing a question or exposing a defect in how the work was being checked. A reader who wants the
 argument and not the record can take the first group and {{ref:s-pattern-across-eight}}.
@@ -34,4 +34,4 @@ of the three produced a better model and each prevented a wrong claim.
 {{ref:s-five-attempts-find-spatial}} belongs in this second group for a different reason, and it is the one section whose
 placement is itself an argument. It consumed the most time of any entry here and established the
 least, and {{ref:s-pattern-across-eight}} explains why. A reader short of patience should still read it, because the
-contrast with {{ref:s-learned-spatial-pattern-pre}} is the chapter's conclusion.
+contrast with {{ref:s-learned-spatial-pattern-pre}} is the conclusion of {{this:ch-eight-approaches-did-work}}.

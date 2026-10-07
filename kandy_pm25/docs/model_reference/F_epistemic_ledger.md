@@ -5837,7 +5837,9 @@ in Chapter 1's summary.
 ### 🔴 Demoted: the attributable-burden projection moved to **Appendix E**
 Both reviewers, independently. Labelling it an illustrative projection was not enough, because a
 figure of the form *"N deaths per year"* detaches from its caveats the moment anyone quotes it and
-its interval propagates only the response-function uncertainty. §7.11 keeps the **exposure
+its interval propagates only the response-function uncertainty [⚠ corrected 2026-10-07 (F.124): the code propagates
+the field's q05/q95 exposure through the central GEMM, so the interval carries field spread and NO response-function
+uncertainty — `health_burden.py:91–104`]. §7.11 keeps the **exposure
 weighting**, which is a measurement on this project's own raster; the mortality arithmetic is an
 appendix with its own statement of why it is not a result.
 

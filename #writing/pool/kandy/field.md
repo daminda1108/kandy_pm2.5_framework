@@ -12,8 +12,11 @@ The annual basin mean runs from {{claim:kandy.mean_min}} to {{claim:kandy.mean_m
 per cubic metre across the five anchored years. Every year is above the World Health Organization
 annual guideline of 5 micrograms per cubic metre [@WHO2021], by a factor of three or more. In
 {{claim:exposure.year}} the regional background averages {{claim:kandy.background_annual}}, so
-roughly half of the basin mean is carried by air that is the same everywhere in the city, which is
-the partition of {{claim:partition.f}} derived in {{ref:s-partition-constraint-rather-than}} seen in a single year. The
+roughly half of the basin mean is carried by air that is the same everywhere in the city. That
+is the local share of {{claim:partition.f}} seen in a single year; {{ref:s-partition-constraint-rather-than}} shows
+that it is a bound set by a non-negativity constraint on the increment, between
+{{claim:v2.f.cap_min}} and {{claim:v2.f.cap_max}} across reasonable forms of that constraint,
+rather than a value the data identify. The
 lowest year is 2021, when activity was restricted for part of the year.
 
 {{fig:field}}
@@ -51,6 +54,15 @@ sunset. The same ordering is observed at the two Kandy sensors. That agreement i
 than earned, because the temporal anchor is calibrated to those sensors, and
 {{ref:s-checks-kandy-carry-weight}} explains why it cannot be counted as validation.
 
+The depth of the daily cycle carries a further qualification. The sensor record to which the
+temporal anchor is sharpened was converted from the sensors' raw readings with a constant
+relative humidity. Repeating the conversion with the hourly humidity reduces the ratio of the
+daily peak to the daily trough in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}} while leaving the timing of the peaks and the
+trough unchanged. The shipped field uses the constant-humidity conversion, so the amplitudes
+above may overstate the daily swing; which conversion is right can only be settled by co-locating
+the sensors with a reference instrument.
+
 ### An episode {#s-kandy-field-episode}
 
 Averages hide the days that matter most for health. In December 2022 a regional pollution episode
@@ -62,7 +74,7 @@ Over the 48 hours of the episode the basin mean averaged {{claim:kandy.episode_m
 per cubic metre, reaching {{claim:kandy.episode_peak}} in the evening of the first day. At the peak
 hour the whole domain was raised together: the difference between the cleanest and the most
 polluted cell was small beside the level itself (panel a). That is the signature of air arriving
-from outside the basin, which the construction carries in the background, and it is consistent
-with the finding in {{ref:s-ordering-under-four-loss}} that a background series is worth most on the days in the
-upper tail of the distribution. An episode of this kind is, for a local authority, a warning to
-issue rather than an emission to control.
+from outside the basin, which the construction carries in the background. An episode of this
+kind is, for a local authority, a warning to issue rather than an emission to control, and
+recognising it on the day requires an observation that reaches the estimate on the day, whether
+from a station inside the basin or from a background station outside it.

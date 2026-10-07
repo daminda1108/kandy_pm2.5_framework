@@ -13,16 +13,22 @@ this project took most often, and the counts are given below.
 Each registration stated its predictions, and the condition under which each would be abandoned,
 before the corresponding analysis ran. The table lists every one, with its outcome where the
 analysis has run. Several of the refuted predictions were headline predictions of the person who
-registered them. Some registered studies have no outcomes in this thesis: a measurement design for
-Kandy that is still under development and is not reported here, and a spatial learning curve that
-is registered and underway.
+registered them. The table also marks the registrations without outcomes in this thesis: a
+measurement design for Kandy that is still under development and is not reported here, and the
+amendments that changed how an analysis was run without adding predictions of their own. The
+counts quoted anywhere in the thesis are those of the table and its note, which are generated
+from the registry rather than typed.
 
 {{tbl:T7_5}}
 
 The practice matters most in the branch that distinguishes an honest amendment from a rescued
 hypothesis. A defect found in the machinery **before** scoring may be corrected, provided the
 amendment is dated and reported. This happened first when a sampling design was found to alias
-latitude band with monitoring network, and again in the two dated amendments to the spatial
-learning curve, both lodged before any real-data scoring. A criterion changed **after** the result is known is not a
+latitude band with monitoring network, and again in the dated amendments to the spatial learning
+curve: one added a terrain moderator and corrected two definitions before any real-data scoring,
+and a later one moved two deep-learning arms to processors without a graphics card after a
+software change had silently broken them. Departures that could not be registered in advance,
+such as a city excluded at ingest under the stated rules, are recorded as deviations beside the
+results they affect. A criterion changed **after** the result is known is not a
 criterion. The distinction is procedural rather than moral, and it is the reason the registrations
 are timestamped by a third party, not by the author.

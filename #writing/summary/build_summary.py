@@ -97,6 +97,7 @@ def meta_claims() -> dict:
     scored = [r for r in rows if r.get("refuted") is not None]
     if len(scored) == len(rows) or all(
             r.get("refuted") is not None or r.get("status", "").startswith("prospective")
+            or r.get("kind") in ("campaign", "spatial_curve")     # carry no outcome of their own (T7_5 rule)
             for r in rows):
         ref = sum(r["refuted"] for r in scored)
         tot = sum(r["predictions"] for r in scored)

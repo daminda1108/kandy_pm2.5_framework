@@ -96,6 +96,8 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch08_where_it_stops/07-s-matched-support-model-close.md shift=1}}
 
+{{include:pool/ch08_where_it_stops/07b-s-what-stations-buy-map.md shift=1}}
+
 {{include:pool/ch08_where_it_stops/08-s-spatial-results-support.md shift=1}}
 
 {{include:pool/ch09_what_next/00-ch-measure-next.md shift=1}}

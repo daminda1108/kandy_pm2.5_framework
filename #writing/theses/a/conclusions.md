@@ -10,17 +10,25 @@ The conclusions are given against the objectives set out in {{ref:a-aims}}.
 2. **The reconstructed field is above the World Health Organization annual guideline in every
    anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms per cubic
    metre, with a north-east monsoon maximum, a south-west monsoon minimum and a midday trough
-   below the night. Roughly half of the concentration is the local increment under the stated
-   assumptions, and weighting by population raises exposure {{claim:exposure.uplift_pct}} per cent
-   above the area mean.
+   below the night. The decomposition assigns about half of the concentration to the local
+   increment, {{claim:partition.f}} in production and {{claim:v2.f.cap_min}} to
+   {{claim:v2.f.cap_max}} across reasonable forms of the constraint that sets it; this is a bound,
+   not a source apportionment. Weighting by population raises exposure
+   {{claim:exposure.uplift_pct}} per cent above the area mean.
 3. **The timing of the field is supported and its level is not settled.** The construction
    transfers between monitored cities of the same kind, and an independent national record at
-   Kandy agrees with it in two separate years, while three low-cost records sit below it.
+   Kandy agrees with it in two separate years, while three low-cost records sit below it. The
+   depth of the daily cycle depends on a humidity correction that only a co-located reference
+   instrument can check.
 4. **The field is not supported below the kilometre scale.** More of the variation within a city
-   lies inside a single cell than between cells, and no model built from freely available
-   covariates recovers it; the limit is one of support and of the information available, not of
-   the model chosen.
-5. **The measurement worth most to Kandy is a local one**, and a reference-grade instrument is the
-   form of it that would also settle the level. The ordering is stated with its loss attached: it
-   holds for daily city-mean accuracy and reverses for detecting exceedances, where a regional
-   background series is worth more.
+   lies inside a single cell than between cells, no model built from freely available covariates
+   recovers it, and a handful of interpolated stations does not recover it either; the limit is
+   one of support and of the information available, not of the model chosen.
+5. **The measurement worth most to Kandy is a set of continuously reporting stations whose
+   readings enter the estimate each day.** A station read daily is worth several times what the
+   same station is worth as a one-off calibration, the kind of station matters little, and a
+   handful of stations fixes the level and the daily sequence of a city mean but not a
+   neighbourhood map. A reference-grade instrument among them would also settle the level. This
+   conclusion replaces an earlier ordering of a background series above local stations, which a
+   review traced to a registered comparison of rungs built differently: registration fixes how a
+   test is run, not whether it compares like with like.

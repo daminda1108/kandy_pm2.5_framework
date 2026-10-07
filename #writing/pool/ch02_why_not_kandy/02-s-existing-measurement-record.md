@@ -25,5 +25,7 @@ concurrent reference monitors, the deep tropical band has {{claim:census.deep_tr
 temperate band has {{claim:census.temperate}}, a factor of
 {{claim:census.temperate_over_deep_tropical}}. The climatic regime in which a method requiring no
 local monitoring is most needed is therefore the one in which local monitoring is scarcest. Any
-validation panel assembled for this problem inherits the imbalance, and for this reason every
-result in {{ref:s-marginal-predictive-value-each}} is reported stratified by latitude band.
+validation panel assembled for this problem inherits the imbalance. The measurement of
+information value in {{ref:s-marginal-predictive-value-each}} is therefore dominated by
+temperate cities served by regulatory monitors, and whether its results differ in the tropics
+could not be tested with the few dense tropical networks that publish data.

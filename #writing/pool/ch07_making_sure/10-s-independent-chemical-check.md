@@ -23,9 +23,10 @@ Composition is the one axis on which this model makes a claim it does not model.
 deeper test, and three were run. **Two returned nothing usable, and the reasons differ in a way
 worth recording.**
 
-**Does composition explain what latitude band only labels?** {{ref:s-recommendation-inverts-tropics}} states that band is a
-stratifying label and names a candidate mechanism it does not test. A chemical mechanism is
-available: a city whose particulate is mostly secondary is chemically a regional problem, so a
+**Does composition explain what latitude band only labels?** The test was designed when the
+discovery panel appeared to show the ordering of the ladder reversing in the deep tropics, a
+result since retracted ({{ref:s-marginal-predictive-value-each}}). Latitude band was then treated
+as a stratifying label standing in for some physical cause, and a chemical cause was a candidate: a city whose particulate is mostly secondary is chemically a regional problem, so a
 background observation should be worth more there and a local monitor less. That direction was
 fixed in a script committed four days before any correlation was computed, which is why it could
 be tested one-sided. It was pre-registered with its detection limit before the analysis ran.
@@ -37,8 +38,10 @@ a near miss, it is an order of magnitude short.
 
 The reason is worth more than the result. The registration expected
 {{claim:chem.mech.registered_n}} cities and the analysis scored {{claim:chem.mech.n}}, because
-**controlling for band removes the cities that carry no band**, which are exactly the single
-national network described in {{ref:s-recommendation-inverts-tropics}}. That deviation is what makes the following table
+**controlling for band removed the cities that carried no band**, which in the frame used at the
+time were exactly the cities of the Chinese national network. Those cities have since been assigned
+to their bands, so the exclusion reflects the frame of the time rather than a property of the
+network. The registered result stands as computed. The deviation is what makes the following table
 possible, and the table is the finding:
 
 | group | cities | correlation of composition with the acquisition advantage |
@@ -79,6 +82,7 @@ claim {{ref:s-partition-constraint-rather-than}} withdraws. With the local share
 locally emitted primary share is bounded from both directions without further assumption. At
 Kandy it lies between **{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per
 cent** of concentration. The lower figure is material that is both local and primary, and
-responds immediately to local emission control. The upper figure is the whole local increment,
-and requires every locally formed secondary particle to disappear as well. The gap between them
+responds immediately to local emission control. The upper figure is the whole local increment, so it moves with the local fraction across the
+choices examined in {{ref:s-partition-constraint-rather-than}}, and it requires every locally
+formed secondary particle to disappear as well. The gap between them
 is precisely what cannot be resolved without speciated measurement in the city.

@@ -163,7 +163,8 @@ PM(x, y, t) = B(t) + max(T − B, 0) · P(x, y, t) + min(T − B, 0) + ε(t)(P �
 - **Circularity.** The FECT sensors train T, set its interval width and sharpen its amplitude, so every FECT agreement
   is in-sample. The genuinely independent checks are NBRO, the RF-CNN record and KOALA 2019.
 - **Health burden.** 431 deaths per year [237–632] for 2023. The model (GEMM) was applied to all ages instead of ages
-  25 and over, and the interval carries only the response-function uncertainty. I treat it as an illustrative
+  25 and over, and the interval reflects only the spread of the concentration field (it omits the response-function
+  uncertainty). I treat it as an illustrative
   appendix.
 - **Decision (mine and my main supervisor's):** the shipped model stays unchanged until the CEA data arrive. Then I
   rebuild with hourly humidity and a local-day cap, and check against the reference monitor.

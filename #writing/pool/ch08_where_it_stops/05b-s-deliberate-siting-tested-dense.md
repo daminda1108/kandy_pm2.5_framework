@@ -32,12 +32,32 @@ same cities become differences, and the distribution sits across zero.
 
 {{fig:pairedtrap}}
 
-**The robustness check could not be run.** Scoring every method against one common held-out set
-would remove the confound that each design leaves a different remainder. On this panel it is
-arithmetically impossible: the median city has twelve stations, so a held-out third is
+**The robustness check could not be run on this panel.** Scoring every method against one common
+held-out set would remove the confound that each design leaves a different remainder. On this
+panel it is arithmetically impossible: the median city has twelve stations, so a held-out third is
 {{claim:site.fixed_median_held}}, and a rank correlation on that many points can only take values
 {{claim:site.fixed_quantisation}} apart. Every paired median collapsed to exactly zero. The check
 was run and returned nothing, and that is a limit of the panel rather than a confirmation.
+
+The registered spatial learning curve of {{ref:s-what-stations-buy-map}} supplied the fixed
+design this panel could not. It restricted itself to the densest networks, held out at least ten
+sites or a third of each network, whichever was larger, and compared fitting sites chosen to span
+the covariates with sites chosen at random at each station count. Most of its full-record cities
+are scored on exactly ten held-out sites, so each per-city rank correlation is itself noisy. Its
+registered siting statistic was reported as exactly zero with a zero-width interval, which was an
+error of construction and not a measurement: the summary pooled every estimator, including those
+that never use the fitting stations and therefore differ between designs by exactly zero. Computed
+for kriging alone, deliberate minus random siting is:
+
+| frame | three stations | five stations | eight stations |
+|---|---:|---:|---:|
+| registered, one-year records | {{claim:v2.curve.reg.x5_e3_k3.median}} [{{claim:v2.curve.reg.x5_e3_k3.lo}}, {{claim:v2.curve.reg.x5_e3_k3.hi}}] | {{claim:v2.curve.reg.x5_e3_k5.median}} [{{claim:v2.curve.reg.x5_e3_k5.lo}}, {{claim:v2.curve.reg.x5_e3_k5.hi}}] | {{claim:v2.curve.reg.x5_e3_k8.median}} [{{claim:v2.curve.reg.x5_e3_k8.lo}}, {{claim:v2.curve.reg.x5_e3_k8.hi}}] |
+| full records | {{claim:v2.curve.full.x5_e3_k3.median}} [{{claim:v2.curve.full.x5_e3_k3.lo}}, {{claim:v2.curve.full.x5_e3_k3.hi}}] | {{claim:v2.curve.full.x5_e3_k5.median}} [{{claim:v2.curve.full.x5_e3_k5.lo}}, {{claim:v2.curve.full.x5_e3_k5.hi}}] | {{claim:v2.curve.full.x5_e3_k8.median}} [{{claim:v2.curve.full.x5_e3_k8.lo}}, {{claim:v2.curve.full.x5_e3_k8.hi}}] |
+
+Every interval spans zero, and the registered verdict, that siting by design does not beat random
+siting by a resolvable amount, stands with intervals that now mean something. The two tests are
+separate: the one above compares subsets of the panel's networks under one model, and the curve
+compares fitting designs under a fixed held-out set. They agree.
 
 What this establishes is bounded in the same way as the nulls of {{ref:s-six-negative-results-their}}. The interval does
 not exclude an advantage as large as {{claim:site.paired_hi}}, so deliberate siting is

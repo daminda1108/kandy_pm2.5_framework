@@ -24,15 +24,17 @@ structure a floor-based estimator needs in order to mean anything.
 And it would settle whether the local increment can be treated as fresh primary aerosol, which
 {{ref:s-independent-chemical-check}} showed is too simple because stagnation ages local precursors in place.
 
-A regional background station. It ranks second for Kandy rather than first, and the reason to
-want one anyway is that it would close a question the panel can only bound. {{ref:s-marginal-predictive-value-each}} rebuilt
-the background from a donor city the target never sees and recovered
-{{claim:donor.gain_reproduced_pct}} per cent of the gain, which establishes that the rung carries
-regional information rather than more of the same network. It does not divide the residual
-quarter, because donor distance is confounded with independence, and in Kandy's own band recovery
-falls to {{claim:donor.reproduced_deep_tropical}} per cent on
-{{claim:donor.km_deep_tropical}}-kilometre donors. A real station five to fifty kilometres out
-would separate the two in a way no re-analysis of the existing panel can.
+A regional background station. {{ref:s-measurement-priority-ordering}} does not rank it against
+local stations, because read on the same footing the two are worth the same to a daily city mean.
+The reason to want one in particular is that it would close a question the panel can only bound.
+The panel's background is a low quantile of the same network's other stations, and
+{{ref:s-marginal-predictive-value-each}} rebuilt it from an independent network thirty to three
+hundred kilometres away and recovered {{claim:donor.gain_reproduced_pct}} per cent of its gain per
+city, which establishes that the rung carries regional information rather than more of the same
+network. It does not divide the remainder, because donor distance is confounded with
+independence. A real regional station five to fifty kilometres from Kandy would separate the two
+in a way no re-analysis of the existing panel can, and it would supply the regional series that
+the model's background term is currently built without.
 
 The nearest candidate donor was tested and refused. Colombo lies {{claim:donor.colombo_km}}
 kilometres away, is reference grade, and its record was already held; daily correlation with Kandy
@@ -49,18 +51,24 @@ measurement.** {{ref:ch-model-stops}} established that the spatial limit is a ch
 data deficiency, and that a learned pattern does not beat the best single predictor by more than
 {{claim:phase1.min_detectable}} on the frame available. That frame is a convenience sample, since
 regulatory and low-cost networks are sited for compliance and access, so the natural proposal is
-to site monitors on purpose. {{ref:s-six-negative-results-their}} tested that proposal on the panel's own dense networks:
+to site monitors on purpose. {{ref:s-deliberate-siting-tested-dense}} tested that proposal on the panel's own dense networks:
 paired within city, deliberate siting scores {{claim:site.paired_median}} against convenience
-siting [{{claim:site.paired_lo}}, {{claim:site.paired_hi}}]. The interval does not exclude a
-modest advantage, so this is a bound and not a refutation, but it leaves no measured case for
-ranking deliberate siting as an observation this model would use.
+siting [{{claim:site.paired_lo}}, {{claim:site.paired_hi}}]. The registered spatial learning curve
+of {{ref:s-what-stations-buy-map}} tested it again under a fixed held-out design and found the
+same: for kriging from three stations, sites chosen to span the covariates minus sites chosen at
+random is {{claim:v2.curve.full.x5_e3_k3.median}}
+[{{claim:v2.curve.full.x5_e3_k3.lo}}, {{claim:v2.curve.full.x5_e3_k3.hi}}]. Neither interval
+excludes a modest advantage, so this is a bound and not a refutation, but it leaves no measured
+case for ranking deliberate siting as an observation this model would use.
 
-One further item belongs here even though it is an analysis and not an observation, because
-it needs no new data and it would sharpen the thesis's most policy-relevant result. {{ref:s-recommendation-inverts-tropics}}
-reports that the measurement-priority ordering differs between bands and states that latitude is
-a label rather than a mechanism. The candidate mechanism is the amplitude of the regional
-seasonal cycle, which is high in the temperate bands and weak in the deep tropics, and which is
-computable for every city already on disk. Sorting the panel by that amplitude directly, and
-asking whether the ordering follows the amplitude or the latitude, would convert a stratified
-association into a tested explanation. It should be registered before it is run, for the reason
-{{ref:s-methodological-lessons-beyond-problem}} gives.
+One further item belongs here even though it is an analysis and not an observation, because it
+needs no new data. Whether the value of a station differs between climate bands is the question
+this thesis would most like to answer for Kandy and cannot. The confirmation could not see
+latitude: its test of a latitude dependence was undetectable, with only four low-latitude cities
+among those scored, and the spatial learning curve could not distinguish tropical cities from the
+others. A candidate mechanism that would make the question testable with more power is the
+amplitude of the regional seasonal cycle, which is high in the temperate bands, weak in the deep
+tropics, and computable for every city already on disk. Sorting the panel by that amplitude and
+asking whether the value of a background or of a station follows it would replace a latitude label
+with a quantity. It is an exploratory analysis idea, and it should be registered before it is run,
+with arms built the same way, for the reason {{ref:s-methodological-lessons-beyond-problem}} gives.

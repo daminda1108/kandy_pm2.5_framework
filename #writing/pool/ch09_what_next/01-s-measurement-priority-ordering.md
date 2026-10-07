@@ -1,102 +1,117 @@
 ## The measurement-priority ordering {#s-measurement-priority-ordering}
 
 The practical question behind this thesis is what a city with almost no monitoring should obtain
-first. The answer is not a single instrument, because it depends on what the city already has and
-on which group of cities it resembles. The figure below sets that out as the decision it actually
-is: start from what is already available at no cost, then branch on whether the city has any local
-observation at all, and then branch again on the group it belongs to, because {{ref:s-recommendation-inverts-tropics}} shows the
-ordering reverses between those groups. Each endpoint names the measurement to obtain and the
-section that prices it. The diagram encodes ordering only. It does not encode cost, and the
-distinction is the subject of the paragraph that follows.
+first. The answer depends less on which instrument is bought than on how its readings are used,
+and it depends on the purpose the estimate serves: a daily city level, a check on that level, or
+a map of where in the city pollution is highest. The ordering below is stated for those purposes
+in turn. It rests on the panel measurements of {{ref:s-marginal-predictive-value-each}}, read with
+the post hoc re-analysis that put every observation on the same footing [ledger F.124], and on the
+spatial results of {{ref:ch-model-stops}}.
 
-{{dia:decisiontree}}
-
-This section ranks measurements by the marginal predictive value defined in {{ref:s-marginal-predictive-value-each}}, and that
-is not the same thing as a procurement optimum. No cost enters the ladder, and neither does
-maintenance, calibration burden, instrument reliability, compliance value, temporal or spatial
-coverage, nor the consequence of a decision made on the output. What follows therefore **informs**
-procurement rather than optimising it: it says which measurement this model can use most, not
-which purchase a programme should make once its own costs and obligations are counted. The
-distinction matters most where the two could diverge, and a reference-grade instrument is the
-clearest case: no rung of the ladder priced one, the measurement-design argument below favours it,
-and {{ref:ch-kandy-setting-record-stakes}} notes that it costs tens of thousands of dollars to install.
+This section ranks measurements by marginal predictive value, and that is not the same thing as a
+procurement optimum. No cost enters the ladder, and neither does maintenance, calibration burden,
+instrument reliability, compliance value, coverage, nor the consequence of a decision made on the
+output. What follows therefore **informs** procurement rather than optimising it: it says which
+measurement this model can use most, not which purchase a programme should make once its own
+costs and obligations are counted. Two further limits of scope travel with every statement here.
+The confirmation cities were mostly temperate and mostly served by regulatory reference networks,
+so low-cost tropical networks lie outside the population the ladder was confirmed on, and Kandy
+lies outside it too. And the value of a reference-grade instrument as such was never a rung,
+which is why it is argued separately below.
 
 **Take the free data first.** Terrain, roads, land cover, vegetation, night lights, population,
 reanalysis meteorology and satellite retrievals cost nothing and are available for every city.
-Together they buy {{claim:step.geography}} per cent on the ladder, comparable to the first
-instrument a city could purchase. A programme that has not exhausted them is leaving the cheapest
-available improvement unused.
+Every gain reported below is measured on top of them, so a programme that skips this step will
+see larger gains from its first instruments without being better off. The free streams are also
+not exhausted by the set the ladder used: a richer registered baseline, adding atmospheric
+composition reanalysis, fires, satellite nitrogen dioxide, rainfall and terrain, improved the
+sensorless estimate by a further {{claim:v2.rich.bud0_gain.median}} per cent
+[{{claim:v2.rich.bud0_gain.lo}}, {{claim:v2.rich.bud0_gain.hi}}], and every registered verdict
+survived the change.
 
-Then buy according to the group of cities the target belongs to, not according to the global
-average.
+**Then obtain continuous stations whose readings reach the estimate every day.** This is the
+recommendation of this thesis, and it is the one most robust to how the evidence is read. When a
+station's reading is used on the day it is taken, two stations reduce daily error in the
+reconstructed city mean by {{claim:v2.review.registered_loco.reco.gL2s_rmse.median}} per cent
+[{{claim:v2.review.registered_loco.reco.gL2s_rmse.lo}}, {{claim:v2.review.registered_loco.reco.gL2s_rmse.hi}}].
+Used only to recalibrate the sensorless estimate, as the registered first rung used them, the
+same two stations gave {{claim:v2.conf.reco.first2_rmse.median}} per cent
+[{{claim:v2.conf.reco.first2_rmse.lo}}, {{claim:v2.conf.reco.first2_rmse.hi}}] on the fresh
+confirmation cities, and nothing detectable on high-pollution days. On cities with full station
+networks the same contrast holds at every station count:
 
-{{fig:acquisition}}
+{{fig:stationdaily}}
 
-Pooled across the panel, a regional background station is the largest single gain at
-{{claim:step.bud2_bud3}} per cent and two local sensors buy {{claim:step.bud0c_bud1}} per cent.
-Within the deep tropical band, which is the band Kandy belongs to, the ordering reverses: local
-sensors buy {{claim:maiac.deep_tropical_first2}} per cent against
-{{claim:maiac.deep_tropical_background}} per cent for the background, a local advantage of
-{{claim:maiac.deep_tropical_local_advantage}} times.
+One station read daily reduced error by {{claim:v2.review.k.day1.median}} per cent
+[{{claim:v2.review.k.day1.lo}}, {{claim:v2.review.k.day1.hi}}], two by
+{{claim:v2.review.k.day2.median}} per cent [{{claim:v2.review.k.day2.lo}}, {{claim:v2.review.k.day2.hi}}]
+and five by {{claim:v2.review.k.day5.median}} per cent [{{claim:v2.review.k.day5.lo}}, {{claim:v2.review.k.day5.hi}}],
+while the same stations used as a calibration only gave about {{claim:v2.review.k.cal2.median}}
+per cent whatever their number. Most of the value arrives with the first two or three stations,
+and almost all of it lies in the daily reading rather than in the calibration. A short campaign
+that co-locates instruments for a few weeks and then leaves recovers a small fraction of what a
+station reporting continuously is worth.
 
-For Kandy specifically, therefore, **the first purchase is a local observation rather than a
-regional one**. {{ref:s-recommendation-inverts-tropics}} shows that conclusion survives a paired interval over cities on the
-clean satellite stream, favouring local sensors in {{claim:inv.maiac.frac_cities}} per cent of
-the band, and that it does **not** survive on the contaminated stream.
+The kind of station hardly matters for this purpose. Used on the same footing, two local stations,
+a background summarising the rest of the network and any two other stations were indistinguishable:
+the background minus the first two is {{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.median}}
+points [{{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.lo}}, {{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.hi}}]
+for ordinary days and {{claim:v2.review.registered_loco.reco.BGallmL2s_exceed.median}} points
+[{{claim:v2.review.registered_loco.reco.BGallmL2s_exceed.lo}}, {{claim:v2.review.registered_loco.reco.BGallmL2s_exceed.hi}}]
+for exceedances of the guideline, and the prospective arm, in which every stream keeps reporting
+and coefficients come only from the earlier half of the record, gives
+{{claim:v2.review.registered_loco.pros.BGallmL2s_rmse.median}} points
+[{{claim:v2.review.registered_loco.pros.BGallmL2s_rmse.lo}}, {{claim:v2.review.registered_loco.pros.BGallmL2s_rmse.hi}}].
+The registered ladder reported a background series ahead of the first local stations by
+{{claim:v2.conf.reco.bgm2_rmse.median}} points, but that comparison set a reading used on the day
+against a reading used only for calibration, so it is quoted as constructed and **does not rank
+a background above local stations**. For Kandy the consequence is direct. The stations of the
+Central Environmental Authority in the city, the regional stations of the National Building
+Research Organisation and the university's own sensor network should all be brought into the
+estimate as continuous daily inputs, whichever of them can be obtained, and they are
+complementary rather than ranked.
 
-The scope of that recommendation should be stated exactly, because it is the sentence most likely
-to be lifted out of this thesis. What is established is that **within this panel, the
-deep-tropical group is the closest available analogue to Kandy, and within that group a local
-observation outranks the background stand-in.** It is not established that tropical cities in
-general should buy local monitors first. The group contains thirteen cities, band travels with
-instrument class and five other things, and {{ref:s-recommendation-inverts-tropics}} sets out why a latitude label is not a
-mechanism. A city that resembles Kandy in the ways this panel can measure should read the band
-row; a city that does not has been given a method for pricing its own options, which is the more
-transferable product of the two.
+**Make at least one of them reference grade, for a reason the ladder does not price.** The case
+for a reference instrument is a measurement-design argument and stands on its own. It would
+settle the level discrepancy of {{ref:s-checks-kandy-carry-weight}}, where three of four
+independent records sit below the model and the one that matches carries an undocumented
+instrument. It would anchor the calibration of the low-cost sensors already in the basin, against
+which their performance can be assessed on a published protocol [@Duvall2021]. And it would settle
+the shape of the diurnal cycle, which at present depends on a humidity correction: with a constant
+relative humidity the corrected low-cost record has a peak-to-trough ratio of
+{{claim:v2.rh.constant_rh80.peak_to_trough}}, and with hourly humidity
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Only a co-located reference record can say
+which is right. None of the station-count figures above is evidence for this case, and it does
+not need them.
 
-**And the ordering holds for one loss, not for all of them.** {{ref:s-ordering-under-four-loss}} re-scores the ladder
-under four scoring rules. Under daily and absolute error the local advantage is
-{{claim:loss.inv.rmse}} and {{claim:loss.inv.mae}} points. On days in the observed top decile it
-is {{claim:loss.inv.tail}} points and on exceedance at the World Health Organization guideline
-{{claim:loss.inv.exceedance}} points
-[{{claim:loss.inv.exceedance.lo}}, {{claim:loss.inv.exceedance.hi}}], both favouring the
-background proxy, with the exceedance interval excluding zero. **A programme whose purpose is a
-daily city-mean field should buy the local observation first. A programme whose purpose is
-exceedance detection or health alerting should not**, and the background series is worth
-{{claim:loss.bg.tail}} per cent on episode days, its largest value under any loss. {{ref:ch-kandy-setting-record-stakes}} names
-both purposes, so the ordering has to be stated with its loss attached and not as a single
-recommendation.
+**Do not expand the network to improve the daily mean.** Beyond two or three stations read daily,
+further stations add little to a daily city-level estimate. On full networks a background
+summarising about ten outer stations added
+{{claim:v2.review.full_loco.reco.BGallmL2s_rmse.median}} points
+[{{claim:v2.review.full_loco.reco.BGallmL2s_rmse.lo}}, {{claim:v2.review.full_loco.reco.BGallmL2s_rmse.hi}}]
+over two stations read on the day, an effect of count rather than of kind, and stations three to
+six used as a recalibration added {{claim:v2.conf.reco.s36_rmse.median}} points
+[{{claim:v2.conf.reco.s36_rmse.lo}}, {{claim:v2.conf.reco.s36_rmse.hi}}]. That last value is close
+to guaranteed by design, because a recalibration with an intercept and a slope is already fixed by
+two stations, so it says that further stations used that way add nothing, not that they carry no
+information. A pair still buys something the ladder does not score: a second sensor makes a
+between-sensor comparison possible, which is how the calibration checks of
+{{ref:s-checks-kandy-carry-weight}} were obtained at all.
 
-Two separate arguments then point at a reference-grade instrument, and they should not be
-merged. The ladder measured two low-cost sensors, so it establishes that a local observation
-outranks a regional one in this band. It does not establish the value of a reference monitor,
-which was never a rung. The case for making that local observation reference-grade stands on its own as a
-measurement-design argument. A reference instrument would settle the level discrepancy of
-{{ref:s-checks-kandy-carry-weight}}, where three of four independent records sit below the model and the one that matches
-carries an undocumented instrument. It would also anchor the calibration of any low-cost sensors
-deployed afterwards, against which their performance can be assessed on a published protocol
-[@Duvall2021]. That case is strong, and the
-{{claim:maiac.deep_tropical_first2}} per cent figure is not evidence for it.
+**Buy a network for a map only if the map is the purpose, and expect little from a small one.**
+A city that needs more stations needs them for a spatial purpose, such as locating hotspots,
+siting interventions or exposure mapping, and should judge them against that purpose. For that
+purpose the evidence is weak. {{ref:s-what-stations-buy-map}} finds that at three to eight
+stations neither interpolation nor a free product ranked neighbourhoods usefully, that
+interpolation clearly overtook a free land-cover layer in only
+{{claim:v2.curve.full.holm_crossing}} of twenty-three cities after correction for multiple
+testing, and that siting by design gained nothing. A Kandy network of a handful of stations should
+be expected to give the city's level and its days, not its neighbourhoods.
 
-Do not expand the local network as a way of improving this model, and the redundancy starts
-earlier than the ladder's rungs suggest. {{ref:s-marginal-predictive-value-each}} sweeps the station count from one to
-eight: a single station buys {{claim:stn.one_gain}} per cent, the second adds
-{{claim:stn.second_adds}} percentage points paired within city, and no count between two and
-eight beats one station by more than {{claim:stn.max_extra}}. **For a daily city mean under this
-model, on networks sited as these are, one local observation captures essentially everything a
-further local observation could add**, which makes this the most estimator-robust result in the
-study. The qualifiers are load-bearing and belong inside the sentence rather than after it: the
-quantity is a daily city mean and not an episode or an exceedance, the model is this one, and the
-stations sit where each city's programme happened to put them. {{ref:s-ordering-under-four-loss}} shows the finding
-surviving three further losses, including the two that ask about episodes. Declining to buy something is also the only
-recommendation here whose cost consequence is unambiguous, since no cost model is needed to
-price an instrument that is not purchased.
+The tropics cannot be given advice of their own. The confirmation held only four low-latitude
+cities with dense networks, its test of a latitude dependence was undetectable, and the public
+record holds too few dense tropical networks to settle the question. Nothing in this study
+suggests that the value of a same-day reading differs by climate band, and no ordering specific
+to Kandy's band is claimed.
 
-Two qualifications travel with it. This concerns monitors as networks actually place them, and
-whether placing them deliberately across land-use contrast changes the spatial picture is a
-separate question, which {{ref:s-six-negative-results-their}} tests on the panel's own dense networks. And a pair buys something the ladder does not score: a second sensor is what
-makes a between-sensor comparison possible, which is how the calibration checks of {{ref:s-checks-kandy-carry-weight}} were
-obtained at all. The advice is that a second station does not improve the model, not that it is
-worthless.
-
-{{tbl:T9_1}}
+{{tbl:T9_1_next_v2}}
