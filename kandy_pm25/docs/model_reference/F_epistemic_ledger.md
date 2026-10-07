@@ -6431,7 +6431,9 @@ first two **+13.3 %** vs 8.5, background +42.5 vs 41.1, H4 +25.9 vs 24.6) — le
 modestly; like for like unchanged (−0.21 [−0.55, +0.13]). **Station-count curve read on the day** (`ladder_v2_review_k.py`, 86
 cities, full networks): k = 1/2/3/5/8 → **+42.1 [31.8, 54.9] / +53.3 / +55.8 / +58.4 / +60.9 %**; second station +4.48
 [2.51, 5.91]; as recalibration ~11 % flat for every k. F.116's "saturation after one or two stations" is a property of the
-recalibration. H2 (+0.2) is close to
+recalibration. **Data-QA sensitivity (2026-10-07):** CNEMC timestamps were China Standard Time stored as UTC and ~35 % of CNEMC rows
+duplicated; corrected (`--clean`): first two same-day +58.9 [47.7, 68.2], background − first two −0.14 [−0.70, +0.21];
+CNEMC level 70.8 % vs other networks 52.4 % — the pooled ~58 % mixes the two; report by network. H2 (+0.2) is close to
 guaranteed by construction (two stations already fix a two-parameter map). Quote H1–H5 as "as constructed"; never
 "a background is worth more than local stations".
 

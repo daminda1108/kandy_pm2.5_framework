@@ -156,6 +156,12 @@ Top SHAP drivers: wind_speed (3.594), pm25_prev_month_mean (0.809), rwp (0.641),
 | 90 % PI width | 22.3 µg/m³ | — |
 | CRPS | 2.9 | — |
 
+⚠ **These are the lagged nowcaster's scores, not the deployed anchor's (corrected 2026-10-07).** The v3.0 blend uses
+observed PM2.5 from earlier hours as features. The deployed temporal anchor `T(t)` is the **lag-free** model, which must
+predict hours with no sensor; its own pooled hourly leave-one-month-out skill is **R² 0.33, RMSE 9.87 µg/m³, 90 %
+coverage 0.72 before conformal correction**. Simple lag-1 persistence reaches R² 0.76 on the same sensor-hours, so the lagged
+blend's 0.58 says little. Most of `T(t)`'s skill is seasonal and daily (daily r 0.69, monthly r 0.89).
+
 Production model is a linear blend of LightGBM + CatBoost + XGBoost-quantile wrapped in CV+ Mondrian conformal calibration. Per-sensor offsets `b_FECT` (Akurana −9.105, Hantana −13.749 µg/m³) anchor the residual target to zero mean by construction.
 
 Against Senarathna 2024 diurnal pattern: r = +0.865 (morning peak 07 LT match, evening peak 18–19 LT with 1 h drift). Embassy Colombo out-of-domain coverage (2019–2025): cov90 = 0.861, RMSE = 9.51, R² = 0.452 — point skill degrades out-of-domain but the predictive interval transfers honestly.

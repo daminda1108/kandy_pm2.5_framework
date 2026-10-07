@@ -100,6 +100,7 @@ rural or regional monitor. An independent network 30–300 km away recovers **71
 |---|---|---|
 | **"background outranks the first two stations"** (H4 +24.6, H5 +59.3) | rung construction: calibration-only vs same-day (F.124) | like for like −0.22 [−0.60, +0.04]; quote H4/H5 "as constructed" |
 | **"cities split: 15/23 cross the raster"**, **"tropical inside the temperate envelope"**, X5 **[0.00, 0.00]**, limit **0.24/0.28** | crossing labels within sampling noise; envelope rule uninformative; pooling bug; SD assumed | **3/23** after Holm; tropical − other −0.22 [−0.45, +0.02]; per-k X5; limit **0.35/0.51** (F.124) |
+| **T(t) skill "R² 0.581"** | that is the LAGGED blend (observed-PM lags), a nowcaster | deployed lag-free T(t): **R² 0.33**, daily r 0.69, monthly r 0.89 (review 2026-10-07) |
 | **f = 0.244 / 25.3%** | superseded by the coherence cap | **f ≈ 0.48** |
 | `eps0 = 2.573` | pre-cap | **3.69** |
 | **"Kandy ~90% vehicular"** | **REFUTED as a mass share (F.66)** | *traffic dominates local **timing**; it is a minority of local **mass*** |

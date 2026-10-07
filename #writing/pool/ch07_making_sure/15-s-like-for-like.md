@@ -77,3 +77,13 @@ is the evidence behind the measurement priorities for Kandy in the main text.
 exploratory. A registered test of the symmetric design would need a fresh set of dense networks that
 none of the analyses has seen, and the public archives no longer hold enough of them; it has not been
 run. The registered verdicts stand as registered and are quoted as constructed.
+
+**Data quality.** A later audit of the ingestion found that the Chinese national network's timestamps
+had been read as universal time when they are local time, and that about a third of its station-hours
+were duplicated. Repeating the re-analysis with both corrected leaves the comparison unchanged: two
+stations read on the day reduce daily error by
+{{claim:v2.review.registered_loco_clean.reco.gL2s_rmse.median}} per cent and the background minus
+the first two is {{claim:v2.review.registered_loco_clean.reco.BGallmL2s_rmse.median}} points. The
+pooled level is a mixture of networks, however: {{claim:v2.review.clean.cnemc.gL2s_median}} per cent
+in the Chinese cities and {{claim:v2.review.clean.other.gL2s_median}} per cent elsewhere, so the size
+of the gain depends on the network and the equality of the two uses does not.

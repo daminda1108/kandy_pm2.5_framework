@@ -45,7 +45,9 @@ shaped everything since: Kandy has **no public monitor**. The only local data ar
 **Phase 1 — machine learning and physics-informed networks (March–May 2026).**
 - **Satellite-ML model for the daily level.** The first version calibrated CAMS labels with KOALA and then validated
   against KOALA, which is circular. Moving to the FECT sensors as labels gave leave-one-month-out R² 0.69 (daily). An
-  hourly version reached 0.58, just short of its 0.60 target.
+  hourly version reported R² 0.58, but it uses the previous hours' measured PM2.5 as inputs. The anchor actually
+  deployed cannot (it must predict hours with no sensor): its own hourly R² is **0.33** (daily r 0.69, monthly r 0.89),
+  and simple persistence would score 0.76. I found this in the October review.
 - **Physics-informed models for the map.** A spatial PINN lost the ordering of stations, and all six parameters of a
   terrain-flow model hit their bounds.
 - **A cross-city neural process** (ConvCNP), trained on three valley cities and applied zero-shot to Kandy, gave an
@@ -178,7 +180,7 @@ PM(x, y, t) = B(t) + max(T − B, 0) · P(x, y, t) + min(T − B, 0) + ε(t)(P �
 | Spatial PINN (quasi-steady-state) | lost the ordering of stations under physics weight | moved to a time-dependent PINN, then cut spatial PINN work entirely |
 | Rigid terrain-flow ansatz (Whiteman) | all six parameters hit their bounds in every city | the functional form cannot represent different valley regimes |
 | ConvCNP cross-city transfer (3 source cities) | sound point skill; Gaussian likelihood collapsed the variance (coverage 0.54–0.73), fixed with Student-t + per-city×hour conformal | zero-shot map over-smoothed; fine-tuning on two sensors memorised their coordinates |
-| Temporal Fusion Transformer (hourly) | R² 0.45 against the tree blend's 0.58 | no gain |
+| Temporal Fusion Transformer (hourly) | R² 0.45 against the lagged tree blend's 0.58 | no gain |
 | Five rebuilds of the background B(t) | each moved one diagnostic and broke another | the hourly local/regional split is not identifiable from these data; I stopped at five |
 | Learned spatial pattern, foundation-model embeddings, land-use regression, six model families | none beat a single built-up covariate beyond its detection limit | information-limited at 1 km (Section 5.6) |
 | GEMS geostationary satellite | 55° viewing angle at Kandy (1 pixel over the domain); misses afternoon and night | geometry, decided before requesting access |

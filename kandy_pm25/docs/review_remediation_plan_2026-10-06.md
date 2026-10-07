@@ -286,3 +286,23 @@ feeds dropped) RUNNING; registered code untouched.
 **Burden interval (found by the thesis rewrite).** `health_burden.py:91–104` passes the field's q05/q95 exposure through
 the CENTRAL GEMM, so [237–632] is field spread with NO response-function uncertainty. CONTEXT.md, the ledger (F.110
 text), and the Dehideniya report said the opposite; all corrected 2026-10-07.
+
+**2026-10-07 — clean sensitivity DONE (`review_registered_loco_clean_*`).** CNEMC Asia/Shanghai → UTC and duplicate
+station-hours removed (city309: 596k → 385k rows); OpenAQ duplicate feeds: none present in the registered frame (the
+reviewer's 7 identical pairs are in the uncapped archive; the 12-station cap kept one of each). Union, same-day: first
+two **+58.9 [47.7, 68.2]** (was 58.8), background − first two **−0.14 [−0.70, +0.21]** (was −0.22), exceedance −0.44,
+prospective +0.07; registered construction on confirmation cities first two 8.5, background 41.1, H4 26.1 (was 24.6).
+**The timezone bug does not explain the network gap:** CNEMC same-day gain 71.8 → 70.8 %, other cities 51.0 → 52.4 %.
+The pooled ~58 % is a mix of a ~71 % Chinese-network and a ~52 % other-network level; report gains by network. The
+equality of the arms holds in both.
+
+**(b2) Temporal-anchor review (subagent, 2026-10-07; key numbers re-verified by hand).** **The reported R² 0.581 is
+the lagged blend** (observed-PM lags), a nowcaster; the deployed lag-free T(t) scores **R² 0.327, RMSE 9.87, cov90
+0.717 pre-conformal; daily r 0.69, monthly r 0.89** (verified). Lag-1 persistence R² 0.758 (verified) beats the lagged
+blend. Other findings: Mondrian bins and calendar features on UTC hours; b_FECT from all data (−0.01 R²); month folds
+leave neighbouring months in training (error autocorrelation 0.34–0.50); blender weights fitted on the scored OOF;
+sharpening climatology confounded by the changing sensor mix (monthly factors move up to ~0.2); the extension tier and its
+tail correction are validated against the locked T(t), not observations; the shipped interval (shifted and sharpened)
+is never coverage-tested. **Done now:** relabelled everywhere (README public, CLAUDE, CONTEXT, report, claims
+`v2.tanchor.*`, thesis model limits). **Deferred to the CEA rebuild (K-f):** buffered folds, per-fold offsets,
+local-hour Mondrian, sensor-relative sharpening, coverage test of the shipped interval.

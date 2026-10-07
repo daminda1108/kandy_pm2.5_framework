@@ -16,6 +16,18 @@ omitted, and {{ref:ch-model-stops}} gives the measured consequence at a city whe
 
 ### Limits of the Kandy sensor record {#s-limits-kandy-sensor-record}
 
+The skill of *T*(*t*) itself is modest at the hourly scale. The deployed anchor uses no measured
+concentration as an input, because it must predict the hours that no sensor observed, and scored by
+leaving out one month of one sensor at a time it reaches a coefficient of determination of
+{{claim:v2.tanchor.lagfree.r2}} on hourly values, with a root mean square error of
+{{claim:v2.tanchor.lagfree.rmse}} micrograms per cubic metre and a coverage of
+{{claim:v2.tanchor.lagfree.cov90}} for its nominal ninety per cent interval before the conformal correction.
+A variant that also uses the concentrations measured in earlier hours reaches
+{{claim:v2.tanchor.lagged_blend.r2}}, but that variant is a short-range nowcaster rather than a
+reconstruction, and simple persistence of the previous hour does better still, so its score is not
+evidence for *T*(*t*). Most of the anchor's skill lies in the daily and seasonal variation that the
+validation of the following chapter tests across cities.
+
 Three further limits concern the low-cost sensor record that shapes *T*(*t*), and each was
 identified by an external review of the chain.
 

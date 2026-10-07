@@ -2119,6 +2119,32 @@ def registered_v2(c: Claims) -> None:
             c.add(f"v2.rh.{v}.peak_to_trough", float(d.loc[v, "peak_to_trough"]),
                   stat="FECT normalised diurnal peak/trough ratio", n=2, source=p.name, ledger="F.124")
 
+    # temporal anchor T(t): the DEPLOYED lag-free model's own leave-one-month-out skill (review 2026-10-07).
+    # The 0.581 often quoted belongs to the lagged blend (observed-PM lags), a nowcaster, not to T(t).
+    pt = REPO / "data" / "processed" / "stage1_v3" / "training" / "summary_v3_lgbm_lagfree.csv"
+    if pt.exists():
+        r = pd.read_csv(pt).iloc[0]
+        for k, col, lab in (("r2", "r2_pooled", "R squared"), ("rmse", "rmse_pooled", "RMSE, ug/m3"),
+                            ("cov90", "cov90_pooled", "90 % interval coverage before conformal correction")):
+            c.add(f"v2.tanchor.lagfree.{k}", float(r[col]), stat=f"lag-free T(t), pooled hourly leave-one-month-out {lab}",
+                  n=int(r["n_obs"]), source=pt.name, ledger="F.124")
+    pb = REPO / "data" / "processed" / "stage1_v3" / "training" / "summary_blend_v3.csv"
+    if pb.exists():
+        b = pd.read_csv(pb)
+        row = b[b.model.str.contains("blend", case=False)].iloc[0] if b.model.str.contains("blend", case=False).any() else b.iloc[-1]
+        c.add("v2.tanchor.lagged_blend.r2", float(row["r2"]), stat="lagged blend (uses observed-PM lags; a nowcaster, "
+              "not the deployed T(t)), pooled hourly leave-one-month-out R squared", n=int(row["n"]), source=pb.name,
+              ledger="F.124")
+
+    # data-QA sensitivity (2026-10-07): same-day first-two gain by network, after the CNEMC timezone/duplicate fix
+    pc = L2 / "review_registered_loco_clean_percity_symmetric_reconstruction.csv"
+    if pc.exists():
+        d = pd.read_csv(pc, index_col=0)
+        for lab, sub in (("cnemc", d[d.cluster == "CNEMC"]), ("other", d[d.cluster != "CNEMC"])):
+            c.add(f"v2.review.clean.{lab}.gL2s_median", float(sub.gL2s_rmse.median()),
+                  stat=f"median % daily RMSE gain, first two read daily, {lab} cities (clean data)",
+                  n=int(sub.gL2s_rmse.notna().sum()), source=pc.name, ledger="F.124")
+
     # F.117 addendum: paired MAIAC - GHAP on background minus first two (discovery, v2 estimator, exploratory)
     pm = L2 / "maiac_s21_b5_crossfit_c18_grid_dv2_percity_reconstruction.csv"
     pg = L2 / "ghap_s21_b5_crossfit_c18_grid_dv2_percity_reconstruction.csv"
@@ -2138,7 +2164,7 @@ def registered_v2(c: Claims) -> None:
               n=len(j), source=pm.name, ledger="F.117 addendum")
 
     # ladder re-analysis (review L1-L3), once run
-    for fr, bud in (("registered", "loco"), ("full", "loco"), ("registered", "lono")):
+    for fr, bud in (("registered", "loco"), ("full", "loco"), ("registered", "lono"), ("registered", "loco_clean")):
         p = L2 / f"review_{fr}_{bud}_summary.json"
         if not p.exists():
             continue

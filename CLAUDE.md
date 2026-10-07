@@ -230,6 +230,10 @@ and the ledger before spending anything on it.
 - **Architecture**: hourly residual target `pm25 − c_prior_anchored` where `c_prior_anchored = ρ·GEOS-CF + b_FECT[sensor]`. Per-sensor offset in `data/processed/stage1_v3/v3_station_constants.json` (Akurana b_FECT=−9.105, Hantana b_FECT=−13.749). Residual centred on −0.028 µg m⁻³ (H8 PASS by construction).
 - **Dataset**: 19,686 hourly rows × 43 cols (`data/processed/stage1_v3/dataset_v3_hourly.parquet`). 33 trainable features. NaN map: GEOS-CF 1.1%, ERA5 0.8%, CAMS 0.8%, MAIAC 84.5%, t925 100% (deferred).
 - **v3.0 production**: linear blend of LightGBM+CatBoost+XGBoost-quantile (0.46/0.48/0.06) + **CV+ Mondrian conformal**. Outputs `data/processed/stage1_v3/training/predictions_blend_v3.parquet`.
+- ⚠ **(2026-10-07 review)** The numbers below are the **LAGGED blend** (observed-PM lags 1/3/24/168 h), a nowcaster.
+  The **deployed T(t) is the lag-free LGBM: pooled hourly LOMO R² 0.327, RMSE 9.87, cov90 0.717 pre-conformal; daily
+  r 0.69, monthly r 0.89** (`summary_v3_lgbm_lagfree.csv`; claims `v2.tanchor.*`). Lag-1 persistence R² 0.76. Never
+  quote 0.581 as T(t)'s skill. Further T(t) issues and their deferred fixes: review plan §5 (b2).
 - **Pooled hourly LOMO** (60 folds, 53 non-empty, 19,388 obs): **RMSE 7.76, R² 0.583, cov90 0.865, PI width 22.3, CRPS 2.9**.
 - **v3-extended (39 feat)**: RMSE 7.78, R² 0.581, cov90 0.867. Tier-1 features did NOT lift R². **Path A negative result.**
 - **Pre-reg gates**: H1 PASS (60% RMSE reduction); H2 cov90 **PASS (0.867)**; H3 R²≥0.60 **CLOSED AS HONEST NEAR-MISS at 0.581**; H4 (Embassy daily) PASS at 0.861; H7 **PASS**; H8 residual mean −0.028 **PASS**.

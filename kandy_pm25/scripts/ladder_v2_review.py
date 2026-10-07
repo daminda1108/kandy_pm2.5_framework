@@ -210,7 +210,7 @@ def _drop_duplicate_feeds(st: dict, p: pd.DataFrame):
             dup = False
             for j in keep:
                 both = w[[i, j]].dropna()
-                if len(both) >= 30 and (both[i] - both[j]).abs().max() < 1e-9:
+                if len(both) >= 30 and ((both[i] - both[j]).abs() < 1e-6).mean() >= 0.95:
                     dup = True; break
             if not dup:
                 keep.append(i)
