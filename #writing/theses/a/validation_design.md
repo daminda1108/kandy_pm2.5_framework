@@ -14,14 +14,12 @@ The first line asks whether the field's **level** agrees with measurements at Ka
 part in building it. Four published records qualify: annual means from a monitor of the national
 research organisation for two years, and three records from low-cost sensors, each carrying its
 own calibration. The model is read at the cell containing each site and compared with the
-published annual mean. The comparison is of an area mean with a point, so it is governed by an
-explicit observation model: a reading is the cell value seen through an operator for that kind of
-instrument, plus a systematic offset for siting and calibration, plus a random
-representativeness error for variation inside the cell. The offset and the representativeness
-error can be estimated where a reference monitor exists and cannot be estimated at Kandy, which
-has none; the observation model therefore disciplines the comparison at Kandy without correcting
-it ({{ref:s-comparing-areal-model-point}}). These records test the level at a few points. They
-cannot test the timing of the field, its spatial pattern, or any other part of the city.
+published annual mean. The comparison is of an area mean with a point, so it is governed by the
+observation model of {{ref:s-comparing-areal-model-point}}. These records test the level at a few
+points. They cannot test the timing of the field, its spatial pattern, or any other part of the
+city.
+
+{{include:pool/ch06_the_model/02-s-comparing-areal-model-point.md shift=1}}
 
 ### Budget-matched transfer to analogue cities {#s-borrowed-ground-truth}
 
@@ -59,7 +57,7 @@ design, and Kandy contributes nothing to any of its panels.
 The ladder's own sensorless rung is a generic learner of the daily city mean, not the model
 deployed at Kandy. To make the ladder a validation of the deployed model, the model's temporal
 anchor was added to it as two further rungs. Only the anchor is needed, because the field's city
-mean is *T*(*t*) exactly. The first rung runs the anchor's chain with no stations at all: the
+mean is *T*(*t*) to within {{claim:gauge.drift_hi_pct}} per cent. The first rung runs the anchor's chain with no stations at all: the
 composition prior, shifted each year to the satellite level. The second runs it as deployed at
 Kandy, with two stations of each city as its anchor pair, used for training, interval calibration
 and amplitude correction but never read on the day being predicted. Both are scored on the same

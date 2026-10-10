@@ -46,7 +46,4 @@ in practice, and this thesis states it that way, not as an exact identity.
 
 Two assumptions carry the construction: that the background can be treated as uniform across the
 domain, and that the imposed pattern is more than an arbitrary prior. Both are examined in
-{{ref:s-decomposition-assumptions}}. In brief, the uniform background is mostly a definition, since
-any structure across fifteen kilometres is assigned to the increment, and the pattern is built from
-measured quantities, scored against withheld monitors in other cities, and partly refuted by that
-scoring.
+{{ref:s-decomposition-assumptions}}.

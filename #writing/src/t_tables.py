@@ -446,7 +446,7 @@ def t7_1_ladder_v2():
             _ci(c + "bgm2_exceed") + " points"]],
           note="Verdicts stand as registered (OSF ueyfr). The rungs use their stations differently: "
                "the local stations never enter a day's prediction, the background does. H4 and H5 "
-               "therefore compare uses, not observations (Table 7.2).")
+               "therefore compare uses, not observations; {{ref:s-like-for-like}} compares them on equal terms.")
 
 
 def t7_2_like_for_like_v2():
@@ -490,7 +490,7 @@ def t3_km_rung():
                f"bias are for the reconstruction use. The deployed chain's nominal 90 per cent interval "
                f"covered a fraction {tok(r + 'K2_cov90.median')} of held-out daily means in reconstruction and "
                f"{tok(p + 'K2_cov90.median')} prospectively. Specified before scoring "
-               f"(docs/kandy_model_rung_spec_2026-10-10.md); not registered.")
+               f"and committed to the project record; not registered.")
 
 
 def t9_1_next_v2():
@@ -518,8 +518,8 @@ def t9_1_next_v2():
             f"satellite surface ranked at {tok('v2.curve.full.ghap.median')}"],
            ["Precipitation in the drivers", "wet removal",
             f"REGISTERED NULL: {tok('precip.p1')} per cent on the sensorless rung"]],
-          note="Supersedes Table 9.1 of the September build, whose first row rested on the retracted "
-               "deep-tropical ordering (F.115–F.117) and on the registered rung construction (F.124).")
+          note="The first row rests on the like-for-like re-analysis, not on the registered rung "
+               "construction, and no ordering specific to the deep tropics is used.")
 
 
 BUILDERS = {

@@ -474,6 +474,20 @@ def main() -> int:
     # figure captions may too, so claims resolve after insertion.
     text, assigned, captions, vis_missing, fig_sources = resolve_visuals(text)
     problems += vis_missing
+    # A visual MENTIONED inline but never PLACED renders as "Table 3.3" with nothing behind it.
+    # That passed every gate on 2026-10-10 and an external reviewer found it in the PDF.
+    placed = {f"tbl:{t}" for t in re.findall(r"(?m)^\s*\{\{tbl:([A-Za-z0-9_]+)\}\}\s*$", "\n".join(lines))}
+    placed |= {f"fig:{t}" for t in fig_sources}
+    for key, lab in assigned.items():
+        if key not in placed:
+            problems.append(f"{lab} ({key}) is referenced but never placed")
+    # A typed "Table 7.2" / "Figure 4.1" that no visual carries (a stale number in prose or in a
+    # generated table note) is the same defect in another form.
+    known = set(assigned.values())
+    for typed in sorted(set(re.findall(r"\b(?:Table|Figure) (?:\d+|[A-J])\.\d+\b",
+                                       re.sub(r"(?m)^(?:Table: |!\[).*$", " ", text)))):
+        if typed not in known:
+            problems.append(f"typed reference '{typed}' matches no placed visual")
     text, missing = resolve_refs(text, labels)
     problems += missing
     text, missing = resolve_claims(text, claims)

@@ -5,6 +5,8 @@ The deployed model's temporal anchor was scored as a rung of the ladder in
 withheld stations ({{ref:s-validation-ladder}}). {{tbl:T3_km_rung}} gives the result. It has to be
 read in two uses, because they answer different questions about Kandy.
 
+{{tbl:T3_km_rung}}
+
 **Where the two anchor stations observed the period being reconstructed**, the deployed chain is
 the strongest of the estimates tested that do not read stations on the day. It reduces daily error by
 {{claim:v2.km.reco.unio.gK2_rmse.median}} per cent relative to the generic sensorless learner

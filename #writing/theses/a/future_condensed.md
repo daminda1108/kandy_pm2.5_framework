@@ -25,6 +25,17 @@ refused: its daily correlation with Kandy is {{claim:donor.colombo_r}} against a
 {{claim:donor.benchmark_median_matched}} at comparable separation, consistent with the finding of
 [@Senarathna2026] that sensor calibrations do not transfer between the two climatic zones.
 
+**A fresh, pre-specified like-for-like test of the ladder.** The finding that the kind of station
+matters little rests on a post hoc re-analysis of registered data ({{ref:s-like-for-like}}). It
+should be confirmed by a test registered before scoring, with every observation source used the
+same way and scored both prospectively and on cities or networks that have played no part in any
+earlier panel. The same registration should include the deployed model's rung
+({{ref:s-kandy-model-rung}}), which was specified before scoring but not registered.
+
+**An independent reproduction.** Every number in this thesis is regenerated from source files at
+each build, but no one outside the project has yet re-run the chain from the source datasets.
+That is the check that would turn a documented workflow into a demonstrated one.
+
 ### The construction step most worth revisiting {#s-construction-step-most-worth}
 
 Scored against held-out stations, the dispersion step lowers the pattern's rank correlation from

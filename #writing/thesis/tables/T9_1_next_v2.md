@@ -8,4 +8,4 @@ Table: Measurement priorities for Kandy, and the kind of evidence behind each
 | A network for a neighbourhood map | where in the basin pollution is highest | SPATIAL CURVE: at three to eight stations no method ranked neighbourhoods usefully; {{claim:v2.curve.full.holm_crossing}} cities crossed a free layer after correction; a satellite surface ranked at {{claim:v2.curve.full.ghap.median}} |
 | Precipitation in the drivers | wet removal | REGISTERED NULL: {{claim:precip.p1}} per cent on the sensorless rung |
 
-Supersedes Table 9.1 of the September build, whose first row rested on the retracted deep-tropical ordering (F.115–F.117) and on the registered rung construction (F.124).
+The first row rests on the like-for-like re-analysis, not on the registered rung construction, and no ordering specific to the deep tropics is used.

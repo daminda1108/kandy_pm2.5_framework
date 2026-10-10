@@ -72,16 +72,11 @@ information.
 
 {{ref:ch-model}} sets out the decomposition, its components and the constraint that bounds the
 partition, and {{ref:a-validation}} reports its validation. {{This:a-app-decomposition}} gives the
-supporting detail: the two assumptions the construction rests on, the partition's sensitivity to
-each choice in the constraint, the observation model that governs any comparison of a cell with a
-point, the independent identification of the error in that comparison, and the best case of the
+supporting detail: the partition's sensitivity to each choice in the constraint, the independent
+identification of the error made in comparing a cell with a point, and the best case of the
 ten-city transfer.
 
-{{include:pool/ch06_the_model/01e-s-decomposition-assumptions.md}}
-
 {{include:pool/ch06_the_model/06b-s-partition-detail.md}}
-
-{{include:pool/ch06_the_model/02-s-comparing-areal-model-point.md}}
 
 {{include:pool/ch07_making_sure/09b-s-external-representativeness.md}}
 
@@ -100,6 +95,8 @@ product, bounds the locally emitted share, and records the test that could not b
 {{include:pool/ch11_appendices/00-app-constants-configuration.md}}
 
 {{include:pool/ch11_appendices/01-app-registered-predictions-their-outcomes.md}}
+
+{{tbl:T7_5}}
 
 {{include:theses/a/app_changes.md}}
 

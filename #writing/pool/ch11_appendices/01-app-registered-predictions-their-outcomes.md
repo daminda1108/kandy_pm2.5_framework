@@ -1,8 +1,8 @@
 # Registered predictions and their outcomes {#app-registered-predictions-their-outcomes}
 
 Every pre-registration lodged during this work, with its predictions and, where the analysis has
-run, its outcomes, is listed in {{tbl:T7_5}} in {{ref:s-pre-registration-working-practice}}. It is not repeated here, and
-no count of registrations or predictions is restated outside it: the table and its note are
+run, its outcomes, is listed in {{tbl:T7_5}}. No count of registrations or predictions is restated outside
+that table: the table and its note are
 generated from the registry at every build, so they are the only place those counts appear. The
 table marks which registrations have no outcome in this thesis, namely the Kandy measurement design,
 which is still under development, and the amendments that changed how an analysis was run without

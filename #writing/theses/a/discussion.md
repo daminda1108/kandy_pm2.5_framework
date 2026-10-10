@@ -118,11 +118,15 @@ ahead of local stations on the strength of the registered ordering, and before t
 local stations ahead of a background on the strength of an apparent reversal in the deep tropics
 that did not survive averaging over station splits. Neither recommendation stands. What replaces
 them is the recommendation above, which does not rank kinds of station and rests on how a
-station's readings are used.
+station's readings are used. That recommendation is better founded than either predecessor but not
+equally confirmed: the like-for-like comparison is a post hoc re-analysis of the registered
+data, and the near-equivalence of station types it reports awaits a fresh pre-specified test.
 
 Read together, the field is a well-founded account of when Kandy's air is worse and by roughly
 how much relative to the rest of the year, on a level that remains open, with a daily amplitude
 that depends on a humidity correction still to be checked, and with a spatial pattern that is
-imposed rather than measured. That is less than a validated map. It is also more than Kandy has
+imposed rather than measured. That is less than a validated map, and the map should not be read
+as one: its differences between cells are a hypothesis to be tested, not a ranking of
+neighbourhoods. It is also more than Kandy has
 had, and each of its limits points to a specific measurement, set out in {{ref:ch-measure-next}}
 and carried into the further work of {{ref:a-conclusions}}.

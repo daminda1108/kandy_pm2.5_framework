@@ -58,11 +58,14 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch06_the_model/01-s-decomposition-conserves.md shift=1}}
 
+
 {{include:pool/ch06_the_model/01b-s-temporal-anchor.md shift=1}}
 
 {{include:pool/ch06_the_model/01c-s-regional-background.md shift=1}}
 
 {{include:pool/ch06_the_model/01d-s-spatial-pattern.md shift=1}}
+
+{{include:pool/ch06_the_model/01e-s-decomposition-assumptions.md shift=1}}
 
 {{include:pool/ch06_the_model/05-s-two-correction-terms.md shift=1}}
 

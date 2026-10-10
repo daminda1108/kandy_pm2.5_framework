@@ -2,7 +2,7 @@
 
 The temporal anchor *T*(*t*) is the concentration averaged over the basin at each hour. It carries
 the level of the field and all of its variation in time, and because the pattern has unit mean it
-is also the field's city mean. It is built in five steps.
+is also the field's city mean, to within the build tolerance of {{ref:s-decomposition-conserves}}. It is built in five steps.
 
 **A prior from a composition model.** The hourly PM2.5 of the global composition forecast system
 GEOS-CF [@Keller2021], averaged over the basin, is scaled to the local sensors by a single ratio

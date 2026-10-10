@@ -8,4 +8,4 @@ Table: Registered confirmation on 72 fresh cities, as constructed
 | H4 background minus first two | a comparison of the two rungs as built | {{claim:v2.conf.reco.bgm2_rmse.median}} [{{claim:v2.conf.reco.bgm2_rmse.lo}}, {{claim:v2.conf.reco.bgm2_rmse.hi}}] points |
 | H5 the same, exceedance days | as H4, balanced error at 15 µg m⁻³ | {{claim:v2.conf.reco.bgm2_exceed.median}} [{{claim:v2.conf.reco.bgm2_exceed.lo}}, {{claim:v2.conf.reco.bgm2_exceed.hi}}] points |
 
-Verdicts stand as registered (OSF ueyfr). The rungs use their stations differently: the local stations never enter a day's prediction, the background does. H4 and H5 therefore compare uses, not observations (Table 7.2).
+Verdicts stand as registered (OSF ueyfr). The rungs use their stations differently: the local stations never enter a day's prediction, the background does. H4 and H5 therefore compare uses, not observations; {{ref:s-like-for-like}} compares them on equal terms.

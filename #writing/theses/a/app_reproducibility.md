@@ -23,13 +23,16 @@ committed to the version-control record before it was scored.
 
 ## Reproducing this work {#app-reproducing-work}
 
-The analysis code, the generating scripts for every claim, the figure and table scripts and the
-registration documents are held in a version-controlled repository. The document is produced in
+The analysis code, the generating scripts for every claim, the figure and table scripts, the
+document build and the registration documents are held in a public version-controlled repository,
+<https://github.com/daminda1108/kandy_pm2.5_framework>. The document is produced in
 four steps, each of which refuses to proceed if the one before it failed: regenerate and check every
 claim, generate the figures and tables, assemble the chapters with every token resolved, and render
 against a reference document that carries the typography. The observational inputs are third-party
 and are not redistributed; their sources are given in {{ref:ch-available-data-deliberate-constraint}}.
 The work is therefore auditable, and reproducible conditional on obtaining the source datasets.
+It has not yet been reproduced by anyone outside the project, and this thesis claims a documented
+workflow rather than a demonstrated independent reproduction.
 
 ## Data requested but not obtained {#s-data-requested-but-obtained}
 
