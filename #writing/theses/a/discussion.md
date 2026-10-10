@@ -23,10 +23,9 @@ sensors' hours. Removing each sensor's own offset, with the width unchanged, rai
 calibration bias at those sensors; it does not establish that the width is right for the basin
 field, and across the ladder's cities the interval under-covers as well. One qualification applies to the amplitude of the daily cycle rather than its
 timing. The sensor record to which the temporal anchor is sharpened was converted with a constant
-relative humidity, and repeating the conversion with hourly humidity reduces the ratio of the
-daily peak to the daily trough in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
+relative humidity, and repeating the conversion with hourly humidity reduces the ratio of the morning peak to the midday level in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the delivered series, the alternative leaves the
-level, the timing of the peaks and trough, the day-to-day sequence and the local fraction
+level, the timing of the peaks and of the midday dip, the day-to-day sequence and the local fraction
 essentially unchanged, but it reduces the depth of the cycle and reverses the ordering of night and
 midday ({{ref:s-rh-scenario}}). How deep the cycle is cannot be settled without a reference
 instrument co-located with the sensors.
@@ -41,10 +40,8 @@ is one candidate mechanism. Nothing available to this study separates those poss
 the discrepancy is reported as open rather than resolved by choosing the record that agrees. The
 consequence runs through every number in {{ref:s-kandy-field}}: the cycles and the partition are
 statements about shape and proportion that survive a shift in level, while the annual means, the
-exposure figures and the comparison with the guideline do not. The burden projection in
-{{ref:app-attributable-burden-projection}} inherits this and has a further limitation of its own:
-the response function it uses is defined for adults, and it was applied to deaths at all ages, so
-it is illustrative and is not a result of this study.
+exposure figures and the comparison with the guideline do not. For that reason, among others,
+no attributable burden is reported ({{ref:app-attributable-burden-projection}}).
 
 **Not supported: the neighbourhood pattern.** The spatial pattern is a construction and should be
 read as one. Measured on cities with dense networks, the spread inside a single cell is

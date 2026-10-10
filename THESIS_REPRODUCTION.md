@@ -3,7 +3,7 @@
 *An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, validation
 without local ground truth, and measurement priorities* (A. M. D. W. B. Alahakoon, University of Peradeniya, 2026).
 
-The submitted version corresponds to the git tag **`thesis-a-2026-10-10`** of this repository. Every number in the
+The version built for review corresponds to the git tag **`thesis-a-2026-10-10-r3`** of this repository (an earlier round is `thesis-a-2026-10-10`). Every number in the
 thesis is a token resolved from `kandy_pm25/data/processed/modular/claims.json`, which `build_claims.py` regenerates
 from the scored files; the build refuses to produce a document when a stored value and a recomputation disagree.
 `VERIFICATION_thesis_a.md` lists every cited claim, its source artefact and whether it rests on public or restricted

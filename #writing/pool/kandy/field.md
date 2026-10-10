@@ -61,10 +61,9 @@ than earned, because the temporal anchor is calibrated to those sensors, and
 
 The depth of the daily cycle carries a further qualification. The sensor record to which the
 temporal anchor is sharpened was converted from the sensors' raw readings with a constant
-relative humidity. Repeating the conversion with the hourly humidity reduces the ratio of the
-daily peak to the daily trough in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
+relative humidity. Repeating the conversion with the hourly humidity reduces the ratio of the morning peak to the midday level in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}} while leaving the timing of the morning and
-evening peaks and of the midday trough unchanged. Carried through the delivered series
+evening peaks and of the midday dip unchanged. Carried through the delivered series
 ({{ref:s-rh-scenario}}), it also reverses the ordering of night and midday: the night falls to
 {{claim:rh2.hourly_rh.night_midday}} of the midday level. The shipped field uses the
 constant-humidity conversion, so the daily amplitudes above, and the statement that night exceeds
@@ -73,16 +72,23 @@ sensors with a reference instrument.
 
 ### An episode {#s-kandy-field-episode}
 
-Averages hide the days that matter most for health. In December 2022 a regional pollution episode
-reached Kandy, and the field over those two days shows what the construction does with one.
+Averages hide the days that matter most for health. In December 2022 the field shows a
+high-concentration episode across the whole basin, and those two days show what the construction
+does with one.
 
 {{fig:episode}}
 
 Over the 48 hours of the episode the basin mean averaged {{claim:kandy.episode_mean}} micrograms
 per cubic metre, reaching {{claim:kandy.episode_peak}} in the evening of the first day. At the peak
 hour the whole domain was raised together: the difference between the cleanest and the most
-polluted cell was small beside the level itself (panel a). That is the signature of air arriving
-from outside the basin, which the construction carries in the background. An episode of this
-kind is, for a local authority, a warning to issue rather than an emission to control, and
+polluted cell was small beside the level itself (panel a). In this model a uniform rise is what an
+elevated background produces by construction, because the background is uniform across the domain
+and all spatial structure belongs to the local increment; the uniformity is therefore consistent
+with regional transport but is not independent evidence of it. It is a model-inferred regional
+episode. The episode falls in the north-east monsoon, the season in which published back-trajectory
+analysis of the national network traces high particulate concentrations to air arriving from eastern
+India and the Bay of Bengal [@Nirmani2025], but that analysis is seasonal and does not establish the
+origin of this particular event. If it was regional, an episode of this kind is, for a local
+authority, a warning to issue rather than an emission to control, and
 recognising it on the day requires an observation that reaches the estimate on the day, whether
 from a station inside the basin or from a background station outside it.

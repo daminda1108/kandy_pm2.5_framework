@@ -30,7 +30,9 @@ sensorless estimate by a further {{claim:v2.rich.bud0_gain.median}} per cent
 survived the change.
 
 **Then obtain continuous stations whose readings reach the estimate every day.** This is the
-recommendation of this thesis, and it is the one most robust to how the evidence is read. When a
+recommendation of this thesis, and it is the one most robust to how the evidence is read. It holds
+for the city-mean estimation procedure that was tested, on a panel of mostly temperate cities: it is
+evidence for using readings continuously, not a universal procurement ranking. When a
 station's reading is used on the day it is taken, two stations reduce daily error in the
 reconstructed city mean by {{claim:v2.review.registered_loco.reco.gL2s_rmse.median}} per cent
 [{{claim:v2.review.registered_loco.reco.gL2s_rmse.lo}}, {{claim:v2.review.registered_loco.reco.gL2s_rmse.hi}}].
@@ -79,7 +81,7 @@ independent records sit below the model and the one that matches carries an undo
 instrument. It would anchor the calibration of the low-cost sensors already in the basin, against
 which their performance can be assessed on a published protocol [@Duvall2021]. And it would settle
 the shape of the diurnal cycle, which at present depends on a humidity correction: with a constant
-relative humidity the corrected low-cost record has a peak-to-trough ratio of
+relative humidity the corrected low-cost record has a morning-peak-to-midday ratio of
 {{claim:v2.rh.constant_rh80.peak_to_trough}}, and with hourly humidity
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Only a co-located reference record can say
 which is right. None of the station-count figures above is evidence for this case, and it does

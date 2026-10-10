@@ -496,7 +496,7 @@ def t3_km_rung():
 def t3_rh_scenario():
     """Humidity-correction scenario (exploratory, F.126)."""
     rows = []
-    for tag, lab in (("f", "local fraction"), ("peak_trough", "morning peak over midday trough"),
+    for tag, lab in (("f", "local fraction"), ("peak_trough", "morning peak over midday level"),
                      ("night_midday", "night over midday"), ("season_swing", "highest over lowest month"),
                      ("daily_r", "daily correlation with the sensors"),
                      ("daily_rmse", "daily RMSE against the sensors (micrograms per cubic metre)"),
@@ -523,7 +523,7 @@ def t4_ledger():
             f"observed the period, {tok(km_p + 'K2_r.median')} where they did not",
             "better supported on days the sensors reported"],
            ["Depth of the daily cycle",
-            f"calibration-sensitive: peak over trough {tok('rh2.production.peak_trough')} or "
+            f"calibration-sensitive: morning peak over midday {tok('rh2.production.peak_trough')} or "
             f"{tok('rh2.hourly_rh.peak_trough')} depending on the humidity correction",
             "scenario-dependent until a reference instrument settles the correction"],
            ["Absolute level",

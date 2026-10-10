@@ -18,7 +18,7 @@ reconstruction, what the evidence supports and what it may be used for.
 2. **The reconstructed annual basin means exceed the World Health Organization annual guideline in
    every satellite-anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}}
    micrograms per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum, and
-   morning and evening peaks either side of a midday trough. Because the absolute level is
+   morning and evening peaks either side of a midday dip. Because the absolute level is
    unresolved (conclusion 3), this characterises the modelled field and is not an independently
    established measurement of exposure; that PM2.5 is a substantial concern in Kandy is better
    supported than the exact values. Under the baseline
@@ -29,9 +29,10 @@ reconstruction, what the evidence supports and what it may be used for.
    {{claim:rh2.hourly_rh.f}} under the hourly-humidity label. These describe the decomposition's
    sensitivity to its specification, not a confidence interval and not a source apportionment: they
    do not say that half of Kandy's PM2.5 is emitted in Kandy. Weighting by population raises exposure
-   {{claim:exposure.uplift_pct}} per cent above the area mean, and both that figure and the
-   illustrative burden of {{ref:app-attributable-burden-projection}} inherit the uncertainty of the
-   level and of the unvalidated spatial pattern.
+   {{claim:exposure.uplift_pct}} per cent above the area mean, a figure that inherits the uncertainty
+   of the level and of the unvalidated spatial pattern. No attributable burden is reported: it needs
+   age-specific mortality, a settled level and a propagated uncertainty that this study does not yet
+   have ({{ref:app-attributable-burden-projection}}).
 3. **The evidence for the field is graded, and its parts stand at different strengths.**
    - *The seasonal cycle is the best-supported property.* The construction reproduces it in every
      analogue city when their own observations are withheld (seasonal correlation
@@ -46,7 +47,7 @@ reconstruction, what the evidence supports and what it may be used for.
      analogue cities and not to others (diurnal correlation {{claim:scorecard.diurnal_r_lo}} to
      {{claim:scorecard.diurnal_r_hi}}), and hourly skill at Kandy is modest (a coefficient of
      determination of {{claim:v2.tanchor.lagfree.r2}} out of sample). Under the alternative humidity
-     correction the timing of the peaks and trough is unchanged, but the peak-to-trough ratio falls
+     correction the timing of the peaks and of the midday dip is unchanged, but the morning-peak-to-midday ratio falls
      from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night
      falls below midday; the depth of the cycle is calibration-dependent until a co-located reference
      instrument settles the correction.
@@ -63,8 +64,9 @@ reconstruction, what the evidence supports and what it may be used for.
    guide where to measure. It must not be used to rank neighbourhoods or to place interventions as
    though its differences between cells had been validated.
 5. **The measurement worth most to Kandy is a set of continuously reporting stations whose
-   readings enter the estimate each day.** A station read daily is worth several times what the
-   same station is worth as a one-off calibration, and a handful of stations fixes the level and
+   readings enter the estimate each day.** For the city-mean estimation procedure tested, on a mostly
+   temperate panel, a station read daily is worth several times what the same station is worth as a
+   one-off calibration, and a handful of stations fixes the level and
    the daily sequence of a city mean but not a neighbourhood map. A reference-grade instrument among
    them would also settle the level and the depth of the daily cycle. This conclusion replaces an
    earlier ordering of a background series above local stations, which a review traced to a

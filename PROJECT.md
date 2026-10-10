@@ -529,11 +529,12 @@ and the annual local fraction becomes **f ≈ 0.48**.
 > cap choices (UTC vs local day; min, 2nd-lowest hour, 3-h running min, P10) it spans **0.433–0.492**; production 0.483
 > (`scripts/kandy_f_sensitivity.py`). Quote "about 0.45–0.5, a bound under the cap".
 
-**The answer is not tunable.** Sweeping `F_MIN` from 0 to 0.08 moves `f` only from 0.477 to
-0.502 — the physical constraint sets it, not the parameter. `F_MIN = 0.02` was chosen as the
+**The free parameter matters little; the specification does.** Sweeping `F_MIN` from 0 to 0.08 moves `f` only from 0.477 to
+0.502, but the day boundary and daily-floor statistic move it across 0.433–0.492 and a 48-hour window gives 0.547; `f` is a
+property of the decomposition (a non-negativity constraint), not a measured source contribution and not a confidence interval. `F_MIN = 0.02` was chosen as the
 smallest value that removes the defect, before the resulting `f` was known.
 
-**f = 0.48 agrees with every independent line**: above the coherence floor (≥0.41), inside
+**f ≈ 0.48 is consistent with the independent lines below** (consistency, not identification): above the coherence floor (≥0.41), inside
 the hierarchical interval (0.392 [0.258, 0.525]), near the network instrument (0.446). The
 0.244 prior is retired. **Basin means, exposure and burden are unchanged** — the field is
 T-locked; only the attribution moves, from ~25/75 to **~48/52**.

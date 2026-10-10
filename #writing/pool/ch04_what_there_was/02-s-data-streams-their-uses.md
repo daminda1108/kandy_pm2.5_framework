@@ -53,6 +53,6 @@ Both records are corrected for the known over-reading of optical sensors with th
 equation [@Barkjohn2021]. Its humidity term was evaluated at a constant relative humidity of
 eighty per cent rather than at the hourly value. Because the humidity at Kandy follows a strong
 daily cycle, this leaves part of that cycle in the corrected record: recomputed with hourly
-reanalysis humidity, the ratio of the normalised morning peak to the afternoon trough falls from
+reanalysis humidity, the ratio of the normalised morning peak to the midday level falls from
 {{claim:v2.rh.constant_rh80.peak_to_trough}} to {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}.
 {{ref:s-excluded-processes-known-limits}} sets out what this means for the model.

@@ -4,7 +4,7 @@ Five items, in decreasing order of what the evidence supports.
 
 **An hourly humidity correction in the label.** The low-cost record the temporal anchor is
 sharpened to was corrected with a constant relative humidity. With the hourly humidity the same
-correction expects, the peak-to-trough ratio of the observed diurnal cycle falls from
+correction expects, the morning-peak-to-midday ratio of the observed diurnal cycle falls from
 {{claim:v2.rh.constant_rh80.peak_to_trough}} to {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}},
 so part of the delivered daily swing is a humidity artefact of the label. The correction is
 straightforward to apply, but which diurnal shape is right can only be settled against a

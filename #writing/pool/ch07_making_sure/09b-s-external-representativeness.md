@@ -20,17 +20,25 @@ the Kandy transect of {{ref:ch-model-stops}} contributes {{claim:srep.kandy_cell
 | Kandy transect sites sharing a cell | {{claim:srep.kandy_cv}} | {{claim:srep.ratio_kandy}} |
 | the model estimator at the same places | {{claim:srep.model_cv}} | 1.0 |
 
-The estimator is too small by a factor of {{claim:srep.ratio_panel}} on the panel and by at least
-{{claim:srep.ratio_kandy}} at Kandy. The Kandy figure is a lower bound, because three of its seven
-sites were censored at an upper sampling limit and censoring can only shrink an observed spread,
-so the bias runs toward the model and cannot have produced the result.
+On the panel the estimator is too small by a factor of {{claim:srep.ratio_panel}}. That figure
+compares the long-term means of stations that share a cell, so it assumes those means are
+comparable: stations whose records cover different periods, or that differ in siting or instrument,
+contribute spread that is not within-cell variation. It is therefore evidence that the implemented
+term is too small, not a precise measurement of how much.
+
+The Kandy figure, a factor of {{claim:srep.ratio_kandy}}, is weaker evidence and is not a lower
+bound. Three of its seven sites were censored at an upper sampling limit, which shrinks the observed
+spread, but the sites were sampled on different days and measured PM10, and day-to-day variation
+widens the spread ({{ref:s-test-holds-support-fixed}}). The two biases run in opposite directions
+and the net direction is not known, so the Kandy figure is a strongly confounded diagnostic of
+possible within-cell heterogeneity, not an estimate of the point-to-cell error.
 
 Two things follow, and they are different. The delivered interval is unaffected, because its width
-comes from the temporal anchor's conformal quantiles, not from this term, and the coverage
-figures above already show that width to be right for an areal quantity. What is affected is the
+comes from the temporal anchor's conformal quantiles, not from this term. What is affected is the
 observation model, which the specification requires to exist before any regulatory record is
 ingested. Had this term been used as written, the first point-level interval built against a real
-Kandy measurement would have been too narrow by a factor of three or more, and the resulting
+Kandy measurement would have been too narrow, by a factor of about two to three on the panel's
+evidence, and the resulting
 apparent over-confidence would have looked like an error in the field rather than an error in the
-comparison. The term must be taken from co-located instruments. The delivered interval is
-calibrated for an areal quantity, and it understates point-level uncertainty.
+comparison. The term must be taken from co-located, time-aligned instruments. The delivered
+interval describes an areal quantity, and it understates point-level uncertainty.

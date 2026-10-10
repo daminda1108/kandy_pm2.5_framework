@@ -88,8 +88,10 @@ continuously, so `B ≤ T` must hold at every hour; a background at or above the
 with a zero local share at the traffic core. **Both tiers need it independently** — the
 locked chain (`build_additive_field_v2.build_B_v2`) and the extension tier
 (`kandy_driver_tier_build`) construct `B` by different routes, and capping one leaves the
-other at 18–28%. The resulting `f ≈ 0.48` is insensitive to `F_MIN` (0.477 → 0.502 across a
-fourfold sweep), so the constraint sets it, not the parameter.
+other at 18–28%. The resulting `f` is 0.483 at baseline and insensitive to `F_MIN` (0.477 → 0.502 across a
+fourfold sweep), but it moves with the cap's specification (0.433–0.492 across day boundary and
+daily-floor statistic; 0.547 with a 48-hour window). It is a property of the decomposition, not a
+measured source contribution.
 
 **Regional background `B(t)`, construction:** = `(1−f)·L(year)` × daily GEOS-CF shape × origin-conditioned
 re-levelling `κ_origin` (air-mass trajectory class). **Daily resolution against an hourly `T`** —

@@ -7,7 +7,7 @@ is also the field's city mean, to within the build tolerance of {{ref:s-decompos
 **A prior from a composition model.** The hourly PM2.5 of the global composition forecast system
 GEOS-CF [@Keller2021], averaged over the basin, is scaled to the local sensors by a single ratio
 and a per-sensor offset. The scaled prior supplies the large-scale variation that a model trained
-on two sensors could not learn alone, including transboundary episodes.
+on two sensors could not learn alone, including regional episodes.
 
 **A learned correction.** Gradient-boosted regression trees (LightGBM [@Ke2017]) learn the residual between
 the two Kandy sensors and the scaled prior. The predictors are exogenous only: reanalysis

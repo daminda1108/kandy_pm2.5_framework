@@ -11,9 +11,9 @@ the basin ranges from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micro
 metre across the anchored years, above the World Health Organization annual guideline of 5
 micrograms per cubic metre throughout [@WHO2021]. {{ref:s-exposure-weighting}} gives the
 population exposure implied by the delivered field. {{ref:app-attributable-burden-projection}}
-gives a burden projection, which is illustrative only: its interval carries only the uncertainty
-of the response function, and the response function, defined for adults, was applied to deaths at
-all ages.
+sets out how an attributable burden would be estimated and why no estimate is reported: the
+response function needs age-specific mortality not yet obtained, the concentration level is
+unresolved, and the uncertainty could not yet be propagated.
 
 *Policy.* Prioritising interventions requires a spatially resolved field. A municipality deciding
 whether to reroute heavy vehicles, restrict open burning or relocate a bus terminus needs to know

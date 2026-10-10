@@ -6497,3 +6497,12 @@ registered R2; parity with R2 0.0): median ρ raw emission surface **0.371**, di
 built-up within 1 km **0.393**; dispersion beats raw in 3/10, built-up beats dispersed in 6/10; P90/P10 contrast observed
 1.27 vs raw 3.98 vs dispersed 5.77. ⇒ the dispersion step is a declared choice, not a validated improvement. Thesis A:
 §3.2.5, §3.3.4, Table T4_ledger, T3_validation_summary, TA_ladder_status; claims `rh2.*`, `r2b.*`.
+
+**F.126 addendum — third review round (2026-10-10).** (i) **Attributable burden WITHDRAWN** from thesis A (user decision):
+the method is given in Appendix I without a number, because GEMM needs age-specific (25+) GBD mortality not yet obtained,
+the level is unresolved, and the old interval (field bounds through the central function) omitted response-function,
+baseline, weighting and level uncertainty. Never quote 431 / 300 / 237–632. (ii) **Kandy representativeness factor 16.9 is
+NOT a lower bound**: censoring shrinks the spread but different-day PM10 sampling widens it; net direction unknown. Panel
+factor 2.61 uses long-term station means (not time-aligned). (iii) Humidity scenarios are alternatives, neither validated;
+they do not bound the true cycle. Metric renamed "morning peak / midday". (iv) December 2022 episode = "model-inferred
+regional episode" (uniformity is a property of the uniform background, not independent evidence of origin).

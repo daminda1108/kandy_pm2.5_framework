@@ -3,7 +3,7 @@ Table: The delivered series under the two humidity corrections (exploratory)
 | quantity | constant humidity (delivered) | hourly humidity |
 |---|---|---|
 | local fraction | {{claim:rh2.production.f}} | {{claim:rh2.hourly_rh.f}} |
-| morning peak over midday trough | {{claim:rh2.production.peak_trough}} | {{claim:rh2.hourly_rh.peak_trough}} |
+| morning peak over midday level | {{claim:rh2.production.peak_trough}} | {{claim:rh2.hourly_rh.peak_trough}} |
 | night over midday | {{claim:rh2.production.night_midday}} | {{claim:rh2.hourly_rh.night_midday}} |
 | highest over lowest month | {{claim:rh2.production.season_swing}} | {{claim:rh2.hourly_rh.season_swing}} |
 | daily correlation with the sensors | {{claim:rh2.production.daily_r}} | {{claim:rh2.hourly_rh.daily_r}} |

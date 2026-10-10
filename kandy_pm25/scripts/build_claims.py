@@ -2422,7 +2422,7 @@ def srep_external(c: Claims) -> None:
     c.add("srep.ratio_kandy", S["ratio_kandy"],
           stat="observed over modelled within-cell variability, Kandy", n=S["kandy_cells"],
           source=src, ledger="F.106",
-          note="a lower bound because of censoring")
+          note="confounded: censoring shrinks the spread, different-day PM10 sampling widens it; direction unknown")
 
 
 def loss_sensitivity(c: Claims) -> None:

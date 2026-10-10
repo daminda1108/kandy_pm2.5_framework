@@ -18,10 +18,9 @@ Four findings survive the choice. The annual level is the same by construction. 
 moves from {{claim:rh2.production.f}} to {{claim:rh2.hourly_rh.f}}, well inside the range set by
 the specification of the cap. The day-to-day sequence is unchanged: the correlation of the anchor's
 daily means with the sensors' is {{claim:rh2.production.daily_r}} and
-{{claim:rh2.hourly_rh.daily_r}}. And the timing of the morning and evening peaks and of the midday
-trough does not move.
+{{claim:rh2.hourly_rh.daily_r}}. And the timing of the morning and evening peaks and of the midday dip does not move.
 
-Three findings do not survive it. The ratio of the morning peak to the midday trough falls from
+Three findings do not survive it. The ratio of the morning peak to the midday level falls from
 {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}}. The night, which in
 the delivered field runs {{claim:rh2.production.night_midday}} times the midday level, falls to
 {{claim:rh2.hourly_rh.night_midday}} of it, so whether the night or the midday is the daily
@@ -30,7 +29,9 @@ minimum depends on the correction. And the seasonal contrast widens from
 and lowest months. The interval's coverage of the corrected sensor record is
 {{claim:rh2.production.cov90}} and {{claim:rh2.hourly_rh.cov90}}, one-sided in both.
 
-The production scenario remains the delivered field because it is the one the model was built and
+Neither scenario is validated against a co-located reference instrument, and the two do not bound
+the true cycle: they are alternatives that show which conclusions depend on the correction. The
+production scenario remains the delivered field because it is the one the model was built and
 validated on, not because it is known to be right. Statements in this thesis about the depth of the
 daily cycle, and about whether night exceeds midday, are therefore conditional on the humidity
 correction; statements about the level, the timing of the cycle, the day-to-day sequence and the

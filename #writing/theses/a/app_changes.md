@@ -2,8 +2,8 @@
 
 Preparing this document required regenerating quantities recorded earlier in the project, and
 some of them moved. Eleven values changed when they were recomputed from their source files, among
-them the number of countries in the panel, the population-weighted exposure uplift and the
-attributable burden; each now carries its regenerated value in the text. The corrections below
+them the number of countries in the panel and the population-weighted exposure uplift; each
+now carries its regenerated value in the text. The corrections below
 changed conclusions rather than values. They came from a verification pass over the information
 ladder and from an external review of the whole analysis in October 2026, and they are listed so
 that a reader of earlier drafts or presentations can see what replaced what.
@@ -23,7 +23,7 @@ that a reader of earlier drafts or presentations can see what replaced what.
 | siting interval of the spatial learning curve | 0.00 to 0.00 | {{claim:v2.curve.reg.x5_e3_k3.lo}} to {{claim:v2.curve.reg.x5_e3_k3.hi}} at three stations | the summary pooled estimators that cannot differ at a site; the verdict is unchanged |
 | cities where kriging beats the built-up layer | 15 of 23 | {{claim:v2.curve.full.holm_crossing}} of 23 | a correction for multiple comparisons, which the first reading omitted |
 | detection limit of the spatial learning curve | 0.24 | {{claim:v2.curve.full.mde_empirical}} | the registered value assumed a spread smaller than the one observed |
-| diurnal swing of the sensor record | constant-humidity correction | peak to trough {{claim:v2.rh.constant_rh80.peak_to_trough}} becomes {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}} with hourly humidity | the correction had used a fixed relative humidity; the shipped field is not yet rebuilt |
-| age range of the attributable burden | not stated | stated as all ages, illustrative only | the response function is defined for adults of 25 and older and was applied to all ages; a corrected figure awaits age-specific mortality data |
+| diurnal swing of the sensor record | constant-humidity correction | morning peak to midday {{claim:v2.rh.constant_rh80.peak_to_trough}} becomes {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}} with hourly humidity | the correction had used a fixed relative humidity; the shipped field is not yet rebuilt |
+| attributable burden | a number of deaths per year with an interval | withdrawn; the method is given without a number | the response function is defined for adults of 25 and older and was applied to all ages, the interval omitted most of the uncertainty and the level is unresolved; an estimate awaits age-specific mortality data |
 
 <!-- lint:on -->

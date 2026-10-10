@@ -52,9 +52,11 @@ Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
 ## 🔬 Second review (2026-10-10, F.126, exploratory)
-Humidity scenario: f 0.483→0.488; peak/trough 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
+Humidity scenario: f 0.483→0.488; morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
 level unchanged. Dispersion on identical sites: raw 0.371, dispersed 0.274, built-up 0.393 → dispersion is NOT validated.
 Quote f as 0.483 (0.433–0.492 cap choices; 0.547 at 48 h) — a decomposition property, never a confidence interval.
+**Burden withdrawn** (no number; method only — never quote 431/300). Kandy s_rep factor 16.9 is confounded, NOT a lower
+bound. Dec 2022 = model-inferred regional episode.
 
 ## 🔬 The deployed model on the ladder (2026-10-10, F.125, exploratory)
 Kandy's T(t) chain (daily, 2 anchor stations, VanD level) scored on the ladder, 104 cities: **reconstruction +32.7 %

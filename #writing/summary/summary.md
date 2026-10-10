@@ -90,9 +90,9 @@ because the absolute level is unresolved, this describes the modelled field rath
 established exposure. The seasonal cycle is the best-supported property, with the maximum in the
 north-east monsoon ({{claim:kandy.season_djf}} in December to February of {{claim:exposure.year}}) and
 the minimum in the south-west monsoon ({{claim:kandy.season_jja}}). The day-to-day sequence is
-supported on days the sensors reported. Morning and evening peaks either side of a midday trough are
+supported on days the sensors reported. Morning and evening peaks either side of a midday dip are
 robust in timing, but their depth depends on the humidity correction of the sensor record: with
-hourly rather than constant humidity the peak-to-trough ratio falls from
+hourly rather than constant humidity the morning-peak-to-midday ratio falls from
 {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night falls below
 midday, while the level, the daily sequence and the local fraction barely move. The interval covers
 {{claim:kandy.cov90}} per cent of sensor hours with misses almost all on one side, which points to a

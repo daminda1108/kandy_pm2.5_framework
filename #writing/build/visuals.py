@@ -322,7 +322,7 @@ VISUALS: dict[str, tuple[str, str]] = {
         "night. Thin lines are elevation contours."),
     "episode": (
         "F_episode",
-        "The December 2022 transboundary episode. (a) The field at the hour of the highest "
+        "The December 2022 episode, inferred by the model as regional. (a) The field at the hour of the highest "
         "basin mean. (b) The basin mean across the 48 hours of the episode, averaging "
         "{{claim:kandy.episode_mean}} micrograms per cubic metre with a peak of "
         "{{claim:kandy.episode_peak}}. The dashed and dotted lines are the World Health "

@@ -37,16 +37,17 @@ of eighty per cent rather than at the hourly value. Over-reading by an optical s
 humidity cycle, which at Kandy is high at night and in the early morning and lowest in the
 afternoon, so a constant term leaves part of that cycle in the corrected record, and the
 sharpening step then imposes it on *T*(*t*). Recomputing the correction with hourly reanalysis
-humidity lowers the ratio of the morning peak to the afternoon trough of the normalised diurnal
+humidity lowers the ratio of the morning peak to the midday level of the normalised diurnal
 cycle from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
-{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}, about a tenth less swing. A full hygroscopic
-growth correction applied on top inverts the cycle, which is implausible for a valley whose diurnal
-cycle is set by the boundary layer, so it over-corrects. The true diurnal shape therefore lies
-somewhere between these versions and cannot be fixed without co-locating the sensors with a
-reference monitor. The shipped field has not been rebuilt with the hourly correction, because
-the reference record that would decide between the versions is expected from the Central
-Environmental Authority. Because the local fraction is a function of the diurnal amplitude of *T*
-({{ref:s-partition-constraint-rather-than}}), this limit reaches the partition as well.
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}, about a tenth less swing. A full hygroscopic growth correction applied on top inverts the cycle, which appears physically
+implausible for a valley whose diurnal cycle is set by the boundary layer. These are alternative
+correction scenarios, and neither is validated against a co-located reference instrument; judging
+one of them implausible does not make the other two a bound on the true shape. The shipped field
+keeps the constant-humidity correction, and {{ref:s-rh-scenario}} carries the hourly correction
+through the delivered series as an alternative to show which conclusions depend on the choice.
+Because the local fraction is a function of the diurnal amplitude of *T*
+({{ref:s-partition-constraint-rather-than}}), the choice reaches the partition as well, though only
+slightly.
 
 **The sensor record is used three times.** The same two sensors train the anchor, set the width of
 its conformal interval and supply the diurnal and seasonal profile to which it is sharpened. The

@@ -103,4 +103,4 @@ that could not be interpreted. No chemical measurement at Kandy is involved.
 
 {{include:theses/a/app_changes.md}}
 
-{{include:pool/ch11_appendices/04-app-attributable-burden-projection.md}}
+{{include:theses/a/app_burden_method.md}}
