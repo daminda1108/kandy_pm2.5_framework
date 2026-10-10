@@ -49,7 +49,7 @@ files.
 The driver set carries temperature, wind, boundary-layer height and two day-of-year terms, so wet
 removal appeared to be absent from its meteorology. On inspection a reanalysis daily precipitation
 total was already in the scored frame, pulled and merged and never referenced, because it was not in
-the feature list. That is the shape of the defect described in {{ref:s-defects-found-audit-rather}}:
+the feature list. That is the shape of the defect described in {{ref:s-information-budget}}:
 a rung holding a driver its budget admits, unused.
 
 It was registered and tested on the discovery ladder [OSF z89kt], with both arms fitted on one fixed

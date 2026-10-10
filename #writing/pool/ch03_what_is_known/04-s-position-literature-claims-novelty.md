@@ -60,7 +60,7 @@ The implementation is new, and is the more defensible half. The tiers of {{ref:s
 so that withholding a stream reproduces the lower tier exactly rather than approximately, which
 follows from a conservation property of the decomposition, not from a training procedure.
 Admissibility is asserted in code in both directions, so a tier can neither use a stream it is
-not entitled to nor silently fail to use one it is. {{ref:s-defects-found-audit-rather}} records what the absence of the
+not entitled to nor silently fail to use one it is. {{ref:s-information-budget}} records what the absence of the
 second check cost, which is the argument for it.
 
 One empirical result is new as a finding, independently of the framework that produced it, and

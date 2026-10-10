@@ -58,7 +58,11 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch06_the_model/01-s-decomposition-conserves.md shift=1}}
 
-{{include:pool/ch06_the_model/02-s-comparing-areal-model-point.md shift=1}}
+{{include:pool/ch06_the_model/01b-s-temporal-anchor.md shift=1}}
+
+{{include:pool/ch06_the_model/01c-s-regional-background.md shift=1}}
+
+{{include:pool/ch06_the_model/01d-s-spatial-pattern.md shift=1}}
 
 {{include:pool/ch06_the_model/05-s-two-correction-terms.md shift=1}}
 
@@ -66,9 +70,7 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch06_the_model/07-s-excluded-processes-known-limits.md shift=1}}
 
-{{include:pool/ch07_making_sure/00-ch-validation-without-local-ground.md shift=1}}
-
-{{include:pool/ch07_making_sure/01-s-borrowed-ground-truth.md shift=1}}
+{{include:theses/a/validation_design.md}}
 
 # Results and Discussion {#a-results}
 
@@ -76,11 +78,17 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/kandy/field.md}}
 
-{{include:pool/ch07_making_sure/08-s-checks-kandy-carry-weight.md}}
+{{include:pool/ch07_making_sure/11-s-exposure-weighting.md shift=1}}
 
-{{include:pool/ch07_making_sure/09-s-interval-calibration.md}}
+{{include:theses/a/validation_results_lead.md}}
 
-{{include:pool/ch07_making_sure/11-s-exposure-weighting.md}}
+{{include:pool/ch07_making_sure/08-s-checks-kandy-carry-weight.md shift=1}}
+
+{{include:pool/ch07_making_sure/07-s-model-across-ten-cities.md shift=1}}
+
+{{include:theses/a/kandy_model_rung.md}}
+
+{{include:pool/ch07_making_sure/09-s-interval-calibration.md shift=1}}
 
 {{include:pool/ch08_where_it_stops/00-ch-model-stops.md shift=1}}
 
@@ -92,11 +100,7 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch08_where_it_stops/04-s-spatial-contrast-lost.md shift=1}}
 
-{{include:pool/ch08_where_it_stops/06-s-reason-change-support.md shift=1}}
-
-{{include:pool/ch08_where_it_stops/07-s-matched-support-model-close.md shift=1}}
-
-{{include:pool/ch08_where_it_stops/07b-s-what-stations-buy-map.md shift=1}}
+{{include:theses/a/spatial_bridge.md}}
 
 {{include:pool/ch08_where_it_stops/08-s-spatial-results-support.md shift=1}}
 
@@ -110,15 +114,7 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:theses/a/conclusions.md}}
 
-{{include:theses/a/future_lead.md}}
-
-{{include:pool/ch09_what_next/02-s-measurement-would-settle-most.md shift=1}}
-
-{{include:pool/ch09_what_next/03-s-construction-step-most-worth.md shift=1}}
-
-{{include:pool/ch09_what_next/05-s-improvements-temporal-model.md shift=1}}
-
-{{include:pool/ch09_what_next/07-s-approaches-would-help.md shift=1}}
+{{include:theses/a/future_condensed.md}}
 
 # References {#a-references .unnumbered}
 

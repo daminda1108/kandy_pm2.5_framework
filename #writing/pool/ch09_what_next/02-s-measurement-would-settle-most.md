@@ -71,4 +71,4 @@ amplitude of the regional seasonal cycle, which is high in the temperate bands, 
 tropics, and computable for every city already on disk. Sorting the panel by that amplitude and
 asking whether the value of a background or of a station follows it would replace a latitude label
 with a quantity. It is an exploratory analysis idea, and it should be registered before it is run,
-with arms built the same way, for the reason {{ref:s-methodological-lessons-beyond-problem}} gives.
+with arms built the same way, for the reason {{ref:s-like-for-like}} gives.

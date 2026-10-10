@@ -24,9 +24,9 @@ The first stops a tier reaching for information it was not granted. This is the 
 direction and it was implemented first.
 
 The second stops a tier **quietly failing to use what it has**. This is the direction that was
-missing, and {{ref:s-defects-found-audit-rather}} describes what its absence cost: the sensorless tier used one of the
-three streams its budget admits, so every gain measured above it was measured against an
-artificially weak baseline.
+missing, and its absence had a cost: in an earlier version of the ladder the sensorless tier used
+one of the three streams its budget admits, so every gain measured above it was measured against
+an artificially weak baseline, and the first rung's gain was overstated until an audit found it.
 
 The third stops a tier being scored on units that lack one of its streams. A single city missing
 a stream is invisible in a pooled median and shifts it.

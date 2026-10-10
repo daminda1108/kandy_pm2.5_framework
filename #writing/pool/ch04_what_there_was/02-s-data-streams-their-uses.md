@@ -7,9 +7,13 @@ weaknesses are that it is absent under cloud, which in a monsoon climate is a su
 fraction of days, and that it carries no diurnal information whatever, because the satellite
 passes at a fixed local time.
 
-A satellite-derived annual concentration surface supplies the level [@Wei2023]. It is a fusion
-product and it is used here only as an annual anchor. {{ref:s-effect-monitor-trained-covariate}} describes what happened when it was
-used as though it were an independent observation, which it is not.
+A satellite-derived annual concentration surface supplies the level [@vanDonkelaar2021]. It is a
+fusion product, trained in part on ground monitors elsewhere, and it is used in the model only as
+an annual anchor and as a gentle spatial shape. A second, methodologically different surface
+[@Wei2023] is used only as a cross-check on the level, and is quasi-independent rather than
+independent because the two draw on overlapping inputs. {{ref:s-effect-monitor-trained-covariate}}
+describes what happened when the second surface was used as though it were an independent
+observation, which it is not.
 
 Reanalysis meteorology supplies wind, boundary-layer height, temperature and humidity at
 hourly resolution [@Hersbach2020]. This is the workhorse of the temporal model and it is the

@@ -2,8 +2,10 @@
 
 Stated because these are the proposals most likely to be made.
 
-**A larger model.** {{ref:ch-eight-approaches-did-work}} records several architectures of increasing capacity, none of
-which recovered information that was not in the inputs.
+**A larger model.** A model can only redistribute the information present in its inputs
+({{ref:s-capabilities-limits-modelling}}), and the comparison of model families in
+{{ref:s-six-negative-results-their}} found no family that recovered structure the inputs did not
+encode.
 
 A finer grid, for the reason given in {{ref:s-implications-radius-result}}.
 

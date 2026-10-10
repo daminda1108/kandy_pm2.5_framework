@@ -17,9 +17,14 @@ The conclusions are given against the objectives set out in {{ref:a-aims}}.
    {{claim:exposure.uplift_pct}} per cent above the area mean.
 3. **The timing of the field is supported and its level is not settled.** The construction
    transfers between monitored cities of the same kind, and an independent national record at
-   Kandy agrees with it in two separate years, while three low-cost records sit below it. The
-   depth of the daily cycle depends on a humidity correction that only a co-located reference
-   instrument can check.
+   Kandy agrees with it in two separate years, while three low-cost records sit below it. Placed
+   on the ladder in {{claim:v2.km.cities_scored}} cities, the deployed temporal model reduces
+   daily error by {{claim:v2.km.reco.unio.gK2_rmse.median}} per cent against a generic
+   sensorless estimate where its two anchor stations observed the period, and by no resolvable
+   amount where they did not; its satellite-derived level sits above the withheld city mean, as
+   the field sits above three of the four Kandy records, and its nominal ninety per cent interval
+   under-covers. The depth of the daily cycle depends on a humidity correction that only a
+   co-located reference instrument can check.
 4. **The field is not supported below the kilometre scale.** More of the variation within a city
    lies inside a single cell than between cells, no model built from freely available covariates
    recovers it, and a handful of interpolated stations does not recover it either; the limit is

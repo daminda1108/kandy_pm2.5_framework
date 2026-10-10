@@ -22,12 +22,12 @@ is tropical and has only low-cost sensors. They are stated for a daily city-mean
 they are stated as the evidence supports them after a design flaw in one registered comparison
 was found and corrected ({{ref:a-discussion}}).
 
-{{ref:a-methods}} describes the data, the decomposition and how a field can be checked where no
-local ground truth exists. {{ref:a-results}} presents the reconstructed field, the checks it
-passes and fails, the scale at which it stops, and what the measurement of information value
-implies for what Kandy should measure next. {{ref:a-conclusions}} answers the objectives and sets out
-the further work the results call for.
-The appendices carry the supporting work in full: the measurement of information value across the
-panel of monitored cities, the negative results on spatial structure, the approaches that did not
-succeed, the chemical check on the decomposition, and the software that regenerates every number
-in this document from its source.
+{{ref:a-methods}} describes the data, the model component by component, and the three lines of
+evidence by which a field can be checked where no local ground truth exists. {{ref:a-results}}
+presents the reconstructed field, its validation along those three lines, the scale at which its
+spatial pattern stops being supported, and what the measurement of information value implies for
+what Kandy should measure next. {{ref:a-conclusions}} answers the objectives and sets out the
+further work the results call for. The appendices carry the supporting work in full: the
+cross-city measurement of information value, the tests of spatial structure, the chemical check on
+the decomposition, and the machinery that regenerates every number in this document from its
+source.

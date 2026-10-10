@@ -2019,6 +2019,48 @@ def identifiability(c: Claims) -> None:
 # ── driver ────────────────────────────────────────────────────────────────────────────────
 
 
+
+def kandy_model_config(c: Claims) -> None:
+    """Configuration constants of the deployed Kandy chain, read from the code that uses them."""
+    import io
+    import re
+    for tag, path, name, note in (
+            ("config.kappa", REPO / "src/stage1_satml/decomp/build_m_confinement.py", "KAPPA",
+             "confinement amplitude; a physical prior, not fitted"),
+            ("config.h_ridge_m", REPO / "src/stage1_satml/decomp/build_m_confinement.py", "H_RIDGE_M",
+             "effective ridge height for the confinement trapping weight"),
+            ("config.b_marine", REPO / "scripts/build_additive_field_v2.py", "B_MARINE",
+             "background on six-hourly arrivals classed as marine (ug/m3)")):
+        m = re.search(rf"^{name}\s*=\s*([0-9.]+)", io.open(path, encoding="utf-8").read(), re.M)
+        assert m, f"{name} not found in {path}"
+        c.add(tag, float(m.group(1)), stat="configuration constant", n=1,
+              source=str(path.relative_to(REPO)), ledger="F.125", note=note)
+
+
+def kandy_model_rung(c: Claims) -> None:
+    """The deployed Kandy temporal anchor scored as a rung of the ladder (EXPLORATORY, F.125;
+    spec docs/kandy_model_rung_spec_2026-10-10.md, scripts/ladder_v2_kandy_model.py)."""
+    f = MOD / "ladder_v2" / "kandy_model_summary.json"
+    if not f.exists():
+        return
+    S = json.load(open(f, encoding="utf-8"))
+    c.add("v2.km.cities_scored", int(S["cities_scored"]), stat="count", n=int(S["cities_scored"]),
+          source=f.name, ledger="F.125")
+    for use in ("reconstruction", "prospective"):
+        for scope in ("union", "confirmation"):
+            for col, v in S.get(f"{use}.{scope}", {}).items():
+                tag = f"v2.km.{use[:4]}.{scope[:4]}.{col}"
+                c.add(tag + ".median", round(v["median"], 3), stat="median over cities of the per-city median over splits",
+                      n=v["n"], source=f.name, ledger="F.125", note="exploratory")
+                c.add(tag + ".lo", round(v["cluster"][0], 3), stat="2.5th percentile, cluster bootstrap over networks",
+                      n=v["n"], source=f.name, ledger="F.125")
+                c.add(tag + ".hi", round(v["cluster"][1], 3), stat="97.5th percentile, cluster bootstrap over networks",
+                      n=v["n"], source=f.name, ledger="F.125")
+                c.add(tag + ".n", v["n"], stat="cities", n=v["n"], source=f.name, ledger="F.125")
+                c.add(tag + ".pos", v["positive"], stat="cities with a positive value", n=v["n"], source=f.name,
+                      ledger="F.125")
+
+
 def registered_v2(c: Claims) -> None:
     """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
     New keys under `v2.*`; the older ladder keys are left in place (they state what the
@@ -2547,6 +2589,8 @@ def build() -> dict:
     identifiability(c)
     cluster_bootstrap(c)
     registered_v2(c)
+    kandy_model_config(c)
+    kandy_model_rung(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

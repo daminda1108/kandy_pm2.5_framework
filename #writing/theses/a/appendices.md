@@ -11,10 +11,12 @@ ordering must be read. The conclusion that the main text uses is that a station 
 the estimate on the day it is taken is worth several times more than the same station used only to
 recalibrate a free estimate, and that, used that way, the kind of station makes no resolvable
 difference. No ordering of local stations against a background series, and nothing specific to the
-deep tropics, is established. The section on the model across ten cities, which validates the
-reconstruction rather than prices observations, closes the appendix before the summary.
+deep tropics, is established. The deployed model's own position on the ladder is reported in the main text
+({{ref:s-kandy-model-rung}}).
 
 {{include:pool/ch04_what_there_was/03-s-borrowed-panel.md}}
+
+{{tbl:T4_3}}
 
 {{include:pool/ch03_what_is_known/04-s-position-literature-claims-novelty.md}}
 
@@ -42,8 +44,6 @@ reconstruction rather than prices observations, closes the appendix before the s
 
 {{include:pool/ch07_making_sure/05-s-effect-monitor-trained-covariate.md}}
 
-{{include:pool/ch07_making_sure/07-s-model-across-ten-cities.md}}
-
 {{include:pool/ch07_making_sure/12-s-summary-established-results.md}}
 
 # Spatial structure: the negative results in detail {#a-app-spatial}
@@ -51,34 +51,41 @@ reconstruction rather than prices observations, closes the appendix before the s
 {{ref:ch-model-stops}} states that the field is not supported below the kilometre scale. {{This:a-app-spatial}}
 gives the tests behind that statement: six attempts to recover within-city structure, each with
 the effect it could and could not have detected, the model-family comparison that shows the limit
-belongs to the information rather than to one model, the siting experiment, and the result on the
-radius over which a predictor carries information.
+belongs to the information rather than to one model, the siting experiment, the change of support
+that explains the limit, the comparison at matched support, the registered test of what
+additional stations buy for a map, and the result on the radius over which a predictor carries
+information.
 
 {{include:pool/ch08_where_it_stops/05-s-six-negative-results-their.md}}
 
 {{include:pool/ch08_where_it_stops/05b-s-deliberate-siting-tested-dense.md}}
 
+{{include:pool/ch08_where_it_stops/06-s-reason-change-support.md}}
+
+{{include:pool/ch08_where_it_stops/07-s-matched-support-model-close.md}}
+
+{{include:pool/ch08_where_it_stops/07b-s-what-stations-buy-map.md}}
+
 {{include:pool/ch09_what_next/04-s-implications-radius-result.md}}
 
-{{include:pool/ch05_what_failed/00-ch-eight-approaches-did-work.md}}
+# The model in detail {#a-app-decomposition}
 
-{{include:pool/ch05_what_failed/01-s-physics-informed-network-transferred.md}}
+{{ref:ch-model}} sets out the decomposition, its components and the constraint that bounds the
+partition, and {{ref:a-validation}} reports its validation. {{This:a-app-decomposition}} gives the
+supporting detail: the two assumptions the construction rests on, the partition's sensitivity to
+each choice in the constraint, the observation model that governs any comparison of a cell with a
+point, the independent identification of the error in that comparison, and the best case of the
+ten-city transfer.
 
-{{include:pool/ch05_what_failed/02-s-rigid-physical-form-fitted.md}}
+{{include:pool/ch06_the_model/01e-s-decomposition-assumptions.md}}
 
-{{include:pool/ch05_what_failed/03-s-conditional-neural-process-trained.md}}
+{{include:pool/ch06_the_model/06b-s-partition-detail.md}}
 
-{{include:pool/ch05_what_failed/04-s-fine-tuning-two-sensors.md}}
+{{include:pool/ch06_the_model/02-s-comparing-areal-model-point.md}}
 
-{{include:pool/ch05_what_failed/05-s-five-attempts-find-spatial.md}}
+{{include:pool/ch07_making_sure/09b-s-external-representativeness.md}}
 
-{{include:pool/ch05_what_failed/06-s-five-reconstructions-regional-background.md}}
-
-{{include:pool/ch05_what_failed/07-s-defects-found-audit-rather.md}}
-
-{{include:pool/ch05_what_failed/08-s-learned-spatial-pattern-pre.md}}
-
-{{include:pool/ch05_what_failed/09-s-pattern-across-eight.md}}
+{{include:pool/ch07_making_sure/07c-s-ten-city-showcase.md}}
 
 # A chemical check on the decomposition {#a-app-chemistry}
 
@@ -88,34 +95,12 @@ product, bounds the locally emitted share, and records the test that could not b
 
 {{include:pool/ch07_making_sure/10-s-independent-chemical-check.md}}
 
-{{include:pool/ch10_software/00-ch-reproducibility-machinery-catches-errors.md}}
-
-{{include:pool/ch10_software/01-s-problem-machinery-solves.md}}
-
-{{include:pool/ch10_software/02-s-generated-numbers.md}}
-
-{{include:pool/ch10_software/03-s-figures-consumers-too.md}}
-
-{{include:pool/ch10_software/04-s-pre-registration-working-practice.md}}
-
-{{include:pool/ch10_software/05-s-admissibility-asserted-code.md}}
-
-{{include:pool/ch10_software/06-s-reproducing-work.md}}
-
-{{include:pool/ch10_software/07-s-limits-machinery.md}}
-
-{{include:pool/ch04_what_there_was/04-s-data-requested-but-obtained.md}}
-
-{{include:pool/ch04_what_there_was/05-s-computational-resources.md}}
-
-{{include:pool/ch09_what_next/06-s-methodological-lessons-beyond-problem.md}}
+{{include:theses/a/app_reproducibility.md}}
 
 {{include:pool/ch11_appendices/00-app-constants-configuration.md}}
 
 {{include:pool/ch11_appendices/01-app-registered-predictions-their-outcomes.md}}
 
-{{include:pool/ch11_appendices/02-app-reproducing-work.md}}
-
-{{include:pool/ch11_appendices/03-app-changed-during-writing-thesis.md}}
+{{include:theses/a/app_changes.md}}
 
 {{include:pool/ch11_appendices/04-app-attributable-burden-projection.md}}

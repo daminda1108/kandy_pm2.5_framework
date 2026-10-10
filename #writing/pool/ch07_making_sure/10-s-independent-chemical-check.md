@@ -73,8 +73,7 @@ something other than local origin, and what it is measuring is episodic temporal
 dust and sea salt arrive in transport events and are the most episodic species present.
 
 **The species prediction is therefore untested rather than refuted.** Reporting the reversal as a
-chemical result would be reporting an instrument failure as a finding, which is the error
-{{ref:ch-eight-approaches-did-work}} exists to document. The controls were read after the run rather than declared before
+chemical result would be reporting an instrument failure as a finding. The controls were read after the run rather than declared before
 it, which is a weakness in the design and not a defence of it.
 
 What an intervention could remove. The third attempt is the one that works, and it repairs a

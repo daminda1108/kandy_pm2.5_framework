@@ -340,16 +340,14 @@ def t4_3_panel():
           ["band", "cities", "countries", "median withheld monitors",
            "median scored days", "reference stations (per cent)"], rows,
           note=f"{tok('frame.cities')} cities, {tok('frame.countries')} countries, "
-               f"{tok('frame.city_days')} city days in total. Neither of the first two columns "
-               f"sums to those totals, for two different reasons. The cities column reaches "
-               f"{tok('frame.bands')} because {tok('frame.unbanded')} cities come from a single "
-               f"national network that is scored in every pooled result and carries no latitude "
-               f"band. The countries column reaches {tok('frame.band_country_sum')} because "
-               f"{tok('frame.countries_multiband')} countries span more than one band and are "
-               f"counted once in each, while the unbanded network's country appears in no row. "
-               f"A per-band distinct count is not additive. The deep-tropical cell is "
-               f"dominated by low-cost sensors and the temperate cell by reference monitors, "
-               f"which is a confound that cannot be sampled away.")
+               f"{tok('frame.city_days')} city days in total. The cities column sums to the "
+               f"panel total. The countries column reaches {tok('frame.band_country_sum')} "
+               f"because {tok('frame.countries_multiband')} countries span more than one band "
+               f"and are counted once in each; a per-band distinct count is not additive. The "
+               f"cities of the national network of China are assigned to their bands and counted "
+               f"as reference monitoring. Every deep-tropical city comes from the open archive, "
+               f"where low-cost sensors dominate, which is a confound that cannot be sampled "
+               f"away.")
 
 
 def t7_1_ladder():
@@ -469,6 +467,32 @@ def t7_2_like_for_like_v2():
                "in the same run. Station-count rows: full networks, 86 cities.")
 
 
+def t3_km_rung():
+    """The deployed Kandy temporal anchor on the ladder (exploratory, F.125)."""
+    r, p = "v2.km.reco.unio.", "v2.km.pros.unio."
+    rows = []
+    for arm, lab, use in (("Bud0", "Sensorless learner (the ladder's own rung)", "none"),
+                          ("K0", "Kandy chain, no stations", "none"),
+                          ("Bud0cal2", "Sensorless learner, recalibrated", "two, calibration only"),
+                          ("K2", "Kandy chain as deployed", "two, training and calibration"),
+                          ("L2same", "Sensorless learner, stations read on the day", "two, read daily")):
+        g = "" if arm == "Bud0" else _ci(r + f"g{arm}_rmse")
+        gp = "" if arm == "Bud0" else _ci(p + f"g{arm}_rmse")
+        rows.append([lab, use, g or "reference", gp or "reference",
+                     tok(r + f"{arm}_r.median"), tok(r + f"{arm}_bias.median")])
+    write("T3_km_rung", "The deployed model's temporal anchor placed on the ladder (exploratory)",
+          ["rung", "local stations", "reduction in daily RMSE, reconstruction (per cent)",
+           "reduction in daily RMSE, prospective (per cent)", "correlation with held-out daily mean",
+           "level bias (per cent)"], rows,
+          note=f"Median over {tok('v2.km.cities_scored')} cities of the per-city median over up to "
+               f"21 random station splits; intervals from a cluster bootstrap over monitoring networks. "
+               f"Reductions are relative to the sensorless learner on the same days. Correlation and "
+               f"bias are for the reconstruction use. The deployed chain's nominal 90 per cent interval "
+               f"covered a fraction {tok(r + 'K2_cov90.median')} of held-out daily means in reconstruction and "
+               f"{tok(p + 'K2_cov90.median')} prospectively. Specified before scoring "
+               f"(docs/kandy_model_rung_spec_2026-10-10.md); not registered.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -499,7 +523,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

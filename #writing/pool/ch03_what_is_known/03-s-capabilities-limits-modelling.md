@@ -24,8 +24,7 @@ city is not represented in the available covariates, no change of architecture w
 {{ref:ch-model-stops}} turns this constraint into a measurement. The result is stated as a
 finding of this study rather than a general theorem: the information and the model classes tested
 here did not recover the within-city spatial structure, within a detection limit fixed in advance.
-{{ref:ch-eight-approaches-did-work}} records five separate attempts to find such structure, and
-{{ref:s-six-negative-results-their}} sets out the later ones, pre-registered with detection limits
+{{ref:s-six-negative-results-their}} sets out the tests, pre-registered with detection limits
 stated in advance, including tests of further model families and of interpolation from a small
 number of monitoring stations.
 

@@ -4,9 +4,13 @@ The results sort the field into three kinds of statement, and the sorting is the
 study establishes about Kandy. A fourth part of the discussion concerns what Kandy should measure
 next, and a fifth records a design flaw found late in the work and what it changed.
 
-**Supported: the timing.** The seasonal and daily behaviour of the field is supported from two
+**Supported: the timing.** The seasonal and daily behaviour of the field is supported from three
 directions. The construction that produces it transfers between monitored valley and basin cities
-when their own observations are withheld ({{ref:s-model-across-ten-cities}}), and at Kandy the
+when their own observations are withheld ({{ref:s-model-across-ten-cities}}). Its temporal anchor,
+placed on the ladder, follows the withheld daily city mean at a correlation of
+{{claim:v2.km.reco.unio.K2_r.median}} where its anchor stations observed the period, though only
+{{claim:v2.km.pros.unio.K2_r.median}} where they did not, so the day-to-day sequence at Kandy is
+best supported on the days its sensors reported ({{ref:s-kandy-model-rung}}). And at Kandy the
 independent national record differs from the field by {{claim:nbro.diff_pct_2021}} and
 {{claim:nbro.diff_pct_2022}} per cent in two separate years, at a cell whose value the model lifts
 {{claim:nbro.lift_pct_2021}} and {{claim:nbro.lift_pct_2022}} per cent above the basin mean

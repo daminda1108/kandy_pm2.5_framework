@@ -25,6 +25,8 @@ be tested against, and where its spatial pattern stops being supported.
 
 {{include:pool/ch06_the_model/06-s-partition-constraint-rather-than.md}}
 
+{{include:pool/ch06_the_model/06b-s-partition-detail.md}}
+
 {{include:pool/ch06_the_model/07-s-excluded-processes-known-limits.md}}
 
 {{include:pool/kandy/field.md}}
@@ -32,6 +34,8 @@ be tested against, and where its spatial pattern stops being supported.
 {{include:pool/ch07_making_sure/08-s-checks-kandy-carry-weight.md}}
 
 {{include:pool/ch07_making_sure/09-s-interval-calibration.md}}
+
+{{include:pool/ch07_making_sure/09b-s-external-representativeness.md}}
 
 {{include:pool/ch07_making_sure/11-s-exposure-weighting.md}}
 
@@ -65,6 +69,8 @@ monitored cities.
 {{include:pool/ch08_where_it_stops/05b-s-deliberate-siting-tested-dense.md}}
 
 {{include:pool/ch07_making_sure/07-s-model-across-ten-cities.md}}
+
+{{include:pool/ch07_making_sure/07c-s-ten-city-showcase.md}}
 
 {{include:pool/ch07_making_sure/12-s-summary-established-results.md}}
 

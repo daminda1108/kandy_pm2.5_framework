@@ -1,7 +1,7 @@
 ## Six negative results and their detection limits {#s-six-negative-results-their}
 
-{{ref:s-five-attempts-find-spatial}} described five searches for learnable spatial structure, none of which stated in
-advance what it could detect. {{fig:nullpower}} gives the retrospective answer: at their sample
+Five earlier searches for learnable spatial structure, made during the development of the model,
+did not state in advance what they could detect. {{fig:nullpower}} gives the retrospective answer: at their sample
 sizes they could only have found residual correlations between
 {{claim:null.min_detectable_lo}} and {{claim:null.min_detectable_hi}}.
 
@@ -120,7 +120,8 @@ inverse distance weighting reaches {{claim:tour.oracle_idw}}, geographically wei
 benchmark's {{claim:tour.benchmark}}, which is obtained with no local observation at all. On this
 frame a city that has a network, using the methods designed for exactly that case, ranks its own
 stations no better than a single free raster ranks a city it has never seen.
-{{ref:s-five-attempts-find-spatial}} reported the same thing for inverse distance weighting alone.
+An earlier search during the model's development found the same for inverse distance weighting
+alone.
 
 The oracle arm is a leave-one-out ranking of every station in a city, which is not the design of
 the registered spatial learning curve of {{ref:s-what-stations-buy-map}}. There a fixed set of

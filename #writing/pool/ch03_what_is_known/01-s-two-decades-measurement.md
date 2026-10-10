@@ -35,8 +35,8 @@ The source apportionment of Seneviratne and colleagues, using positive matrix fa
 speciated samples at Katugastota, attributes 7.6 per cent of PM2.5 mass to traffic and 14.1 per
 cent to biomass burning [@Seneviratne2017]. This contradicts, at least for that suburban site,
 the assumption made in earlier versions of this work that Kandy's particulate matter is
-approximately ninety per cent vehicular; {{ref:s-defects-found-audit-rather}} describes how that
-assumption persisted and what it affected.
+approximately ninety per cent vehicular. That assumption has been withdrawn, and the model no
+longer depends on it ({{ref:s-spatial-pattern}}).
 
 More recent studies provide the only independent data against which the model can be evaluated
 at Kandy. Nirmani and colleagues published daily concentrations obtained from the National

@@ -1,9 +1,8 @@
 ## The model across ten cities {#s-model-across-ten-cities}
 
-The ladder measures what an observation is worth. It does not say how well the model performs, and
-those are different questions. This section answers the second one across the ten cities where the
-full model was built, rather than the many more cities of the discovery, confirmation and
-full-network panels where only the ladder was run. Three axes are
+This section scores the complete model, field and all, across the ten valley and basin cities
+where it was built with only two anchor stations and scored against the stations withheld from it
+({{ref:s-borrowed-ground-truth}}). Three axes are
 scored separately: how well the model reproduces the seasonal cycle, how well it reproduces the
 daily cycle, and how far its annual level sits from the observed one. The figure below gives all
 three for every city, with the axes kept apart rather than combined into a single score. Reading
@@ -24,11 +23,5 @@ random. Level bias has a median of {{claim:scorecard.level_bias_median}} per cen
 spatial rank is estimable at {{claim:scorecard.spatial_estimable}} of the ten cities, with a
 median of {{claim:scorecard.spatial_rho_median}}.
 
-{{fig:kathmandu}}
-
-The showcase city is shown because it is the best case and is labelled as such. It reaches a
-seasonal correlation of {{claim:ktm.seasonal_r}} and a diurnal correlation of
-{{claim:ktm.diurnal_r}} at {{claim:ktm.stations}} stations, with a level bias of
-{{claim:ktm.level_bias_pct}} per cent. Its spatial rank, taken from the panel scorecard rather
-than from the figure so that one city does not carry two numbers, is
-{{claim:scorecard.kathmandu_spatial_rho}}.
+The best case, a city with a dense network scored at forty stations, is shown in
+{{ref:s-ten-city-showcase}} and labelled as the best case rather than as typical.

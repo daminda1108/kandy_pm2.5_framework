@@ -93,7 +93,22 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
-## Current State (updated 2026-10-06, 🔴 **EXTERNAL REVIEW: THE LADDER'S ORDERING IS A CONSTRUCTION ARTEFACT; SPATIAL CLAIMS NARROWED**)
+## Current State (updated 2026-10-10, 🟢 **THESIS A RESTRUCTURED; THE DEPLOYED MODEL SCORED ON THE LADDER (F.125)**)
+
+- ✅ **Thesis A restructured to the user's brief and ENS4998** (`#writing/theses/a/`): Methodology now describes T(t), B(t),
+  P (new pool `ch06_the_model/01b/01c/01d`) and a three-line validation design (`theses/a/validation_design.md`);
+  Results §3.2 Validation = Kandy records · 10-city transfer (moved from App. A) · **deployed model on the ladder
+  (§3.2.3, Table `T3_km_rung`)** · interval calibration. **Appendix C (failed approaches) deleted**; E and I condensed
+  (`app_reproducibility.md`, `app_changes.md`); new App. C "The model in detail" holds moved detail. Build COMPLIANT:
+  body **75/75 pages (no slack)**, intro 20 %, results 35 %, abstract 348/350, 0 lint errors.
+- 🔬 **F.125 (exploratory, spec committed before scoring):** deployed T chain as a ladder rung, 104 cities —
+  reconstruction **+32.7 % [25.9, 41.9]** vs Bud0, prospective **+4.8 [−2.8, 25.8]**; r 0.86 / 0.67; level +8 / +18 %;
+  cov90 0.70. Results `kandy_pm25/docs/kandy_model_rung_results_2026-10-10.md`.
+- ⚠ **Summary (`#writing/summary/summary.md`) NOT updated**: still has "What was tried first" (failed arcs) and wrongly
+  says the dispersion step "is not used" (production additive_v2 is built from the 4factor field, so it IS used).
+- Found and fixed: §2.1.2 cited GHAP (Wei2023) as the level anchor (it is van Donkelaar); Table 2.2 note stale.
+
+## Current State (2026-10-06, 🔴 **EXTERNAL REVIEW: THE LADDER'S ORDERING IS A CONSTRUCTION ARTEFACT; SPATIAL CLAIMS NARROWED**)
 
 Adversarial code review + remediation, all post hoc / exploratory (Test C declined by the author: no fresh dense pool).
 Plan and full log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`; ledger **F.124**; thesis change list

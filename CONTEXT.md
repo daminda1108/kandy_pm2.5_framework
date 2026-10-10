@@ -51,6 +51,13 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
+## 🔬 The deployed model on the ladder (2026-10-10, F.125, exploratory)
+Kandy's T(t) chain (daily, 2 anchor stations, VanD level) scored on the ladder, 104 cities: **reconstruction +32.7 %
+[25.9, 41.9]** vs the sensorless learner (+17.0 pts over calibration-only; −22 pts short of same-day), r 0.86;
+**prospective +4.8 [−2.8, 25.8]** (no better than calibration), r 0.67. Level +8 / +18 % high; 90 % interval covers 0.70.
+Thesis A is now built on three validation lines (Kandy records · 10-city transfer · this rung). Never quote the
+reconstruction gain as skill on days the sensors did not observe.
+
 ## 🟢 The ladder: CONFIRMED on 72 fresh cities (2026-09-28, OSF `ueyfr`, F.117; discovery F.115/F.116) — ordering superseded by F.124
 
 **Status.** Ladder v2 (frozen `e6b744b`; 21 station splits, 5 learner seeds, cross-fitted shrinkage,

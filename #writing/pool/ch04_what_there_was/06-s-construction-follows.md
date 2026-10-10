@@ -16,7 +16,3 @@ drivers and the satellite level and produces a basin-mean concentration for ever
 background term takes the same drivers and produces a regional contribution. The spatial pattern
 takes the static geography and produces a unit-mean surface. {{ref:ch-model}} sets out the formulation
 and {{ref:s-marginal-predictive-value-each}} measures what each stream contributes.
-
-The order in which those three are described is not the order in which they were built, and
-{{ref:ch-eight-approaches-did-work}} gives the actual sequence, which involved abandoning two complete architectures before
-arriving at this one.

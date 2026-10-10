@@ -6470,3 +6470,17 @@ correction needs GBD age-specific baselines (author download). Burden stays an i
 Scripts: `ladder_v2_review.py`, `spatial_curve_x5_erratum.py`, `spatial_curve_reanalysis.py`,
 `spatial_curve_satellite_benchmark.py`, `kandy_f_sensitivity.py`, `kandy_rh_sensitivity.py`. Claims `v2.*` in
 `build_claims.py` (`registered_v2`).
+
+## F.125 — 🔬 the deployed Kandy temporal anchor placed on the ladder: strong where its sensors observed, no gain where they did not (2026-10-10)
+
+EXPLORATORY; spec committed before scoring (`docs/kandy_model_rung_spec_2026-10-10.md`, a45cf0c); results
+`docs/kandy_model_rung_results_2026-10-10.md`; claims `v2.km.*`. The field's city mean is T(t) exactly, so the anchor was
+scored on the ladder's daily city-mean target (104 cities, 21 splits, cluster bootstrap over 49 networks), with the
+anchor chain of `src/transfer_validation/t_anchor.py` at daily resolution (GEOS-CF prior + ERA5 daily met; per-year
+van Donkelaar re-anchor) and the first two pool stations as its anchor pair. **Reconstruction:** gain vs Bud0
+**+32.7 % [25.9, 41.9]**, +17.0 points over the same two stations used as calibration [6.7, 21.4], −22.2 points short
+of reading them on the day [12.1, 32.6]; r 0.86. **Prospective:** +4.8 [−2.8, 25.8], −6.4 vs calibration [−12.7, +3.0],
+r 0.67. Chain without stations: r 0.65 (> Bud0 0.58) but RMSE −51 % (overstated amplitude). Level +8 % / +18 % above the
+withheld mean (same sign as W11). Nominal-90 interval covers 0.70 / 0.80. **Quote:** "where its anchor stations observed
+the period, the deployed chain cuts daily error by about a third against a generic sensorless estimate; where they did
+not, by no resolvable amount." Never quote the reconstruction gain as skill on unobserved days.
