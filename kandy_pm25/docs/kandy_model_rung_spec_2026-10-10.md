@@ -39,7 +39,10 @@ a daily city-mean score.
 | `Bud0cal2` | `Bud0` with an intercept and slope fitted to the first two pool stations (the registered first-two rung before shrinkage) | pool[0:2], calibration only |
 | `K0` | Kandy chain with no stations: GEOS-CF daily series, additively shifted per calendar year so its annual mean equals the van Donkelaar level | none |
 | `K2` | **Kandy chain as deployed**, with pool[0:2] as the anchor pair: ratio = row-mean(anchor)/row-mean(prior); residual target anchor − prior·ratio; LightGBM quantile heads (0.05/0.50/0.95, `t_anchor.LGBM_PARAMS`) on day-of-year harmonics, day of week, BLH, u10, v10, wind speed, t2m and the scaled prior; CV+ Mondrian conformal by month on 5 sequential folds; monthly amplitude sharpening to the anchor climatology (clip 0.5–2); per-year additive re-anchor to van Donkelaar | pool[0:2], training and calibration only, never read on the day |
-| `L2same` | first two pool stations read on the day: held-out mean regressed on (1, Bud0, mean of pool[0:2]) over the scored period, Bud0 affine fallback on missing days (no shrinkage) | pool[0:2], read on the day |
+| `L2same` | first two pool stations read on the day, exactly as the review's symmetric `L2s` arm without shrinkage: the daily mean of pool[2:6] (never the held-out set) regressed on (1, Bud0, mean of pool[0:2]); Bud0 affine fallback on days the pair is missing; needs pool ≥ 6 | pool[0:2] read on the day; pool[2:6] fit only |
+
+(Amended before scoring, same day: the first draft fitted `L2same` on the held-out mean, which would
+score it in sample.)
 
 Daily resolution is a declared deviation from the hourly Kandy chain: the hour-of-day features and the
 hour-of-day sharpening are dropped because the scored quantity is a daily mean. Everything else is
