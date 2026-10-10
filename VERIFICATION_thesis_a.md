@@ -1,8 +1,8 @@
 # Verification report, thesis A
 
-- Built: 2026-10-10T20:59:11  ·  repository commit at report time: `9ec7b48`
+- Built: 2026-10-10T20:59:11  ·  repository commit at report time: `ac0943f`
 - Claims generated: 2026-10-10  ·  claims in the registry: 1875  ·  cited by this thesis: 507
-- Claims cited but missing from the registry: 1
+- Claims cited but missing from the registry: 0
 - Every cited claim was recomputed and compared at build time; the build refuses on any drift.
 
 ## By input access

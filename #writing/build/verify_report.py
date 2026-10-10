@@ -66,7 +66,7 @@ def main():
     src_text = "".join(io.open(p, encoding="utf-8").read()
                        for p in list((HERE.parent / "pool").rglob("*.md")) + list((HERE.parent / "theses" / a.thesis).rglob("*.md"))
                        + list((HERE.parent / "thesis" / "tables").glob("*.md")))
-    cited = set(re.findall(r"\{\{claim:([^}\s]+)\}\}", src_text))
+    cited = set(re.findall(r"\{\{claim:([^}\s]+)\}\}", re.sub(r"`[^`]*`", " ", src_text)))   # skip code spans (examples)
     C = json.load(open(CLAIMS, encoding="utf-8"))
     claims = C["claims"]
     used = {k: v for k, v in claims.items() if k in cited}
