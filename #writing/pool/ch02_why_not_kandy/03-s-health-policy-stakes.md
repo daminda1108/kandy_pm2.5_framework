@@ -23,7 +23,7 @@ single point measurement separates them. A field that reports only a total is of
 such decisions, however accurate the total.
 
 The decomposition described in {{ref:ch-model}} is designed for this purpose. It separates a
-regional background from a locally generated increment, of which only the increment can be
+regional background from a local increment, of which only the increment can be
 influenced by a local authority. For Kandy, under the background and minimum-increment
 assumptions set out in {{ref:s-partition-constraint-rather-than}}, the constrained decomposition
 assigns {{claim:partition.f}} of modelled concentration to the local increment and the remainder

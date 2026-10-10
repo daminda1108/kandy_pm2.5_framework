@@ -36,6 +36,25 @@ divides into a background and an increment. That division is bounded by the cons
 {{ref:s-partition-constraint-rather-than}} and by the way *B* is built in {{ref:s-regional-background}}, and how much the resulting fraction moves
 when those choices are varied is reported there rather than assumed away.
 
+#### Three quantities kept distinct {#s-three-quantities}
+
+Three quantities are easily conflated, and this thesis keeps them apart throughout.
+
+The **regional-background estimate** *B*(*t*) is a constructed quantity: a level and a daily series
+built from a satellite surface, a composition model and an air-mass classification
+({{ref:s-regional-background}}). It is not a measured inflow.
+
+The **local increment** *T*(*t*) − *B*(*t*) is the residual of the total above that estimate under
+the specified decomposition. Its share of the total is the **local fraction** *f*. Because *B* is
+constructed and capped by a constraint, *f* is a property of the decomposition and moves when the
+decomposition is specified differently ({{ref:s-partition-constraint-rather-than}}).
+
+The **locally emitted primary contribution** is the mass emitted directly by sources inside the
+basin. It is a different physical quantity, the one an emission-control decision acts on, and this
+model does not observe it: the local increment includes secondary aerosol formed inside the basin
+from precursors of any origin, and excludes aerosol formed regionally. Where this thesis bounds it,
+it does so separately ({{ref:s-partition-detail}}).
+
 One qualification belongs here rather than in a limitations list. The satellite anchor is exact,
 in that the annual mean of *T* matches the reference product to four decimal places every year.
 The delivered field nonetheless sits {{claim:gauge.drift_lo_pct}} to {{claim:gauge.drift_hi_pct}}

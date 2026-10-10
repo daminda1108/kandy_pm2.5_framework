@@ -21,9 +21,9 @@ boundary layer grows through the day. Fitting the exponent that would express th
 component is close to inert to the diurnal cycle. That is the behaviour of air already mixed
 rather than air accumulating in place.
 
-{{ref:s-independent-chemical-check}} supplies composition evidence from an independent direction: air classified by
-arrival sector as continental is more secondary-rich, and therefore more aged, than air arriving
-from the ocean. A background composed of aged air is what the decomposition requires.
+{{ref:s-independent-chemical-check}} adds a model-based consistency check: in the composition model, air
+classified by back-trajectory arrival sector as continental is more secondary-rich, and therefore
+more aged, than air arriving from the ocean. A background composed of aged air is what the decomposition requires.
 
 The assumption is nonetheless the one a denser network would test first, and {{ref:s-marginal-predictive-value-each}} is
 explicit that the proxy standing in for *B* is the weakest link in the chain.

@@ -3,7 +3,10 @@
 The conclusions are given against the objectives set out in {{ref:a-aims}}. What this study
 delivers is a constrained reconstruction of PM2.5 over Kandy and an account of how far each part of
 it can be trusted. It does not deliver a validated hourly, kilometre-scale map, and the conclusions
-are worded so that they cannot be read as one.
+are worded so that they cannot be read as one. {{tbl:T4_ledger}} states, for each part of the
+reconstruction, what the evidence supports and what it may be used for.
+
+{{tbl:T4_ledger}}
 
 1. **A decomposition that conserves the city-wide mean can be built for Kandy from data available
    everywhere.** The field separates a regional background from a local increment whose spatial
@@ -12,15 +15,20 @@ are worded so that they cannot be read as one.
    {{claim:gauge.drift_hi_pct}} per cent. Each component declares which observations it may use,
    and removing an observation stream reproduces the simpler tier exactly, which is what allows
    the value of each stream to be measured.
-2. **The reconstructed field is above the World Health Organization annual guideline in every
-   year of the study period**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms
-   per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum and a midday
-   trough below the night. That PM2.5 is a substantial concern in Kandy is better supported than
-   the exact values, whose level is open (conclusion 3). The decomposition assigns about half of
-   the concentration to the local increment, {{claim:partition.f}} in production and
-   {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across reasonable forms of the constraint that
-   sets it. This is a bound on a constructed partition, not a source apportionment: it does not
-   say that half of Kandy's PM2.5 is emitted in Kandy. Weighting by population raises exposure
+2. **The reconstructed annual basin means exceed the World Health Organization annual guideline in
+   every satellite-anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}}
+   micrograms per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum, and
+   morning and evening peaks either side of a midday trough. Because the absolute level is
+   unresolved (conclusion 3), this characterises the modelled field and is not an independently
+   established measurement of exposure; that PM2.5 is a substantial concern in Kandy is better
+   supported than the exact values. Under the baseline
+   decomposition the local increment accounts for {{claim:partition.f}} of the modelled
+   concentration; the fraction ranges from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} under
+   the tested choices of day boundary and daily-floor statistic, reaches
+   {{claim:field.f_form_roll48}} with a 48-hour background window, and is
+   {{claim:rh2.hourly_rh.f}} under the hourly-humidity label. These describe the decomposition's
+   sensitivity to its specification, not a confidence interval and not a source apportionment: they
+   do not say that half of Kandy's PM2.5 is emitted in Kandy. Weighting by population raises exposure
    {{claim:exposure.uplift_pct}} per cent above the area mean, and both that figure and the
    illustrative burden of {{ref:app-attributable-burden-projection}} inherit the uncertainty of the
    level and of the unvalidated spatial pattern.
@@ -36,9 +44,12 @@ are worded so that they cannot be read as one.
      so on the many days they did not.
    - *The daily cycle's timing is supported and its depth is not.* The daily cycle transfers to some
      analogue cities and not to others (diurnal correlation {{claim:scorecard.diurnal_r_lo}} to
-     {{claim:scorecard.diurnal_r_hi}}), hourly skill at Kandy is modest (a coefficient of
-     determination of {{claim:v2.tanchor.lagfree.r2}} out of sample), and the depth of the cycle
-     depends on a humidity correction that only a co-located reference instrument can check.
+     {{claim:scorecard.diurnal_r_hi}}), and hourly skill at Kandy is modest (a coefficient of
+     determination of {{claim:v2.tanchor.lagfree.r2}} out of sample). Under the alternative humidity
+     correction the timing of the peaks and trough is unchanged, but the peak-to-trough ratio falls
+     from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night
+     falls below midday; the depth of the cycle is calibration-dependent until a co-located reference
+     instrument settles the correction.
    - *The absolute level is open.* An independent national record agrees with the field in two
      years, three low-cost records sit below it, and the satellite level used to anchor it sits
      above the withheld city mean across the ladder's cities. The interval's nominal ninety per

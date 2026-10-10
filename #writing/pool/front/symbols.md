@@ -9,6 +9,6 @@
 | *H*~*k*~ | observation operator for instrument k |
 | *b*~*k*~ | systematic offset for instrument k |
 | *s*~rep~ | representativeness error from unresolved sub-grid structure |
-| *f* | local fraction of concentration, the partition |
-| *F*~min~ | floor on the local share imposed by the coherence constraint |
+| *f* | local fraction: the local increment's share of the modelled total under the decomposition; not a source apportionment |
+| *F*~min~ | floor on the local fraction imposed by the coherence constraint |
 | *ρ* | Spearman rank correlation |

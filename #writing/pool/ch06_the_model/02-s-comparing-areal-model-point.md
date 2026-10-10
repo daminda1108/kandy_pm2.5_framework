@@ -30,12 +30,15 @@ under exchangeability [@Vovk2005; @Angelopoulos2023], and hourly air quality in 
 climate is not exchangeable, so the
 nominal level is a design target and the measured coverage is the evidence. It covers
 {{claim:kandy.cov90}} per cent of
-observations at the two Kandy sensors. Read alone, that suggests the interval is too narrow. It
-is not. Observations fall below the lower bound in {{claim:kandy.miss_below}} per cent of hours
+observations at the two Kandy sensors. Read alone, that suggests the interval is too narrow, but
+the misses are not symmetric. Observations fall below the lower bound in {{claim:kandy.miss_below}} per cent of hours
 and above the upper bound in {{claim:kandy.miss_above}} per cent, which is a one-sided failure
 rather than a width failure. Removing each sensor's own median offset restores coverage to
-{{claim:kandy.cov90_recentred}} per cent. The width of the interval is therefore about right and
-its centre is not, and only an explicit *b*~*k*~ makes that diagnosis available at all.
+{{claim:kandy.cov90_recentred}} per cent. That pattern is a diagnostic of a possible calibration
+bias at these two sensors, and only an explicit *b*~*k*~ makes it visible at all. It is not evidence
+that the interval's width is correct for the basin field: the re-centred coverage is measured on the
+same two sensors that calibrated the anchor, and the interval omits several sources of uncertainty
+listed below.
 
 Two readings of the offset remain open. The first is the change of support described above: the
 field is an area mean and the sensors are points, so a systematic offset between them is expected.

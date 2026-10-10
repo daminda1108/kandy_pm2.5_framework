@@ -2061,6 +2061,33 @@ def kandy_model_rung(c: Claims) -> None:
                       ledger="F.125")
 
 
+
+def review2(c: Claims) -> None:
+    """Second external review (2026-10-10, F.126): humidity scenario and the dispersion benchmark."""
+    f = DEC / "rh_scenario_summary.csv"
+    if f.exists():
+        S = pd.read_csv(f, index_col=0)
+        for row, tag in (("f", "f"), ("T_peak_trough", "peak_trough"), ("T_night_midday", "night_midday"),
+                         ("T_season_swing", "season_swing"), ("cov90", "cov90"), ("cov90_recentred", "cov90_rec"),
+                         ("daily_r", "daily_r"), ("daily_rmse", "daily_rmse")):
+            for sc in ("production", "hourly_rh"):
+                c.add(f"rh2.{sc}.{tag}", round(float(S.loc[row, sc]), 3), stat="mean over 2019-2023",
+                      n=5, source=f.name, ledger="F.126", note="exploratory scenario; production is the identity")
+    f = MOD / "r2b_dispersion_benchmark.csv"
+    if f.exists():
+        d = pd.read_csv(f); m = d[d.city == "MEDIAN"].iloc[0]; body = d[d.city != "MEDIAN"]
+        for col, tag in (("rho_S", "rho_S"), ("rho_C", "rho_C"), ("rho_BU", "rho_BU"),
+                         ("contrast_obs", "contrast_obs"), ("contrast_S", "contrast_S"), ("contrast_C", "contrast_C"),
+                         ("C_minus_S_median", "C_minus_S"), ("BU_minus_S_median", "BU_minus_S"),
+                         ("BU_minus_C_median", "BU_minus_C")):
+            c.add(f"r2b.{tag}", round(float(m[col]), 3), stat="median over cities", n=len(body),
+                  source=f.name, ledger="F.126")
+        for k in ("C_minus_S", "BU_minus_S", "BU_minus_C"):
+            c.add(f"r2b.{k}_wins", int(m[f"{k}_wins"]), stat="cities where the first arm ranks higher",
+                  n=int(m[f"{k}_n"]), source=f.name, ledger="F.126")
+        c.add("r2b.cities", len(body), stat="count", n=len(body), source=f.name, ledger="F.126")
+
+
 def registered_v2(c: Claims) -> None:
     """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
     New keys under `v2.*`; the older ladder keys are left in place (they state what the
@@ -2591,6 +2618,7 @@ def build() -> dict:
     registered_v2(c)
     kandy_model_config(c)
     kandy_model_rung(c)
+    review2(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

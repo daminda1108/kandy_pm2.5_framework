@@ -493,6 +493,116 @@ def t3_km_rung():
                f"and committed to the project record; not registered.")
 
 
+def t3_rh_scenario():
+    """Humidity-correction scenario (exploratory, F.126)."""
+    rows = []
+    for tag, lab in (("f", "local fraction"), ("peak_trough", "morning peak over midday trough"),
+                     ("night_midday", "night over midday"), ("season_swing", "highest over lowest month"),
+                     ("daily_r", "daily correlation with the sensors"),
+                     ("daily_rmse", "daily RMSE against the sensors (micrograms per cubic metre)"),
+                     ("cov90", "nominal 90 per cent interval coverage"), ("cov90_rec", "coverage, sensor offsets removed")):
+        rows.append([lab, tok(f"rh2.production.{tag}"), tok(f"rh2.hourly_rh.{tag}")])
+    write("T3_rh_scenario", "The delivered series under the two humidity corrections (exploratory)",
+          ["quantity", "constant humidity (delivered)", "hourly humidity"], rows,
+          note="Means over 2019 to 2023. The annual level is identical by construction. Skill and "
+               "coverage are against the sensor record corrected the same way; the sensors calibrated "
+               "the anchor, so these are consistency measures, not validation.")
+
+
+def t4_ledger():
+    """Evidence ledger: what each model quantity may be used for (second external review)."""
+    km_r, km_p = "v2.km.reco.unio.", "v2.km.pros.unio."
+    write("T4_ledger", "What each part of the reconstruction can be used for",
+          ["model quantity", "evidential status", "permitted interpretation"],
+          [["Seasonal behaviour",
+            f"supported in the ten analogue cities (seasonal correlation {tok('scorecard.seasonal_r_lo')} to "
+            f"{tok('scorecard.seasonal_r_hi')})",
+            "broad seasonal comparisons, subject to the limits of transfer"],
+           ["Day-to-day sequence",
+            f"conditionally supported: daily correlation {tok(km_r + 'K2_r.median')} where the anchor stations "
+            f"observed the period, {tok(km_p + 'K2_r.median')} where they did not",
+            "better supported on days the sensors reported"],
+           ["Depth of the daily cycle",
+            f"calibration-sensitive: peak over trough {tok('rh2.production.peak_trough')} or "
+            f"{tok('rh2.hourly_rh.peak_trough')} depending on the humidity correction",
+            "scenario-dependent until a reference instrument settles the correction"],
+           ["Absolute level",
+            f"unresolved: a national record within {tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} "
+            f"per cent, three low-cost records below, the satellite level {tok(km_r + 'K2_bias.median')} per cent "
+            f"above withheld city means",
+            "a model estimate, not an independently established exposure"],
+           ["Uncertainty interval",
+            f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, a fraction "
+            f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
+            "indicative only; not calibrated for the basin field"],
+           ["Spatial pattern at the kilometre scale",
+            f"not validated: rank correlation {tok('r2b.rho_C')} as delivered, below a free built-up layer "
+            f"({tok('r2b.rho_BU')})",
+            "a hypothesis to test, not a ranking of neighbourhoods"],
+           ["Regional and local partition",
+            f"specification-dependent: {tok('partition.f')} at baseline, {tok('v2.f.cap_min')} to "
+            f"{tok('v2.f.cap_max')} across cap choices, {tok('field.f_form_roll48')} with a 48-hour window",
+            "a property of the decomposition, not a source apportionment"],
+           ["Value of daily observations",
+            f"supported across the panel: one station read daily {tok('v2.review.k.day1.median')} per cent, "
+            f"two used only to calibrate {tok('v2.review.k.cal2.median')} per cent (post hoc re-analysis)",
+            "evidence for continuous use of readings, not an ordering of station types"]],
+          note="Each row summarises evidence reported in the results; none of it is new.")
+
+
+def t3_validation_summary():
+    """Validation by evaluation condition (second external review)."""
+    km_r, km_p = "v2.km.reco.unio.", "v2.km.pros.unio."
+    write("T3_validation_summary", "Validation results by evaluation condition",
+          ["condition", "evidence", "result", "caveat"],
+          [["Seasonal aggregation", "ten analogue cities, withheld stations",
+            f"seasonal correlation {tok('scorecard.seasonal_r_lo')} to {tok('scorecard.seasonal_r_hi')}; level "
+            f"bias median {tok('scorecard.level_bias_median')} per cent",
+            "climatological; level there set by two stations, not the satellite"],
+           ["Shape of the daily cycle", "ten analogue cities",
+            f"diurnal correlation {tok('scorecard.diurnal_r_lo')} to {tok('scorecard.diurnal_r_hi')}",
+            "regime-dependent; depth also calibration-dependent at Kandy"],
+           ["Daily, anchor stations reporting", f"ladder, {tok('v2.km.cities_scored')} cities",
+            f"error {tok(km_r + 'gK2_rmse.median')} per cent below the sensorless estimate; correlation "
+            f"{tok(km_r + 'K2_r.median')}; bias {tok(km_r + 'K2_bias.median')} per cent",
+            "includes training on the anchor stations' own record"],
+           ["Daily, anchor stations not reporting", "ladder, prospective",
+            f"error {tok(km_p + 'gK2_rmse.median')} per cent below [{tok(km_p + 'gK2_rmse.lo')}, "
+            f"{tok(km_p + 'gK2_rmse.hi')}]; correlation {tok(km_p + 'K2_r.median')}; bias "
+            f"{tok(km_p + 'K2_bias.median')} per cent",
+            "no resolvable gain over the sensorless estimate"],
+           ["Hourly, at Kandy", "one month of one sensor withheld at a time",
+            f"coefficient of determination {tok('v2.tanchor.lagfree.r2')}; RMSE {tok('v2.tanchor.lagfree.rmse')}",
+            "the same sensors calibrate the anchor's amplitude"],
+           ["Interval coverage", "Kandy sensors; ladder cities",
+            f"{tok('kandy.cov90')} per cent; a fraction {tok(km_r + 'K2_cov90.median')}",
+            "nominal 90; misses one-sided at Kandy"],
+           ["Independent Kandy records", "national organisation, two years; three low-cost records",
+            f"{tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent; low-cost records below the field",
+            "point against cell; instruments differ"]],
+          note="A high seasonal correlation does not imply accurate daily or hourly values; each "
+               "condition is reported separately for that reason.")
+
+
+def ta_ladder_status():
+    """Status of each ladder result: registered, post hoc, retracted or exploratory."""
+    write("TA_ladder_status", "Status of each result from the information ladder",
+          ["result", "status", "how it may be quoted"],
+          [["Confirmation on fresh cities (H1 to H5)", "registered (OSF ueyfr)",
+            "as constructed: the rungs use their stations differently"],
+           ["Richer sensorless rung; other learners; full networks", "registered (OSF b379r, jea58, mhgna)",
+            "as robustness of the confirmation, as constructed"],
+           ["Every station used the same way", "post hoc re-analysis of registered data",
+            "kind of station makes no resolvable difference; awaits a fresh registered test"],
+           ["Stations read daily against calibration only", "post hoc re-analysis",
+            "daily use has demonstrated value in the panel"],
+           ["Leave one network out", "post hoc", "the sensorless rung was flattered slightly"],
+           ["Deep-tropical reversal", "retracted", "not distinguishable from zero across splits"],
+           ["Deployed model as a rung", "exploratory; design committed before scoring, not registered",
+            "conditional on whether the anchor stations reported"]],
+          note="No post hoc result is presented as a registered confirmation anywhere in this thesis.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -523,7 +633,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

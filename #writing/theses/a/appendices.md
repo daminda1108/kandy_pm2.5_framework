@@ -46,6 +46,8 @@ deep tropics, is established. The deployed model's own position on the ladder is
 
 {{include:pool/ch07_making_sure/12-s-summary-established-results.md}}
 
+{{tbl:TA_ladder_status}}
+
 # Spatial structure: the negative results in detail {#a-app-spatial}
 
 {{ref:ch-model-stops}} states that the field is not supported below the kilometre scale. {{This:a-app-spatial}}
@@ -82,11 +84,12 @@ ten-city transfer.
 
 {{include:pool/ch07_making_sure/07c-s-ten-city-showcase.md}}
 
-# A chemical check on the decomposition {#a-app-chemistry}
+# A model-based chemical consistency check on the decomposition {#a-app-chemistry}
 
 The decomposition of {{ref:a-methods}} rests on an assumption about what the regional background and
-the local increment are made of. {{This:a-app-chemistry}} tests that assumption against a composition
-product, bounds the locally emitted share, and records the test that could not be interpreted.
+the local increment are made of. {{This:a-app-chemistry}} checks that assumption for consistency
+against a composition model, bounds the locally emitted primary contribution, and records the test
+that could not be interpreted. No chemical measurement at Kandy is involved.
 
 {{include:pool/ch07_making_sure/10-s-independent-chemical-check.md}}
 

@@ -46,11 +46,9 @@ benchmark for any replacement.
 
 ### Improvements to the temporal model {#s-improvements-temporal-model}
 
-The sensor record that sharpens the anchor should be corrected with hourly rather than constant
-humidity, which lowers the observed peak-to-trough ratio from
-{{claim:v2.rh.constant_rh80.peak_to_trough}} to {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}};
-which shape is right can only be settled against a co-located reference, so the rebuild waits for
-the regulatory record. In the same pass the coherence cap should be evaluated on local days with a
+The humidity correction of the sensor record has been carried through as an alternative scenario
+({{ref:s-rh-scenario}}); the choice between the two can only be made against a co-located
+reference, and the regulatory record would allow it. In the same pass the coherence cap should be evaluated on local days with a
 robust daily floor. The panel version of the anchor scored on the ladder
 ({{ref:s-kandy-model-rung}}) used only the composition prior and meteorology; scoring the full
 predictor set across the panel would test whether the satellite and composition predictors add

@@ -21,9 +21,12 @@ diagnosis: the misses are one-sided, {{claim:kandy.miss_below}} per cent below a
 {{claim:kandy.median_offset}} micrograms per cubic metre. Removing each sensor's own offset
 restores coverage to {{claim:kandy.cov90_recentred}} per cent.
 
-The width is about right and the centring is not. The cause of the offset is not settled. It may
-be the change of support of {{ref:ch-model-stops}}, in which case the interval is correct for the
-areal quantity it describes. It may instead be an upward level bias of the model at these points,
+The pattern points to a centring problem at these sensors rather than a width problem, but it is a
+diagnostic, not a calibration of the interval: the re-centred coverage is measured on the two
+sensors that also calibrated the anchor, so it cannot show that the width is right for the basin
+field, and the interval omits uncertainties listed below. The cause of the offset is not settled. It may
+be the change of support of {{ref:ch-model-stops}}, in which case the interval may be adequate for
+the areal quantity it describes. It may instead be an upward level bias of the model at these points,
 for which the constant-humidity correction of the sensor record is one candidate mechanism, and
 {{ref:s-checks-kandy-carry-weight}} sets out the evidence on each side. The check cannot
 distinguish the two, because the sensors that score the interval are the same sensors that

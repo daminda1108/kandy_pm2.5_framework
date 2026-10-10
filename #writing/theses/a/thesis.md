@@ -93,6 +93,8 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:pool/ch07_making_sure/09-s-interval-calibration.md shift=1}}
 
+{{include:theses/a/rh_scenario.md}}
+
 {{include:pool/ch08_where_it_stops/00-ch-model-stops.md shift=1}}
 
 {{include:pool/ch08_where_it_stops/01-s-observation-sets-problem.md shift=1}}

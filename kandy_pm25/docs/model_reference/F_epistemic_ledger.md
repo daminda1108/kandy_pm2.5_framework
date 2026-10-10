@@ -6484,3 +6484,16 @@ r 0.67. Chain without stations: r 0.65 (> Bud0 0.58) but RMSE −51 % (overstate
 withheld mean (same sign as W11). Nominal-90 interval covers 0.70 / 0.80. **Quote:** "where its anchor stations observed
 the period, the deployed chain cuts daily error by about a third against a generic sensorless estimate; where they did
 not, by no resolvable amount." Never quote the reconstruction gain as skill on unobserved days.
+
+## F.126 — 🔬 second external review answered by computation: humidity scenario and the dispersion benchmark (2026-10-10)
+
+EXPLORATORY. **(a) Humidity scenario** (`scripts/kandy_rh_scenario.py`; production scenario parity 0.0 for T and B): the
+hourly-RH Barkjohn label carried through T(t) by the ratio of the labels' hour/month climatologies, annual mean
+restored, B rebuilt by the production code. Robust: level (identical), f **0.483 → 0.488**, daily r with sensors 0.857 →
+0.855, timing of peaks and trough. Not robust: peak/trough **1.93 → 1.68**, night/midday **1.16 → 0.95** (night falls
+BELOW midday — gotcha #54's "night above midday" is calibration-dependent), seasonal swing 3.43 → 3.96; cov90 0.764 → 0.721.
+Learner not retrained (stated). **(b) Dispersion on identical sites** (`scripts/r2b_dispersion_benchmark.py`, extends
+registered R2; parity with R2 0.0): median ρ raw emission surface **0.371**, dispersed (delivered) **0.274**, ESA WorldCover
+built-up within 1 km **0.393**; dispersion beats raw in 3/10, built-up beats dispersed in 6/10; P90/P10 contrast observed
+1.27 vs raw 3.98 vs dispersed 5.77. ⇒ the dispersion step is a declared choice, not a validated improvement. Thesis A:
+§3.2.5, §3.3.4, Table T4_ledger, T3_validation_summary, TA_ladder_status; claims `rh2.*`, `r2b.*`.

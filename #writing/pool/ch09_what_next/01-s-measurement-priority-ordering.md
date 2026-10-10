@@ -52,7 +52,8 @@ and almost all of it lies in the daily reading rather than in the calibration. A
 that co-locates instruments for a few weeks and then leaves recovers a small fraction of what a
 station reporting continuously is worth.
 
-The kind of station hardly matters for this purpose. Used on the same footing, two local stations,
+No ordering of station types is established for this purpose. In a post hoc re-analysis that used every
+stream on the same footing, two local stations,
 a background summarising the rest of the network and any two other stations were indistinguishable:
 the background minus the first two is {{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.median}}
 points [{{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.lo}}, {{claim:v2.review.registered_loco.reco.BGallmL2s_rmse.hi}}]

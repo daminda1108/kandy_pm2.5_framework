@@ -1,16 +1,22 @@
-## An independent chemical check {#s-independent-chemical-check}
+## A model-based chemical consistency check {#s-independent-chemical-check}
 
 The decomposition assumes that the regional background is aged air arriving from outside the
 basin and the local increment is fresher material generated inside it. That assumption is
 load-bearing and had never been tested against composition.
 
+This is a consistency check, not an independent chemical validation. The composition values come
+from the GEOS-CF composition model [@Keller2021], which the temporal anchor also uses as a prior,
+and no chemical measurement at Kandy is involved. The one element that is independent of that model
+is the classification of each day's air by its back-trajectory arrival sector. The check therefore
+asks whether the composition model, sorted by an independent classification of air-mass origin,
+behaves as the decomposition assumes; a speciated measurement at Kandy would be needed to test it.
+
 {{fig:chemistry}}
 
-Classifying air-mass origin by back-trajectory sector, which is independent of the composition
-product used to measure it [@Keller2021], continental air is measurably more secondary-rich and therefore more
+Classifying air-mass origin by back-trajectory sector, continental air is measurably more secondary-rich and therefore more
 aged than marine air: {{claim:chem.sec_frac.IGP_E_India}} against
-{{claim:chem.sec_frac.SW_marine}}. That is the ordering the decomposition requires and it is the
-first chemical support the construction has.
+{{claim:chem.sec_frac.SW_marine}}. That is the ordering the decomposition requires, and it is the
+first chemical consistency the construction has shown, within the composition model.
 
 A second registered prediction was refuted usefully. Recirculated local air was expected to be
 the freshest, and it is not, because stagnation gives local precursors time to age in place. The
@@ -77,7 +83,7 @@ chemical result would be reporting an instrument failure as a finding. The contr
 it, which is a weakness in the design and not a defence of it.
 
 What an intervention could remove. The third attempt is the one that works, and it repairs a
-claim {{ref:s-partition-constraint-rather-than}} withdraws. With the local share and the secondary share both known, the
+claim {{ref:s-partition-constraint-rather-than}} withdraws. With the local fraction and the secondary share both known, the
 locally emitted primary share is bounded from both directions without further assumption. At
 Kandy it lies between **{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per
 cent** of concentration. The lower figure is material that is both local and primary, and

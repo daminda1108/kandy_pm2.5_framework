@@ -31,6 +31,6 @@ presents the reconstructed field, its validation along those three lines, the sc
 spatial pattern stops being supported, and what the measurement of information value implies for
 what Kandy should measure next. {{ref:a-conclusions}} answers the objectives and sets out the
 further work the results call for. The appendices carry the supporting work in full: the
-cross-city measurement of information value, the tests of spatial structure, the chemical check on
+cross-city measurement of information value, the tests of spatial structure, the model-based chemical consistency check on
 the decomposition, and the machinery that regenerates every number in this document from its
 source.

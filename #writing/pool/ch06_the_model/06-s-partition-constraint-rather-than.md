@@ -27,7 +27,7 @@ choice is varied.
 Before the constraint, the background exceeded the total in
 {{claim:field.precap_excess_lo}} to {{claim:field.precap_excess_hi}} per cent of hours, averaging
 {{claim:field.precap_excess_mean}}. In each such hour the field rendered flat and reported a zero
-local share at the traffic core. After the constraint the residual is at worst
+local fraction at the traffic core. After the constraint the residual is at worst
 {{claim:field.postcap_excess_max}} per cent in any year, and every remaining case is an hour
 where the anchor itself returned a negative total, which no constraint on the background can
 repair.
@@ -35,10 +35,14 @@ repair.
 Across the anchored years the local fraction is **{{claim:partition.f}}**, ranging
 {{claim:partition.f_lo}} to {{claim:partition.f_hi}}.
 
-**This is a bound, not a measured share.** The fraction depends on how the cap is defined: on the
-day boundary, local or UTC, and on whether the daily floor is the single lowest hour or a robust
-low statistic. Across those choices it lies between {{claim:v2.f.cap_min}} and
-{{claim:v2.f.cap_max}}. It is also a function of the anchor's daily amplitude, because the cap
+**This is a property of the decomposition, not a measured share.** Under the baseline
+specification the local increment accounts for {{claim:partition.f}} of the modelled
+concentration. The fraction ranges from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} under the
+tested choices of day boundary (local or UTC) and daily-floor statistic (the single lowest hour or
+a robust low statistic), and reaches {{claim:field.f_form_roll48}} when the background is
+estimated over a 48-hour window. These values describe the sensitivity of the result to how the
+decomposition is specified; they are not a confidence interval for the true locally emitted
+fraction of PM2.5. It is also a function of the anchor's daily amplitude, because the cap
 binds at the daily minimum of *T*. And it is a decomposition of modelled concentration, not a
 source apportionment: the local increment contains locally formed secondary aerosol and excludes
 regionally formed aerosol, so it is not established that removing every local source would remove

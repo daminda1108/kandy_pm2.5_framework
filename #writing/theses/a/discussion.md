@@ -17,17 +17,19 @@ independent national record differs from the field by {{claim:nbro.diff_pct_2021
 ({{ref:s-checks-kandy-carry-weight}}). That record is one site over two years, with an
 undocumented instrument, and a global satellite-derived product read lower than it at the same
 cell in both years, so it supports the field without validating it. The interval around the field
-is the right width and wrongly centred at the two sensors: nominal ninety per cent intervals
-cover {{claim:kandy.cov90}} per cent of their hours, and removing each sensor's own offset, with
-the width unchanged, restores {{claim:kandy.cov90_recentred}} per cent
-({{ref:s-interval-calibration}}). What fails is the centring, which is a level question, and not
-the uncertainty. One qualification applies to the amplitude of the daily cycle rather than its
+under-covers: nominal ninety per cent intervals cover {{claim:kandy.cov90}} per cent of the two
+sensors' hours. Removing each sensor's own offset, with the width unchanged, raises that to
+{{claim:kandy.cov90_recentred}} per cent ({{ref:s-interval-calibration}}), which diagnoses a possible
+calibration bias at those sensors; it does not establish that the width is right for the basin
+field, and across the ladder's cities the interval under-covers as well. One qualification applies to the amplitude of the daily cycle rather than its
 timing. The sensor record to which the temporal anchor is sharpened was converted with a constant
 relative humidity, and repeating the conversion with hourly humidity reduces the ratio of the
 daily peak to the daily trough in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
-{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. The ordering of the peaks and the trough is
-unchanged; how deep the cycle is cannot be settled without a reference instrument co-located with
-the sensors.
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the delivered series, the alternative leaves the
+level, the timing of the peaks and trough, the day-to-day sequence and the local fraction
+essentially unchanged, but it reduces the depth of the cycle and reverses the ordering of night and
+midday ({{ref:s-rh-scenario}}). How deep the cycle is cannot be settled without a reference
+instrument co-located with the sensors.
 
 **Open: the level.** Of four independent point records at Kandy, three sit below the field and
 one agrees with it, and the three low ones all carry a downward calibration correction applied to
@@ -68,7 +70,7 @@ identification: it moves from {{claim:partition.f_lo}} to {{claim:partition.f_hi
 anchored years, from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across the choice of day
 boundary and of the statistic used for the daily minimum, and reaches
 {{claim:field.f_form_roll48}} under a 48-hour background window
-({{ref:s-partition-constraint-rather-than}}). Under every one of these choices the local share
+({{ref:s-partition-constraint-rather-than}}). Under every one of these choices the local fraction
 is close to half and well above the quarter previously assumed, which is the policy-relevant
 statement. It does not establish how much of that share is emitted locally rather than formed in
 the air, which is the question a composition measurement would answer

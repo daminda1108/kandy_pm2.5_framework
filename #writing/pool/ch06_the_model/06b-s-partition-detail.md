@@ -92,7 +92,7 @@ chemistry, as {{ref:s-excluded-processes-known-limits}} states. Precursors emitt
 inside it, and material formed outside can arrive already aged. The increment is defined by
 spatial structure and timing rather than by origin, so it contains locally formed secondary
 aerosol and excludes regionally formed aerosol regardless of where the precursors came from.
-{{ref:s-independent-chemical-check}} supplies the one chemical check the thesis has, and it also refuted the simplest
+{{ref:s-independent-chemical-check}} supplies the one chemical consistency check the thesis has, made within a composition model, and it also refuted the simplest
 reading, that the local increment can be treated as fresh primary aerosol.
 
 The intervention statement therefore has to be weaker than the arithmetic suggests. It is not
@@ -101,7 +101,7 @@ share of the increment is secondary material whose precursors are not all local 
 formation would not stop with the emissions this decomposition can see.
 
 Withdrawing the claim leaves a reader with nothing, so {{ref:s-independent-chemical-check}} replaces it with a bound. The
-locally emitted primary share is constrained from both directions by the local share and the
+locally emitted primary share is constrained from both directions by the local fraction and the
 secondary share together, with no further assumption, and at Kandy it lies between
 **{{claim:chem.intervention_lo}} and {{claim:chem.intervention_hi}} per cent** of concentration.
 The lower figure responds immediately to local emission control. The upper figure equals the

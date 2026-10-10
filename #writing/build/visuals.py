@@ -77,7 +77,9 @@ VISUALS: dict[str, tuple[str, str]] = {
         "The spatial limit, measured rather than asserted. Two survey sites three hundred "
         "metres apart, sampled by the same method over the same three midday hours (on "
         "different days), fall inside a "
-        "single model cell: support is held fixed and only location varies. The first panel "
+        "single model cell, so the model's support is the same; because the days differ and the "
+        "measurement is PM10, their contrast illustrates sub-grid variation without isolating "
+        "location as its cause. The first panel "
         "gives the observed contrast against the model as delivered and after the physics is "
         "re-run ten times finer in area. The second sweeps resolution, which converts an "
         "anecdote about one pair of sites into a test of the hypothesis that resolution is the "
@@ -103,8 +105,8 @@ VISUALS: dict[str, tuple[str, str]] = {
         "spread across stations in three panel cities with dense networks, measured in this "
         "work. Observed contrast falls as the window lengthens and the model's rises, so the "
         "model is most under-contrasted at the hourly window. The two are spreads over "
-        "different things, cells against stations, and {{ref:s-test-holds-support-fixed}} is "
-        "the test that holds support fixed."),
+        "different things, cells against stations; {{ref:s-test-holds-support-fixed}} compares "
+        "two sites inside one cell."),
     "nullpower": (
         "F12_null_power",
         "What the earlier spatial nulls could have detected. At the sample sizes available, "
