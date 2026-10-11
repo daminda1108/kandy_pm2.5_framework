@@ -6617,3 +6617,7 @@ v3_drv) → all diagnostics. Backups: `decomp/backup_satellite_level_2026-10-11/
   NBRO 2022 months: too high Jan–Mar only.
 - Cost: CEA 2019 → mid-2021 is now an INPUT; only its later record is a check. The cross-city ladder rung (v2.km) is
   unaffected (it uses the satellite level in each city).
+
+**F.132 addendum (2026-10-11): propagated.** Webapp re-exported (QA PASS, worst 0.0009 µg/m³), live-forecast GBMs
+retrained on the re-anchored T(t) (2023 holdout RMSE 5.32), attributable deaths removed from the explorer. Release
+repo ported; its `regenerate_all.py --from-anchor` reproduces the framework's delivered field exactly (max |Δ| 0.0).

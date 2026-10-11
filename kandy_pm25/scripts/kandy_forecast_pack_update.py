@@ -46,7 +46,9 @@ PINN = REPO / "data" / "processed" / "pinn_inputs"
 PACK = REPO.parent / "kandy_webapp" / "live" / "model" / "pack.json"
 WIND_CALIB = REPO / "results" / "figures" / "kandy_extension" / "b2_kandy_wind_prior.json"
 WIDEN = DEC / "kandy_forecast_ood_widening.json"
-EPS_FLOOR = 2.573          # additive_v3, transferred relative form (see gotcha #65)
+# additive_v3 ventilated-hour floor: read from the field's own file so the forecast reconstructs with the SAME eps0
+# as the shipped field (the hard-coded 2.573 had gone stale twice: the coherence cap and the CEA re-anchoring, F.132).
+EPS_FLOOR = float(json.load(open(DEC / "additive_v3_eps.json", encoding="utf-8"))["eps0"])
 
 
 def bt_ratio_month() -> list[float]:
