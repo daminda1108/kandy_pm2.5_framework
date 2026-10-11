@@ -42,8 +42,12 @@ possible. The offset may be a change of support, an area mean compared with poin
 an upward bias of the field at the sensor locations, for which the constant-humidity conversion
 is one candidate mechanism. The regulatory record makes the first harder to sustain, because its station lies in the
 city centre where the cell is among the highest in the basin, but one station cannot separate a
-level bias from a siting effect, and the field has not been recalibrated to it. What can be
-said is bounded: if the satellite level that anchors the field errs at Kandy as it does in the
+level bias from a siting effect, and the field has not been recalibrated to it. The station does
+locate the step at which the excess enters. The corrected Akurana record follows the station closely
+and sits {{claim:ceaatt.pct.akurana}} per cent from it on the days both reported, whereas the anchor
+after re-anchoring to the satellite level sits {{claim:ceaatt.pct.T_basin}} per cent above it. The
+low-cost calibration, long the suspected source, is the part that agrees; the satellite level is the
+part that does not. What can be said is bounded: if the satellite level that anchors the field errs at Kandy as it does in the
 middle half of the tropical cities scored on the ladder, the basin mean lies between
 {{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least
 {{claim:lvl.tropical.who_lo}} times the guideline ({{ref:s-kandy-field-level}}). The

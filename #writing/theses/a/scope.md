@@ -3,8 +3,8 @@
 The claims of this study are narrower than the problem it addresses, and are stated explicitly
 here. The study period is 2019 to 2023, the years whose level is anchored to the satellite
 surface. The software that produces the field also extends it to 2026 with a level taken from
-the drivers alone; that extension is not evaluated in this thesis and none of its results rest
-on it.
+the drivers alone; that extension is checked only against the regulatory station
+({{ref:s-cea-reference}}) and none of the thesis's other results rest on it.
 
 It does not claim a validated neighbourhood-scale map of Kandy. {{ref:ch-model-stops}} shows that such a
 map cannot be supported at the resolution used, explains why the limit is one of definition

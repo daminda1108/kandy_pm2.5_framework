@@ -33,11 +33,47 @@ city's two low-cost sensors were not reporting, the daily correlation is
 is {{claim:cea.del.sensors_reported.r}}. Agreement with this record therefore does not depend on the
 anchor sensors being present.
 
+**Where the excess enters.** On the {{claim:ceaatt.days}} days on which both the station and the
+Akurana low-cost sensor reported, the station's mean is {{claim:ceaatt.mean.obs}}. The corrected
+sensor record, which the temporal anchor is trained on, reads {{claim:ceaatt.mean.akurana}}
+({{claim:ceaatt.pct.akurana}} per cent relative to the station) and follows the station closely, at a daily correlation of
+{{claim:ceaatt.r.akurana}}. The basin anchor after its yearly re-anchoring to the satellite level
+reads {{claim:ceaatt.mean.T_basin}} ({{claim:ceaatt.pct.T_basin}} per cent above), and the field at the
+station's cell {{claim:ceaatt.mean.delivered}} ({{claim:ceaatt.pct.delivered}} per cent above). The
+satellite level at the city's cell exceeds the station's annual mean by
+{{claim:ceaatt.vand.2019.pct}}, {{claim:ceaatt.vand.2020.pct}} and {{claim:ceaatt.vand.2023.pct}} per
+cent in the three years the station covers well. The excess therefore enters at the step that sets
+the anchor's annual level from the satellite surface, not in the low-cost sensor record and not in
+the spatial pattern. It also corroborates the sensors' calibration: the corrected Akurana record
+sits within a few per cent of a regulatory instrument. The ratio of the station to the ridge sensor
+at Hantana is {{claim:ceaatt.ratio.hantana.2019_2023}} before 2024 and
+{{claim:ceaatt.ratio.hantana.2024_2026}} after it, on only {{claim:ceaatt.ratio.hantana.2024_2026.n}}
+days, so there is no sign that the station's record shifted between the uploaded sets in which the
+platform holds it, although the later check is thin.
+
+**After 2023.** The software extends the field to 2024 to 2026 without a satellite surface for
+those years ({{ref:a-scope}}); the station allows that extension its only check. On the {{claim:ceaext.days}} days the station reported, mostly in
+the high season, the extension's mean differs from the station's by {{claim:ceaext.all.bias_pct}} per cent, reading low,
+with a daily correlation of {{claim:ceaext.all.r}} and {{claim:ceaext.monthly_r}} for monthly means;
+within the month the correlation is {{claim:ceaext.anomaly_daily_r}}. The station's own calendar
+climatology reaches {{claim:ceaext.bench.r}} over the same days, so the extension's day-to-day skill
+there is no better than the season. The station's hourly cycle over these years has the same shape
+as before, with a morning peak {{claim:ceaext.hourly.station.peak07_over_midday}} times midday and
+nights at {{claim:ceaext.hourly.station.night_over_midday}} of it; the extension exaggerates the
+morning peak ({{claim:ceaext.hourly.production.peak07_over_midday}}) and keeps its nights high
+({{claim:ceaext.hourly.production.night_over_midday}}). The change of sign, from a field that reads high in the
+anchored years to one that reads low after them, shows that the level is set differently in the two
+periods and in neither by anything measured at Kandy. The extension is not otherwise used in this
+thesis.
+
 **The daily cycle.** The station's hourly record, {{claim:cea.hourly.hours}} hours, is the first
-reference against which the shape of the daily cycle can be checked. The platform stamps hourly
-records in universal time rather than local time; this was established from the station's ozone,
-which peaks in the early afternoon, at {{claim:cea.hourly.o3_peak_hour}} local time once the stamps
-are shifted by five and a half hours, and every hourly comparison uses the shifted times. The
+reference against which the shape of the daily cycle can be checked. The platform's timestamps
+follow two conventions: the records uploaded in batches for 2019 to mid-2025 are stamped in universal
+time, and the live feed from September 2025 in local time. This was established from the gases. Ozone,
+which peaks in the early afternoon, peaks at {{claim:cea.hourly.o3_peak_hour}} local time once the
+batch records are shifted by five and a half hours, and the carbon monoxide cycle of the live feed
+matches that of the batches only without the shift. Every hourly comparison uses the corrected
+times. The
 station's cycle has the timing of the delivered anchor: its highest hour is
 {{claim:cea.hourly.station.max_hour}} in the morning, with a second peak in the evening and a dip
 around midday. The morning peak is {{claim:cea.hourly.station.peak07_over_midday}} times the

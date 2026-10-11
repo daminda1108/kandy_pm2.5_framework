@@ -65,7 +65,10 @@ reconstruction, what the evidence supports and what it may be used for.
      {{claim:cea.days}} days, and a calibrated low-cost record reads below it too; only the national
      research organisation's record, of undocumented instrument, sits above it. The field nonetheless
      follows the regulatory station's day-to-day sequence (daily correlation
-     {{claim:cea.del.all.r}}, {{claim:cea.del.anomaly_daily_r}} within the month). The
+     {{claim:cea.del.all.r}}, {{claim:cea.del.anomaly_daily_r}} within the month). The excess enters
+     where the anchor's annual level is taken from the satellite surface: the corrected low-cost record
+     the anchor is trained on sits {{claim:ceaatt.pct.akurana}} per cent from the station on shared days,
+     the re-anchored basin series {{claim:ceaatt.pct.T_basin}} per cent. The
      satellite level used to anchor it sits above the withheld city mean in the median city on the
      ladder, by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
      {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per

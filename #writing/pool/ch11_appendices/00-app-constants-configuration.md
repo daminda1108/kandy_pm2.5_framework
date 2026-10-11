@@ -10,7 +10,7 @@ in which case the code changes with them.
 | solve resolution | {{claim:subgrid.production_res_m}} m | the grid the transport solver runs on |
 | fine emission grid | {{claim:subgrid.fine_res_m}} m | the grid the emission surface is computed on |
 | study period | 2019 to 2023 | the satellite-anchored years on which every result in this thesis rests |
-| extension tier | 2024 to 2026 | delivered by the software with a driver-anchored level; not evaluated here and not part of the evidence |
+| extension tier | 2024 to 2026 | delivered by the software with a driver-anchored level; checked only against the regulatory station ({{ref:s-cea-reference}}); not otherwise part of the evidence |
 | interval level | 90 per cent | nominal coverage of the delivered interval |
 | sensorless predictors | {{claim:bud0c.n_features}} | of which {{claim:bud0c.n_geo_features}} are static geography |
 | local fraction floor | {{claim:partition.f_min_parameter}} | the one free parameter in the coherence constraint |

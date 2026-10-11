@@ -27,7 +27,11 @@ OUT = REPO / "data" / "external" / "cea"
 RAW = OUT / "raw"
 URL = "https://aq.cea.lk/public/sensor-data/history"
 LOC, EQ = 4, 1
-FIELDS = ["pm2_5", "pm10", "o3", "co", "no2", "so2", "pm2_5_status", "pm10_status", "created_at"]
+FIELDS = ["pm2_5", "pm10", "o3", "co", "no2", "so2", "pm2_5_status", "pm10_status", "created_at", "identifier", "type"]
+# Timestamp convention differs by source (2026-10-11, gotcha #106): the manually uploaded sets
+# ("kandyaqms-1h-set1..4 ... .xlsx") are stamped in UTC; the live feed (from 2025-09, identifier = a Unix epoch) is
+# stamped in LOCAL time. Established from the gas cycles: CO phase vs set1 r 0.97 at +6 h for the live feed, 0 h for
+# sets 2-4. `t_local` below applies the right shift per record.
 
 
 def session():
@@ -94,6 +98,10 @@ def main():
             if i % 100 == 0:
                 print(f"  {i + 1}/{len(days)} {k}", flush=True)
         h = pd.DataFrame(R).drop_duplicates("created_at")
+        ts = pd.to_datetime(h.created_at)
+        manual = h.identifier.astype(str).str.contains(".xlsx", regex=False)
+        h["source_set"] = h.identifier.astype(str).str.extract(r"(set\d)")[0].where(manual, "live")
+        h["t_local"] = ts.where(~manual, ts + pd.Timedelta(hours=5, minutes=30))
         tmp = OUT / "kandy_aqms_hourly.tmp.csv"; h.to_csv(tmp, index=False); os.replace(tmp, OUT / "kandy_aqms_hourly.csv")
         print(f"hourly: {len(h)} hours with values; PM2.5 non-null {h.pm2_5.notna().sum()}")
 

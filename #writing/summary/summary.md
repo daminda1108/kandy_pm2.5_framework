@@ -93,7 +93,9 @@ The modelled annual basin mean is {{claim:kandy.mean_min}} to {{claim:kandy.mean
 cubic metre over 2019 to 2023, above the World Health Organization guideline of 5 in every year.
 The level is probably too high: the regulatory station reads {{claim:cea.del.all.bias_pct}} per cent
 below the field, as does a calibrated low-cost record, while the national research record, of
-undocumented instrument, sits above it. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
+undocumented instrument, sits above it. The excess enters where the anchor's level is set from the
+satellite surface: the corrected low-cost record is within {{claim:ceaatt.pct.akurana}} per cent of the
+station on shared days. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
 half of the tropical cities on the ladder, the basin mean is {{claim:lvl.tropical.iqr_lo}} to
 {{claim:lvl.tropical.iqr_hi}}, at least {{claim:lvl.tropical.who_lo}} times the guideline. The seasonal cycle is the best-supported property, with the maximum in the
 north-east monsoon ({{claim:kandy.season_djf}} in December to February of {{claim:exposure.year}}) and

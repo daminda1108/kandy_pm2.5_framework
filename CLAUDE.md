@@ -90,7 +90,7 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | 🟢 **CEA REPLIED 2026-08-12 — THE DATA EXISTS AND IS FREE FOR ACADEMIC USE** | formal process required | **Kandy regulatory AQMS, HOURLY, 2019 → 2026-05**: PM2.5, PM10, gases, and **full met including a rain gauge and wind speed/direction**. Known gap **2021-07 → 2022-10** (no funds to operate). Needs a letter on **university letterhead to the Director General**, copy DDG (Environmental Protection), scans emailed to dg@ / chedus@ / randd@ / AQ@cea.lk, then a **signed agreement via the R&D Unit**. Conditions: notify CEA in writing of any data "manipulation" and obtain authorisation first; cite CEA; send final outputs. Contact: Akila Jayasundara (SEO), Air Quality, Noise & Vibration Monitoring. |
 | 🔴 **PDN Uni runs its own islandwide microsensor network** | unexploited — and it is the user's OWN university | CEA named it alongside NBRO. Internal access should be far faster than any external request. **Chase this first.** |
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
-| **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
+| **W5 — FECT calibration** | **CONFIRMED against a REFERENCE 2026-10-11 (F.131)** | Corrected Akurana vs CEA AAQMS, 126 shared days: −5 %, daily r 0.89. The level excess (+17 % at T, +22 % in the field) enters at the VanD re-anchoring, not the sensors. |
 
 ## Current State (updated 2026-10-11, 🔴 **CEA REFERENCE STATION OBTAINED (public platform): LEVEL ~24 % HIGH, NIGHTS TOO HIGH; DRIFT FIXED (F.129/F.130)**)
 
@@ -100,6 +100,10 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **F.131: the excess is the SATELLITE LEVEL.** 126 shared days: CEA 17.1, corrected FECT Akurana 16.2 (−5 %,
+  r 0.89), T after VanD re-anchoring 20.0 (+17 %); VanD city +23…+34 % vs station. W5 confirmed. 2024–26 pulled
+  (30,934 h total; live feed from 2025-09 is LOCAL-stamped, gotcha #106): extension tier −17 %, daily r 0.64 ≈ climatology.
+  Candidate next step: re-anchor the level to CEA with a held-out split (not done; would cost the independent check).
 - 🟢 **F.129: mean conservation fixed** (S×M per-hour renormalised; dispersion A rescaled against its field; v2 anchor
   read from T directly); `test_conservation.py`; field regenerated; tests 122 pass. Fifth-review wording done (matched
   averaging window; panel+estimand beside 58.8/53.3; full-field vs pattern contrast; reco 7.87 vs pros 17.7 bias in
@@ -736,7 +740,10 @@ python src/comparison/publication_figures.py --all
    weeks and nobody noticed, because nothing ran the build. **Rule: after any change to `build_claims.py` keys or to
    `registrations.json`, run `#writing/build/build_docx.py --thesis a --no-word` and fix every unresolved token.**
 
-106. **🔴 The CEA AirShare hourly records are stamped in UTC, not Sri Lanka time (2026-10-11, F.130).** Taken as
+106. **🔴 The CEA AirShare hourly records use TWO timestamp conventions (2026-10-11, F.130/F.131): the manual xlsx
+   upload sets (set1–set4, 2019 → 2025-08) are UTC; the LIVE feed (2025-09 →, identifier = Unix epoch) is LOCAL.**
+   `pull_cea_kandy_aqms.py` writes `source_set` + `t_local`; always use `t_local`. Live set identified by CO phase
+   (r 0.97 at +6 h vs set1); live O3/NO2 cycles are weak (r ≈ 0.3). Original note: Taken as
    local, the station's PM2.5 diurnal was ANTI-correlated with the model (r −0.66; peak at "01", minimum at "21"). The
    check that settled it: **ozone** must peak in the early afternoon, and it peaked at stamps 04–08. +05:30 fixes it
    (r +0.73). **Rule: for any new time series, check one species with a known diurnal phase (O3, or solar radiation)

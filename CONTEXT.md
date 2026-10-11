@@ -57,6 +57,10 @@ daily r **0.60**, within-month **0.72**, bias **+24 %** (dispersed field +36 %);
 (peak/midday 1.87 obs, 1.91 model); **night/midday 0.71 obs vs 1.17 model**. Attanayake site now **+11 %**. Records no
 longer bracket the field → **level probably high at the city centre, size uncertain**. Not recalibrated (kept as check).
 Mean conservation fixed (F.129): field = T(t) to 0.0 %.
+**Where the excess enters (F.131):** on 126 shared days CEA 17.1, corrected FECT Akurana 16.2 (−5 %, r 0.89), basin T
+after VanD re-anchoring 20.0 (+17 %), field 20.8 (+22 %); VanD city pixel +31/+34/+23 % vs station (2019/20/23). ⇒ the
+**satellite level** is high, the **sensor calibration is right** (W5 confirmed). Extension tier 2024–26 vs CEA: −17 %,
+daily r 0.64 ≈ station's own climatology 0.63 (no day-to-day skill beyond season).
 
 ## 🟢 New Kandy evidence; dispersion removed (2026-10-11, F.128)
 NBRO daily (digitised Nirmani 2025): daily r 0.39 (0.60 sensor days / 0.33 other); month-climatology r 0.77; 2022 missed

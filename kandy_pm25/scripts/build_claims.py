@@ -2158,13 +2158,13 @@ def cea_reference(c: Claims) -> None:
             for scope in ("all", "sensors_reported", "sensors_absent"):
                 v = o[scope]
                 for k, nd in (("r", 2), ("rmse", 1), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1), ("n", None)):
-                    c.add(f"cea.{tag}.{scope}.{k}", round(v[k], nd) if nd is not None else v[k], stat=f"daily {k}",
+                    c.add(f"cea.{tag}.{scope}.{k}", (int(round(v[k])) if nd == 0 else round(v[k], nd)) if nd is not None else v[k], stat=f"daily {k}",
                           n=v["n"], source=f.name, ledger="F.130")
             for k in ("climatology_r", "monthly_r", "anomaly_daily_r"):
                 c.add(f"cea.{tag}.{k}", round(o[k], 2), stat=k, n=o["all"]["n"], source=f.name, ledger="F.130")
             for y, v in o["by_year"].items():
                 for k, nd in (("r", 2), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1), ("n", None)):
-                    c.add(f"cea.{tag}.{y}.{k}", round(v[k], nd) if nd is not None else v[k], stat=f"daily {k}, {y}",
+                    c.add(f"cea.{tag}.{y}.{k}", (int(round(v[k])) if nd == 0 else round(v[k], nd)) if nd is not None else v[k], stat=f"daily {k}, {y}",
                           n=v["n"], source=f.name, ledger="F.130")
         if "hourly" in S:
             H = S["hourly"]
@@ -2180,12 +2180,48 @@ def cea_reference(c: Claims) -> None:
             for arm in ("production", "hourly_rh"):
                 c.add(f"cea.hourly.{arm}.shape_r", round(H[arm]["shape_r"], 2), stat="diurnal-shape r vs station",
                       n=24, source=f.name, ledger="F.130")
+    f = DEC / "kandy_cea_attribution.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        n = S["shared_days"]
+        c.add("ceaatt.days", n, stat="days with both the station and FECT Akurana", n=n, source=f.name, ledger="F.131")
+        for k in ("obs", "akurana", "T_basin", "delivered"):
+            c.add(f"ceaatt.mean.{k}", round(S["means"][k], 1), stat="mean on shared days", n=n, source=f.name, ledger="F.131")
+        for k in ("akurana", "T_basin", "delivered"):
+            c.add(f"ceaatt.pct.{k}", int(round(S["pct_vs_station"][k])), stat="per cent vs the station", n=n, source=f.name, ledger="F.131")
+            c.add(f"ceaatt.r.{k}", round(S["r_vs_station"][k], 2), stat="daily r vs the station", n=n, source=f.name, ledger="F.131")
+        for k, v in S["cea_over_fect"].items():
+            c.add(f"ceaatt.ratio.{k}", round(v["median_ratio"], 2), stat="median daily station/sensor ratio", n=v["n"],
+                  source=f.name, ledger="F.131")
+            c.add(f"ceaatt.ratio.{k}.n", v["n"], stat="days", n=v["n"], source=f.name, ledger="F.131")
+        for y, v in S["vand_city_vs_station"].items():
+            c.add(f"ceaatt.vand.{y}.pct", int(round(v["pct"])), stat="satellite level at the city pixel vs the station (%)",
+                  n=1, source=f.name, ledger="F.131")
+    f = DEC / "kandy_cea_reference_check_ext.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        o = S["delivered"]
+        c.add("ceaext.days", S["days"], stat="matched days 2024-2026, extension tier", n=S["days"], source=f.name, ledger="F.131")
+        c.add("ceaext.bench.r", round(S["monthly_climatology_benchmark"]["r"], 2), stat="station's own monthly climatology r",
+              n=S["days"], source=f.name, ledger="F.131")
+        for k, nd in (("r", 2), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1)):
+            c.add(f"ceaext.all.{k}", (int(round(o["all"][k])) if nd == 0 else round(o["all"][k], nd)), stat=f"daily {k}", n=o["all"]["n"], source=f.name, ledger="F.131")
+        for k in ("climatology_r", "monthly_r", "anomaly_daily_r"):
+            c.add(f"ceaext.{k}", round(o[k], 2), stat=k, n=o["all"]["n"], source=f.name, ledger="F.131")
+        if "hourly" in S:
+            H = S["hourly"]
+            c.add("ceaext.hourly.hours", H["hours"], stat="station hours", n=H["hours"], source=f.name, ledger="F.131")
+            for arm in ("station", "production"):
+                for k in ("peak07_over_midday", "night_over_midday"):
+                    c.add(f"ceaext.hourly.{arm}.{k}", round(H[arm][k], 2), stat=k, n=H["hours"], source=f.name, ledger="F.131")
+            c.add("ceaext.hourly.production.shape_r", round(H["production"]["shape_r"], 2), stat="diurnal-shape r",
+                  n=24, source=f.name, ledger="F.131")
     f = DEC / "kandy_attanayake_pixel.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))
         c.add("attan.model_pixel", round(S["model_pixel"], 1), stat="delivered field at the site, 2022-11-02..2023-12-31",
               n=S["hours"], source=f.name, ledger="F.130")
-        c.add("attan.diff_pct", round(S["diff_pct"]), stat="model vs published 19.49 (%)", n=S["hours"],
+        c.add("attan.diff_pct", int(round(S["diff_pct"])), stat="model vs published 19.49 (%)", n=S["hours"],
               source=f.name, ledger="F.130")
 
 

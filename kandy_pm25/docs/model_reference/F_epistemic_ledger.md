@@ -6575,3 +6575,19 @@ say the model is high; only NBRO (−7/−12 %, undocumented, likely multi-senso
 high at the city centre, size uncertain** (one station, method/siting undocumented). The field was NOT recalibrated to
 CEA, so it stays a check. CEA conditions (cite; notify processing; send outputs) to be met via the R&D agreement; the
 public values were used, gases and met not used.
+
+## F.131 — 🟢 the level excess is located at the satellite re-anchoring; the sensor calibration is confirmed; 2024–26 checked (2026-10-11)
+
+EXPLORATORY. (1) **Attribution** (`scripts/kandy_cea_attribution.py`): on 126 days with both CEA and FECT Akurana,
+CEA 17.1 · corrected Akurana **16.2 (−5 %, daily r 0.89)** · basin T after per-year VanD re-anchoring **20.0 (+17 %)** ·
+field at the station 20.8 (+22 %). VanD city pixel vs station annual mean: **+31 / +34 / +23 %** (2019/2020/2023). The
+excess enters at the satellite level, not in the LCS calibration (W5 confirmed against a reference) and not in the
+pattern. CEA/Hantana ratio 1.93 (n 207) before 2024, 2.04 (n 5) after: no sign the station record shifted.
+(2) **Timestamps:** manual upload sets set1–4 are UTC, the live feed (2025-09 →) is LOCAL (CO phase r 0.97 at +6 h);
+gotcha #106 corrected. (3) **2024–2026** (`kandy_cea_reference_check.py --extension`, extension tier `_v3_drv`, no
+satellite level for those years): 203 matched days, mostly high season: bias **−17 %**, daily r 0.64 vs the station's own
+climatology 0.63 (no skill beyond season), monthly r 0.87, within-month 0.40. Station hourly cycle unchanged (peak/midday
+1.52, night/midday 0.74); the extension exaggerates the peak (2.90) and keeps nights high (1.29). The sign change of the
+level bias between anchored and extension years shows neither level is fixed by Kandy data. **Obvious next step (not
+taken): re-anchor the level to CEA/FECT instead of VanD — but then CEA stops being an independent check; a split
+(re-anchor on 2019–2021, check on 2022–2026) would keep part of it.**
