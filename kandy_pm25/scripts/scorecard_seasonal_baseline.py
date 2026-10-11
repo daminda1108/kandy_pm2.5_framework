@@ -1,4 +1,5 @@
-"""scorecard_seasonal_baseline.py -- null baselines for the ten-city seasonal correlation (2026-10-11, ledger F.135).
+"""scorecard_seasonal_baseline.py -- null baselines for the ten-city seasonal and diurnal correlations (2026-10-11,
+ledger F.135; the diurnal arm was added after the ninth review).
 
 A review pointed out that a seasonal correlation of 0.94-1.00 says little unless simpler predictors are scored the same
 way: the composition prior carries a seasonal cycle, and the two anchor stations set the level. For each scorecard city,
@@ -34,6 +35,10 @@ def monthly(df, col):
     return df.assign(m=df.loct.dt.month).groupby("m")[col].mean()
 
 
+def hourly(df, col):
+    return df.assign(h=df.loct.dt.hour).groupby("h")[col].mean()
+
+
 def shape_rmse(pred, obs):
     j = pd.concat([pred.rename("p"), obs.rename("o")], axis=1).dropna()
     p = j.p * (j.o.mean() / j.p.mean())
@@ -66,21 +71,31 @@ def main():
         anchor_m = monthly(A, "pm25")
         r_prior, n_p = r12(prior_m, om)
         r_anchor, n_a = r12(anchor_m, om) if len(A) else (np.nan, 0)
+        # diurnal (added after the ninth review): the 24 local-hour means, same rows
+        oh = hourly(V, "pm25")
+        rd_prior, _ = r12(hourly(V.dropna(subset=["c_prior"]), "c_prior"), oh)
+        rd_anchor, _ = r12(hourly(A, "pm25"), oh) if len(A) else (np.nan, 0)
         rows.append(dict(city=slug, scorecard_name=sc.city.iloc[i], n_vault=len(vault), years=f"{min(years)}-{max(years)}",
                          months=int(om.notna().sum()), r_model=float(sc.seasonal.iloc[i]),
                          r_prior=r_prior, r_anchors=r_anchor,
+                rd_model=float(sc.diurnal.iloc[i]), rd_prior=rd_prior, rd_anchors=rd_anchor,
                          shape_rmse_prior=shape_rmse(prior_m, om),
                          shape_rmse_anchors=shape_rmse(anchor_m, om) if len(A) else np.nan,
                          prior_cover=float(V.c_prior.notna().mean())))
-        print(f"{slug:11s} model {rows[-1]['r_model']:.3f}  prior {r_prior:.3f}  anchors {r_anchor:.3f}", flush=True)
+        print(f"{slug:11s} seasonal model {rows[-1]['r_model']:.3f} prior {r_prior:.3f} anchors {r_anchor:.3f} | "
+              f"diurnal model {rows[-1]['rd_model']:.3f} prior {rd_prior:.3f} anchors {rd_anchor:.3f}", flush=True)
     df = pd.DataFrame(rows)
     df.to_csv(OUT / "scorecard_seasonal_baseline.csv", index=False)
     summ = {k: dict(min=float(df[k].min()), median=float(df[k].median()), max=float(df[k].max()))
-            for k in ("r_model", "r_prior", "r_anchors")}
+            for k in ("r_model", "r_prior", "r_anchors", "rd_model", "rd_prior", "rd_anchors")}
     summ["model_minus_prior_median"] = float((df.r_model - df.r_prior).median())
     summ["model_minus_anchors_median"] = float((df.r_model - df.r_anchors).median())
     summ["cities_model_above_prior"] = int((df.r_model > df.r_prior).sum())
     summ["cities_model_above_anchors"] = int((df.r_model > df.r_anchors).sum())
+    summ["diurnal_model_minus_prior_median"] = float((df.rd_model - df.rd_prior).median())
+    summ["diurnal_model_minus_anchors_median"] = float((df.rd_model - df.rd_anchors).median())
+    summ["diurnal_cities_model_above_prior"] = int((df.rd_model > df.rd_prior).sum())
+    summ["diurnal_cities_model_above_anchors"] = int((df.rd_model > df.rd_anchors).sum())
     p = OUT / "scorecard_seasonal_baseline.json"
     tmp = p.with_suffix(".tmp.json"); tmp.write_text(json.dumps(summ, indent=1), encoding="utf-8"); os.replace(tmp, p)
     print(json.dumps(summ, indent=1))

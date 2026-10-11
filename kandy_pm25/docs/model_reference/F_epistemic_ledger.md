@@ -6680,3 +6680,10 @@ the city and improves on the free prior; it adds no seasonal skill beyond the an
 conclusion 3, ten-city section, summary, Tables 3.x/4.1). Same round: "+-11" table bug fixed; the three night/midday
 values labelled by subset; 17 internal ledger tags removed; panel table (Table 2.2); why the defects were not rebuilt;
 limits of self-registration.
+
+**F.135 addendum (tenth review, 2026-10-11).** Diurnal arm added: diurnal r, median over 10 cities — model **0.899**
+(−0.33…0.98), prior **0.160** (model better 8/10, median +0.56), two-anchor own cycle **0.901** (model better 6/10,
+median +0.008). Both cycles are carried from the anchors; where the model fails (Yichang) the anchors' cycle fails too.
+Same round: title "…constrained reconstruction of fine particulate matter…", abstract re-led with the solid results
+(CEA day-to-day and timing, held-out level, station value; f demoted to a closing clause), Appendix H (changes during
+writing) moved to `CHANGELOG_thesis.md`. Rebuild with hourly RH / local-day cap declined: neither fixes the nights.

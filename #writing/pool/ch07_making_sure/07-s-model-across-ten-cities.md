@@ -25,9 +25,16 @@ stations' own monthly climatology reaches {{claim:sb.anchors.median}}, the model
 model is the better of the two in only {{claim:sb.above_anchors}} cities, with a median difference of
 {{claim:sb.model_minus_anchors}}. The seasonal agreement is therefore inherited from the anchor stations: the
 construction carries it across the city without degrading it and improves on the free prior, but it does not add
-seasonal skill beyond what two stations already hold. The baseline was added after an external review asked for it. Diurnal correlation runs {{claim:scorecard.diurnal_r_lo}} to
-{{claim:scorecard.diurnal_r_hi}}, which is a much wider range and is regime-dependent rather than
-random. Level bias has a median of {{claim:scorecard.level_bias_median}} per cent. The fine
+seasonal skill beyond what two stations already hold.
+
+Diurnal correlation runs {{claim:scorecard.diurnal_r_lo}} to {{claim:scorecard.diurnal_r_hi}}, a much wider range that
+is regime-dependent rather than random, and the same baselines tell the same story. The prior alone carries almost no
+daily cycle (median {{claim:sbd.prior.median}}), and the model improves on it in {{claim:sbd.above_prior}} cities by a
+median of {{claim:sbd.model_minus_prior}}. The anchor stations' own daily cycle reaches {{claim:sbd.anchors.median}},
+against the model's {{claim:sbd.model.median}}, with the model the better in {{claim:sbd.above_anchors}} cities; where
+the model fails, as in the city at the bottom of the range, the anchors' own cycle fails with it. Both cycles are
+therefore carried across the city from the anchor stations, which is what the construction is designed to do, and both
+baselines were added after an external review asked for them. Level bias has a median of {{claim:scorecard.level_bias_median}} per cent. The fine
 spatial rank is estimable at {{claim:scorecard.spatial_estimable}} of the ten cities, with a
 median of {{claim:scorecard.spatial_rho_median}}.
 

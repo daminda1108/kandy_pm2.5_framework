@@ -2363,6 +2363,19 @@ def seasonal_baseline(c: Claims) -> None:
           source=f.name, ledger="F.135")
     c.add("sb.above_anchors", S["cities_model_above_anchors"], stat="cities where the model beats the anchors' climatology",
           n=10, source=f.name, ledger="F.135")
+    if "rd_model" in S:
+        for k, tag in (("rd_model", "model"), ("rd_prior", "prior"), ("rd_anchors", "anchors")):
+            for q in ("min", "median", "max"):
+                c.add(f"sbd.{tag}.{q}", round(S[k][q], 3), stat=f"diurnal r of the {tag} across the ten cities ({q})",
+                      n=10, source=f.name, ledger="F.135")
+        c.add("sbd.model_minus_prior", round(S["diurnal_model_minus_prior_median"], 2), stat="median paired difference, diurnal",
+              n=10, source=f.name, ledger="F.135")
+        c.add("sbd.model_minus_anchors", round(S["diurnal_model_minus_anchors_median"], 3),
+              stat="median paired difference, diurnal, model - anchors", n=10, source=f.name, ledger="F.135")
+        c.add("sbd.above_prior", S["diurnal_cities_model_above_prior"], stat="cities, diurnal, model beats prior", n=10,
+              source=f.name, ledger="F.135")
+        c.add("sbd.above_anchors", S["diurnal_cities_model_above_anchors"], stat="cities, diurnal, model beats anchors",
+              n=10, source=f.name, ledger="F.135")
 
 
 def panels(c: Claims) -> None:

@@ -1,11 +1,11 @@
 # Reproducing Thesis A
 
-*An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, evaluation
-under sparse local monitoring, and measurement priorities* (A. M. D. W. B. Alahakoon, University of Peradeniya, 2026).
+*An hourly kilometre-scale constrained reconstruction of fine particulate matter for Kandy, Sri Lanka: construction,
+evaluation under sparse local monitoring, and measurement priorities* (A. M. D. W. B. Alahakoon, University of Peradeniya, 2026).
 
-The version built for review corresponds to the git tag **`thesis-a-2026-10-11-r15`** of this repository: the PDF,
+The version built for review corresponds to the git tag **`thesis-a-2026-10-11-r16`** of this repository: the PDF,
 `VERIFICATION_thesis_a.md` and this guide were generated from the working tree that this tag commits (earlier rounds:
-`thesis-a-2026-10-10`, `-r3`, `thesis-a-2026-10-11-r4` to `-r14`). Because the report is written before the commit that
+`thesis-a-2026-10-10`, `-r3`, `thesis-a-2026-10-11-r4` to `-r15`). Because the report is written before the commit that
 contains it, the commit it names is the tag's parent; the link between the PDF, the registry and the tag is the pair of
 sha256 checksums the report prints, for `claims.json` and for the assembled `#writing/build/a/thesis.md`, which anyone
 can recompute at the tag. Every figure the thesis embeds was regenerated from its builder for this release, after a
@@ -18,7 +18,7 @@ carried out.**
 
 ## Clean-environment rerun by the author (2026-10-11)
 
-**State at `thesis-a-2026-10-11-r15`** (author's working environment, same lock file): `pytest scripts/tests` **123 passed**, 0 skipped; `build_claims.py --check` **2,285 claims reproduce exactly**, of which the thesis cites **735**, none missing from the registry (`VERIFICATION_thesis_a.md`). The Kandy chain was rebuilt end to end in the standalone release repository (`kandy_pm25_model`, `scripts/regenerate_all.py --from-anchor`), which reproduces this repository's delivered field exactly (largest difference 0.0, 2019–2023); that is a second code path by the same author, not an independent reproduction. The same test suite runs on GitHub Actions (`.github/workflows/tests.yml`, Windows); it passed on every release commit since `0767997`; the passing runs for the two most recent releases are [r12, `ff5d2c3`](https://github.com/daminda1108/kandy_pm2.5_framework/actions/runs/38146908550) and [r11, `f75233e`](https://github.com/daminda1108/kandy_pm2.5_framework/actions/runs/38141445248), and the run for this tag appears on the repository's Actions page under its commit.
+**State at `thesis-a-2026-10-11-r16`** (author's working environment, same lock file): `pytest scripts/tests` **123 passed**, 0 skipped; `build_claims.py --check` **2,298 claims reproduce exactly**, of which the thesis cites **741**, none missing from the registry (`VERIFICATION_thesis_a.md`). The Kandy chain was rebuilt end to end in the standalone release repository (`kandy_pm25_model`, `scripts/regenerate_all.py --from-anchor`), which reproduces this repository's delivered field exactly (largest difference 0.0, 2019–2023); that is a second code path by the same author, not an independent reproduction. The same test suite runs on GitHub Actions (`.github/workflows/tests.yml`, Windows); it passed on every release commit since `0767997`; the passing runs for the two most recent releases are [r12, `ff5d2c3`](https://github.com/daminda1108/kandy_pm2.5_framework/actions/runs/38146908550) and [r11, `f75233e`](https://github.com/daminda1108/kandy_pm2.5_framework/actions/runs/38141445248), and the run for this tag appears on the repository's Actions page under its commit.
 
 **Fresh-clone rerun, recorded at `thesis-a-2026-10-11-r4`.** This is a rerun by the author from fresh clones of the public repository into empty folders, with a fresh virtual
 environment built only from `kandy_pm25/requirements-lock.txt`. It is **not** an independent reproduction.

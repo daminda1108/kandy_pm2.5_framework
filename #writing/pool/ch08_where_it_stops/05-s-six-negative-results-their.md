@@ -38,8 +38,8 @@ signal was found" is not.
 The tournament above varies the model and holds the information fixed. The complement is to hold
 the model fixed and vary the information, and the strongest candidate available is an Earth
 observation foundation model. This project had already tested one, and the test was not good
-enough: it ran on three cities and thirty-three stations between them, and {{ref:app-changed-during-writing-thesis}} records its
-minimum detectable partial correlation as {{claim:emb.f27_mde_lo}} to
+enough: it ran on three cities and thirty-three stations between them, and its
+minimum detectable partial correlation was {{claim:emb.f27_mde_lo}} to
 {{claim:emb.f27_mde_hi}}. It could exclude only a large effect. On the frame {{this:ch-model-stops}} uses the
 detectable difference is {{claim:emb.detection_limit}}, and the embeddings had never been scored
 there.

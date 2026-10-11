@@ -100,6 +100,10 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **Tenth review (tag r16):** diurnal baseline too — model 0.899 vs prior 0.160 vs anchors 0.901 (better 6/10);
+  title "…constrained reconstruction of fine particulate matter…"; abstract re-led (CEA day-to-day + timing, held-out
+  level, station value; f a closing clause; 318 words); Appendix H → `CHANGELOG_thesis.md`. Main-text cut declined
+  by the user; hourly-RH/local-day rebuild declined (fixes neither night nor peak).
 - 🟡 **F.135 (ninth review, tag r15): seasonal transfer = the anchors' climatology.** Model 0.984 vs prior 0.915
   (better 9/10) vs two-anchor climatology 0.986 (better only 4/10). Thesis reframed: the construction preserves the
   anchors' seasonal cycle, adds nothing beyond it. Also: "+-11" fixed, night ratios labelled, ledger tags removed,

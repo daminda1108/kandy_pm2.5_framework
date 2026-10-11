@@ -59,7 +59,8 @@ reconstruction, what the evidence supports and what it may be used for.
      so on the many days they did not.
    - *The daily cycle's timing and morning peak are supported; its nights are too high.* The daily cycle transfers to some
      analogue cities and not to others (diurnal correlation {{claim:scorecard.diurnal_r_lo}} to
-     {{claim:scorecard.diurnal_r_hi}}), and hourly skill at Kandy is modest (a coefficient of
+     {{claim:scorecard.diurnal_r_hi}}), as well as the anchor stations' own cycle does (median
+     {{claim:sbd.anchors.median}} against {{claim:sbd.model.median}}) and far better than the prior alone, and hourly skill at Kandy is modest (a coefficient of
      determination of {{claim:v2.tanchor.lagfree.r2}} out of sample). Under the alternative humidity
      correction the timing of the peaks and of the midday dip is unchanged, but the morning-peak-to-midday ratio falls
      from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night

@@ -1,5 +1,5 @@
 ---
-title: "An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, evaluation under sparse local monitoring, and measurement priorities"
+title: "An hourly kilometre-scale constrained reconstruction of fine particulate matter for Kandy, Sri Lanka: construction, evaluation under sparse local monitoring, and measurement priorities"
 author: "A. M. D. W. B. Alahakoon, Department of Environmental and Industrial Sciences, University of Peradeniya, Sri Lanka"
 date: "2026"
 geometry: margin=1.0cm
@@ -68,10 +68,9 @@ emitted inside the city.
 The two Kandy sensors trained and shaped $T$, so they cannot validate it. Three other lines of
 evidence are used, and their results are graded rather than combined. The complete model was built
 in ten monitored valley and basin cities with only two anchor stations, as at Kandy, and scored
-against withheld stations: the seasonal cycle carries everywhere (correlation
-{{claim:scorecard.seasonal_r_lo}} to {{claim:scorecard.seasonal_r_hi}}), though no better than the two anchor stations'
-own climatology ({{claim:sb.anchors.median}}), and the daily cycle unevenly
-({{claim:scorecard.diurnal_r_lo}} to {{claim:scorecard.diurnal_r_hi}}). The deployed temporal model
+against withheld stations: the seasonal cycle carries everywhere ({{claim:scorecard.seasonal_r_lo}} to
+{{claim:scorecard.seasonal_r_hi}}) and the daily cycle unevenly ({{claim:scorecard.diurnal_r_lo}} to
+{{claim:scorecard.diurnal_r_hi}}), both about as well as the two anchor stations' own climatology. The deployed temporal model
 was placed on a cross-city ladder of information budgets in {{claim:v2.km.cities_scored}} cities
 (exploratory, specified before scoring): where its anchor stations observed the period it cut daily
 error by {{claim:v2.km.reco.unio.gK2_rmse.median}} per cent against a generic sensorless estimate
@@ -115,8 +114,8 @@ calibration bias at the sensors rather than proving the width right. Under the b
 the local increment is {{claim:partition.f}} of the modelled total, {{claim:v2.f.cap_min}} to
 {{claim:v2.f.cap_max}} across the tested ways of applying the cap and {{claim:field.f_form_roll48}}
 with a 48-hour background window: a property of the decomposition, not a source apportionment. At the regulatory
-station an urban-increment lower bound gives {{claim:lfs.e1min.f}} and a combustion-tracer estimate, not an upper bound,
-{{claim:lfs.e2.co_p5.f}}; the model is broadly consistent with the latter and may be high against the former.
+station the local share has a lower bound of {{claim:lfs.e1min.f}} and a tracer estimate of {{claim:lfs.e2.co_p5.f}};
+the model may be high.
 
 ## What each additional observation is worth
 
@@ -148,10 +147,9 @@ consistency check within a composition model, not a chemical measurement at Kand
 ## Ongoing work and verification
 
 The research that follows treats the delivered field as a locked hypothesis and collects observations able to
-refute it: the regulatory record's provenance; low-cost sensors evaluated against the reference over two monsoons; a
-network whose level, within-cell, drainage and daily-cycle tests are powered to give an answer; and a rural
-background reference with composition measurement.
-Every value in the report is regenerated from source at build time by a gate that refuses to build
+refute it: the regulatory record's provenance; sensors tested against the reference over two monsoons; a network
+whose level, within-cell, drainage and daily-cycle tests are powered; and a rural background reference.
+Every value is regenerated from source at each build by a gate that refuses to build
 when prose and data disagree (github.com/daminda1108/kandy_pm2.5_framework);
 {{claim:meta.refuted}} registered predictions were refuted and are reported as such.
 

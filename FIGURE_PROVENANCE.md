@@ -1,6 +1,6 @@
 # Figure provenance, thesis A
 
-- Built 2026-10-11T23:13:14; delivered field written 2026-10-11 15:37.
+- Built 2026-10-11T23:31:38; delivered field written 2026-10-11 15:37.
 - Figures embedded: 33; rebuilt by a builder this run: 33; changed by the rebuild (were stale): 0; orphans (no builder): 0.
 - Builders failing: 0; superseded-input flags: 0.
 

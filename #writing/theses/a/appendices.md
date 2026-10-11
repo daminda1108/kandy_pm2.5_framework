@@ -101,6 +101,5 @@ that could not be interpreted. No chemical measurement at Kandy is involved.
 
 {{tbl:T7_5}}
 
-{{include:theses/a/app_changes.md}}
 
 {{include:theses/a/app_burden_method.md}}
