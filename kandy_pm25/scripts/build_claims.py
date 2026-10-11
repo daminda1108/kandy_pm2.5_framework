@@ -2255,6 +2255,48 @@ def cea_reference(c: Claims) -> None:
                     c.add(f"ceaext.hourly.{arm}.{k}", round(H[arm][k], 2), stat=k, n=H["hours"], source=f.name, ledger="F.131")
             c.add("ceaext.hourly.production.shape_r", round(H["production"]["shape_r"], 2), stat="diurnal-shape r",
                   n=24, source=f.name, ledger="F.131")
+    # F.134: the local fraction measured two ways (exploratory, spec committed before scoring)
+    f = DEC / "local_fraction_e1.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        cal = S["calibration_battaramulla"]
+        c.add("lfs.cal.days", cal["days"], stat="co-located days, Battaramulla", n=cal["days"], source=f.name, ledger="F.134")
+        c.add("lfs.cal.r", round(cal["r"], 2), stat="IQAir vs reference AAQMS daily r", n=cal["days"], source=f.name, ledger="F.134")
+        for k, tag in (("primary_median_near", "e1med"), ("sens_min_near", "e1min"), ("sens_island_median", "e1isl"),
+                       ("sens_uncalibrated_median_near", "e1unc")):
+            v = S[k]
+            c.add(f"lfs.{tag}.f", round(v["f"], 2), stat=f"urban-increment local share ({k})", n=v["days"], source=f.name, ledger="F.134")
+            c.add(f"lfs.{tag}.lo", round(v["ci95"][0], 2), stat="95% month-block bootstrap, lower", n=v["days"], source=f.name, ledger="F.134")
+            c.add(f"lfs.{tag}.hi", round(v["ci95"][1], 2), stat="95% month-block bootstrap, upper", n=v["days"], source=f.name, ledger="F.134")
+        c.add("lfs.e1.days", S["primary_median_near"]["days"], stat="matched days", n=S["primary_median_near"]["days"], source=f.name, ledger="F.134")
+        c.add("lfs.e1.months", S["primary_median_near"]["months"], stat="matched months", n=S["primary_median_near"]["days"], source=f.name, ledger="F.134")
+        c.add("lfs.e1.sites", sum(1 for v in S["sites"].values() if v["near"]), stat="regional sites within 150 km", n=1, source=f.name, ledger="F.134")
+        c.add("lfs.model.ext_cell", round(S["model_extension_same_days"]["f_model_cell"], 2), stat="model f at the station cell, extension, E1 days",
+              n=S["model_extension_same_days"]["days"], source=f.name, ledger="F.134")
+        c.add("lfs.model.del_cell_months", round(S["model_delivered_same_months"]["f_model_cell"], 2),
+              stat="model f at the station cell, delivered 2019-2023, E1 months", n=1, source=f.name, ledger="F.134")
+    f = DEC / "local_fraction_e2.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for k in ("co_p5", "co_p10", "no2_p5", "no2_p10"):
+            v = S[k]
+            c.add(f"lfs.e2.{k}.f", round(v["f"], 2), stat=f"tracer-intercept local share ({k})", n=v["hours"], source=f.name, ledger="F.134")
+            if "ci95_exploratory" in v:
+                c.add(f"lfs.e2.{k}.lo", round(v["ci95_exploratory"][0], 2), stat="95% month bootstrap, lower", n=v["hours"], source=f.name, ledger="F.134")
+                c.add(f"lfs.e2.{k}.hi", round(v["ci95_exploratory"][1], 2), stat="95% month bootstrap, upper", n=v["hours"], source=f.name, ledger="F.134")
+        c.add("lfs.e2.months", S["co_p5"]["months"], stat="months used", n=S["co_p5"]["hours"], source=f.name, ledger="F.134")
+        c.add("lfs.e2.hours", S["co_p5"]["hours"], stat="hours used", n=S["co_p5"]["hours"], source=f.name, ledger="F.134")
+        m = S["model_same_hours"]
+        c.add("lfs.model.e2_cell", round(m["f_model_cell"], 2), stat="model f at the station cell, E2 hours", n=m["hours"], source=f.name, ledger="F.134")
+        c.add("lfs.model.e2_basin", round(m["f_model_basin"], 2), stat="model basin f, E2 hours", n=m["hours"], source=f.name, ledger="F.134")
+    f = DEC / "local_fraction_e3.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("lfs.e3.D", round(S["D_weather_adjusted"], 2), stat="curfew effect, weather-adjusted", n=S["curfew_days"], source=f.name, ledger="F.134")
+        c.add("lfs.e3.lo", round(S["D_ci95"][0], 2), stat="95% bootstrap, lower", n=S["curfew_days"], source=f.name, ledger="F.134")
+        c.add("lfs.e3.hi", round(S["D_ci95"][1], 2), stat="95% bootstrap, upper", n=S["curfew_days"], source=f.name, ledger="F.134")
+        c.add("lfs.e3.raw", round(S["D_raw"], 2), stat="curfew effect, raw", n=S["curfew_days"], source=f.name, ledger="F.134")
+        c.add("lfs.e3.days", S["curfew_days"], stat="curfew days", n=S["curfew_days"], source=f.name, ledger="F.134")
     f = DEC / "kandy_attanayake_pixel.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))

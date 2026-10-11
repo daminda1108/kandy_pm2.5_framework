@@ -29,7 +29,7 @@ CLAIMS = ROOT / "kandy_pm25" / "data" / "processed" / "modular" / "claims.json"
 FAMILIES = [
     (r"^(kandy_|rh_|f_sensitivity|nbro|exposure|health|decomp|T_|partition|kandy_partition|field|summary_v3|"
      r"predictions_|gauge|srep|kandy_field|kandy_contrast|species_partition|chemistry|F_spatiotemporal|F_cycles|"
-     r"F_episode|F_field|S_traffic|S_emit|shipped field|elangasinghe|vandonkelaar|dilution|blh)",
+     r"F_episode|F_field|S_traffic|S_emit|shipped field|elangasinghe|vandonkelaar|dilution|blh|local_fraction|cea_level)",
      "Kandy chain (low-cost sensor record via PurpleAir API; satellite, reanalysis, composition model)", "restricted"),
     (r"^(ladder|confirm|review_|fullnet|kandy_model|learners|rich|bud0|cluster|loss_|precip|order|ladder_v2|"
      r"independent_background|c1_satellite|global_reference|maiac|ghap|station_count|colombo|donor|step|band|frame|"

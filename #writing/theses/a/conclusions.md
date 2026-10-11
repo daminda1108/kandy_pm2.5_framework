@@ -29,7 +29,11 @@ reconstruction, what the evidence supports and what it may be used for.
    {{claim:field.f_form_roll48}} with a 48-hour background window, and is
    {{claim:rh2.hourly_rh.f}} under the hourly-humidity label. These describe the decomposition's
    sensitivity to its specification, not a confidence interval and not a source apportionment: they
-   do not say that half of Kandy's PM2.5 is emitted in Kandy. Weighting by population raises exposure
+   do not say that half of Kandy's PM2.5 is emitted in Kandy. Measured at the regulatory station, the
+   local share lies between about {{claim:lfs.e1min.f}} (the urban excess over the cleanest regional
+   town, a lower bound) and {{claim:lfs.e2.co_p5.f}} (a combustion-tracer intercept); the model's
+   {{claim:lfs.model.e2_cell}} at that cell is at the upper end, so the basin value is within the
+   measured range but may be somewhat high. Weighting by population raises exposure
    {{claim:exposure.uplift_pct}} per cent above the area mean, a figure that inherits the uncertainty
    of the level and of the unvalidated spatial pattern. No attributable burden is reported: it needs
    age-specific mortality, a settled level and a propagated uncertainty that this study does not yet

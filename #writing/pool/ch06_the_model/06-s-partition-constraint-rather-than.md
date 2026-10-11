@@ -52,4 +52,6 @@ source apportionment: the local increment contains locally formed secondary aero
 regionally formed aerosol, so it is not established that removing every local source would remove
 half the concentration. {{ref:s-partition-detail}} gives what sets the number, its sensitivity to
 each choice, and the bound on the locally emitted primary share that replaces the intervention
-claim.
+claim. Two measurement routes at the Kandy regulatory station test it in {{ref:s-local-fraction-measured}}: they
+place the local share at the city centre between about {{claim:lfs.e1min.f}} and {{claim:lfs.e2.co_p5.f}}, with the
+model at the upper end.

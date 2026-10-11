@@ -113,7 +113,9 @@ field's nights are too high. The interval covers
 calibration bias at the sensors rather than proving the width right. Under the baseline decomposition
 the local increment is {{claim:partition.f}} of the modelled total, {{claim:v2.f.cap_min}} to
 {{claim:v2.f.cap_max}} across the tested ways of applying the cap and {{claim:field.f_form_roll48}}
-with a 48-hour background window: a property of the decomposition, not a source apportionment.
+with a 48-hour background window: a property of the decomposition, not a source apportionment. Measured at the
+regulatory station, the local share lies between about {{claim:lfs.e1min.f}} (urban excess over the cleanest regional
+town, a lower bound) and {{claim:lfs.e2.co_p5.f}} (combustion-tracer intercept), with the model at the upper end.
 
 ## What each additional observation is worth
 

@@ -100,6 +100,11 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **F.134: f measured at the CEA station, two routes (spec committed first):** urban excess over the cleanest
+  regional IQAir town 0.36 [0.25, 0.46] (lower bound; median-town 0.20), CO-tracer intercept 0.53 [0.48, 0.59];
+  model at the station cell 0.51. Thesis §3.2.4 + Table `T3_local_fraction`; abstract/conclusions/discussion/summary
+  say "measured 0.36–0.53, model at the upper end". AirShare: IQAir at 11 sites (history), NBRO 26 (none),
+  Battaramulla IQAir↔AAQMS r 0.95. Tag r10.
 - 🟡 **F.133: f reconciled = 0.479** (0.428–0.489 across cap choices; 48-h 0.521; hourly-RH 0.486). 0.442 was a
   raw-`basin_mean` bug in 5 analysis scripts after F.132; 0.483 was a file stale since 08-13. Test
   `test_local_fraction_consistency.py`. Title now "…evaluation under sparse local monitoring…". Tag r9.

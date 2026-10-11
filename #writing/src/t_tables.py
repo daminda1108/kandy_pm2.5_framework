@@ -560,7 +560,8 @@ def t4_ledger():
            ["Regional and local partition",
             f"specification-dependent: {tok('partition.f')} at baseline, {tok('v2.f.cap_min')} to "
             f"{tok('v2.f.cap_max')} across cap choices, {tok('field.f_form_roll48')} with a 48-hour window",
-            "a property of the decomposition, not a source apportionment"],
+            "a property of the decomposition, not a source apportionment; measured at the city centre "
+            f"between about {tok('lfs.e1min.f')} and {tok('lfs.e2.co_p5.f')}, with the model at the upper end"],
            ["Value of daily observations",
             f"supported across the panel: one station read daily {tok('v2.review.k.day1.median')} per cent, "
             f"two used only to calibrate {tok('v2.review.k.cal2.median')} per cent (post hoc re-analysis)",
@@ -604,6 +605,10 @@ def t3_validation_summary():
             f"held-out days {tok('ceasplit.bias_re')} per cent (satellite level {tok('ceasplit.bias_sat')}); daily-cycle correlation "
             f"{tok('cea.hourly.production.shape_r')}, nights too high",
             "one station, also used to fit the level; method and siting undocumented"],
+           ["Local share at Kandy", "regulatory station against regional towns; combustion-tracer intercept",
+            f"{tok('lfs.e1min.f')} (lower bound) to {tok('lfs.e2.co_p5.f')}; model at the station's cell "
+            f"{tok('lfs.model.e2_cell')}",
+            "no rural reference monitor; exploratory, specified before scoring"],
            ["Held-out sensor at Kandy", "train on one sensor, score the other",
             f"daily correlation {tok('loso.akurana.daily.pred.r')} and {tok('loso.hantana.daily.pred.r')}; prior alone "
             f"{tok('loso.akurana.daily.prior_only.r')} and {tok('loso.hantana.daily.prior_only.r')}",
@@ -674,6 +679,29 @@ def t3_cea():
                "the calibration window only; the year rows for 2019 to 2021 are therefore not a test.")
 
 
+def t3_local_fraction():
+    """The local fraction measured two ways at the Kandy station (exploratory, F.134)."""
+    def ci(k): return f"{tok(k + '.f')} [{tok(k + '.lo')}, {tok(k + '.hi')}]"
+    write("T3_local_fraction", "The local share at the Kandy regulatory station by four routes, against the model on the same basis",
+          ["route", "what it measures", "local share [95 per cent interval]", "model at the station's cell, same basis"],
+          [["Kandy minus the median of five regional town sensors, 2024 to 2026",
+            "urban excess over regional towns; a lower bound", ci("lfs.e1med"), tok("lfs.model.ext_cell")],
+           ["Kandy minus the cleanest of those towns each day",
+            "urban excess over the least polluted town; still a lower bound", ci("lfs.e1min"), tok("lfs.model.ext_cell")],
+           ["Combustion-tracer intercept (carbon monoxide), 2019 to 2023",
+            "share above the level at background carbon monoxide", ci("lfs.e2.co_p5"), tok("lfs.model.e2_cell")],
+           ["The same with nitrogen dioxide",
+            "as above, a second tracer", ci("lfs.e2.no2_p5"), tok("lfs.model.e2_cell")],
+           ["The 2020 curfew, adjusted for weather",
+            "local and regional response together; not a bound", f"{tok('lfs.e3.D')} [{tok('lfs.e3.lo')}, {tok('lfs.e3.hi')}]", "--"],
+           ["Source apportionment at Katugastota [@Seneviratne2017]",
+            "identified local primary sources; a floor", "about 0.3", "--"]],
+          note="Regional sensors are calibrated against the reference monitor co-located at Battaramulla. Intervals: "
+               "bootstrap over calendar months (the tracer interval was added after the specification). The model "
+               "column is the same quantity, 1 minus the mean background over the mean field at the station's cell, "
+               "on the same days or hours; the model's basin value is lower.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -704,7 +732,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_lf": t3_local_fraction, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

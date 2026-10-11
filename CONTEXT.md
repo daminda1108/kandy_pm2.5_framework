@@ -51,6 +51,11 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
+## 🟢 Local fraction measured (2026-10-11, F.134)
+City-centre local share by measurement: **0.36** (urban excess over cleanest regional IQAir town; lower bound) to **0.53**
+(CO-tracer intercept, 2019–23); model at the station cell **0.51**, basin **0.479** — "within the measured range, at the
+upper end, may be somewhat high". Pre-specified rule classes the model high vs the town route (biased low).
+
 ## 🟢 Level re-anchored to CEA, split (2026-10-11, F.132)
 β = **0.80 [0.70, 0.92]** fitted on CEA 2019-01 → 2021-06 only; multiplicative on T and B (f unchanged). Basin annual means
 **13.6–16.8** (were 17.0–20.9); ≥2.4× WHO across β's interval. Held-out 2022–23 (250 d, 11 months): **−1 % [−21, +20]**

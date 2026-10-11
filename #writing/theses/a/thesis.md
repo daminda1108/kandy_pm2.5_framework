@@ -91,6 +91,8 @@ Plan: kandy_pm25/docs/thesis_rescope_plan_2026-09-18.md
 
 {{include:theses/a/cea_reference.md}}
 
+{{include:theses/a/local_fraction_measured.md}}
+
 {{include:pool/ch07_making_sure/07-s-model-across-ten-cities.md shift=1}}
 
 {{include:theses/a/kandy_model_rung.md}}

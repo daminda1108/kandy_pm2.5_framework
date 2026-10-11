@@ -84,7 +84,11 @@ anchored years, from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across the
 boundary and of the statistic used for the daily minimum, and reaches
 {{claim:field.f_form_roll48}} under a 48-hour background window
 ({{ref:s-partition-constraint-rather-than}}). Under every one of these choices the local fraction
-is close to half. That is not comparable with the quarter taken earlier from source apportionment,
+is close to half. Two measurement routes at the regulatory station bracket it from below and above: the urban excess
+over the cleanest regional town gives {{claim:lfs.e1min.f}}, a lower bound because every regional sensor is in a town,
+and a combustion-tracer intercept gives {{claim:lfs.e2.co_p5.f}} ({{ref:s-local-fraction-measured}}). The model, at
+{{claim:lfs.model.e2_cell}} for that cell, sits at the upper end; the rule fixed before the comparison classes it as
+high against the first route, whose bias runs in the direction that would explain the gap. That is not comparable with the quarter taken earlier from source apportionment,
 which classifies mass by emitting source rather than by spatial structure, and it does not establish
 how much of the increment is emitted locally rather than formed in the air, which is the question a composition measurement would answer
 ({{ref:s-measurement-would-settle-most}}).
