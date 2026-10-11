@@ -92,7 +92,7 @@ cell, is broadly consistent with the second; the rule fixed before the compariso
 high against the first route, whose bias runs in the direction that would explain the gap. That is not comparable with the quarter taken earlier from source apportionment,
 which classifies mass by emitting source rather than by spatial structure, and it does not establish
 how much of the increment is emitted locally rather than formed in the air, which is the question a composition measurement would answer
-({{ref:s-measurement-would-settle-most}}).
+({{ref:s-future-background}}).
 
 **What Kandy should measure next.** Each limit above points to the same need, local observation,
 and the cross-city measurement of {{ref:a-app-panel}} says what form it should take. A station's

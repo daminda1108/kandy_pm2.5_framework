@@ -76,6 +76,6 @@ city, so nothing here supports a coastal application.
 What would break the transfer is stated so that it can be checked. If the value of a same-day
 reading at Kandy is governed by something the confirmation population does not span, such as the
 amplitude of the regional seasonal cycle or the error structure of low-cost sensors, the pooled
-ordering may not hold there. {{ref:s-measurement-would-settle-most}} gives the measurement that
+ordering may not hold there. {{ref:s-future-alongside}} gives the measurement that
 would test it directly. Until then the transfer is an assumption with evidence behind it and not a
 demonstration.

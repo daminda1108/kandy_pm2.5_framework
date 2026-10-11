@@ -100,5 +100,5 @@ survive averaging over random splits, and no band-specific ordering is carried t
 What would break the transfer is stated so that it can be checked. If the value of a same-day
 reading at Kandy is governed by something the panels do not span, such as the amplitude of the
 regional seasonal cycle or the error structure of low-cost sensors, the transferred ordering may not
-hold there. {{ref:s-measurement-would-settle-most}} gives the measurement that would test it
+hold there. {{ref:s-future-alongside}} gives the measurement that would test it
 directly.

@@ -106,3 +106,10 @@ reconstruction, what the evidence supports and what it may be used for.
    difference, but it is a post hoc re-analysis of the registered data, not a registered
    confirmation, and a fresh pre-specified test is required before the near-equivalence of station
    types is treated as established ({{ref:a-future}}).
+6. **The next step is to test the reconstruction, not to enlarge it.** The work that follows treats the
+   delivered field as a locked hypothesis and collects observations able to refute it: the regulatory
+   record's provenance first, then low-cost sensors evaluated against the reference across two
+   monsoons, then a distributed network whose level, within-cell, drainage and daily-cycle tests are
+   powered to give an answer, and finally a rural background reference and composition measurement
+   ({{ref:a-future}}). Whether the map survives, fails at one kilometre, or fails for temporal or
+   background reasons, the outcome says which part of the construction to keep.

@@ -146,9 +146,13 @@ consistency check within a composition model, not a chemical measurement at Kand
 
 ## Ongoing work and verification
 
-A formal agreement for the regulatory record, and co-locating the low-cost sensors with it, would
-fix the size of the level excess and show where the sensor record's nights go wrong. A fresh pre-registered
-like-for-like test and an independent reproduction are the next steps for the cross-city results.
+The research that follows treats the delivered field as a locked hypothesis, with its predictions registered
+before any instrument is bought, and collects observations able to refute it, in four phases: the regulatory
+record's provenance and a register of what calibrates and what checks the model; low-cost sensors evaluated against
+the reference over two monsoons, which also decides the humidity correction; a distributed network whose level,
+within-cell, drainage and daily-cycle tests are powered to give an answer, while a one-kilometre ranking test can
+only detect gross failure; and a rural background reference with composition measurement. A fresh pre-registered
+like-for-like ladder test and an independent reproduction accompany it.
 Every value in the report is regenerated from source at build time by a gate that refuses to build
 when prose and data disagree (github.com/daminda1108/kandy_pm2.5_framework);
 {{claim:meta.refuted}} registered predictions were refuted and are reported as such.

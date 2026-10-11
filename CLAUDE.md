@@ -100,6 +100,11 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **Thesis reshaped toward the continuation programme (tag r12, user will pursue it):** §4.2 future work = the
+  delivered field as a LOCKED HYPOTHESIS, four phases (CEA provenance/register → collocation over two monsoons → 35-site
+  falsification network, Table `T5_continuation` with stated power → rural background + composition) + outcomes→redesign
+  map; conclusion 6; abstract last sentence; summary "Ongoing work"; pointer in §3.4.1. Proposal
+  `kandy_pm25/docs/continuation_research_proposal_2026-10.md`. Body 103 pp.
 - 🟢 **Seventh review answered (tag r11):** Fig 3.1(c) was drawn from the pre-F.133 partition file → ALL thesis figures
   regenerated from builders (8 changed). f wording: 0.36 = lower-bound estimate, 0.53 = separate two-sided estimate,
   not a bracket; E2 held-out (2022-10 on) 0.505. App E gas wording, Table 2.1 + CEA/regional rows, §1.2.4 heading,

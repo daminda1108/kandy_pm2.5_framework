@@ -112,7 +112,9 @@ stations neither interpolation nor a free product ranked neighbourhoods usefully
 interpolation clearly overtook a free land-cover layer in only
 {{claim:v2.curve.full.holm_crossing}} of twenty-three cities after correction for multiple
 testing, and that siting by design gained nothing. A Kandy network of a handful of stations should
-be expected to give the city's level and its days, not its neighbourhoods.
+be expected to give the city's level and its days, not its neighbourhoods. A network can still serve the map in a
+different way: not by teaching the model the pattern but by testing it, with predictions frozen in advance and tests
+chosen for the power they have. That is the research this thesis leads into ({{ref:a-future}}).
 
 The tropics cannot be given advice of their own. The confirmation held only four low-latitude
 cities with dense networks, its test of a latitude dependence was undetectable, and the public

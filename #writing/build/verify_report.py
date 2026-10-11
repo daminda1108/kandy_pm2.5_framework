@@ -39,6 +39,7 @@ FAMILIES = [
      r"validation_scorecard|scorecard|ktm|r2b|spatial_tournament|siting|F8_kathmandu|reviewer_response|multicity)",
      "spatial tests and analogue cities (public monitoring archives, OSM, GEE layers)", "public"),
     (r"^(registrations|meta|thesis)", "document metadata and the registration registry", "public"),
+    (r"^(campaign|sensor_design|design_)", "continuation network design (terrain, roads, receptors, published prices)", "public"),
 ]
 
 

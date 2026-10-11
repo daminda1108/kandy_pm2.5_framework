@@ -44,7 +44,7 @@ of the regional background is weak, so a background series could add little that
 sensors has not already taken from reanalysis and geography, while in temperate latitudes a strong
 winter accumulation regime would make the same series carry a great deal. If that is right, the
 operative variable is the amplitude of the regional seasonal cycle and latitude stands in for it.
-Testing it would require sorting cities by that amplitude directly, which {{ref:s-measurement-would-settle-most}}
+Testing it would require sorting cities by that amplitude directly, which {{ref:s-future-alongside}}
 lists and this thesis did not run.
 
 For Kandy, the consequence is that no band-specific ordering of local stations against a background

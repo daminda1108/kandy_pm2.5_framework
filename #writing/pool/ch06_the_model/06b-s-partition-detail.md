@@ -119,4 +119,4 @@ top of a range and not in the middle of one.
 That is the most the present evidence supports. The bound is conditional on the decomposition and
 on a composition model, its lower end lies below the earlier quarter and its upper end well above
 it, so it neither confirms nor overturns the earlier estimate of what local action could achieve. A speciated measurement in the city is the
-experiment that would narrow the range, and {{ref:s-measurement-would-settle-most}} lists it.
+experiment that would narrow the range, and {{ref:s-future-background}} lists it.

@@ -43,5 +43,5 @@ Physical sophistication and predictive skill did not improve together here.
 
 The first comparison, without the built-up arm, was registered in advance; the three-way comparison
 on identical sites was added after the second external review and is exploratory. The direction
-holds on two independently selected sets of cities, which is why {{ref:s-construction-step-most-worth}}
+holds on two independently selected sets of cities, which is why {{ref:s-future-alongside}}
 treats the dispersion step, not the source surface, as the place to intervene.

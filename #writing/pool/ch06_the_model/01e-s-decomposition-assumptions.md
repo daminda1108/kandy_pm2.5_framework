@@ -45,4 +45,4 @@ against held-out monitors is reported rather than assumed, with a median of
 the dispersion step, which redistributed the emission surface through terrain-steered flow,
 **lowered** rank from {{claim:r2.rho_emission_surface}} to {{claim:r2.rho_with_atransport}}. A prior
 that cannot fail would not have produced that result, and the response was to remove the step from
-the delivered field ({{ref:s-construction-step-most-worth}}) rather than to defend it.
+the delivered field ({{ref:s-future-alongside}}) rather than to defend it.

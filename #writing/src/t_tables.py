@@ -712,6 +712,30 @@ def t3_local_fraction():
                "on the same days or hours; the model's basin value is lower.")
 
 
+def t5_continuation():
+    """The continuation programme's tests, each with what it can and cannot show (power from F.100/F.103/F.134)."""
+    write("T5_continuation", "Tests of the locked reconstruction in the continuation programme, and what each can show",
+          ["test", "what is compared", "power, measured in this work", "the outcome it can decide"],
+          [["Level at many points", "model minus observed at every network site, by stratum",
+            "high: many site-months", "whether the one-station level correction holds across the basin"],
+           ["Within-cell ratio", "paired sites inside one model cell",
+            f"high: resolved to a factor of {tok('camp.h2_ratio_7d')} in seven days",
+            "how much variation a one-kilometre cell hides (a resolution limit)"],
+           ["Night-time drainage", "valley-floor sink against the core, night by night",
+            f"high: detectable if the sink exceeds the core on {tok('camp.h4_nights90')} per cent of 90 nights",
+            "whether the confinement term's physics is right"],
+           ["Daily cycle by site", "night-to-midday ratio against the calibrated sensors",
+            "high, once the collocation has fixed the humidity correction", "whether the night-time defect is general or local"],
+           ["Rank at one kilometre", "model against observed across the contrast sites",
+            f"low: only a gain of {tok('camp.h1_gain_lo')} to {tok('camp.h1_gain_hi')} over the free benchmark is detectable "
+            f"with {tok('camp.n_fit')} fitting sites", "a gross failure of the map; not that the map is good"],
+           ["Background and local share", "a rural upwind reference against the background and the city centre",
+            "moderate", "whether the background term and the local fraction have a physical meaning"]],
+          note="Every prediction is frozen and registered before any instrument is bought, with the pass, fail and "
+               "inconclusive regions and the model component each failure points to. Power figures are from the "
+               "design analysis of the network proposed here; the rank test's weakness is stated in advance.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -742,7 +766,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_lf": t3_local_fraction, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_lf": t3_local_fraction, "T5_cont": t5_continuation, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,
