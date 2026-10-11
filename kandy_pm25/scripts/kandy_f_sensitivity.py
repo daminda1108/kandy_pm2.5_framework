@@ -39,7 +39,7 @@ def main():
     rows = []
     for y in range(2019, 2024):
         T = pd.read_parquet(bv.TANCHOR / f"T_kandy_hourly_{y}.parquet", columns=["datetime_utc", "T_q50"])
-        b_annual = (1 - bv.FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "basin_mean"])
+        b_annual = (1 - bv.FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "L_corrected"])   # the level T(t) is anchored to (F.132)
         big = T.copy(); big["T_q50"] = 1e9
         Bu = bv.build_B_v2(y, b_annual, T_override=big).B.to_numpy()          # cap disabled
         ts = pd.to_datetime(T.datetime_utc)

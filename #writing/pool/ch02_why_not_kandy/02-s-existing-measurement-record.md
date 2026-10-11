@@ -1,14 +1,17 @@
 ## Existing measurement record {#s-existing-measurement-record}
 
-At the time of this study, the publicly available PM2.5 record for Kandy consisted of two
-low-cost sensors, and no reference-grade record was available.
+At the start of this study, the PM2.5 record known to be available for Kandy consisted of two
+low-cost sensors. A regulatory record was found during the work on the regulator's public platform
+and is used in {{ref:s-cea-reference}}.
 
 The city previously had a reference-grade instrument at Torrington Park, which anchored the
 calibration of published low-cost sensor records in the region [@Attanayake2025]; it is no longer
 in operation. The national environmental authority operates a monitoring station with an hourly
 record extending back to 2019, with a gap from July 2021 to October 2022 when it could not be
-operated (Central Environmental Authority, personal communication, 12 August 2026). That record
-is not publicly released, and access requires a formal agreement.
+operated (Central Environmental Authority, personal communication, 12 August 2026). Access to the
+record itself requires a formal agreement, which had not been concluded by the time of writing;
+the station's daily and hourly means are, however, served on the authority's public platform
+[@CEA2026AirShare], and those public values are what this thesis uses.
 
 The study area is therefore a city of 98,828 residents within its municipal boundary
 [@DCS2012Census], into which nearly 389,000 commuters, more than twice that number, travel on a

@@ -1,9 +1,12 @@
-## Validation without local ground truth {#ch-validation-without-local-ground}
+## Evaluation under sparse local monitoring {#ch-validation-without-local-ground}
 
-Kandy has two low-cost sensors and no reference monitor, so no local dataset exists against which
-the field can be scored, and the two sensors cannot serve: the temporal anchor is trained on them,
-its interval is calibrated on them and its amplitude is sharpened to them
-({{ref:s-temporal-anchor}}). Agreement with them measures the calibration, not the model.
+Kandy has three local PM2.5 records and none of them is a spatially resolved reference field. The
+two low-cost sensors cannot serve as a check: the temporal anchor is trained on them, its interval
+is calibrated on them and its amplitude is sharpened to them ({{ref:s-temporal-anchor}}), so
+agreement with them measures the calibration, not the model. The regulatory station in the city
+centre is used in two ways: its record to June 2021 sets the field's level, and its later record
+checks it ({{ref:s-cea-reference}}). No local dataset can score the spatial pattern, because no
+network samples the basin at more than one point.
 
 The validation therefore rests on three lines of evidence. Each answers a different question, and
 none of them alone would be sufficient.
@@ -11,7 +14,8 @@ none of them alone would be sufficient.
 ### Independent records at Kandy {#s-validation-kandy-records}
 
 The first line asks whether the field's **level** agrees with measurements at Kandy that played no
-part in building it. Four published records qualify: annual means from a monitor of the national
+part in building it. Four published records qualify, alongside the later record of the regulatory
+station: annual means from a monitor of the national
 research organisation for two years, and three records from low-cost sensors, each carrying its
 own calibration. The model is read at the cell containing each site and compared with the
 published annual mean. The comparison is of an area mean with a point, so it is governed by the

@@ -17,10 +17,10 @@ The comparison is shown for completeness, at a seasonal correlation of
 {{claim:kandy.cycles_diurnal_r}}, and those numbers should be read as confirming that the
 calibration was applied rather than as evidence that the model works.
 
-**Three records do carry weight**, because the model played no part in producing them and they
-played no part in producing the model: the national research organisation's station, a calibrated
-low-cost record, and the regulatory station in the city centre, which is treated separately in
-{{ref:s-cea-reference}}.
+**Three records do carry weight.** Two of them are independent of the model in both directions: the
+national research organisation's station and a calibrated low-cost record. The third, the regulatory
+station in the city centre ({{ref:s-cea-reference}}), is independent only for its record after June
+2021: its earlier record sets the field's level.
 
 {{tbl:T3_2}}
 

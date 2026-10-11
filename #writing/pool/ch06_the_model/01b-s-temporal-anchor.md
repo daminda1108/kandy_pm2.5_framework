@@ -41,7 +41,7 @@ multiplied by a single factor of {{claim:ceabeta.beta}}, fitted as the ratio of 
 the field's at the station's cell over January 2019 to June 2021 and held fixed for every year. The
 factor scales the whole series after the shift, so the shape is kept and no hour is pushed below
 zero, and it scales the background by the same amount ({{ref:s-regional-background}}), so the local
-fraction is unchanged. The station's record from October 2022 is not used and serves as the check.
+fraction is changed only through the fixed marine floor of the background. The station's record from October 2022 is not used and serves as the check.
 
 **Amplitude correction.** A model of this kind regresses towards the mean, and the learned
 series reproduces the shape of the observed daily and seasonal cycles while damping their

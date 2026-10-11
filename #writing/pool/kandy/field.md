@@ -11,7 +11,7 @@ parts of it are supported by evidence.
 The annual basin mean runs from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms
 per cubic metre across the five anchored years. The reconstructed annual basin means exceed the
 World Health Organization annual guideline of 5 micrograms per cubic metre [@WHO2021] in every
-satellite-anchored year, by a factor of three or more. The level is the satellite surface's,
+anchored year, by a factor of {{claim:kandy.who_min}} to {{claim:kandy.who_max}}. The level is the satellite surface's,
 re-anchored to the regulatory station in the city centre by a single factor of
 {{claim:ceabeta.beta}} fitted on 2019 to mid-2021 ({{ref:s-cea-reference}}); it is therefore as good
 as that one station, and its check on later years covers only {{claim:ceasplit.months}} months. The

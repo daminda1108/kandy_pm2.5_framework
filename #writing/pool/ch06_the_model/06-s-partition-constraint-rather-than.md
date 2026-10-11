@@ -33,8 +33,11 @@ local fraction at the traffic core. After the constraint the residual is at wors
 where the anchor itself returned a negative total, which no constraint on the background can
 repair.
 
-Across the anchored years the local fraction is **{{claim:partition.f}}**, ranging
-{{claim:partition.f_lo}} to {{claim:partition.f_hi}}.
+The local fraction is the increment's share of the modelled total, computed for each year as
+*f* = 1 − ⟨*B*⟩/⟨*T*⟩, where ⟨·⟩ is the mean over that year's hours, and then averaged over the
+anchored years. It is a ratio of annual means, not a mean of hourly ratios, and the same definition
+is used wherever a local fraction is reported in this thesis. Across the anchored years it is
+**{{claim:partition.f}}**, ranging {{claim:partition.f_lo}} to {{claim:partition.f_hi}}.
 
 **This is a property of the decomposition, not a measured share.** Under the baseline
 specification the local increment accounts for {{claim:partition.f}} of the modelled

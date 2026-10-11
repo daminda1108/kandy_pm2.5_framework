@@ -6621,3 +6621,17 @@ v3_drv) → all diagnostics. Backups: `decomp/backup_satellite_level_2026-10-11/
 **F.132 addendum (2026-10-11): propagated.** Webapp re-exported (QA PASS, worst 0.0009 µg/m³), live-forecast GBMs
 retrained on the re-anchored T(t) (2023 holdout RMSE 5.32), attributable deaths removed from the explorer. Release
 repo ported; its `regenerate_all.py --from-anchor` reproduces the framework's delivered field exactly (max |Δ| 0.0).
+
+## F.133 — 🟡 the local fraction reconciled: one estimand, recomputed 0.479 (2026-10-11)
+
+Sixth external review found f quoted as 0.483 (headline) and 0.442/0.445 (humidity scenario table). Not two estimands:
+every script uses f = 1 − mean(B)/mean(T) per year, averaged over 2019–2023. Two defects: (1) `kandy_rh_scenario.py`,
+`kandy_f_sensitivity.py`, `kandy_fmin_sweep.py`, `f_diurnal_amplitude_sweep.py`, `w1_subdaily_origin_check.py` built B
+from the raw `basin_mean` while T(t) was re-anchored (F.132) → B too high → f 0.442; (2) the headline
+`kandy_partition_v2.json` dated 2026-08-13, predating the dispersion removal (F.128), the conservation fix (F.129) and the
+re-anchoring. Both fixed and regenerated: **f = 0.479** (partition report = sweep baseline = humidity production, all
+0.4793); cap specifications **0.428–0.489**; 48-h window 0.521; hourly-RH 0.486. Not exactly β-invariant because the
+marine background floor is a fixed µg/m³ value. `scripts/tests/test_local_fraction_consistency.py` now fails if the three
+disagree. Same review: abstract/conclusions report the 2022 (−22 %) and 2023 (+9 %) held-out biases beside the pooled
+−1 %, the RMSE gain as not established, the CEA correction as provisional and conditional on the site-to-cell relation;
+title → "evaluation under sparse local monitoring"; WHO multiple 2.7–3.4 (was "three or more"); tag `thesis-a-2026-10-11-r9`.

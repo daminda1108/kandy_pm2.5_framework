@@ -5,11 +5,12 @@ one of two such stations in the country. Its record was requested formally durin
 access was granted in principle, subject to an agreement that had not been concluded by the time
 of writing ({{ref:s-data-requested-but-obtained}}). The authority's public platform, however, serves
 the station's daily and hourly means for the whole period, and the comparison below uses those
-public values [@CEA2026AirShare]. The record played no part in building the field. It is the only
-record at Kandy from a regulatory instrument, although the platform does not state the measurement
-method. The station reported PM2.5 on {{claim:cea.days}} days between 2019 and 2023. It did not
+public values [@CEA2026AirShare]; any underlying record released under the formal agreement may
+differ from them. The station's record from January 2019 to June 2021 is used to set the field's
+level, below; only its later record is independent of the model. It is the only record at Kandy from
+a regulatory instrument, although the platform does not state the measurement method. The station reported PM2.5 on {{claim:cea.days}} days between 2019 and 2023. It did not
 operate from mid-2021 to late 2022, so 2021 and 2022 are represented by a few months each. The
-comparison is exploratory and was made after the field was fixed.
+analysis is exploratory and was added after the rest of the model had been fixed.
 
 {{tbl:T3_cea}}
 
@@ -58,7 +59,8 @@ multiplied by a single factor, fitted as the ratio of the station's mean to the 
 station's first {{claim:ceabeta.days}} reporting days, January 2019 to June 2021. The factor is
 {{claim:ceabeta.beta}} (95 per cent interval {{claim:ceabeta.lo}} to {{claim:ceabeta.hi}}, from a
 bootstrap over its {{claim:ceabeta.months}} months). It scales the temporal anchor and the background
-together, so the local fraction and the spatial pattern are unchanged, and it is applied as a
+together, so the spatial pattern is unchanged and the local fraction moves only through the
+background's fixed marine floor, and it is applied as a
 multiplication because a fixed downward shift of that size drove the cleanest hours below zero. The
 station's later record, October 2022 to 2023, was not used and serves as the check. On those
 {{claim:ceasplit.days}} held-out days the re-anchored field differs from the station by
@@ -66,10 +68,17 @@ station's later record, October 2022 to 2023, was not used and serves as the che
 against {{claim:ceasplit.bias_sat}} per cent ({{claim:ceasplit.bias_sat.lo}} to
 {{claim:ceasplit.bias_sat.hi}}) for the field at the satellite level, and its daily error is
 {{claim:ceasplit.rmse_change}} per cent different ({{claim:ceasplit.rmse_change.lo}} to
-{{claim:ceasplit.rmse_change.hi}}). By year the re-anchored field reads
-{{claim:cea.del.2022.bias_pct}} per cent in the short 2022 window and {{claim:cea.del.2023.bias_pct}}
-per cent in 2023. The held-out record covers only {{claim:ceasplit.months}} months, so the check
-points in the right direction without excluding the satellite level. The delivered field is the
+{{claim:ceasplit.rmse_change.hi}}). The pooled figure hides errors of opposite
+sign: the re-anchored field reads {{claim:cea.del.2022.bias_pct}} per cent in the short 2022 window
+and {{claim:cea.del.2023.bias_pct}} per cent in 2023, so it is not shown to be accurate year by year,
+and the interval on the change in daily error includes no improvement. The held-out record covers
+only {{claim:ceasplit.months}} months, so the check points in the right direction without excluding
+the satellite level. The factor is also fitted at one point, the station's cell, and applied to the
+whole basin, so it carries the assumption that the modelled relation between that cell and the basin
+mean is right; the spatial pattern that sets that relation is not validated
+({{ref:s-spatial-contrast-lost}}). The result is therefore a provisional basin-level correction
+anchored to one regulatory station, conditional on the modelled site-to-cell relation, and a
+held-out temporal check; it is not an independent measurement of the basin mean. The delivered field is the
 re-anchored one ({{tbl:T3_cea}} shows both).
 
 **After 2023.** The software extends the field to 2024 to 2026 without a satellite surface for

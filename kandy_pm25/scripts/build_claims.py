@@ -624,6 +624,10 @@ def kandy_field(c: Claims) -> None:
     c.add("kandy.mean_max", round(max(means.values()), 1), stat="max over anchored years",
           n=len(means), source="decomp/kandy_decomp_predictions_*_additive_v3.parquet",
           ledger="production")
+    c.add("kandy.who_min", round(min(means.values()) / 5.0, 1), stat="lowest annual mean / WHO 5",
+          n=len(means), source="decomp/kandy_decomp_predictions_*_additive_v3.parquet", ledger="production")
+    c.add("kandy.who_max", round(max(means.values()) / 5.0, 1), stat="highest annual mean / WHO 5",
+          n=len(means), source="decomp/kandy_decomp_predictions_*_additive_v3.parquet", ledger="production")
 
     # Annual contrast, from the ANNUAL-MEAN field: the per-cell mean over the year, then its
     # p90/p10. Not the same as the midday between-cell figure in section 5.6, which is flatter

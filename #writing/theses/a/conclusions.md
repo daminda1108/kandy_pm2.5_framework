@@ -68,7 +68,11 @@ reconstruction, what the evidence supports and what it may be used for.
      {{claim:ceabeta.beta}} ({{claim:ceabeta.lo}} to {{claim:ceabeta.hi}}) fitted on 2019 to mid-2021,
      the field differs from the station by {{claim:ceasplit.bias_re}} per cent on the
      {{claim:ceasplit.days}} held-out days of 2022 and 2023 ({{claim:ceasplit.bias_re.lo}} to
-     {{claim:ceasplit.bias_re.hi}}), against {{claim:ceasplit.bias_sat}} per cent at the satellite level.
+     {{claim:ceasplit.bias_re.hi}}), against {{claim:ceasplit.bias_sat}} per cent at the satellite level;
+     the pooled figure combines {{claim:cea.del.2022.bias_pct}} per cent in 2022 with
+     {{claim:cea.del.2023.bias_pct}} per cent in 2023, and the reduction in daily error is not
+     established. It is a provisional correction anchored to one station and conditional on the
+     modelled relation between that station's cell and the basin mean.
      The field follows the station's day-to-day sequence (daily correlation {{claim:cea.del.all.r}},
      {{claim:cea.del.anomaly_daily_r}} within the month). Beyond 2023 the re-anchored extension reads
      {{claim:ceasplit.ext_bias}} per cent against the station, so the correction is not supported

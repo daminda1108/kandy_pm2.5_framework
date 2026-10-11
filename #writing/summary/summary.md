@@ -1,5 +1,5 @@
 ---
-title: "An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, validation without local ground truth, and measurement priorities"
+title: "An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, evaluation under sparse local monitoring, and measurement priorities"
 author: "A. M. D. W. B. Alahakoon, Department of Environmental and Industrial Sciences, University of Peradeniya, Sri Lanka"
 date: "2026"
 geometry: margin=1.0cm

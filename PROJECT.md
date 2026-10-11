@@ -526,11 +526,11 @@ merely computed. Result across all eight years: **zero-local hours fall from ~25
 and the annual local fraction becomes **f ≈ 0.48**.
 
 > ⚠ **F.124 (2026-10-06):** f is a bound set by T's diurnal amplitude where the cap binds, not identified by data. Across
-> cap choices (UTC vs local day; min, 2nd-lowest hour, 3-h running min, P10) it spans **0.433–0.492**; production 0.483
+> cap choices (UTC vs local day; min, 2nd-lowest hour, 3-h running min, P10) it spans **0.428–0.489**; production **0.479** (recomputed 2026-10-11; 0.483 was a stale file)
 > (`scripts/kandy_f_sensitivity.py`). Quote "about 0.45–0.5, a bound under the cap".
 
-**The free parameter matters little; the specification does.** Sweeping `F_MIN` from 0 to 0.08 moves `f` only from 0.477 to
-0.502, but the day boundary and daily-floor statistic move it across 0.433–0.492 and a 48-hour window gives 0.547; `f` is a
+**The free parameter matters little; the specification does.** Sweeping `F_MIN` from 0 to 0.08 moved `f` only from 0.477 to
+0.502 (pre-October field), but the day boundary and daily-floor statistic move it across 0.428–0.489 and a 48-hour window gives 0.521; `f` is a
 property of the decomposition (a non-negativity constraint), not a measured source contribution and not a confidence interval. `F_MIN = 0.02` was chosen as the
 smallest value that removes the defect, before the resulting `f` was known.
 

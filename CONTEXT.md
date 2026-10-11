@@ -46,7 +46,7 @@ first two same-day **+58.8 % [44.9, 69.0]**, background +57.7, background − fi
 **Never say a background is worth more than local stations.** H1–H5 are quoted "as constructed". The robust result is
 **same-day observation ≈ +58 % vs calibration-only ≈ +9–14 %**; kind does not matter; on full networks a ~10-station background adds +2.5 [1.1, 3.7] over two same-day stations (count).
 Spatial curve: X5 interval was a bug; only **3/23** cities cross after Holm (not 15/23); tropical − other −0.22
-[−0.45, +0.02]; detection limit 0.35/0.51; GHAP ≈ built-up raster. f: **0.433–0.492** across cap choices.
+[−0.45, +0.02]; detection limit 0.35/0.51; GHAP ≈ built-up raster. f: **0.428–0.489** across cap choices (recomputed 2026-10-11).
 Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
@@ -78,9 +78,9 @@ Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate e
 (4 valley cities). Author rerun, NOT independent reproduction. Never compare f with the old ~0.25 (different quantities).
 
 ## 🔬 Second review (2026-10-10, F.126, exploratory)
-Humidity scenario: f 0.483→0.488; morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
+Humidity scenario: f 0.479→0.486 (recomputed 2026-10-11); morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
 level unchanged. Dispersion on identical sites: raw 0.371, dispersed 0.274, built-up 0.393 → dispersion is NOT validated.
-Quote f as 0.483 (0.433–0.492 cap choices; 0.547 at 48 h) — a decomposition property, never a confidence interval.
+Quote f as **0.479** (0.428–0.489 cap choices; 0.521 at 48 h; recomputed 2026-10-11 — 0.483 came from a file stale since 2026-08-13) — a decomposition property, never a confidence interval.
 **Burden withdrawn** (no number; method only — never quote 431/300). Kandy s_rep factor 16.9 is confounded, NOT a lower
 bound. Dec 2022 = model-inferred regional episode.
 

@@ -100,9 +100,10 @@ continuously, so `B ≤ T` must hold at every hour; a background at or above the
 with a zero local share at the traffic core. **Both tiers need it independently** — the
 locked chain (`build_additive_field_v2.build_B_v2`) and the extension tier
 (`kandy_driver_tier_build`) construct `B` by different routes, and capping one leaves the
-other at 18–28%. The resulting `f` is 0.483 at baseline and insensitive to `F_MIN` (0.477 → 0.502 across a
-fourfold sweep), but it moves with the cap's specification (0.433–0.492 across day boundary and
-daily-floor statistic; 0.547 with a 48-hour window). It is a property of the decomposition, not a
+other at 18–28%. The resulting `f` (= 1 − mean(B)/mean(T) per year, averaged over the anchored years) is 0.479 at
+baseline, recomputed 2026-10-11 on the delivered field; it moves with the cap's specification
+(0.428–0.489 across day boundary and daily-floor statistic; 0.521 with a 48-hour window). An
+earlier `F_MIN` sweep (0.477 → 0.502) was measured on the pre-October field. It is a property of the decomposition, not a
 measured source contribution.
 
 **Regional background `B(t)`, construction:** = `(1−f)·L(year)` × daily GEOS-CF shape × origin-conditioned

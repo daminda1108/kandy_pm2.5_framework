@@ -100,6 +100,9 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟡 **F.133: f reconciled = 0.479** (0.428–0.489 across cap choices; 48-h 0.521; hourly-RH 0.486). 0.442 was a
+  raw-`basin_mean` bug in 5 analysis scripts after F.132; 0.483 was a file stale since 08-13. Test
+  `test_local_fraction_consistency.py`. Title now "…evaluation under sparse local monitoring…". Tag r9.
 - 🟢 **F.132 (user-directed): LEVEL RE-ANCHORED TO CEA, split.** β = **0.80 [0.70, 0.92]** fitted on CEA 2019-01 →
   2021-06 (`kandy_cea_level_calibration.py`; `vandonkelaar.LEVEL_ANCHOR="cea_split"`), applied MULTIPLICATIVELY in
   `predict_T_anchor_v3` (additive made 4.5 % of hours negative); B reads `L_corrected` so f unchanged. Basin means now
@@ -760,6 +763,13 @@ python src/comparison/publication_figures.py --all
    check that settled it: **ozone** must peak in the early afternoon, and it peaked at stamps 04–08. +05:30 fixes it
    (r +0.73). **Rule: for any new time series, check one species with a known diurnal phase (O3, or solar radiation)
    before reading a diurnal shape.** The monthly (daily-resolution) records were left as served.
+
+107. **🔴 Changing a shared input's definition must be propagated to EVERY reader, not just the production one
+   (2026-10-11, F.133).** F.132 changed the level from `basin_mean` to `L_corrected = β·basin_mean` and fixed the
+   production background builder — but five analysis scripts still rebuilt B from `basin_mean`, so the humidity
+   scenario quoted f = 0.442 beside a headline 0.483 (itself from a file stale for two months). **Rule: after changing
+   what a column means, grep every reader of that column (`grep -rn '"basin_mean"' scripts src`), and add a test that
+   two independent computations of the same headline agree.** Family of #70, #86, #101.
 
 ## Pending Tasks (updated 2026-10-06)
 

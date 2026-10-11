@@ -3,7 +3,7 @@
 *An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, validation
 without local ground truth, and measurement priorities* (A. M. D. W. B. Alahakoon, University of Peradeniya, 2026).
 
-The version built for review corresponds to the git tag **`thesis-a-2026-10-11-r4`** of this repository (earlier rounds: `thesis-a-2026-10-10`, `thesis-a-2026-10-10-r3`). Every number in the
+The version built for review corresponds to the git tag **`thesis-a-2026-10-11-r9`** of this repository: the PDF, `VERIFICATION_thesis_a.md` and this guide were all generated from that one commit (earlier rounds: `thesis-a-2026-10-10`, `-r3`, `thesis-a-2026-10-11-r4` to `-r8`). Every number in the
 thesis is a token resolved from `kandy_pm25/data/processed/modular/claims.json`, which `build_claims.py` regenerates
 from the scored files; the build refuses to produce a document when a stored value and a recomputation disagree.
 `VERIFICATION_thesis_a.md` lists every cited claim, its source artefact and whether it rests on public or restricted
@@ -12,7 +12,9 @@ carried out.**
 
 ## Clean-environment rerun by the author (2026-10-11)
 
-This is a rerun by the author from fresh clones of the public repository into empty folders, with a fresh virtual
+**State at `thesis-a-2026-10-11-r9`** (author's working environment, same lock file): `pytest scripts/tests` **123 passed**, 0 skipped; `build_claims.py --check` **2,191 claims reproduce exactly**, of which the thesis cites **659**, none missing from the registry (`VERIFICATION_thesis_a.md`). The Kandy chain was rebuilt end to end in the standalone release repository (`kandy_pm25_model`, `scripts/regenerate_all.py --from-anchor`), which reproduces this repository's delivered field exactly (largest difference 0.0, 2019–2023); that is a second code path by the same author, not an independent reproduction.
+
+**Fresh-clone rerun, recorded at `thesis-a-2026-10-11-r4`.** This is a rerun by the author from fresh clones of the public repository into empty folders, with a fresh virtual
 environment built only from `kandy_pm25/requirements-lock.txt`. It is **not** an independent reproduction.
 
 | stage | what was run | result |

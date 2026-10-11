@@ -108,7 +108,7 @@ def main():
     for y in YEARS:
         T0 = pd.read_parquet(bv.TANCHOR / f"T_kandy_hourly_{y}.parquet",
                              columns=["datetime_utc", "T_q05", "T_q50", "T_q95"])
-        b_annual = (1 - bv.FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "basin_mean"])
+        b_annual = (1 - bv.FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "L_corrected"])   # the level T(t) is anchored to (F.132)
         stored = pd.read_parquet(bv.DEC / f"B_background_hourly_{y}_v2.parquet").B.to_numpy()
         for lab in ("production", "hourly_rh"):
             T = rescale(T0, cl["production"], cl[lab])
