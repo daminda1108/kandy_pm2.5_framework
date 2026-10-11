@@ -1,0 +1,648 @@
+{
+ "built": "2026-10-11T22:22:51",
+ "field_mtime": "2026-10-11 15:37",
+ "figures": [
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D11_valley.png",
+   "builder": "src/d_schematics.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D1_pipeline.png",
+   "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D2_decomposition.png",
+   "builder": "src/d_schematics.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D3_budget_tiers.png",
+   "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D4_observation_operator.png",
+   "builder": "src/d_schematics.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D5_validation_protocol.png",
+   "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F1_1_observing_density.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F2_2_reference_by_band.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F3_2_transect.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F4_3_panel.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F5_5_dispersion_costs.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F6_partition.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_contrast_window.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_tournament.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_3_radius.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_paired_trap.png",
+   "builder": "src/f_chapters.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_confirmation.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_like_for_like.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_robustness.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_station_count_daily.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_curve.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_noise.png",
+   "builder": "src/f_paper1.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:22"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F11_uncertainty.png",
+   "builder": "scripts/paper2026_fig11_uncertainty.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F12_null_power.png",
+   "builder": "scripts/paper2026_fig12_null_power.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F1_paired.png",
+   "builder": "scripts/paper2026_figures.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F5_withinpixel.png",
+   "builder": "scripts/paper2026_figures_b.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F6_chemistry.png",
+   "builder": "scripts/paper2026_figures_b.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_scorecard.png",
+   "builder": "scripts/paper2026_fig7_scorecard.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_kathmandu.png",
+   "builder": "scripts/paper2026_fig8_kathmandu.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:21"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_cycles.png",
+   "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_episode.png",
+   "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_field.png",
+   "builder": "scripts/paper2026_figures_d.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  },
+  {
+   "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_spatiotemporal.png",
+   "builder": "scripts/paper2026_figures_d.py",
+   "rebuilt": true,
+   "changed": false,
+   "mtime": "2026-10-11 22:20"
+  }
+ ],
+ "builders": [
+  {
+   "builder": "scripts/paper2026_figures.py",
+   "exit": 0,
+   "seconds": 4.7,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_revalidated.csv"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F1_paired.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F1_paired.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F2_ladder.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F2_ladder.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_figures_b.py",
+   "exit": 0,
+   "seconds": 6.8,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\chemistry_origin_test.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_revalidated.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\s2_within_pixel.csv"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F3_streams.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F3_streams.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F4_confounds.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F4_confounds.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F5_withinpixel.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F5_withinpixel.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F6_chemistry.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F6_chemistry.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_protocol.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_protocol.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_figures_c.py",
+   "exit": 0,
+   "seconds": 5.9,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F0_visual_abstract.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F0_visual_abstract.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_schematic.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_schematic.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_figures_d.py",
+   "exit": 0,
+   "seconds": 9.3,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\B_background_hourly_2023_v2.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2023_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_partition_v2.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\pinn_inputs\\kandy_elev_grid_100m.npz"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_field.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_field.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_spatiotemporal.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_spatiotemporal.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
+   "exit": 0,
+   "seconds": 10.7,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\exposure_weighting.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\health_burden.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2019_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2020_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2021_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2022_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_decomp_predictions_2023_additive_v3.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\stage1_v3\\dataset_v3_hourly.parquet"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_burden.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_burden.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_cycles.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_cycles.png",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_episode.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_episode.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_fig11_uncertainty.py",
+   "exit": 0,
+   "seconds": 4.2,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_interval_coverage.json"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F11_uncertainty.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F11_uncertainty.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_fig12_null_power.py",
+   "exit": 0,
+   "seconds": 3.4,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\multicity\\reviewer_response_stats.json"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F12_null_power.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F12_null_power.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_fig7_scorecard.py",
+   "exit": 0,
+   "seconds": 5.2,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\multicity\\spatial_significance_test.csv",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\multicity\\validation_scorecard.csv"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_scorecard.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_scorecard.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "scripts/paper2026_fig8_kathmandu.py",
+   "exit": 0,
+   "seconds": 27.7,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp_kathmandu\\kathmandu_decomp_predictions_2024_additive_v2.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp_kathmandu\\kathmandu_decomp_predictions_2025_additive_v2.parquet",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\stage2\\kathmandu_perstation_v13.parquet"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_kathmandu.pdf",
+    "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_kathmandu.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "src/f_chapters.py",
+   "exit": 0,
+   "seconds": 35.0,
+   "reads": [
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.dbf",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.prj",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.shp",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.shx",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_110m_admin_0_boundary_lines_land.dbf",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_110m_admin_0_boundary_lines_land.prj",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_110m_admin_0_boundary_lines_land.shp",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_110m_admin_0_boundary_lines_land.shx",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_coastline.dbf",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_coastline.prj",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_coastline.shp",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_coastline.shx",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_land.dbf",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_land.prj",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_land.shp",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_110m_land.shx",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_50m_land.dbf",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_50m_land.prj",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_50m_land.shp",
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\physical\\ne_50m_land.shx",
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F1_1_observing_density.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F2_2_reference_by_band.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F3_2_transect.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F4_3_panel.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F5_5_dispersion_costs.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F6_partition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_cluster_bootstrap.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_losses.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_station_count.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_contrast_window.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_tournament.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_1_acquisition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_2_learned_bar.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_3_radius.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_paired_trap.png",
+    "D:\\ProjectCD\\kandy_pm25\\data\\external\\openaq\\discovery\\global_locations.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\elangasinghe_spatial_test.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_contrast_by_window.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_fmin_sweep.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\kandy_partition_v2.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\cluster_bootstrap.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\embedding_spatial_test.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\global_reference_census.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_revalidated.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\loss_sensitivity.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\phase0_sector_surface.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\phase1_predictor_ranking.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\phase2_learned_pattern.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\r2_atransport.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\siting_experiment.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\siting_experiment.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_tournament.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\station_count_curve.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\station_count_curve.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\support_collapse.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\validation_frame.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\paper_figures\\phase2_learned.json"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F1_1_observing_density.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F1_1_observing_density.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F2_2_reference_by_band.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F2_2_reference_by_band.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F3_2_transect.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F3_2_transect.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F4_3_panel.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F4_3_panel.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F5_5_dispersion_costs.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F5_5_dispersion_costs.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F6_partition.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F6_partition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_cluster_bootstrap.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_cluster_bootstrap.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_losses.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_losses.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_station_count.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F7_station_count.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_contrast_window.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_contrast_window.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_tournament.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_tournament.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_1_acquisition.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_1_acquisition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_2_learned_bar.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_2_learned_bar.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_3_radius.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_3_radius.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_paired_trap.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_paired_trap.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "src/f_paper1.py",
+   "exit": 0,
+   "seconds": 9.7,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\confirm_REGISTERED_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\fullnet_full_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\learners_REGISTERED_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\maiac_s21_b5_crossfit_c18_grid_dv2_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\review_k_full_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\review_registered_loco_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\ladder_v2\\rich_REGISTERED_summary.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\analysis\\crossover_city.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\analysis\\curve_q1_pooled.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve\\frame_cities.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\analysis\\crossover_city.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\analysis\\curve_q1_pooled.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\analysis\\reanalysis.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\analysis\\reanalysis_city.csv",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\analysis\\satellite_benchmark.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\spatial_curve_full\\frame_cities.csv",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3_confirmation.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3_confirmation.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3b_like_for_like.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3b_like_for_like.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig4_robustness.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig4_robustness.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7_spatial_curve.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7_spatial_curve.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7b_spatial_noise.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7b_spatial_noise.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\figS1_station_count.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\figS1_station_count.png"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_confirmation.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_confirmation.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_like_for_like.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_like_for_like.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_robustness.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_robustness.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_station_count_daily.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_station_count_daily.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_curve.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_curve.png",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_noise.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_noise.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3_confirmation.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3_confirmation.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3b_like_for_like.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig3b_like_for_like.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig4_robustness.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig4_robustness.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7_spatial_curve.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7_spatial_curve.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7b_spatial_noise.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\fig7b_spatial_noise.png",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\figS1_station_count.pdf",
+    "D:\\ProjectCD\\papers\\paper1_information_budget\\figures\\figS1_station_count.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "src/d_schematics.py",
+   "exit": 0,
+   "seconds": 17.8,
+   "reads": [
+    "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.shp",
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D11_valley.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D12_timeline.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D2_decomposition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D4_observation_operator.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D8_failure_taxonomy.png",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\decomp\\osm_kandy\\rivers.geojson",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\modular\\claims.json",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\pinn_inputs\\kandy_dem_utm44n_90m_wide.tif",
+    "D:\\ProjectCD\\kandy_pm25\\data\\processed\\pinn_inputs\\kandy_elev_grid_100m.npz"
+   ],
+   "writes": [
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D11_valley.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D11_valley.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D12_timeline.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D12_timeline.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D2_decomposition.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D2_decomposition.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D4_observation_operator.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D4_observation_operator.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D8_failure_taxonomy.pdf",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D8_failure_taxonomy.png"
+   ],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "src/d_flowcharts.py",
+   "exit": 0,
+   "seconds": 11.9,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D10_regeneration_chain.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D1_pipeline.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D3_budget_tiers.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D6_prereg_workflow.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D7_claims_gate.png",
+    "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D9_acquisition.png"
+   ],
+   "writes": [],
+   "flags": [],
+   "stderr_tail": ""
+  },
+  {
+   "builder": "src/d05_validation_protocol.py",
+   "exit": 0,
+   "seconds": 5.0,
+   "reads": [
+    "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
+    "D:\\Program Files\\Python311\\python311.zip"
+   ],
+   "writes": [],
+   "flags": [],
+   "stderr_tail": ""
+  }
+ ]
+}

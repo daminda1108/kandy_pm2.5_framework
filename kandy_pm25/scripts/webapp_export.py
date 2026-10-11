@@ -922,7 +922,10 @@ def export_static(lats, lons):
 def export_health_and_fect():
     hb = pd.read_csv(DEC / "health_burden.csv")
     ew = pd.read_csv(DEC / "exposure_weighting.csv")
-    ap = pd.read_csv(DEC / "additive_partition.csv") if (DEC / "additive_partition.csv").exists() else None
+    # the current partition (post coherence cap; F.43/F.133), never the retired v1 additive_partition.csv
+    _pp = DEC / "kandy_partition_v2.json"
+    ap = (pd.DataFrame([{"year": r["year"], "local_pct": 100 * r["local_frac"]}
+                        for r in json.load(open(_pp, encoding="utf-8"))["per_year"]]) if _pp.exists() else None)
     health = {"per_year": {}, "burden_note": ""}
     for _, r in ew.iterrows():
         y = int(r.year)

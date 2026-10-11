@@ -36,9 +36,9 @@ minima across days on which *B* itself differs, so it constrains a quantity the 
 not define.
 
 The sweep and the window-form figures come from an independent reimplementation of the constraint
-and not from the production code path. The reimplementation reads slightly higher than production
-at every value of *F*~min~, by less than a hundredth, which is why its calendar-day value
-({{claim:field.f_form_calendar}}) differs from the production value ({{claim:partition.f}}). The
+and not from the production code path. The reimplementation agrees with production to within about
+a thousandth at every value of *F*~min~, which is why its calendar-day value
+({{claim:field.f_form_calendar}}) differs slightly from the production value ({{claim:partition.f}}). The
 production value is the one quoted as the headline, because a separate check rebuilt the
 production background exactly from the stored inputs; the reimplementation is quoted only for the
 window forms, which the production sweep does not cover.

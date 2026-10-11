@@ -788,6 +788,15 @@ python src/comparison/publication_figures.py --all
    what a column means, grep every reader of that column (`grep -rn '"basin_mean"' scripts src`), and add a test that
    two independent computations of the same headline agree.** Family of #70, #86, #101.
 
+108. **🔴 A figure builder that FAILS leaves the previous image on disk, and the build embeds it as if current
+   (2026-10-11).** `f_chapters.py` caught the exception, printed "FAILED" and exited 0, so Figure C.1 showed August
+   values (f 0.483, 48-h 0.547) for weeks. Its input check failed because `kandy_fmin_sweep.csv` was never regenerated;
+   and `kandy_field_diagnostics.py` (a CLAIMS generator, invisible to any figure trace) built its "uncapped" background
+   from the June v1 `B_background_hourly_{y}.parquet` — 9 claims were stale (pre-cap excess 54.2 → 32.8 %, 48-h f
+   0.521 → 0.538). **Rules: figure builders exit non-zero on any failure (done for f_chapters); before a release run
+   `#writing/build/figure_provenance.py` (traces every read/write; flags retired inputs; must report 0 changed / 0
+   orphans / 0 flags); and grep scripts for retired artefact names, not just figure builders.**
+
 ## Pending Tasks (updated 2026-10-06)
 
 Narrative/history for everything below lives in `memory/SESLOG.md`.

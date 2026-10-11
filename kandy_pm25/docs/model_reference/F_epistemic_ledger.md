@@ -6661,3 +6661,10 @@ the annual fractions (0.465–0.499). Per-year claims `partition.{B,f,T}_{y}` an
 The continuation design's 38 low-cost units = 12 design + 9 paired (3 triplets) + 5 vertical + 8 receptor + **4
 drainage-test sites** outside the five strata; power assumptions (α 0.05, power 0.8, CV 0.35, r_pp 0.5–0.85,
 Steiger 1980) are now claims and stated in §4.2.3.
+
+**F.133 addendum (figure audit, 2026-10-11).** A traced rebuild of every thesis figure (`#writing/build/
+figure_provenance.py`, report `FIGURE_PROVENANCE.md`) found Figure C.1 stale (its builder failed silently) and, by
+static scan, `kandy_field_diagnostics.py` using the June v1 uncapped background. Fixed: uncapped background rebuilt with
+the production builder (cap off, anchored level); calendar form now reproduces production (0.478 vs 0.479); claims
+corrected — pre-cap excess **32.8 %** (26.7–40.1; midday 44.1 %), F_min sweep **0.472–0.498**, window forms
+0.478 / 0.483 / **0.538**. Final audit: 33/33 embedded figures rebuilt, 0 changed, 0 orphans, 0 retired inputs.

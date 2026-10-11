@@ -238,8 +238,8 @@ VISUALS: dict[str, tuple[str, str]] = {
         "The local fraction along the three axes on which it can move, drawn apart because "
         "they measure different things and were once conflated. Anchored years and the "
         "filled sweep come from the production code path; the open markers come from an "
-        "independent reimplementation of the constraint, which reads slightly higher "
-        "throughout and is the version the text quotes. The shaded band spans every value "
+        "independent reimplementation of the constraint, which agrees with production to "
+        "within about a thousandth and is the version the text quotes for the window forms. The shaded band spans every value "
         "shown, and the dashed line is the production fraction."),
     "stationcount": (
         "F7_station_count",

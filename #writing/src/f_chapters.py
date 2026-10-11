@@ -866,11 +866,13 @@ def main() -> int:
     todo = [a.only] if a.only else list(BUILDERS)
 
     from PIL import Image
+    failed = []
     for key in todo:
         try:
             fig, name = BUILDERS[key]()
         except Exception as e:                                              # noqa: BLE001
             print(f"  {key:<6} FAILED  {type(e).__name__}: {str(e)[:70]}")
+            failed.append(key)
             continue
         if fig is None:
             continue
@@ -878,6 +880,11 @@ def main() -> int:
         w, h = Image.open(p).size
         flag = "" if 0.8 <= w / h <= 3.0 else "   <-- aspect"
         print(f"  {key:<6} {name:<30} {w}x{h}  {w/h:.2f}{flag}")
+    if failed:
+        # A failed builder leaves the PREVIOUS image on disk, which the thesis then embeds as if current
+        # (2026-10-11: Figure C.1 showed August values for weeks). Fail the run instead.
+        print(f"{len(failed)} figure(s) FAILED and were not rebuilt: {', '.join(failed)}")
+        return 1
     return 0
 
 

@@ -1,8 +1,8 @@
 # Verification report, thesis A
 
-- Built: 2026-10-11T20:43:29  ·  repository commit at report time: `ff5d2c3` (the working tree is built and checked first and then committed, so the release commit is the one that adds this report; match a release to this report by the checksums below, not by the commit)
-- sha256 of the claim registry (`claims.json`): `39a9bf05b25e820f29db6362b012e1e2d22caab375dc9cdbe017a1bbd7cc7bfe`
-- sha256 of the assembled thesis (`build/a/thesis.md`): `4f7507e0f3d382ee361105eca476dfcc8fa8bcf3a01950c5f1307fa4a878c0b3`
+- Built: 2026-10-11T22:23:22  ·  repository commit at report time: `95b164a` (the working tree is built and checked first and then committed, so the release commit is the one that adds this report; match a release to this report by the checksums below, not by the commit)
+- sha256 of the claim registry (`claims.json`): `87f51d9e06ceb15f7ea57699b4a26e395d16e94462609e67689c285448bf95e6`
+- sha256 of the assembled thesis (`build/a/thesis.md`): `1c9fcb66297dcc2c0cc8394bc69e6a348f4836fda2e9750a67f135d7c292e9a3`
 - Claims generated: 2026-10-11  ·  claims in the registry: 2263  ·  cited by this thesis: 718
 - Claims cited but missing from the registry: 0
 - Every cited claim was recomputed and compared at build time; the build refuses on any drift.

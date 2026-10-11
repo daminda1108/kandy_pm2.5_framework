@@ -52,11 +52,30 @@ def _anchor(year: int) -> pd.Series:
     return t.set_index("datetime_utc").T_q50
 
 
+_UNCAPPED = {}
+
+
 def _bg(year: int, capped: bool) -> pd.Series:
-    suffix = "_v2" if capped else ""
-    b = pd.read_parquet(DEC / f"B_background_hourly_{year}{suffix}.parquet",
-                        columns=["datetime_utc", "B"])
-    return b.set_index("datetime_utc").B
+    """The production background, capped (as shipped) or with the cap disabled.
+
+    The uncapped series used to come from the June v1 file `B_background_hourly_{y}.parquet`, which predates the cap
+    and sits at the old satellite level, so it no longer matched the anchor it is compared with (found 2026-10-11 by
+    the figure-provenance audit). It is now rebuilt with the production builder, cap disabled, at the anchored level
+    (the method of kandy_f_sensitivity.py)."""
+    if capped:
+        b = pd.read_parquet(DEC / f"B_background_hourly_{year}_v2.parquet", columns=["datetime_utc", "B"])
+        return b.set_index("datetime_utc").B
+    if year not in _UNCAPPED:
+        import sys as _sys
+        _sys.path.insert(0, str(REPO)); _sys.path.insert(0, str(REPO / "scripts"))
+        import build_additive_field_v2 as bv
+        vand = pd.read_csv(REPO / "data" / "processed" / "stage1_v3" / "vandonkelaar_kandy_annual.csv").set_index("year")
+        T = pd.read_parquet(bv.TANCHOR / f"T_kandy_hourly_{year}.parquet", columns=["datetime_utc", "T_q50"])
+        big = T.copy(); big["T_q50"] = 1e9
+        b_annual = (1 - bv.FRAC_LOCAL_YEAR[year]) * float(vand.loc[year, "L_corrected"])
+        Bu = bv.build_B_v2(year, b_annual, T_override=big)
+        _UNCAPPED[year] = Bu.set_index("datetime_utc").B
+    return _UNCAPPED[year]
 
 
 def ventilated_and_precap() -> pd.DataFrame:
