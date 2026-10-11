@@ -38,8 +38,7 @@ twenty-three on full records.
 {{fig:spatialcurve}}
 
 **What a re-analysis changed.** That crossing rule was a first-pass reading of per-city rank
-correlations computed on ten to a few dozen held-out sites, and a post hoc re-analysis
-[ledger F.124] asked how much of it is sampling noise. Four results narrow the registered
+correlations computed on ten to a few dozen held-out sites, and a post hoc re-analysis asked how much of it is sampling noise. Four results narrow the registered
 reading, and none of them reverses a verdict.
 
 - *Cities do not clearly split.* The spread of kriging-minus-raster differences between cities

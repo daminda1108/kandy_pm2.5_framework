@@ -5,7 +5,7 @@ measurement. The budget specification sizes the stream to the deployed Kandy bud
 sensors, which is a defensible choice for pricing the tier Kandy occupies and which leaves open how
 the value of stations grows with their number. The sweep below adds stations one at a time, on cities
 with their full networks, and scores each count in both of the uses that {{ref:s-like-for-like}}
-separates [ledger F.124]. The curve itself is drawn in {{fig:stationdaily}} in the main text.
+separates. The curve itself is drawn in {{fig:stationdaily}} in the main text.
 
 **Read on the day**, the curve is steep and then flattens. One station reduces daily error by
 {{claim:v2.review.k.day1.median}} per cent [{{claim:v2.review.k.day1.lo}}, {{claim:v2.review.k.day1.hi}}],

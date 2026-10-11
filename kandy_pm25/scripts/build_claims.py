@@ -2345,6 +2345,41 @@ def cea_reference(c: Claims) -> None:
               source=f.name, ledger="F.130")
 
 
+def seasonal_baseline(c: Claims) -> None:
+    """F.135: null baselines for the ten-city seasonal correlation (prior alone; the two anchor stations' climatology)."""
+    f = REPO / "results" / "figures" / "multicity" / "scorecard_seasonal_baseline.json"
+    if not f.exists():
+        return
+    S = json.load(open(f, encoding="utf-8"))
+    for k, tag in (("r_model", "model"), ("r_prior", "prior"), ("r_anchors", "anchors")):
+        for q in ("min", "median", "max"):
+            c.add(f"sb.{tag}.{q}", round(S[k][q], 3), stat=f"seasonal r of the {tag} across the ten cities ({q})",
+                  n=10, source=f.name, ledger="F.135")
+    c.add("sb.model_minus_prior", round(S["model_minus_prior_median"], 3), stat="median paired difference, model - prior",
+          n=10, source=f.name, ledger="F.135")
+    c.add("sb.model_minus_anchors", round(S["model_minus_anchors_median"], 3),
+          stat="median paired difference, model - anchor climatology", n=10, source=f.name, ledger="F.135")
+    c.add("sb.above_prior", S["cities_model_above_prior"], stat="cities where the model beats the prior", n=10,
+          source=f.name, ledger="F.135")
+    c.add("sb.above_anchors", S["cities_model_above_anchors"], stat="cities where the model beats the anchors' climatology",
+          n=10, source=f.name, ledger="F.135")
+
+
+def panels(c: Claims) -> None:
+    """The city panels behind the thesis's results, each count read from the claim that reports on it (review 9:
+    a reader meets 104, 100, 86, 72, 47, 43, 25, 23 and 10 cities and needs one table that says which is which)."""
+    src = {"panel.ladder_frame": "frame.cities", "panel.km_rung": "v2.km.reco.unio.gK2_rmse.median",
+           "panel.likeforlike": "v2.review.registered_loco.reco.gL2s_rmse.median",
+           "panel.station_count": "v2.review.k.day2.median", "panel.confirmation": "v2.conf.reco.first2_rmse.median",
+           "panel.siting": "site.cities", "panel.tropical_level": "lvl.tropical.n",
+           "panel.spatial_curve": "v2.curve.full.holm_crossing", "panel.scorecard": "scorecard.cities"}
+    for tag, from_tag in src.items():
+        r = c.rows.get(from_tag)
+        if r is None or r.get("n") is None:
+            continue
+        c.add(tag, int(r["n"]), stat=f"cities behind {from_tag}", n=int(r["n"]), source=r["source"], ledger=r["ledger"])
+
+
 def registered_v2(c: Claims) -> None:
     """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
     New keys under `v2.*`; the older ladder keys are left in place (they state what the
@@ -2882,11 +2917,13 @@ def build() -> dict:
     review2(c)
     kandy_external_2026_10_11(c)
     cea_reference(c)
+    seasonal_baseline(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)
     embedding_test(c)
     precip_ladder(c)
+    panels(c)
     return dict(
         generated=str(date.today()),
         gate="Phase 1 of docs/improvement_plan_2026-09-01.md",

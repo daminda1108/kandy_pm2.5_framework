@@ -22,14 +22,20 @@ daily means with the sensors' is {{claim:rh2.production.daily_r}} and
 
 Three findings do not survive it. The ratio of the morning peak to the midday level falls from
 {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}}. The night, which in
-the delivered field runs {{claim:rh2.production.night_midday}} times the midday level, falls to
+the delivered temporal anchor runs {{claim:rh2.production.night_midday}} times the midday level (every hour of
+2019 to 2023, the hours to 04:00 against 14:00), falls to
 {{claim:rh2.hourly_rh.night_midday}} of it, so whether the night or the midday is the daily
 minimum depends on the correction. And the seasonal contrast widens from
 {{claim:rh2.production.season_swing}} to {{claim:rh2.hourly_rh.season_swing}} between the highest
 and lowest months. The interval's coverage of the corrected sensor record is
 {{claim:rh2.production.cov90}} and {{claim:rh2.hourly_rh.cov90}}, one-sided in both.
 
-Neither scenario is validated against a co-located reference instrument, and the two do not bound
+The delivered field was not rebuilt with the hourly correction because neither correction fixes the
+defect: against the regulatory station the hourly correction moves the nights closer but leaves them too high, and it
+lowers the morning peak below what the station records, while computing the cap on local rather than universal-time
+days moves the local fraction by about a hundredth and leaves the nights unchanged. A rebuild would trade one
+error for another without removing the cause, which the collocation planned in {{ref:s-future-collocation}} is
+designed to find. Neither scenario is validated against a co-located reference instrument, and the two do not bound
 the true cycle: they are alternatives that show which conclusions depend on the correction. The
 regulatory station in the city centre, which is not co-located with the sensors, gives a partial
 answer ({{ref:s-cea-reference}}): its morning peak matches the production scenario and its nights

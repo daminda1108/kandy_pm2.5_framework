@@ -147,7 +147,7 @@ The null is therefore a property of the information available on this frame, and
 model family the registered test happened to use. That is a stronger statement than the
 registration was able to make, and it is the one this thesis defends.
 
-The first run of the oracle arm reported kriging at −0.833 [ledger F.105], which is not a poor
+The first run of the oracle arm reported kriging at a rank correlation below minus eight tenths, which is not a poor
 score but a near-perfect inversion, and near-perfect inversions are almost always artefacts. It was one. The
 target had been standardised using every station in the city, so it summed to zero; holding one
 station out then makes the mean of the remainder a strictly decreasing function of the held-out

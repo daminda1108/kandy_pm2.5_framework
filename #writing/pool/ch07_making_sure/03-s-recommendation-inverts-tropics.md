@@ -8,10 +8,10 @@ recorded here because it was the thesis's most quoted recommendation, and becaus
 failed are part of what the measurement established.
 
 **It was one draw.** The result came from one station split and one learner seed. Repeated over
-twenty alternative splits, the interval excluded zero in only three [ledger F.115]. Under the
+twenty alternative splits, the interval excluded zero in only three. Under the
 redesigned ladder, which averages over twenty-one splits and five seeds before comparing anything,
 the direction on the discovery panel still favoured the local stations, but the interval included
-zero, and in the prospective arm the difference nearly vanished [ledger F.116]. On the exceedance
+zero, and in the prospective arm the difference nearly vanished. On the exceedance
 loss the background led even in the deep tropics.
 
 **The confirmation cannot see it.** The registered moderator, the slope of the ordering on absolute

@@ -7,7 +7,7 @@ rung trained with them could be better than a genuinely monitorless city could a
 gain measured above it would then be too small.
 
 The rung was therefore refitted leaving out the whole network, using the same clusters as the
-bootstrap, so that no station of the target's own network enters its training [ledger F.124]. Under
+bootstrap, so that no station of the target's own network enters its training. Under
 the registered construction the first-station gain on the confirmation panel rises from
 {{claim:v2.conf.reco.first2_rmse.median}} to {{claim:v2.review.lono.conf.first2_rmse.median}}
 per cent, and the background verdicts barely move. Leave-one-city-out therefore flattered the

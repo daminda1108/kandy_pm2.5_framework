@@ -113,7 +113,7 @@ midday level, against {{claim:cea.hourly.production.peak07_over_midday}} in the 
 {{claim:cea.hourly.hourly_rh.peak07_over_midday}} under the hourly-humidity correction
 ({{ref:s-rh-scenario}}). The night is different. At the station the deep night is the daily
 minimum, at {{claim:cea.hourly.station.night_over_midday}} of the midday level, whereas the delivered
-anchor runs {{claim:cea.hourly.production.night_over_midday}} times midday at night and the
+anchor, on the same hours as the station, runs {{claim:cea.hourly.production.night_over_midday}} times midday at night and the
 hourly-humidity scenario {{claim:cea.hourly.hourly_rh.night_over_midday}}. The correlation of the
 mean daily cycles is {{claim:cea.hourly.production.shape_r}} for the delivered anchor and
 {{claim:cea.hourly.hourly_rh.shape_r}} for the hourly-humidity scenario. The reference therefore

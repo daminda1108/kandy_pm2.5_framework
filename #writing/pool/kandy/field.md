@@ -62,7 +62,10 @@ Within the day the field has two peaks and a trough. Averaged over the same year
 midday, {{claim:kandy.phase_evening}} in the evening and {{claim:kandy.phase_night}} at night, a
 ratio of {{claim:kandy.phase_swing}} between the highest window and the lowest. In the delivered
 field the midday trough and not the night is the daily minimum: the night runs
-{{claim:kandy.night_over_midday}} times the midday level, consistent with the boundary layer that
+{{claim:kandy.night_over_midday}} times the midday level (basin mean of the delivered field in 2023, night and midday
+windows as above; the temporal anchor over all hours of 2019 to 2023 gives {{claim:rh2.production.night_midday}}
+and on the regulatory station's reporting hours {{claim:cea.hourly.production.night_over_midday}}, all well above the
+station's own {{claim:cea.hourly.station.night_over_midday}}), consistent with the boundary layer that
 dilutes emissions during the day collapsing after sunset. The same ordering is in the two Kandy
 sensors' record as currently corrected, but it is not robust to the humidity correction (below). That agreement is expected rather
 than earned, because the temporal anchor is calibrated to those sensors, and

@@ -5,7 +5,7 @@ first. The answer depends less on which instrument is bought than on how its rea
 and it depends on the purpose the estimate serves: a daily city level, a check on that level, or
 a map of where in the city pollution is highest. The ordering below is stated for those purposes
 in turn. It rests on the panel measurements of {{ref:s-marginal-predictive-value-each}}, read with
-the post hoc re-analysis that put every observation on the same footing [ledger F.124], and on the
+the post hoc re-analysis that put every observation on the same footing, and on the
 spatial results of {{ref:ch-model-stops}}.
 
 This section ranks measurements by marginal predictive value, and that is not the same thing as a

@@ -23,7 +23,7 @@ retrieved, paired within city, averaged over random station splits and learner s
 for parity with the discovery code. Every one of those safeguards passed, and the registered
 ordering of a background above the first local stations was still an artefact of construction:
 the first stations entered only as a recalibration of the sensorless estimate, while the
-background was read on the day. Put on the same footing the two were equal [ledger F.124]. The
+background was read on the day. Put on the same footing the two were equal. The
 same review found a pooled siting interval of exactly zero that arose from averaging estimators
 which cannot differ, and a crossing count that fell from fifteen of twenty-three cities to
 {{claim:v2.curve.full.holm_crossing}} once multiple testing was corrected. The lesson is

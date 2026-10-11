@@ -138,7 +138,7 @@ def t3_2_point_records():
              tok("nbro.model_pixel_2022"), tok("nbro.diff_pct_2022") + " per cent"],
             ["Calibrated low-cost, 2022 to 2024 [@Attanayake2025]", "low-cost, reference-anchored",
              "independent; clear-sky subset of days", "19.49",
-             tok("attan.model_pixel"), "+" + tok("attan.diff_pct") + " per cent"],
+             tok("attan.model_pixel"), tok("attan.diff_pct") + " per cent"],
             ["Research sensor, full record [@Dhammapala2022]", "low-cost",
              "an input to the model (one of its two anchor sensors)", "17.8", "--",
              "corroborates a reference-anchored 18 to 19"],
@@ -475,7 +475,7 @@ def t7_2_like_for_like_v2():
            ["same frame: two stations read daily", _ci(k + "day2")],
            ["same frame: five stations read daily", _ci(k + "day5")],
            ["same frame: two stations used only as a recalibration", _ci(k + "cal2")]],
-          note="Exploratory re-analysis of the registered data (ledger F.124): every stream regressed "
+          note="Exploratory re-analysis of the registered data: every stream regressed "
                "with the free estimate against stations not otherwise used, same-day, with shrinkage "
                "weights cross-fitted from other cities. The registered numbers are reproduced exactly "
                "in the same run. The two blocks differ in panel and target, so the two-station values in them "
@@ -531,7 +531,8 @@ def t4_ledger():
           ["model quantity", "evidential status", "permitted interpretation"],
           [["Seasonal behaviour",
             f"supported in the ten analogue cities (seasonal correlation {tok('scorecard.seasonal_r_lo')} to "
-            f"{tok('scorecard.seasonal_r_hi')})",
+            f"{tok('scorecard.seasonal_r_hi')}), but no better than the two anchor stations' own climatology "
+            f"(median {tok('sb.anchors.median')})",
             "broad seasonal comparisons, subject to the limits of transfer"],
            ["Day-to-day sequence",
             f"conditionally supported: daily correlation {tok(km_r + 'K2_r.median')} where the anchor stations "
@@ -582,7 +583,8 @@ def t3_validation_summary():
     write("T3_validation_summary", "Validation results by evaluation condition",
           ["condition", "evidence", "result", "caveat"],
           [["Seasonal aggregation", "ten analogue cities, withheld stations",
-            f"seasonal correlation {tok('scorecard.seasonal_r_lo')} to {tok('scorecard.seasonal_r_hi')}; level "
+            f"seasonal correlation {tok('scorecard.seasonal_r_lo')} to {tok('scorecard.seasonal_r_hi')} (prior alone "
+            f"{tok('sb.prior.median')}, anchor stations' climatology {tok('sb.anchors.median')}); level "
             f"bias median {tok('scorecard.level_bias_median')} per cent",
             "climatological; level there set by two stations, not the satellite"],
            ["Shape of the daily cycle", "ten analogue cities",
@@ -622,7 +624,7 @@ def t3_validation_summary():
             "two low-cost sensors sharing a calibration"],
            ["Independent Kandy annual levels", "regulatory station; national organisation; a calibrated low-cost record",
             f"regulatory, held out, {tok('cea.del.held_out_2022_2023.bias_pct')} per cent; national record {tok('nbro.diff_pct_2021')} and "
-            f"{tok('nbro.diff_pct_2022')} per cent; low-cost +{tok('attan.diff_pct')} per cent (model minus observed)",
+            f"{tok('nbro.diff_pct_2022')} per cent; low-cost {tok('attan.diff_pct')} per cent (model minus observed)",
             "point against cell; instruments differ"]],
           note="A high seasonal correlation does not imply accurate daily or hourly values; each "
                "condition is reported separately for that reason.")
@@ -736,6 +738,32 @@ def t5_continuation():
                "design analysis of the network proposed here; the rank test's weakness is stated in advance.")
 
 
+def t2_panels():
+    """Every city panel behind the thesis's results, its size and its role (review 9)."""
+    write("T2_panels", "The city panels behind the results, and what each was used for",
+          ["panel", "cities", "what it is", "used for"],
+          [["Analogue scorecard", tok("panel.scorecard"), "monitored valley and basin cities, the complete model built "
+            "with two anchor stations", "the construction scored against withheld stations"],
+           ["Ladder discovery frame", tok("panel.ladder_frame"), "cities with enough stations to withhold, used to "
+            "develop the ladder", "the registered discovery analyses"],
+           ["Ladder confirmation", tok("panel.confirmation"), "fresh cities, none in the discovery frame",
+            "the registered confirmation of the ladder"],
+           ["Like-for-like re-analysis", tok("panel.likeforlike"), "discovery and confirmation cities with at least "
+            "eight stations", "every observation source used the same way (post hoc)"],
+           ["Station-count sweep", tok("panel.station_count"), "cities with full station networks",
+            "the value of one to eight stations read daily"],
+           ["Deployed-model rung", tok("panel.km_rung"), "every ladder city where the deployed anchor could be run",
+            "the deployed temporal model against the sensorless estimate"],
+           ["Satellite level in the tropics", tok("panel.tropical_level"), "tropical cities of the deployed-model rung",
+            "the range of the satellite level's error"],
+           ["Siting experiment", tok("panel.siting"), "cities dense enough to split their own stations",
+            "deliberate against convenience siting"],
+           ["Spatial learning curve", tok("panel.spatial_curve"), "cities with a full-record network for the "
+            "spatial tests", "what three to eight stations buy for a map"]],
+          note="Counts are the cities that entered each analysis after its own data requirements; they differ because "
+               "each test needs a different kind of network.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -766,7 +794,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_lf": t3_local_fraction, "T5_cont": t5_continuation, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_lf": t3_local_fraction, "T5_cont": t5_continuation, "T2_pan": t2_panels, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

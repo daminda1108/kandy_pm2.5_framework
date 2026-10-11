@@ -8,8 +8,11 @@ centre is used in two ways: its record to June 2021 sets the field's level, and 
 checks it ({{ref:s-cea-reference}}). No local dataset can score the spatial pattern, because no
 network samples the basin at more than one point.
 
-The validation therefore rests on three lines of evidence. Each answers a different question, and
-none of them alone would be sufficient.
+The validation therefore rests on three lines of evidence. Each answers a different question, and none of them
+alone would be sufficient. They are scored on different panels of cities, because each test needs a different kind
+of network; the table below lists every panel, its size and what it was used for.
+
+{{tbl:T2_panels}}
 
 ### Independent records at Kandy {#s-validation-kandy-records}
 

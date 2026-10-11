@@ -49,7 +49,7 @@ test can show before any data exist.
 {{tbl:T5_continuation}}
 
 The power figures in the table rest on stated assumptions, set before any data exist and kept in the design
-analysis (`campaign_power.py`, registered at the Open Science Framework, `ad3py`). Every test uses a significance
+analysis (`campaign_power.py`, registered at the Open Science Framework, <https://osf.io/ad3py>). Every test uses a significance
 level of {{claim:camp.alpha}} and power of {{claim:camp.power}}. The within-cell ratio's precision assumes an
 hour-to-hour coefficient of variation of {{claim:camp.cv_site}} at a site, pooled over the
 {{claim:camp.n_pair_locations}} triplets over one week of hourly data; it is the hours averaged, not the number of sites, that make it

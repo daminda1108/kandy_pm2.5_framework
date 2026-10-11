@@ -10,4 +10,4 @@ Table: What a station is worth when it is read on the day (post hoc)
 | same frame: five stations read daily | {{claim:v2.review.k.day5.median}} [{{claim:v2.review.k.day5.lo}}, {{claim:v2.review.k.day5.hi}}] |
 | same frame: two stations used only as a recalibration | {{claim:v2.review.k.cal2.median}} [{{claim:v2.review.k.cal2.lo}}, {{claim:v2.review.k.cal2.hi}}] |
 
-Exploratory re-analysis of the registered data (ledger F.124): every stream regressed with the free estimate against stations not otherwise used, same-day, with shrinkage weights cross-fitted from other cities. The registered numbers are reproduced exactly in the same run. The two blocks differ in panel and target, so the two-station values in them are not expected to agree.
+Exploratory re-analysis of the registered data: every stream regressed with the free estimate against stations not otherwise used, same-day, with shrinkage weights cross-fitted from other cities. The registered numbers are reproduced exactly in the same run. The two blocks differ in panel and target, so the two-station values in them are not expected to agree.

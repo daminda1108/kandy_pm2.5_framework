@@ -19,7 +19,11 @@ dated amendments. {{ref:app-registered-predictions-their-outcomes}} lists every 
 prediction and its outcome, including those that were refuted. Analyses added after scoring, such
 as the re-analysis of {{ref:s-like-for-like}} and the deployed-model rung of
 {{ref:s-kandy-model-rung}}, are labelled as exploratory wherever they appear; the latter's design was
-committed to the version-control record before it was scored.
+committed to the version-control record before it was scored. The registrations were made by the author, not
+by an independent party, and many were lodged within a few weeks of one another, some after the code that would
+score them existed; what a registration guarantees here is that the hypotheses, estimators and pass conditions were
+fixed before the scores were seen, which the registration timestamps and the version-control record allow anyone to
+check, not that the design was reviewed in advance.
 
 ## Reproducing this work {#app-reproducing-work}
 

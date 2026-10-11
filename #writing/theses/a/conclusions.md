@@ -40,9 +40,12 @@ reconstruction, what the evidence supports and what it may be used for.
    age-specific mortality, a settled level and a propagated uncertainty that this study does not yet
    have ({{ref:app-attributable-burden-projection}}).
 3. **The evidence for the field is graded, and its parts stand at different strengths.**
-   - *The seasonal cycle is the best-supported property.* The construction reproduces it in every
-     analogue city when their own observations are withheld (seasonal correlation
-     {{claim:scorecard.seasonal_r_lo}} to {{claim:scorecard.seasonal_r_hi}}).
+   - *The seasonal cycle is the best-supported property, and it comes from the anchor stations.* The
+     construction reproduces it in every analogue city when their own observations are withheld
+     (seasonal correlation {{claim:scorecard.seasonal_r_lo}} to {{claim:scorecard.seasonal_r_hi}}),
+     better than the composition prior alone (median {{claim:sb.prior.median}}) but no better than the
+     two anchor stations' own climatology (median {{claim:sb.anchors.median}}): it preserves what the
+     stations hold rather than adding to it.
    - *At Kandy, the daily record of the national research organisation (2021 and 2022) supports the
      seasonal shape (correlation {{claim:nbrod.climatology_r}} across calendar months) but not the
      day-to-day sequence (within-month correlation {{claim:nbrod.anomaly_daily_r}}), and the field

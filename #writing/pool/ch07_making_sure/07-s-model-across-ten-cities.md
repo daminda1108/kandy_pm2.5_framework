@@ -17,7 +17,15 @@ across metrics produces a meaningless middle: an earlier version of this work di
 and reported a model as representative on the strength of two opposite effects cancelling.
 
 Seasonal correlation runs {{claim:scorecard.seasonal_r_lo}} to {{claim:scorecard.seasonal_r_hi}}
-across the panel. Diurnal correlation runs {{claim:scorecard.diurnal_r_lo}} to
+across the panel. That number means little on its own, because the composition prior carries a seasonal cycle and the
+two anchor stations carry their city's, so both were scored in the same way, on the same withheld stations, years and
+calendar months. The prior alone reaches a median of {{claim:sb.prior.median}} ({{claim:sb.prior.min}} to
+{{claim:sb.prior.max}}), and the model improves on it in {{claim:sb.above_prior}} of the ten cities. The anchor
+stations' own monthly climatology reaches {{claim:sb.anchors.median}}, the model {{claim:sb.model.median}}, and the
+model is the better of the two in only {{claim:sb.above_anchors}} cities, with a median difference of
+{{claim:sb.model_minus_anchors}}. The seasonal agreement is therefore inherited from the anchor stations: the
+construction carries it across the city without degrading it and improves on the free prior, but it does not add
+seasonal skill beyond what two stations already hold. The baseline was added after an external review asked for it. Diurnal correlation runs {{claim:scorecard.diurnal_r_lo}} to
 {{claim:scorecard.diurnal_r_hi}}, which is a much wider range and is regime-dependent rather than
 random. Level bias has a median of {{claim:scorecard.level_bias_median}} per cent. The fine
 spatial rank is estimable at {{claim:scorecard.spatial_estimable}} of the ten cities, with a

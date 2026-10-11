@@ -6668,3 +6668,15 @@ static scan, `kandy_field_diagnostics.py` using the June v1 uncapped background.
 the production builder (cap off, anchored level); calendar form now reproduces production (0.478 vs 0.479); claims
 corrected — pre-cap excess **32.8 %** (26.7–40.1; midday 44.1 %), F_min sweep **0.472–0.498**, window forms
 0.478 / 0.483 / **0.538**. Final audit: 33/33 embedded figures rebuilt, 0 changed, 0 orphans, 0 retired inputs.
+
+## F.135 — 🟡 the ten-city seasonal correlation is inherited from the anchor stations (2026-10-11)
+
+Ninth review asked for a null baseline. `scripts/scorecard_seasonal_baseline.py` scores, on the scorecard's own rows
+(withheld stations, years with a delivered field, 12 calendar months), the prior alone (GEOS-CF `c_prior` at the
+withheld stations) and the two anchor stations' own monthly climatology. Seasonal r, median over 10 cities: **model
+0.984** (0.943–0.996), **prior 0.915** (0.308–0.970; model better in 9/10, median +0.07), **anchor climatology 0.986**
+(0.943–0.998; model better in only 4/10, median −0.002). The construction preserves the anchors' seasonal cycle across
+the city and improves on the free prior; it adds no seasonal skill beyond the anchors. Thesis reframed (abstract,
+conclusion 3, ten-city section, summary, Tables 3.x/4.1). Same round: "+-11" table bug fixed; the three night/midday
+values labelled by subset; 17 internal ledger tags removed; panel table (Table 2.2); why the defects were not rebuilt;
+limits of self-registration.

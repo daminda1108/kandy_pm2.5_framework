@@ -24,7 +24,7 @@ it did not have. A published fused product had been used as an independent satel
 when it is trained on the very monitors the study prices.
 
 The largest audit came later, as a verification pass over the whole ladder before its
-confirmation was registered [ledger F.115; ledger F.116]. It found that one national network had
+confirmation was registered. It found that one national network had
 been left out of the climate-band assignment and classed as low-cost although its monitors are
 reference grade; that a city excluded for a data fault was still present in two scripts; that
 several loops caught every exception silently, so a failed fit returned a missing value rather
@@ -40,7 +40,7 @@ first-rung gain by a large fraction of its value. Every effect is now averaged o
 seeds before cities are bootstrapped, and the deep-tropical result is reported as exploratory.
 
 An external review after the confirmation found three more defects, none of which any automated
-gate could see [ledger F.124]. The registered rungs did not use their observations in the same
+gate could see. The registered rungs did not use their observations in the same
 way: the first stations entered only as a recalibration of the sensorless estimate, while the
 background was read on the day, so the registered ordering of the two was a construction
 artefact. The registered siting interval of the spatial learning curve was exactly zero because

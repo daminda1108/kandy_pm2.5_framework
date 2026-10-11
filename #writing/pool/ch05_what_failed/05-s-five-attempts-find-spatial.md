@@ -15,8 +15,7 @@ therefore never sample the vertical gradient. The fourth applied a general-purpo
 earth-observation embedding, and found nothing. The fifth built a full land-use regression
 predictor set [@Wang2012LUR], {{claim:lur.predictors}} predictors at
 {{claim:lur.total_stations}} stations
-across {{claim:lur.cities}} cities, and moved the pooled rank correlation from 0.273 to 0.275
-[ledger F.61].
+across {{claim:lur.cities}} cities, and moved the pooled rank correlation from 0.273 to 0.275.
 
 **What it cost.** Four months, and a settled belief that the spatial problem was
 information-limited.

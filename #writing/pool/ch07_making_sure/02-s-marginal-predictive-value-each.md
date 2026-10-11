@@ -79,7 +79,7 @@ city's gain, each computed with the five-seed sensorless rung, before any compar
 is made. The design was adopted because the first version of the ladder, run on one split and one
 seed, had produced its most quoted result from a single draw: repeated over twenty alternative
 splits, the interval behind the deep-tropical comparison of {{ref:s-recommendation-inverts-tropics}}
-excluded zero in only three [ledger F.115]. A learner seed alone moved the first-station gain by more
+excluded zero in only three. A learner seed alone moved the first-station gain by more
 than the size of several of the effects being measured.
 
 ### Pairing within city {#s-pairing-within-city}

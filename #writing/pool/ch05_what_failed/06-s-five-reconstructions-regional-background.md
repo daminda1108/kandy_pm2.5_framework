@@ -14,7 +14,7 @@ the constructions were poor. The background is required to satisfy four conditio
 simultaneously: to reproduce an independently measured regional concentration, to remain below
 the total at every hour, to yield a local fraction inside a bracket taken from source
 apportionment, and to reproduce a documented seasonal pattern. Those are four constraints on a
-term with three degrees of freedom [ledger F.17]. The system is over-determined, and no
+term with three degrees of freedom. The system is over-determined, and no
 construction satisfies all four because none can.
 
 Recognising that changed the response from building a sixth version to stating a limitation. It

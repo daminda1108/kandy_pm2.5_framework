@@ -1,7 +1,7 @@
 ## Every station used the same way: a post hoc re-analysis {#s-like-for-like}
 
 **Why it was needed.** An external review of the code after the registered tests had been scored
-found that the registered rungs do not compare like with like [ledger F.124]. The first two
+found that the registered rungs do not compare like with like. The first two
 stations, and stations three to six, enter only as a recalibration of the sensorless estimate, so a
 station's reading never reaches the prediction for the day it was taken. The background rung reads
 its stations on the day being predicted, and it summarises every remaining station in the pool

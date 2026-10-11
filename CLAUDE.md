@@ -100,6 +100,10 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟡 **F.135 (ninth review, tag r15): seasonal transfer = the anchors' climatology.** Model 0.984 vs prior 0.915
+  (better 9/10) vs two-anchor climatology 0.986 (better only 4/10). Thesis reframed: the construction preserves the
+  anchors' seasonal cycle, adds nothing beyond it. Also: "+-11" fixed, night ratios labelled, ledger tags removed,
+  panel Table 2.2, rebuild-deferral + self-registration sentences. Figure audit 33/33 clean.
 - 🟢 **Eighth review answered (tag r13):** 8.95 = 2023 background (f_2023 0.467); 5-yr mean B 7.96; 0.479 = mean of
   annual fractions — per-year claims `partition.{B,f,T}_{y}`. Network: 9 paired = 3 triplets; +4 drainage sites → 38 LCS.
   Power assumptions stated (§4.2.3) as claims. CI run links in the guide. Reviewer: "make those corrections and freeze".

@@ -5,7 +5,7 @@ supports. At a matched averaging window the picture changes. The monitor statist
 
 At monthly averaging the model's between-cell ratio is {{claim:field.contrast_monthly}}, against
 1.26 to 1.51 measured across the stations of three panel cities with dense networks at the same
-window [ledger F.76]. Annually the model gives {{claim:kandy.annual_contrast}}. Set beside the
+window. Annually the model gives {{claim:kandy.annual_contrast}}. Set beside the
 eighty-five-fold spread of the kerbside survey, the model is of the right order.
 
 {{fig:scales}}
@@ -15,7 +15,7 @@ monthly comparison hides. In each of the three monitored cities the contrast bet
 falls as the averaging window lengthens, because short-lived local peaks average out. The
 model's contrast does the opposite: it is lowest at the hourly window and rises slowly with the
 window. The model is therefore most under-contrasted at the hourly scale, where it gives
-{{claim:field.contrast_hourly}} against observed values between 1.8 and 2.5 [ledger F.76]. That follows from its
+{{claim:field.contrast_hourly}} against observed values between 1.8 and 2.5. That follows from its
 construction, since on well-ventilated hours the local increment that carries the pattern is
 small, and it means the delivered field understates how much the air differs across the city
 from hour to hour.
