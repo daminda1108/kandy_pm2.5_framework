@@ -79,9 +79,8 @@ complementary rather than ranked.
 
 **Make at least one of them reference grade, for a reason the ladder does not price.** The case
 for a reference instrument is a measurement-design argument and stands on its own. It would
-settle the level discrepancy of {{ref:s-checks-kandy-carry-weight}}: the regulatory station
-reads about a quarter below the model, but its method and siting are undocumented, and the
-records disagree with one another. It would anchor the calibration of the low-cost sensors already in the basin, against
+firm up the level of {{ref:s-checks-kandy-carry-weight}}, which now rests on one regulatory
+station of undocumented method and siting, re-anchored with a short held-out check. It would anchor the calibration of the low-cost sensors already in the basin, against
 which their performance can be assessed on a published protocol [@Duvall2021]. And it would settle
 the shape of the diurnal cycle, which at present depends on a humidity correction: with a constant
 relative humidity the corrected low-cost record has a morning-peak-to-midday ratio of

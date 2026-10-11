@@ -51,7 +51,13 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
-## 🔴 CEA Kandy reference station (2026-10-11, F.130) — level HIGH, nights too high
+## 🟢 Level re-anchored to CEA, split (2026-10-11, F.132)
+β = **0.80 [0.70, 0.92]** fitted on CEA 2019-01 → 2021-06 only; multiplicative on T and B (f unchanged). Basin annual means
+**13.6–16.8** (were 17.0–20.9); ≥2.4× WHO across β's interval. Held-out 2022–23 (250 d, 11 months): **−1 % [−21, +20]**
+vs satellite level +24 %; RMSE −21 % [−34, +7]. **Extension 2024–26: −40 %** — correction not supported after 2023.
+NBRO annual now −26/−30 %. CEA 2019–mid-2021 is now an input, not a check.
+
+## 🔴 CEA Kandy reference station (2026-10-11, F.130) — satellite level HIGH, nights too high
 Public `aq.cea.lk` endpoint, 858 days / 21,525 h 2019–23 (stamps are **UTC**, gotcha #106). Field at the station:
 daily r **0.60**, within-month **0.72**, bias **+24 %** (dispersed field +36 %); diurnal timing + morning peak match
 (peak/midday 1.87 obs, 1.91 model); **night/midday 0.71 obs vs 1.17 model**. Attanayake site now **+11 %**. Records no

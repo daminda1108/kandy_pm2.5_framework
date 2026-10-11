@@ -11,20 +11,13 @@ parts of it are supported by evidence.
 The annual basin mean runs from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms
 per cubic metre across the five anchored years. The reconstructed annual basin means exceed the
 World Health Organization annual guideline of 5 micrograms per cubic metre [@WHO2021] in every
-satellite-anchored year, by a factor of three or more. Because the absolute level is not
-established, and the one regulatory record at Kandy reads below the field
-({{ref:s-checks-kandy-carry-weight}}), this characterises the modelled field and is not
-an independently established measurement of basin-wide exposure. The conclusion that the guideline
-is exceeded is nonetheless robust to the level. The satellite surface that sets the level was
-compared, in each of the ladder's cities, with the mean of stations withheld from it
-({{ref:s-kandy-model-rung}}); across the {{claim:lvl.tropical.n}} tropical cities its error has a
-median of {{claim:lvl.tropical.bias_p50}} per cent and an interquartile range of
-{{claim:lvl.tropical.bias_p25}} to {{claim:lvl.tropical.bias_p75}} per cent. If Kandy's level errs
-like the middle half of those cities, the basin mean in the anchored years lies between
-{{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, and between
-{{claim:lvl.tropical.p10p90_lo}} and {{claim:lvl.tropical.p10p90_hi}} for the tenth to ninetieth
-percentiles: at least {{claim:lvl.tropical.who_lo}} times the guideline in every case. This
-transfers an error distribution from other cities; it is not a measurement at Kandy. In
+satellite-anchored year, by a factor of three or more. The level is the satellite surface's,
+re-anchored to the regulatory station in the city centre by a single factor of
+{{claim:ceabeta.beta}} fitted on 2019 to mid-2021 ({{ref:s-cea-reference}}); it is therefore as good
+as that one station, and its check on later years covers only {{claim:ceasplit.months}} months. The
+conclusion that the guideline is exceeded is robust to it: at either end of the factor's interval the
+annual basin means lie between {{claim:ceabeta.level_lo}} and {{claim:ceabeta.level_hi}} micrograms
+per cubic metre, at least {{claim:ceabeta.who_lo}} times the guideline. In
 {{claim:exposure.year}} the regional background averages {{claim:kandy.background_annual}}, so
 roughly half of the basin mean is carried by air that is the same everywhere in the city. That
 is the local fraction of {{claim:partition.f}} seen in a single year. {{ref:s-partition-constraint-rather-than}} shows

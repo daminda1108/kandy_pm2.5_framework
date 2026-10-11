@@ -17,8 +17,8 @@ station's cell over {{claim:nbrod.days}} matched days.
 Three results follow. The **seasonal shape** is supported: across the twelve calendar months the
 model and the record correlate at {{claim:nbrod.climatology_r}}, and within 2021 at
 {{claim:nbrod.monthly_r_2021}}. The **year 2022 is missed**: within that year the monthly
-correlation is {{claim:nbrod.monthly_r_2022}}. The field is too high from January to April, during
-the national economic crisis, fuel shortages and power cuts, and too low from September to December,
+correlation is {{claim:nbrod.monthly_r_2022}}. The field is too high from January to March, during
+the national economic crisis, fuel shortages and power cuts, and too low from June onwards and most of all from September to December,
 when the published record shows high values at several stations across the island. Neither event is
 represented in the model's inputs. The **day-to-day sequence** is weak: once each month's mean is
 removed, the daily correlation is {{claim:nbrod.anomaly_daily_r}}. Over all days the model's daily

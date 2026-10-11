@@ -35,10 +35,12 @@ helped, whereas across ten monitored cities it lowered agreement with held-out s
 delivered field follows the larger test.
 
 An off-the-shelf alternative gives the comparison a baseline. The global satellite-derived surface
-of Wei and colleagues [@Wei2023], read at the same cell, sits below the observed annual mean in
-both years and by clearly more than the model does, so at the one reference-like record available
-the constructed field is closer to the observation than the free product it could have been
-replaced with. That is one site and two years, from an instrument whose type is not documented
+of Wei and colleagues [@Wei2023], read at the same cell, also sits below the observed annual mean in
+both years. The field at the satellite level was closer to this record than that free product; the
+re-anchored field is further below it, because the re-anchoring follows the regulatory station
+({{ref:s-cea-reference}}), which reads lower than this record. The two Kandy records therefore
+disagree with each other by more than either disagrees with the model. This one is a single site and
+two years, from an instrument whose type is not documented
 (the network's present Kandy unit also reports carbon dioxide and fine-mode counts, which suggests
 a multi-sensor instrument), and it is a comparison of levels rather than of spatial skill.
 
@@ -53,12 +55,12 @@ near zero the comparison would have collapsed into a check on the anchor and car
 information at all. The station sits {{claim:nbro.station_offset_km}} kilometres from the centre
 of the cell it falls in, so the pairing is not marginal.
 
-**The level at Kandy is probably too high.** Of the independent point records, the regulatory
-station ({{ref:s-cea-reference}}) and the calibrated low-cost record sit below the model, by
-{{claim:cea.del.all.bias_pct}} and {{claim:attan.diff_pct}} per cent of the observed mean, and the
-national research organisation's record sits above it. Only the last has an undocumented
-instrument, and only the first is a regulatory monitor. The interval coverage at the two local
-sensors points the same way: when observations fall outside the interval they fall below it in
+**The level at Kandy, as first built, was too high.** With the level taken from the satellite
+surface, the regulatory station ({{ref:s-cea-reference}}) sat {{claim:cea.sat.all.bias_pct}} per cent
+below the model and the national research organisation's record above it. The delivered field is
+re-anchored to the regulatory station, after which the calibrated low-cost record differs from it
+by {{claim:attan.diff_pct}} per cent. Only the last has an undocumented
+instrument, and only the first is a regulatory monitor. The interval coverage at the two local sensors still points the same way after the re-anchoring: when observations fall outside the interval they fall below it in
 {{claim:kandy.miss_below}} per cent of hours and above it in only {{claim:kandy.miss_above}} per cent
 ({{ref:s-interval-calibration}}).
 
@@ -69,9 +71,9 @@ upward bias in the level the field inherits from the satellite surface, which in
 cities of the panel overstates the mean of withheld stations by a median of
 {{claim:lvl.tropical.bias_p50}} per cent and by {{claim:lvl.tropical.bias_p75}} per cent or more in a
 quarter of them ({{ref:s-kandy-field-level}}); an excess of the size seen at the regulatory station
-is therefore not unusual. The weight of evidence now favours the second, but the size of the bias is
-not established: the regulatory station's method and siting are undocumented, and a single station
-cannot separate a level bias from a local siting effect. The field has not been recalibrated, so
-that the regulatory record remains a check rather than becoming an input. A co-located reference
+is therefore not unusual. The station's comparison with the corrected low-cost record favours the second
+({{ref:s-cea-reference}}), and the level was re-anchored at that step with a check on years not used
+for the fit. A single station still cannot separate a level bias from a local siting effect, and its
+method and siting are undocumented, so the delivered level is as good as that one station. A co-located reference
 monitor with documented siting would settle the level, and the hourly record of the same station
 bears on the diurnal shape ({{ref:s-rh-scenario}}).

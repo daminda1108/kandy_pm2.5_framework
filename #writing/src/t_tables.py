@@ -126,9 +126,10 @@ def t3_2_point_records():
         "External point records at Kandy compared with the model",
         ["record", "instrument", "evidential status", "observed", "model", "difference"],
         [
-            ["Regulatory station, city centre, 2019 to 2023 [@CEA2026AirShare]", "automated regulatory monitor",
-             "independent; the only regulatory record", tok("cea.del.all.obs_mean"),
-             tok("cea.del.all.model_mean"), tok("cea.del.all.bias_pct") + " per cent"],
+            ["Regulatory station, city centre, held-out 2022 to 2023 [@CEA2026AirShare]", "automated regulatory monitor",
+             "the level was fitted to its 2019 to mid-2021 record; these later days are a check",
+             tok("cea.del.held_out_2022_2023.obs_mean"), tok("cea.del.held_out_2022_2023.model_mean"),
+             tok("cea.del.held_out_2022_2023.bias_pct") + " per cent"],
             [f"National research organisation, 2021 [@Nirmani2025]", "undocumented",
              "independent; instrument unknown", "19.6",
              tok("nbro.model_pixel_2021"), tok("nbro.diff_pct_2021") + " per cent"],
@@ -146,8 +147,8 @@ def t3_2_point_records():
              "values are generated from the delivered field at the record's cell. The regulatory row is "
              "the mean over the station's reporting days; the low-cost row compares a published mean over "
              "164 clear-sky days with the model over the calendar window to the end of 2023, the last year "
-             "of the field. The research-organisation record sits above the model; the regulatory and "
-             "calibrated low-cost records sit below it.")
+             "of the field. Model values are from the delivered field, whose level is re-anchored to the "
+             "regulatory station; before that the regulatory and calibrated low-cost records sat below the model.")
 
 
 def t5_1_attempts():
@@ -540,13 +541,14 @@ def t4_ledger():
             f"{tok('cea.hourly.production.night_over_midday')} modelled)",
             "peak timing usable; night-time levels relative to the day are not"],
            ["Absolute level",
-            f"probably too high: {tok('cea.del.all.bias_pct')} per cent above the regulatory station, below the "
-            f"national research record ({tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent); "
-            f"across the ladder's cities the deployed anchor sits above the withheld mean by "
-            f"{tok(km_r + 'K2_bias.median')} per cent in reconstruction and {tok(km_p + 'K2_bias.median')} per cent "
-            f"prospectively; {tok('lvl.tropical.iqr_lo')} to {tok('lvl.tropical.iqr_hi')} micrograms per cubic "
-            f"metre if the satellite level errs as in tropical cities",
-            "a model estimate, likely high; the guideline exceedance is robust, the exact value is not"],
+            f"anchored to one regulatory station: the satellite level read {tok('cea.sat.all.bias_pct')} per cent "
+            f"high; re-anchored on 2019 to mid-2021, {tok('ceasplit.bias_re')} per cent on held-out days "
+            f"({tok('ceasplit.bias_re.lo')} to {tok('ceasplit.bias_re.hi')}, {tok('ceasplit.months')} months); "
+            f"{tok('ceasplit.ext_bias')} per cent after 2023; across the ladder's cities the satellite-anchored "
+            f"chain sits above the withheld mean by {tok(km_r + 'K2_bias.median')} per cent in reconstruction and "
+            f"{tok(km_p + 'K2_bias.median')} per cent prospectively",
+            "as good as one station of undocumented method; the guideline exceedance is robust "
+            f"(at least {tok('ceabeta.who_lo')} times across the factor's interval)"],
            ["Uncertainty interval",
             f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, a fraction "
             f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
@@ -598,16 +600,16 @@ def t3_validation_summary():
             f"within months {tok('nbrod.anomaly_daily_r')}",
             "digitised from a published figure; misses 2022"],
            ["Daily and hourly, at Kandy", "regulatory station, city centre, 2019 to 2023",
-            f"daily correlation {tok('cea.del.all.r')}; within months {tok('cea.del.anomaly_daily_r')}; level "
-            f"{tok('cea.del.all.bias_pct')} per cent high; daily-cycle correlation "
+            f"daily correlation {tok('cea.del.all.r')}; within months {tok('cea.del.anomaly_daily_r')}; level on "
+            f"held-out days {tok('ceasplit.bias_re')} per cent (satellite level {tok('ceasplit.bias_sat')}); daily-cycle correlation "
             f"{tok('cea.hourly.production.shape_r')}, nights too high",
-            "one station; method and siting undocumented"],
+            "one station, also used to fit the level; method and siting undocumented"],
            ["Held-out sensor at Kandy", "train on one sensor, score the other",
             f"daily correlation {tok('loso.akurana.daily.pred.r')} and {tok('loso.hantana.daily.pred.r')}; prior alone "
             f"{tok('loso.akurana.daily.prior_only.r')} and {tok('loso.hantana.daily.prior_only.r')}",
             "two low-cost sensors sharing a calibration"],
            ["Independent Kandy annual levels", "regulatory station; national organisation; a calibrated low-cost record",
-            f"regulatory {tok('cea.del.all.bias_pct')} per cent; national record {tok('nbro.diff_pct_2021')} and "
+            f"regulatory, held out, {tok('cea.del.held_out_2022_2023.bias_pct')} per cent; national record {tok('nbro.diff_pct_2021')} and "
             f"{tok('nbro.diff_pct_2022')} per cent; low-cost +{tok('attan.diff_pct')} per cent (model minus observed)",
             "point against cell; instruments differ"]],
           note="A high seasonal correlation does not imply accurate daily or hourly values; each "
@@ -650,24 +652,26 @@ def t3_nbro_daily():
 
 
 def t3_cea():
-    """The delivered field against the CEA Kandy regulatory station, 2019-2023 (exploratory, F.130)."""
+    """The field against the CEA Kandy regulatory station, 2019-2023: satellite level vs CEA split re-anchoring
+    (exploratory, F.130/F.132)."""
+    role = {"2019": "calibration", "2020": "calibration", "2021": "calibration (to June)", "2022": "held out",
+            "2023": "held out"}
     rows = []
     for y in ("2019", "2020", "2021", "2022", "2023"):
-        k = f"cea.del.{y}."
-        rows.append([y, tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"), tok(k + "bias_pct"), tok(k + "r")])
-    k = "cea.del.all."
-    rows.append(["all years", tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"), tok(k + "bias_pct"), tok(k + "r")])
-    k = "cea.disp.all."
-    rows.append(["all years, field with the dispersion step", tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"),
-                 tok(k + "bias_pct"), tok(k + "r")])
-    write("T3_cea", "The delivered field against the regulatory monitoring station in Kandy city, daily means, 2019 to 2023",
-          ["period", "days", "observed mean (micrograms per cubic metre)", "model at the station's cell",
-           "bias (per cent)", "daily correlation"], rows,
-          note="Observed: the national regulatory authority's automated station [@CEA2026AirShare]; days are those "
-               "the station reported, so annual columns are means over reporting days, not calendar years. The "
-               "station did not operate from mid-2021 to late 2022. Model: the delivered field at the cell "
-               "containing the station; the last row is the field as delivered before the dispersion step was "
-               "removed.")
+        rows.append([y, role[y], tok(f"cea.del.{y}.n"), tok(f"cea.del.{y}.obs_mean"),
+                     f"{tok(f'cea.sat.{y}.model_mean')} ({tok(f'cea.sat.{y}.bias_pct')})",
+                     f"{tok(f'cea.del.{y}.model_mean')} ({tok(f'cea.del.{y}.bias_pct')})"])
+    for scope, lab in (("calibration_2019_2021H1", "calibration window"), ("held_out_2022_2023", "held-out window")):
+        rows.append([lab, "", tok(f"cea.del.{scope}.n"), tok(f"cea.del.{scope}.obs_mean"),
+                     f"{tok(f'cea.sat.{scope}.model_mean')} ({tok(f'cea.sat.{scope}.bias_pct')})",
+                     f"{tok(f'cea.del.{scope}.model_mean')} ({tok(f'cea.del.{scope}.bias_pct')})"])
+    write("T3_cea", "The field against the regulatory monitoring station in Kandy city, daily means, 2019 to 2023",
+          ["period", "role in the re-anchoring", "days", "observed (micrograms per cubic metre)",
+           "satellite level (bias, per cent)", "re-anchored, delivered (bias, per cent)"], rows,
+          note="Observed: the national regulatory authority's automated station [@CEA2026AirShare]; means over the "
+               "days the station reported, not calendar years; the station did not operate from mid-2021 to late "
+               "2022. Model: the field at the cell containing the station. The re-anchoring factor was fitted on "
+               "the calibration window only; the year rows for 2019 to 2021 are therefore not a test.")
 
 
 def t9_1_next_v2():
@@ -682,8 +686,8 @@ def t9_1_next_v2():
             f"{tok('v2.review.registered_loco.reco.BGallmL2s_rmse.median')} points"],
            ["Making one of them reference grade",
             "the level discrepancy, and a calibration anchor for the low-cost sensors",
-            "MEASUREMENT DESIGN, not the ladder: the regulatory station reads about a quarter below the "
-            "model, and the nights of the corrected sensor record are too high"],
+            "MEASUREMENT DESIGN, not the ladder: the level now rests on one regulatory station of undocumented "
+            "method, and the nights of the corrected sensor record are too high"],
            ["More than three to five stations for the daily mean",
             "little: the daily curve flattens",
             f"RE-ANALYSIS: five stations {tok('v2.review.k.day5.median')} per cent against "

@@ -21,11 +21,10 @@ Disease study, had not been obtained when this thesis was written. Applying the 
 with an all-age crude death rate does not reproduce the age-structured calculation, and the
 direction and size of the difference have not been established.
 
-The concentration level is not established, and probably too high
-({{ref:s-checks-kandy-carry-weight}}): the regulatory station in the city centre reads about a
-quarter below the field, and across the ladder's cities the satellite level used to anchor it sits
-above the withheld city means. If the field reads high, any burden computed
-from it is over-stated by an amount this thesis cannot bound.
+The concentration level rests on one regulatory station through a single factor
+({{ref:s-cea-reference}}), whose interval spans roughly a tenth either way, and its check covers
+only {{claim:ceasplit.months}} months. Any burden computed from it would carry that uncertainty
+together with the station's undocumented method.
 
 The uncertainty cannot yet be propagated. A defensible interval would carry the uncertainty of the
 response function's parameters, of the mortality baseline, of the population weighting and of the

@@ -78,6 +78,7 @@ def main():
         arms = {"delivered": cell_series(DEC / "kandy_decomp_predictions_{y}_additive_v3_drv.parquet")}
     else:
         arms = {"delivered": cell_series(DEC / "kandy_decomp_predictions_{y}_additive_v3.parquet"),
+                "satellite_level": cell_series(DEC / "backup_satellite_level_2026-10-11" / "kandy_decomp_predictions_{y}_additive_v3.parquet"),
                 "dispersed_previous": cell_series(DEC / "backup_dispersed_2026-10-11" / "kandy_decomp_predictions_{y}_additive_v3.parquet")}
     sfx = "_ext" if EXT else ""
     out = {"station": [SLAT, SLON]}
@@ -94,6 +95,10 @@ def main():
              "sensors_reported": stats(J[J.sensors_reported].obs, J[J.sensors_reported][k]),
              "sensors_absent": stats(J[~J.sensors_reported].obs, J[~J.sensors_reported][k])}
         o["by_year"] = {int(y): stats(g.obs, g[k]) for y, g in J.groupby(J.index.year) if len(g) >= 20}
+        # split re-anchoring (F.132): the level factor was fitted on 2019-01..2021-06 only
+        cal = (J.index >= "2019-01-01") & (J.index <= "2021-06-30")
+        o["calibration_2019_2021H1"] = stats(J[cal].obs, J[cal][k])
+        o["held_out_2022_2023"] = stats(J[~cal].obs, J[~cal][k])
         mo = J.resample("MS").mean(numeric_only=True).dropna()
         cl = mo.groupby(mo.index.month)[["obs", k]].mean()
         o["climatology_r"] = float(cl.obs.corr(cl[k]))

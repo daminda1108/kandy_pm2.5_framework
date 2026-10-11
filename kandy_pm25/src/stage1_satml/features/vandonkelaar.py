@@ -119,6 +119,13 @@ def spatial_multiplier_grid(lats: np.ndarray, lons: np.ndarray,
     return arr / np.nanmean(arr)
 
 
+# Level anchor (2026-10-11, ledger F.132). "cea_split": the satellite basin level scaled by beta fitted to the CEA
+# Kandy regulatory station over 2019-01..2021-06 only (scripts/kandy_cea_level_calibration.py); 2022-10..2026 are held
+# out as a check. "satellite": beta = 1, the van Donkelaar area level as delivered until 2026-10-11.
+LEVEL_ANCHOR = "cea_split"
+CEA_BETA_JSON = HERE / "data" / "processed" / "stage1_v3" / "cea_level_beta.json"
+
+
 def bias_factor(levels: pd.DataFrame, ref_year: int = 2019,
                 koala: float = KOALA_ANCHOR_UG_M3) -> float:
     """Area-level multiplicative factor for VanD basin mean.
@@ -131,14 +138,21 @@ def bias_factor(levels: pd.DataFrame, ref_year: int = 2019,
 
     `ref_year`/`koala` are retained for signature compatibility and to compute the
     implied floor multiple (koala / VanD_basin_ref) recorded in the meta JSON.
+
+    With LEVEL_ANCHOR == "cea_split" it returns the CEA-fitted beta instead, and raises if that fit is missing
+    rather than silently falling back to 1.
     """
+    if LEVEL_ANCHOR == "cea_split":
+        if not CEA_BETA_JSON.exists():
+            raise FileNotFoundError(f"{CEA_BETA_JSON} missing: run scripts/kandy_cea_level_calibration.py first")
+        return float(json.load(open(CEA_BETA_JSON, encoding="utf-8"))["beta"])
     return 1.0
 
 
 def build_levels_table() -> pd.DataFrame:
     """Compute, persist, and return the per-year bias-corrected level table."""
     levels = annual_kandy_levels()
-    beta = bias_factor(levels)                      # ≡ 1.0 (area anchor)
+    beta = bias_factor(levels)                      # 1.0 (satellite) or the CEA-fitted beta (cea_split)
     levels["beta"] = beta
     levels["L_corrected"] = beta * levels["basin_mean"]   # = VanD area mean
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
@@ -152,7 +166,10 @@ def build_levels_table() -> pd.DataFrame:
         "vand_basin_2019": vand_2019,
         "implied_floor_multiple_koala_over_vand": round(KOALA_ANCHOR_UG_M3 / vand_2019, 4),
         "latest_year_available": latest,
-        "method": ("L(year) = VanD_basin(year)  [area anchor, beta=1]; "
+        "level_anchor": LEVEL_ANCHOR,
+        "method": ("L(year) = beta * VanD_basin(year); beta = 1 (satellite) or fitted to the CEA Kandy station "
+                   "over 2019-01..2021-06 (cea_split, F.132). Historical note: "
+                   "L(year) = VanD_basin(year)  [area anchor, beta=1]; "
                    "KOALA 24.5225 is a valley-floor diagnostic reproduced by M at "
                    "the NIFS pixel, NOT the basin-mean target (2026-06-04 "
                    "area-vs-floor correction)"),

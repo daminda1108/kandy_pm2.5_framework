@@ -19,11 +19,10 @@ reconstruction, what the evidence supports and what it may be used for.
    every satellite-anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}}
    micrograms per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum, and
    morning and evening peaks either side of a midday dip. Because the absolute level is
-   not established and probably high (conclusion 3), these values characterise the modelled field. The exceedance itself is
-   robust: if the satellite level errs at Kandy as it does in the middle half of the tropical cities
-   on the ladder, the basin mean lies between {{claim:lvl.tropical.iqr_lo}} and
-   {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least {{claim:lvl.tropical.who_lo}}
-   times the guideline. Under the baseline
+   set by one regulatory station (conclusion 3), these values characterise the modelled field. The exceedance itself is
+   robust: across the interval of the level factor the annual basin means lie between
+   {{claim:ceabeta.level_lo}} and {{claim:ceabeta.level_hi}} micrograms per cubic metre, at least
+   {{claim:ceabeta.who_lo}} times the guideline. Under the baseline
    decomposition the local increment accounts for {{claim:partition.f}} of the modelled
    concentration; the fraction ranges from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} under
    the tested choices of day boundary and daily-floor statistic, reaches
@@ -60,17 +59,21 @@ reconstruction, what the evidence supports and what it may be used for.
      timing and a morning peak {{claim:cea.hourly.station.peak07_over_midday}} times midday, as in the
      delivered field, but its deep night is the daily minimum
      ({{claim:cea.hourly.station.night_over_midday}} of midday), lower than either correction gives.
-   - *The absolute level is probably too high, by an amount not yet established.* The regulatory
-     station in the city centre reads {{claim:cea.del.all.bias_pct}} per cent below the field over
-     {{claim:cea.days}} days, and a calibrated low-cost record reads below it too; only the national
-     research organisation's record, of undocumented instrument, sits above it. The field nonetheless
-     follows the regulatory station's day-to-day sequence (daily correlation
-     {{claim:cea.del.all.r}}, {{claim:cea.del.anomaly_daily_r}} within the month). The excess enters
-     where the anchor's annual level is taken from the satellite surface: the corrected low-cost record
-     the anchor is trained on sits {{claim:ceaatt.pct.akurana}} per cent from the station on shared days,
-     the re-anchored basin series {{claim:ceaatt.pct.T_basin}} per cent. The
-     satellite level used to anchor it sits above the withheld city mean in the median city on the
-     ladder, by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
+   - *The absolute level is anchored to the regulatory station, with a held-out check that points
+     the right way but is short.* Taken from the satellite surface, the level read
+     {{claim:cea.sat.all.bias_pct}} per cent above the regulatory station over {{claim:cea.days}} days.
+     The excess enters at the satellite level: the corrected low-cost record the anchor is trained on
+     sits {{claim:ceaatt.pct.akurana}} per cent from the station on shared days, the satellite-anchored
+     basin series {{claim:ceaatt.pct.T_basin}} per cent. Re-anchored with a factor of
+     {{claim:ceabeta.beta}} ({{claim:ceabeta.lo}} to {{claim:ceabeta.hi}}) fitted on 2019 to mid-2021,
+     the field differs from the station by {{claim:ceasplit.bias_re}} per cent on the
+     {{claim:ceasplit.days}} held-out days of 2022 and 2023 ({{claim:ceasplit.bias_re.lo}} to
+     {{claim:ceasplit.bias_re.hi}}), against {{claim:ceasplit.bias_sat}} per cent at the satellite level.
+     The field follows the station's day-to-day sequence (daily correlation {{claim:cea.del.all.r}},
+     {{claim:cea.del.anomaly_daily_r}} within the month). Beyond 2023 the re-anchored extension reads
+     {{claim:ceasplit.ext_bias}} per cent against the station, so the correction is not supported
+     there. Across the ladder's cities the satellite level likewise sits above the withheld city mean,
+     by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
      {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per
      cent coverage is not achieved, at Kandy or in those cities.
 4. **The field is not supported below the kilometre scale, and its spatial pattern is a hypothesis,

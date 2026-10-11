@@ -304,7 +304,9 @@ def main():
           f"imposes={sorted(_budget.imposes)}")
     print("=== B(t) v2 additive field (origin-conditioned; v1 untouched) ===")
     for y in YEARS:
-        b_annual = (1 - FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "basin_mean"])
+        # The background takes the same annual level as T(t): L_corrected = beta * VanD basin (F.132). Reading the raw
+        # basin_mean here would leave B at the satellite level while T moved, shifting the local fraction by accident.
+        b_annual = (1 - FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "L_corrected"])
         B = build_B_v2(y, b_annual)
         # Seasonal re-level (2026-07-27). build_B_v2 sets the ANNUAL mean but nothing
         # constrains its seasonal shape against T, and in the low season it lands above

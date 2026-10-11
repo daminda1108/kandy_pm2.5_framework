@@ -11,6 +11,7 @@ in which case the code changes with them.
 | fine emission grid | {{claim:subgrid.fine_res_m}} m | the grid the emission surface is computed on |
 | study period | 2019 to 2023 | the satellite-anchored years on which every result in this thesis rests |
 | extension tier | 2024 to 2026 | delivered by the software with a driver-anchored level; checked only against the regulatory station ({{ref:s-cea-reference}}); not otherwise part of the evidence |
+| level factor | {{claim:ceabeta.beta}} ({{claim:ceabeta.lo}} to {{claim:ceabeta.hi}}) | multiplies the satellite level; fitted to the regulatory station over January 2019 to June 2021 ({{ref:s-cea-reference}}) |
 | interval level | 90 per cent | nominal coverage of the delivered interval |
 | sensorless predictors | {{claim:bud0c.n_features}} | of which {{claim:bud0c.n_geo_features}} are static geography |
 | local fraction floor | {{claim:partition.f_min_parameter}} | the one free parameter in the coherence constraint |

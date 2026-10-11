@@ -33,24 +33,27 @@ daily minimum in the deep night, lower than either conversion gives, so the fiel
 high. Which part of that is the humidity conversion and which the low-cost sensors' siting cannot
 be separated without co-locating them with the reference.
 
-**Probably too high: the level.** The one regulatory record at Kandy, a station in the city
-centre, sits {{claim:cea.del.all.bias_pct}} per cent below the field over the days it reported
-({{ref:s-cea-reference}}); a calibrated low-cost record also sits below it, and only the national
-research organisation's record, of undocumented instrument, sits above it. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
+**Anchored to one station: the level.** Taken from the satellite surface, the field read
+{{claim:cea.sat.all.bias_pct}} per cent above the one regulatory record at Kandy, a station in the city
+centre ({{ref:s-cea-reference}}); a calibrated low-cost record also sat below it, and only the national
+research organisation's record, of undocumented instrument, sat above it. The delivered field is
+re-anchored to the station with a factor fitted on its first two and a half years. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
 the level is not independent of Kandy observations in the way the pattern is. Two readings remain
 possible. The offset may be a change of support, an area mean compared with points, or it may be
 an upward bias of the field at the sensor locations, for which the constant-humidity conversion
 is one candidate mechanism. The regulatory record makes the first harder to sustain, because its station lies in the
 city centre where the cell is among the highest in the basin, but one station cannot separate a
-level bias from a siting effect, and the field has not been recalibrated to it. The station does
-locate the step at which the excess enters. The corrected Akurana record follows the station closely
+level bias from a siting effect. The station does locate the step at which the excess enters. The corrected Akurana record follows the station closely
 and sits {{claim:ceaatt.pct.akurana}} per cent from it on the days both reported, whereas the anchor
 after re-anchoring to the satellite level sits {{claim:ceaatt.pct.T_basin}} per cent above it. The
 low-cost calibration, long the suspected source, is the part that agrees; the satellite level is the
-part that does not. What can be said is bounded: if the satellite level that anchors the field errs at Kandy as it does in the
-middle half of the tropical cities scored on the ladder, the basin mean lies between
-{{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least
-{{claim:lvl.tropical.who_lo}} times the guideline ({{ref:s-kandy-field-level}}). The
+part that does not, which is why the correction was made at that step and nowhere else. On the
+station's later record, not used for the fit, the re-anchored field is within
+{{claim:ceasplit.bias_re}} per cent of the station where the satellite level was
+{{claim:ceasplit.bias_sat}} per cent out, but over only {{claim:ceasplit.months}} months, and the
+correction does not hold beyond 2023. What can be said is bounded: across the interval of the level factor the annual basin means lie
+between {{claim:ceabeta.level_lo}} and {{claim:ceabeta.level_hi}} micrograms per cubic metre, at least
+{{claim:ceabeta.who_lo}} times the guideline ({{ref:s-kandy-field-level}}). The
 consequence runs through every number in {{ref:s-kandy-field}}: the cycles and the partition are
 statements about shape and proportion that survive a shift in level, while the annual means, the
 exposure figures and the comparison with the guideline do not. For that reason, among others,
@@ -135,7 +138,7 @@ equally confirmed: the like-for-like comparison is a post hoc re-analysis of the
 data, and the near-equivalence of station types it reports awaits a fresh pre-specified test.
 
 Read together, the field is a well-founded account of when Kandy's air is worse and by roughly
-how much relative to the rest of the year, on a level that is probably too high, with nights that run too
+how much relative to the rest of the year, on a level anchored to one regulatory station, with nights that run too
 high relative to midday, and with a spatial pattern that is
 imposed rather than measured. That is less than a validated map, and the map should not be read
 as one: its differences between cells are a hypothesis to be tested, not a ranking of

@@ -6591,3 +6591,29 @@ climatology 0.63 (no skill beyond season), monthly r 0.87, within-month 0.40. St
 level bias between anchored and extension years shows neither level is fixed by Kandy data. **Obvious next step (not
 taken): re-anchor the level to CEA/FECT instead of VanD — but then CEA stops being an independent check; a split
 (re-anchor on 2019–2021, check on 2022–2026) would keep part of it.**
+
+## F.132 — 🟢 split re-anchoring of the level to the CEA station: β = 0.80, held-out bias −1 % (2026-10-11)
+
+User-directed. **β = 0.801 [0.702, 0.923]** (`scripts/kandy_cea_level_calibration.py`; ratio of means, CEA vs the β=1
+field at the station cell, 608 days 2019-01 → 2021-06 = CEA upload set 1 only; 30-month block bootstrap).
+`features/vandonkelaar.py` `LEVEL_ANCHOR = "cea_split"` → `L_corrected = β·VanD`; `bias_factor()` raises if the fit is
+missing. `predict_T_anchor_v3` applies β **multiplicatively after** the additive shift to the satellite level: the
+first attempt (additive to β·VanD) pushed up to 396 hours/yr (4.5 %, 2022) below zero; multiplicative keeps the
+original negative counts (2/11/32/41/0). `build_additive_field_v2` B annual now reads `L_corrected` (was raw
+`basin_mean`), so B and T move together and **f = 0.483 is unchanged**. Rerun is deterministic: stored vs rerun T
+pre-anchor differ only by the sharpening factor (within-(hour,month) spread 4e-16). Chain: T → sharpen → decomp_map →
+overlay → v2 (G1 0.000) → v3 (T-lock worst 0.003, PASS) → conservation tests 6/6 → extension (driver tier + fields +
+v3_drv) → all diagnostics. Backups: `decomp/backup_satellite_level_2026-10-11/` (v3 field, T_anchor, level csv).
+**Results** (`kandy_cea_reference_check.py`, `kandy_cea_level_calibration.py --score`):
+- Basin annual means **13.6–16.8** (was 17.0–20.9). β-interval range 11.9–19.3, ≥ **2.4× WHO**.
+- Calibration window bias 0.0 % (by construction), r 0.61.
+- **Held-out 2022-10 → 2023 (250 days, 11 months): bias −1 % [−21, +20] vs satellite level +24 % [−2, +50]; RMSE
+  −21 % [−34, +7].** By year −22 % (2022, 66 high-season days) / +9 % (2023). Direction right; 11 months cannot exclude
+  the satellite level.
+- **Extension 2024–26: −40 %** (was −17 %): the station reads much higher after 2023 (25.6 vs 17.0); the correction is
+  NOT supported beyond 2023. Cause (real rise vs station change) unresolved; Hantana ratio steady on only 5 days.
+- Side effects: NBRO annual now **−26 / −30 %** (model further below NBRO than GHAP is: the two Kandy records disagree
+  with each other); Attanayake −11 %; interval coverage at FECT 72.5 → **77.3 %** (misses 18.0 below / 4.7 above);
+  NBRO 2022 months: too high Jan–Mar only.
+- Cost: CEA 2019 → mid-2021 is now an INPUT; only its later record is a check. The cross-city ladder rung (v2.km) is
+  unaffected (it uses the satellite level in each city).

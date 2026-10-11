@@ -91,13 +91,14 @@ daily correlation is {{claim:cea.del.all.r}} ({{claim:cea.del.anomaly_daily_r}} 
 
 The modelled annual basin mean is {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms per
 cubic metre over 2019 to 2023, above the World Health Organization guideline of 5 in every year.
-The level is probably too high: the regulatory station reads {{claim:cea.del.all.bias_pct}} per cent
-below the field, as does a calibrated low-cost record, while the national research record, of
-undocumented instrument, sits above it. The excess enters where the anchor's level is set from the
-satellite surface: the corrected low-cost record is within {{claim:ceaatt.pct.akurana}} per cent of the
-station on shared days. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
-half of the tropical cities on the ladder, the basin mean is {{claim:lvl.tropical.iqr_lo}} to
-{{claim:lvl.tropical.iqr_hi}}, at least {{claim:lvl.tropical.who_lo}} times the guideline. The seasonal cycle is the best-supported property, with the maximum in the
+Taken from the satellite surface the level read {{claim:cea.sat.all.bias_pct}} per cent above the
+regulatory station; the corrected low-cost record is within {{claim:ceaatt.pct.akurana}} per cent of the
+station, so the excess lies in the satellite level. The delivered level is re-anchored to the station
+by a factor of {{claim:ceabeta.beta}} fitted on 2019 to mid-2021; on the held-out 2022 and 2023 days
+it is within {{claim:ceasplit.bias_re}} per cent of the station (satellite level
+{{claim:ceasplit.bias_sat}} per cent), over only {{claim:ceasplit.months}} months. The exceedance is
+robust: the annual means stay at least {{claim:ceabeta.who_lo}} times the guideline across the factor's
+interval. The seasonal cycle is the best-supported property, with the maximum in the
 north-east monsoon ({{claim:kandy.season_djf}} in December to February of {{claim:exposure.year}}) and
 the minimum in the south-west monsoon ({{claim:kandy.season_jja}}). The day-to-day sequence is
 supported on days the sensors reported. Morning and evening peaks either side of a midday dip are

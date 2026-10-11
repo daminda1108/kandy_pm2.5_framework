@@ -34,7 +34,10 @@ PM(x,y,t) = B(t) + max(T(t) − B(t), 0) · P(x,y,t) + min(T(t) − B(t), 0) + �
 delivered field** (`build_additive_field_v2.PATTERN = "undispersed"`): on identical held-out stations in ten cities
 it lowered rank agreement (0.371 → 0.274). The anchor `T05/T50/T95` is read **directly** from
 `T_kandy_hourly_{y}.parquet`, never from a derived field's mean (ledger F.129). Level check against the CEA
-regulatory station: field +24 % high, nights too high (F.130).
+regulatory station: the satellite level read +24 % high, nights too high (F.130). **Since F.132 the level is
+`β · VanD` with β = 0.80 fitted to the CEA station over 2019-01 → 2021-06** (`vandonkelaar.LEVEL_ANCHOR = "cea_split"`,
+`scripts/kandy_cea_level_calibration.py`), applied multiplicatively to T(t) after the shift to the satellite level, and
+read by the background builder too, so the local fraction is unchanged. Held-out 2022–23: −1 %.
 
 - `T(t)` — basin-mean concentration (the temporal anchor; carries the level and its evolution).
 - `B(t)` — regional/transboundary background (spatially near-uniform).

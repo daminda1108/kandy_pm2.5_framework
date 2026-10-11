@@ -9,6 +9,9 @@ and the van Donkelaar annual level at the city pixel against the station's annua
 In: data/processed/decomp/kandy_cea_reference_check_daily.csv (from kandy_cea_reference_check.py),
     data/external/cea/kandy_aqms_daily.csv, stage1_v3/dataset_v3_hourly.parquet, T_anchor, vandonkelaar_kandy_annual.csv
 Out: data/processed/decomp/kandy_cea_attribution.json
+
+Since the CEA split re-anchoring (F.132) the attribution reads the SATELLITE-LEVEL chain from its backup
+(decomp/backup_satellite_level_2026-10-11): it explains why that chain was high, which is the reason beta exists.
 """
 from __future__ import annotations
 
@@ -36,9 +39,11 @@ def main():
     d["day"] = local_day(d.datetime_utc)
     n = d.groupby(["day", "sensor_id"]).pm25_observed.agg(["mean", "size"])
     n = n[n["size"] >= 18]["mean"].unstack()
-    T = pd.concat([pd.read_parquet(V3 / "T_anchor" / f"T_kandy_hourly_{y}.parquet", columns=["datetime_utc", "T_q50"])
+    T = pd.concat([pd.read_parquet(DEC / "backup_satellite_level_2026-10-11" / "T_anchor" / f"T_kandy_hourly_{y}.parquet",
+                                   columns=["datetime_utc", "T_q50"])
                    for y in range(2019, 2024)])
     T["day"] = local_day(T.datetime_utc)
+    J = J.drop(columns=["delivered"]).rename(columns={"satellite_level": "delivered"})   # the satellite-level field
     K = J.join(n[AKU].rename("akurana")).join(T.groupby("day").T_q50.mean().rename("T_basin")).dropna(subset=["akurana"])
     out = {"shared_days": int(len(K)), "means": {c: float(K[c].mean()) for c in ("obs", "akurana", "T_basin", "delivered")}}
     out["pct_vs_station"] = {c: float(100 * (K[c].mean() / K.obs.mean() - 1)) for c in ("akurana", "T_basin", "delivered")}
@@ -55,7 +60,7 @@ def main():
             if len(g):
                 out["cea_over_fect"][f"{tag}.{per}"] = {"n": int(len(g)), "median_ratio": float((g.cea / g[sid]).median()),
                                                         "r": float(g.cea.corr(g[sid])) if len(g) > 2 else None}
-    va = pd.read_csv(V3 / "vandonkelaar_kandy_annual.csv").set_index("year")
+    va = pd.read_csv(DEC / "backup_satellite_level_2026-10-11" / "vandonkelaar_kandy_annual.csv").set_index("year")
     yr = J.groupby(J.index.year).obs.mean()
     out["vand_city_vs_station"] = {int(y): {"vand_city": float(va.loc[y, "city"]), "station": float(yr[y]),
                                             "pct": float(100 * (va.loc[y, "city"] / yr[y] - 1))}

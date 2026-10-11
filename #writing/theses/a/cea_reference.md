@@ -13,16 +13,17 @@ comparison is exploratory and was made after the field was fixed.
 
 {{tbl:T3_cea}}
 
-**The level.** Over all reporting days the station's mean is {{claim:cea.del.all.obs_mean}} and the
-field at the station's cell is {{claim:cea.del.all.model_mean}}, so the field reads
-{{claim:cea.del.all.bias_pct}} per cent above the station. The excess holds in every year except
-2022, whose {{claim:cea.del.2022.n}} reporting days fall in the high season at the end of the year:
-{{claim:cea.del.2019.bias_pct}} and {{claim:cea.del.2020.bias_pct}} per cent in the two full years
-and {{claim:cea.del.2023.bias_pct}} per cent in 2023. The field as delivered before the dispersion
-step was removed read {{claim:cea.disp.all.bias_pct}} per cent above the station, so the removal
-moved the level towards this record.
+**The level, as first built.** Before this record was used, the field took its annual level directly
+from the satellite surface. Over all reporting days the station's mean is {{claim:cea.sat.all.obs_mean}}
+and that field at the station's cell {{claim:cea.sat.all.model_mean}}, so it read
+{{claim:cea.sat.all.bias_pct}} per cent above the station. The excess held in every year except
+2022, whose {{claim:cea.sat.2022.n}} reporting days fall in the high season at the end of the year:
+{{claim:cea.sat.2019.bias_pct}} and {{claim:cea.sat.2020.bias_pct}} per cent in the two full years
+and {{claim:cea.sat.2023.bias_pct}} per cent in 2023. The field with the dispersion step, before it
+was removed, read {{claim:cea.disp.all.bias_pct}} per cent above the station.
 
-**The timing.** The daily correlation is {{claim:cea.del.all.r}}, against
+**The timing.** The level does not affect the timing, which is the same in every version of the
+field. The daily correlation is {{claim:cea.del.all.r}}, against
 {{claim:cea.bench.r}} for the station's own calendar-month climatology. Once each month's mean is
 removed from both series, the daily correlation is {{claim:cea.del.anomaly_daily_r}}, so the field
 follows the station's day-to-day sequence within the month, more closely than at the
@@ -51,9 +52,30 @@ at Hantana is {{claim:ceaatt.ratio.hantana.2019_2023}} before 2024 and
 days, so there is no sign that the station's record shifted between the uploaded sets in which the
 platform holds it, although the later check is thin.
 
+**Re-anchoring the level, with a held-out check.** Because the excess enters at one identifiable step,
+it can be corrected there without touching the rest of the chain. The annual satellite level is
+multiplied by a single factor, fitted as the ratio of the station's mean to the field's over the
+station's first {{claim:ceabeta.days}} reporting days, January 2019 to June 2021. The factor is
+{{claim:ceabeta.beta}} (95 per cent interval {{claim:ceabeta.lo}} to {{claim:ceabeta.hi}}, from a
+bootstrap over its {{claim:ceabeta.months}} months). It scales the temporal anchor and the background
+together, so the local fraction and the spatial pattern are unchanged, and it is applied as a
+multiplication because a fixed downward shift of that size drove the cleanest hours below zero. The
+station's later record, October 2022 to 2023, was not used and serves as the check. On those
+{{claim:ceasplit.days}} held-out days the re-anchored field differs from the station by
+{{claim:ceasplit.bias_re}} per cent ({{claim:ceasplit.bias_re.lo}} to {{claim:ceasplit.bias_re.hi}}),
+against {{claim:ceasplit.bias_sat}} per cent ({{claim:ceasplit.bias_sat.lo}} to
+{{claim:ceasplit.bias_sat.hi}}) for the field at the satellite level, and its daily error is
+{{claim:ceasplit.rmse_change}} per cent different ({{claim:ceasplit.rmse_change.lo}} to
+{{claim:ceasplit.rmse_change.hi}}). By year the re-anchored field reads
+{{claim:cea.del.2022.bias_pct}} per cent in the short 2022 window and {{claim:cea.del.2023.bias_pct}}
+per cent in 2023. The held-out record covers only {{claim:ceasplit.months}} months, so the check
+points in the right direction without excluding the satellite level. The delivered field is the
+re-anchored one ({{tbl:T3_cea}} shows both).
+
 **After 2023.** The software extends the field to 2024 to 2026 without a satellite surface for
 those years ({{ref:a-scope}}); the station allows that extension its only check. On the {{claim:ceaext.days}} days the station reported, mostly in
-the high season, the extension's mean differs from the station's by {{claim:ceaext.all.bias_pct}} per cent, reading low,
+the high season, the extension, which inherits the re-anchored level, differs from the station's mean by
+{{claim:ceaext.all.bias_pct}} per cent, reading low,
 with a daily correlation of {{claim:ceaext.all.r}} and {{claim:ceaext.monthly_r}} for monthly means;
 within the month the correlation is {{claim:ceaext.anomaly_daily_r}}. The station's own calendar
 climatology reaches {{claim:ceaext.bench.r}} over the same days, so the extension's day-to-day skill
@@ -61,10 +83,11 @@ there is no better than the season. The station's hourly cycle over these years 
 as before, with a morning peak {{claim:ceaext.hourly.station.peak07_over_midday}} times midday and
 nights at {{claim:ceaext.hourly.station.night_over_midday}} of it; the extension exaggerates the
 morning peak ({{claim:ceaext.hourly.production.peak07_over_midday}}) and keeps its nights high
-({{claim:ceaext.hourly.production.night_over_midday}}). The change of sign, from a field that reads high in the
-anchored years to one that reads low after them, shows that the level is set differently in the two
-periods and in neither by anything measured at Kandy. The extension is not otherwise used in this
-thesis.
+({{claim:ceaext.hourly.production.night_over_midday}}). The station reads much higher in these years than before 2023, while the
+model's level does not rise, and the re-anchoring makes the gap larger. Whether the rise is real or
+a change in the station's record cannot be settled from the platform: the ratio to the Hantana
+sensor is stable, but on only {{claim:ceaatt.ratio.hantana.2024_2026.n}} days. The extension is not
+otherwise used in this thesis, and the re-anchoring is not supported beyond 2023.
 
 **The daily cycle.** The station's hourly record, {{claim:cea.hourly.hours}} hours, is the first
 reference against which the shape of the daily cycle can be checked. The platform's timestamps
@@ -93,13 +116,11 @@ shape is inherited from the two low-cost sensors through the amplitude sharpenin
 model's predictors.
 
 **What it changes.** Before this record was available, the external records at Kandy bracketed the
-field, one above and three below, and the level was reported as open. A regulatory instrument now
-sits below the field by about a quarter in most years, in the same direction as the calibrated
-low-cost records and the one-sided interval misses at the two anchor sensors
-({{ref:s-interval-calibration}}). The research organisation's record, of undocumented instrument, is
-the only one above it. The weight of evidence is now that the delivered level is too high at the
-city centre. The size of the excess is uncertain, because the station's method and siting are not
-documented and because a point and a one-kilometre cell need not agree. The field has not been
-recalibrated to this record: doing so would make the record an input, and it is the only regulatory
-check available. The authority's conditions for academic use of its data are acknowledged in
-{{ref:s-data-requested-but-obtained}}.
+field and the level was reported as open. The regulatory record showed the satellite level about a
+quarter too high at the city centre, located the excess in the satellite surface rather than in the
+low-cost calibration, and allowed it to be corrected with a check on years not used for the fit. The
+delivered level is therefore set by one regulatory station through a single factor, and its
+uncertainty is that factor's interval, roughly a tenth either way, together with whatever the
+station's undocumented method and siting contribute. The cost is independence: the station is now an
+input for 2019 to mid-2021, and only its later record remains a check. The authority's conditions for
+academic use of its data are acknowledged in {{ref:s-data-requested-but-obtained}}.

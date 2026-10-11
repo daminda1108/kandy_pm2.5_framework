@@ -34,6 +34,15 @@ over-predicted the ventilated ridge by about a factor of two; {{ref:s-comparing-
 explains why a point on the valley floor is not an estimate of the area mean. Years after the last
 published surface use the last surface as their level, and are labelled as an extension.
 
+**A correction of that level to the regulatory station.** The satellite level was found to read
+about a quarter above the regulatory monitoring station in the city centre, while the corrected
+sensor record agreed with the station ({{ref:s-cea-reference}}). The satellite level is therefore
+multiplied by a single factor of {{claim:ceabeta.beta}}, fitted as the ratio of the station's mean to
+the field's at the station's cell over January 2019 to June 2021 and held fixed for every year. The
+factor scales the whole series after the shift, so the shape is kept and no hour is pushed below
+zero, and it scales the background by the same amount ({{ref:s-regional-background}}), so the local
+fraction is unchanged. The station's record from October 2022 is not used and serves as the check.
+
 **Amplitude correction.** A model of this kind regresses towards the mean, and the learned
 series reproduces the shape of the observed daily and seasonal cycles while damping their
 amplitude. Multiplicative factors for each hour of the day and each month map the model's

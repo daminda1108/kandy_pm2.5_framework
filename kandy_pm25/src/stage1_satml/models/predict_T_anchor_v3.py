@@ -163,7 +163,12 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
     # Additive shift preserves the model's diurnal/seasonal µg/m³ amplitude.
     L, linfo = level_for_year(year)
     raw_mean = float(np.nanmean(q50))
-    shift = L - raw_mean
+    # The satellite level is reached by the additive shift (as before); a CEA-fitted level factor beta (F.132) is then
+    # applied MULTIPLICATIVELY. beta is a ratio of means, and an additive downward shift of ~20 % of the level drove up to
+    # 4.5 % of hours negative (2022), whereas scaling keeps the shape and adds no negative hours.
+    beta = float(linfo["beta"])
+    L_sat = L / beta
+    shift = L_sat - raw_mean
     print(f"VanD level re-anchor: target L({year})={L:.2f} "
           f"(proxy_year={linfo['proxy_year']}, proxied={linfo['proxied']}, "
           f"beta={linfo['beta']:.4f}); raw mean(q50)={raw_mean:.2f} "
@@ -171,9 +176,9 @@ def build_T(year: int = 2024, sensor_id: int = 12451):
 
     out = pd.DataFrame({
         "datetime_utc": g["datetime_utc"].values,
-        "T_q05": q05_conf + shift,
-        "T_q50": q50 + shift,
-        "T_q95": q95_conf + shift,
+        "T_q05": (q05_conf + shift) * beta,
+        "T_q50": (q50 + shift) * beta,
+        "T_q95": (q95_conf + shift) * beta,
         "T_q05_preanchor": q05_conf,
         "T_q50_preanchor": q50,
         "T_q95_preanchor": q95_conf,

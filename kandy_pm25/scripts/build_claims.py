@@ -615,7 +615,7 @@ def kandy_field(c: Claims) -> None:
         m = float(pd.read_parquet(p, columns=["pm25_q50"]).pm25_q50.mean())
         means[y] = m
         if y in v.index:
-            drifts.append(100.0 * (m - float(v.loc[y, "basin_mean"])) / float(v.loc[y, "basin_mean"]))
+            drifts.append(100.0 * (m - float(v.loc[y, "L_corrected"])) / float(v.loc[y, "L_corrected"]))   # the level T(t) is anchored to (beta * VanD)
     if not means:
         return
     c.add("kandy.mean_min", round(min(means.values()), 1), stat="min over anchored years",
@@ -2153,9 +2153,13 @@ def cea_reference(c: Claims) -> None:
         b = S["monthly_climatology_benchmark"]
         c.add("cea.bench.r", round(b["r"], 2), stat="daily r of the station's own monthly climatology", n=b["n"],
               source=f.name, ledger="F.130")
-        for arm, tag in (("delivered", "del"), ("dispersed_previous", "disp")):
+        for arm, tag in (("delivered", "del"), ("satellite_level", "sat"), ("dispersed_previous", "disp")):
+            if arm not in S:
+                continue
             o = S[arm]
-            for scope in ("all", "sensors_reported", "sensors_absent"):
+            for scope in ("all", "sensors_reported", "sensors_absent", "calibration_2019_2021H1", "held_out_2022_2023"):
+                if scope not in o:
+                    continue
                 v = o[scope]
                 for k, nd in (("r", 2), ("rmse", 1), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1), ("n", None)):
                     c.add(f"cea.{tag}.{scope}.{k}", (int(round(v[k])) if nd == 0 else round(v[k], nd)) if nd is not None else v[k], stat=f"daily {k}",
@@ -2180,6 +2184,37 @@ def cea_reference(c: Claims) -> None:
             for arm in ("production", "hourly_rh"):
                 c.add(f"cea.hourly.{arm}.shape_r", round(H[arm]["shape_r"], 2), stat="diurnal-shape r vs station",
                       n=24, source=f.name, ledger="F.130")
+    f = REPO / "data" / "processed" / "stage1_v3" / "cea_level_beta.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("ceabeta.beta", round(S["beta"], 2), stat="level factor fitted to the CEA station, 2019-01..2021-06",
+              n=S["days"], source=f.name, ledger="F.132")
+        c.add("ceabeta.lo", round(S["ci95"][0], 2), stat="95% month-block bootstrap, lower", n=S["days"], source=f.name, ledger="F.132")
+        c.add("ceabeta.hi", round(S["ci95"][1], 2), stat="95% month-block bootstrap, upper", n=S["days"], source=f.name, ledger="F.132")
+        c.add("ceabeta.days", S["days"], stat="calibration days", n=S["days"], source=f.name, ledger="F.132")
+        c.add("ceabeta.months", S["months"], stat="calibration months", n=S["days"], source=f.name, ledger="F.132")
+    f = DEC / "kandy_cea_split_score.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        n = S["held_out_days"]
+        c.add("ceasplit.days", n, stat="held-out days 2022-10..2023", n=n, source=f.name, ledger="F.132")
+        c.add("ceasplit.months", S["held_out_months"], stat="held-out months", n=n, source=f.name, ledger="F.132")
+        for k, tag in (("bias_reanchored", "bias_re"), ("bias_satellite", "bias_sat"), ("rmse_change_pct", "rmse_change")):
+            v = S[k]
+            for i, sfx in ((0, ""), (1, ".lo"), (2, ".hi")):
+                c.add(f"ceasplit.{tag}{sfx}", int(round(v[i])), stat=f"{k} (point, 95% month-block bootstrap)",
+                      n=n, source=f.name, ledger="F.132")
+        if "level_range" in S:
+            L = S["level_range"]
+            c.add("ceabeta.level_lo", round(L["min_lo"], 1), stat="lowest annual basin mean at the lower end of beta's interval",
+                  n=5, source=f.name, ledger="F.132")
+            c.add("ceabeta.level_hi", round(L["max_hi"], 1), stat="highest annual basin mean at the upper end of beta's interval",
+                  n=5, source=f.name, ledger="F.132")
+            c.add("ceabeta.who_lo", round(L["who_multiple_lo"], 1), stat="lowest annual mean, lower end, in multiples of WHO 5",
+                  n=5, source=f.name, ledger="F.132")
+        e = S["extension_2024_2026"]
+        c.add("ceasplit.ext_bias", int(round(e["bias_pct"])), stat="re-anchored extension vs station, 2024-2026 (%)",
+              n=e["days"], source=f.name, ledger="F.132")
     f = DEC / "kandy_cea_attribution.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))

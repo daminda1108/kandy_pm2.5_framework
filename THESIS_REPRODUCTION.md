@@ -61,6 +61,7 @@ The ones behind the main results:
 | leave-one-sensor-out; level range | `scripts/kandy_loso_test.py`, `scripts/kandy_level_range.py` |
 | CEA regulatory station (public AirShare platform; hourly stamps are UTC) and its comparison | `scripts/pull_cea_kandy_aqms.py --daily --hourly`, `scripts/kandy_cea_reference_check.py` |
 | Attanayake low-cost site, model value | `scripts/kandy_attanayake_pixel.py` |
+| level factor fitted to CEA 2019 → mid-2021, held-out score | `scripts/kandy_cea_level_calibration.py` (fit from a β=1 field), then `--score` after the rebuild |
 | where the CEA level excess enters; 2024–2026 extension check | `scripts/kandy_cea_attribution.py`, `scripts/kandy_cea_reference_check.py --extension` |
 | mean conservation of the delivered field | `scripts/tests/test_conservation.py` |
 | dispersion against simpler surfaces | `scripts/r2_score_atransport.py` (registered), `scripts/r2b_dispersion_benchmark.py` |
