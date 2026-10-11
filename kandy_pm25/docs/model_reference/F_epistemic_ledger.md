@@ -6635,3 +6635,15 @@ marine background floor is a fixed µg/m³ value. `scripts/tests/test_local_frac
 disagree. Same review: abstract/conclusions report the 2022 (−22 %) and 2023 (+9 %) held-out biases beside the pooled
 −1 %, the RMSE gain as not established, the CEA correction as provisional and conditional on the site-to-cell relation;
 title → "evaluation under sparse local monitoring"; WHO multiple 2.7–3.4 (was "three or more"); tag `thesis-a-2026-10-11-r9`.
+
+## F.134 — 🟡 the local fraction measured two ways: a bracket of ~0.36–0.53 at the city centre; model at the top (2026-10-11)
+
+Spec committed before scoring (`docs/local_fraction_study_spec_2026-10-11.md`, `f6a8e3d`); results
+`docs/local_fraction_study_results_2026-10-11.md`. New data: AirShare serves IQAir sensors at 11 sites (history from late
+2024) and NBRO sensors at 26 (no history); Battaramulla IQAir vs reference AAQMS r 0.954 over 471 days. **E1** urban
+increment (Kandy AAQMS − calibrated regional IQAir towns ≤150 km, 230 days): median 0.20 [0.05, 0.32], daily-min 0.36
+[0.25, 0.46] — a lower bound (references are towns). **E2** CO-tracer intercept at Kandy 2019–2023: 0.53 [0.48, 0.59]
+(0.47–0.53 across tracer/percentile). **E3** 2020 curfew, weather-adjusted 0.40 [0.29, 0.50] — context only. **E4** PMF
+identified local primary ≈ 0.29. Model on matched data: station cell 0.49–0.52, basin 0.479–0.489. Pre-specified rule:
+model classed **too high vs E1**; E2 agrees with the model. Statement: local share at the city-centre station ≈ 0.36–0.53
+by measurement; the model sits at the upper end. Not identifiable exactly without a rural regional reference monitor.
