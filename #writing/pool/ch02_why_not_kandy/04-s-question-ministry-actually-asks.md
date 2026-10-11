@@ -1,4 +1,4 @@
-## Monitoring priorities for a city without a network {#s-question-ministry-actually-asks}
+## Monitoring priorities under sparse local monitoring {#s-question-ministry-actually-asks}
 
 Much of the modelling literature asks which model is most accurate. An environmental authority in
 a city such as Kandy faces a different question, and it is the question that motivates this

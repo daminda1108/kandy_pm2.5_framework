@@ -6647,3 +6647,10 @@ increment (Kandy AAQMS − calibrated regional IQAir towns ≤150 km, 230 days):
 identified local primary ≈ 0.29. Model on matched data: station cell 0.49–0.52, basin 0.479–0.489. Pre-specified rule:
 model classed **too high vs E1**; E2 agrees with the model. Statement: local share at the city-centre station ≈ 0.36–0.53
 by measurement; the model sits at the upper end. Not identifiable exactly without a rural regional reference monitor.
+
+**F.134 addendum (seventh review, 2026-10-11).** The two routes are not an identified interval: 0.36 is a lower-bound
+estimate, 0.53 a separate estimate with two-sided biases. E2 shares the CEA PM2.5 record with the level calibration
+(2019 → mid-2021); restricted to the held-out record (2022-10 on, 9 months, added after the spec) it gives
+**0.505 [0.43, 0.58]** (CO) and 0.495 (NO2), model 0.51 on the same hours. Also found: Figure 3.1(c) drew the
+partition file as it stood before F.133's regeneration (bars at the satellite level); every thesis figure was then
+regenerated from its builder (8 changed, incl. F11 coverage 72.4 → 77.3 % and the contrast-window figure).

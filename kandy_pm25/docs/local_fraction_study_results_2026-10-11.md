@@ -61,3 +61,9 @@ upwind of Kandy), which no public network provides.
 - Kandy's AAQMS daily values were used as served; for the live feed the platform's daily aggregation is assumed to use
   local days.
 - IQAir calibration from one co-located site (Colombo), applied island-wide.
+
+## Addendum after review (2026-10-11)
+
+- The two routes are a lower-bound estimate (0.36) and a separate two-sided estimate (0.53), not an identified interval.
+- E2 on the CEA record not used to fit the level (2022-10 onward, 9 months, 5,358 hours; added after the spec):
+  **0.505 [0.43, 0.58]** with CO, 0.495 [0.38, 0.61] with NO2; model at the cell 0.51 on the same hours.

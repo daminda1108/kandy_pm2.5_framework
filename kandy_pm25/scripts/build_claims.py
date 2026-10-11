@@ -2278,7 +2278,9 @@ def cea_reference(c: Claims) -> None:
     f = DEC / "local_fraction_e2.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))
-        for k in ("co_p5", "co_p10", "no2_p5", "no2_p10"):
+        for k in ("co_p5", "co_p10", "no2_p5", "no2_p10", "co_p5_heldout", "no2_p5_heldout"):
+            if k not in S:
+                continue
             v = S[k]
             c.add(f"lfs.e2.{k}.f", round(v["f"], 2), stat=f"tracer-intercept local share ({k})", n=v["hours"], source=f.name, ledger="F.134")
             if "ci95_exploratory" in v:
@@ -2286,6 +2288,12 @@ def cea_reference(c: Claims) -> None:
                 c.add(f"lfs.e2.{k}.hi", round(v["ci95_exploratory"][1], 2), stat="95% month bootstrap, upper", n=v["hours"], source=f.name, ledger="F.134")
         c.add("lfs.e2.months", S["co_p5"]["months"], stat="months used", n=S["co_p5"]["hours"], source=f.name, ledger="F.134")
         c.add("lfs.e2.hours", S["co_p5"]["hours"], stat="hours used", n=S["co_p5"]["hours"], source=f.name, ledger="F.134")
+        if "co_p5_heldout" in S:
+            c.add("lfs.e2.heldout.months", S["co_p5_heldout"]["months"], stat="held-out months (2022-10 on)",
+                  n=S["co_p5_heldout"]["hours"], source=f.name, ledger="F.134")
+            c.add("lfs.model.e2_heldout_cell", round(S["model_same_hours_heldout"]["f_model_cell"], 2),
+                  stat="model f at the station cell, held-out tracer hours", n=S["model_same_hours_heldout"]["hours"],
+                  source=f.name, ledger="F.134")
         m = S["model_same_hours"]
         c.add("lfs.model.e2_cell", round(m["f_model_cell"], 2), stat="model f at the station cell, E2 hours", n=m["hours"], source=f.name, ledger="F.134")
         c.add("lfs.model.e2_basin", round(m["f_model_basin"], 2), stat="model basin f, E2 hours", n=m["hours"], source=f.name, ledger="F.134")

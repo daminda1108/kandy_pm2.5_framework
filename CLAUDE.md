@@ -100,6 +100,10 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **Seventh review answered (tag r11):** Fig 3.1(c) was drawn from the pre-F.133 partition file → ALL thesis figures
+  regenerated from builders (8 changed). f wording: 0.36 = lower-bound estimate, 0.53 = separate two-sided estimate,
+  not a bracket; E2 held-out (2022-10 on) 0.505. App E gas wording, Table 2.1 + CEA/regional rows, §1.2.4 heading,
+  abstract "+9 per cent", verify report carries sha256 of claims.json + assembled thesis. Body 100 pp; abstract 350.
 - 🟢 **F.134: f measured at the CEA station, two routes (spec committed first):** urban excess over the cleanest
   regional IQAir town 0.36 [0.25, 0.46] (lower bound; median-town 0.20), CO-tracer intercept 0.53 [0.48, 0.59];
   model at the station cell 0.51. Thesis §3.2.4 + Table `T3_local_fraction`; abstract/conclusions/discussion/summary

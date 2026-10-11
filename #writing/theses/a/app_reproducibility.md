@@ -49,7 +49,7 @@ work. The station's daily and hourly PM2.5 means are, however, served by the aut
 platform, and those public values are used in {{ref:s-cea-reference}} with the authority cited as
 their source. The authority's conditions for academic use (citation, notification of any processing
 of the data, and provision of the final outputs) are to be met through the agreement once it is
-signed; the gases and meteorology have not been used. The regional stations of the national research organisation supply the external check
+signed. What this thesis uses are the platform's public values: the station's PM2.5, carbon monoxide and nitrogen dioxide means, and the PM2.5 of the regional sensors it serves; the station's meteorology has not been used, and the underlying record requested under the agreement, which may differ from the public values, has not been received. The regional stations of the national research organisation supply the external check
 of {{ref:s-checks-kandy-carry-weight}} through a published paper; a direct request would provide a
 genuine regional background series. The university's own sensor network was identified late and not
 pursued. The reference monitor that anchored earlier published Kandy records is no longer operating.

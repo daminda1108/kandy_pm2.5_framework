@@ -13,6 +13,8 @@ Table: Data streams, their provenance, and the limit that matters
 | Night lights | satellite radiance [@Elvidge2017] | 500 m | conflates commercial activity with residential density |
 | Population | modelled settlement layer [@Tatem2017] | 100 m | a model, not a census, at this resolution |
 | Local sensors | two low-cost units at Kandy | hourly, 2018 to 2026 | both on the valley floor; carry their own calibration problem |
+| Regulatory station | the Kandy automated monitor, public platform values [@CEA2026AirShare] | hourly and daily, 2019 to 2026 | one point; method and siting undocumented; its 2019 to mid-2021 record sets the level |
+| Regional sensors | low-cost units served on the same platform, calibrated against a co-located reference monitor | daily, late 2024 to 2026 | all in towns, so they overstate the regional background |
 | Borrowed panel | two open monitoring networks | {{claim:frame.cities}} cities | no Sri Lankan city qualifies for it |
 
 Nothing in this table was collected for this project. Every stream is either openly published or was obtained on request, which is a deliberate constraint: a method that requires bespoke measurement cannot be applied to the cities that most need it.

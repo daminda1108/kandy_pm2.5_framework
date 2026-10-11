@@ -318,6 +318,12 @@ def t4_1_data():
              "a model, not a census, at this resolution"],
             ["Local sensors", "two low-cost units at Kandy", "hourly, 2018 to 2026",
              "both on the valley floor; carry their own calibration problem"],
+            ["Regulatory station", "the Kandy automated monitor, public platform values [@CEA2026AirShare]",
+             "hourly and daily, 2019 to 2026",
+             "one point; method and siting undocumented; its 2019 to mid-2021 record sets the level"],
+            ["Regional sensors", "low-cost units served on the same platform, calibrated against a co-located "
+             "reference monitor", "daily, late 2024 to 2026",
+             "all in towns, so they overstate the regional background"],
             ["Borrowed panel", "two open monitoring networks",
              f"{tok('frame.cities')} cities", "no Sri Lankan city qualifies for it"],
         ],
@@ -561,7 +567,8 @@ def t4_ledger():
             f"specification-dependent: {tok('partition.f')} at baseline, {tok('v2.f.cap_min')} to "
             f"{tok('v2.f.cap_max')} across cap choices, {tok('field.f_form_roll48')} with a 48-hour window",
             "a property of the decomposition, not a source apportionment; measured at the city centre "
-            f"between about {tok('lfs.e1min.f')} and {tok('lfs.e2.co_p5.f')}, with the model at the upper end"],
+            f"urban-increment lower bound {tok('lfs.e1min.f')}, tracer estimate {tok('lfs.e2.co_p5.f')} (not an upper bound); "
+            "model consistent with the latter, may be high"],
            ["Value of daily observations",
             f"supported across the panel: one station read daily {tok('v2.review.k.day1.median')} per cent, "
             f"two used only to calibrate {tok('v2.review.k.cal2.median')} per cent (post hoc re-analysis)",
@@ -606,7 +613,7 @@ def t3_validation_summary():
             f"{tok('cea.hourly.production.shape_r')}, nights too high",
             "one station, also used to fit the level; method and siting undocumented"],
            ["Local share at Kandy", "regulatory station against regional towns; combustion-tracer intercept",
-            f"{tok('lfs.e1min.f')} (lower bound) to {tok('lfs.e2.co_p5.f')}; model at the station's cell "
+            f"lower bound {tok('lfs.e1min.f')}; tracer estimate {tok('lfs.e2.co_p5.f')}; model at the station's cell "
             f"{tok('lfs.model.e2_cell')}",
             "no rural reference monitor; exploratory, specified before scoring"],
            ["Held-out sensor at Kandy", "train on one sensor, score the other",
@@ -692,6 +699,9 @@ def t3_local_fraction():
             "share above the level at background carbon monoxide", ci("lfs.e2.co_p5"), tok("lfs.model.e2_cell")],
            ["The same with nitrogen dioxide",
             "as above, a second tracer", ci("lfs.e2.no2_p5"), tok("lfs.model.e2_cell")],
+           ["Carbon monoxide tracer, held-out record only (October 2022 on)",
+            "as above, on observations not used to fit the level", ci("lfs.e2.co_p5_heldout"),
+            tok("lfs.model.e2_heldout_cell")],
            ["The 2020 curfew, adjusted for weather",
             "local and regional response together; not a bound", f"{tok('lfs.e3.D')} [{tok('lfs.e3.lo')}, {tok('lfs.e3.hi')}]", "--"],
            ["Source apportionment at Katugastota [@Seneviratne2017]",

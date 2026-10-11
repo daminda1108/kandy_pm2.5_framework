@@ -55,8 +55,15 @@ def e2(h, tracer, pct):
         rows.append(dict(month=str(per), n=len(g), slope=slope, intercept=icpt, tracer_bg=tb, pm_bg=pmbg,
                          pm_mean=float(g.pm2_5.mean()), f_month=1 - pmbg / float(g.pm2_5.mean())))
         bg_sum += pmbg * len(g); pm_sum += float(g.pm2_5.sum())
+    # month bootstrap (added after the specification, to match E1's interval; 4000 resamples, fixed seed)
+    ci = None
+    if rows:
+        rng = np.random.default_rng(20261011)
+        bg = np.array([r["pm_bg"] * r["n"] for r in rows]); pm = np.array([r["pm_mean"] * r["n"] for r in rows])
+        bs = [1 - bg[i].sum() / pm[i].sum() for i in (rng.integers(0, len(rows), len(rows)) for _ in range(4000))]
+        ci = [float(x) for x in np.percentile(bs, [2.5, 97.5])]
     return dict(tracer=tracer, pct=pct, months=len(rows), hours=int(sum(r["n"] for r in rows)),
-                f=1 - bg_sum / pm_sum if pm_sum else None, per_month=rows)
+                f=1 - bg_sum / pm_sum if pm_sum else None, ci95_exploratory=ci, per_month=rows)
 
 
 def main():
@@ -66,6 +73,11 @@ def main():
     for tracer in ("co", "no2"):
         for pct in (5, 10):
             out[f"{tracer}_p{pct}"] = e2(h, tracer, pct)
+    # Addition after review (2026-10-11, not in the specification): the same estimator on the CEA record NOT used to fit
+    # the level factor (2022-10 onwards), so the tracer route shares no observations with the model's calibration.
+    hh_out = h[h.t_local >= "2022-10-01"]
+    for tracer in ("co", "no2"):
+        out[f"{tracer}_p5_heldout"] = e2(hh_out, tracer, 5)
     # model on the hours used by the primary arm
     M = model_hourly()
     used = set(r["month"] for r in out["co_p5"]["per_month"])
@@ -80,6 +92,14 @@ def main():
     for k in ("co_p5", "co_p10", "no2_p5", "no2_p10"):
         print(k, out[k]["months"], "months", round(out[k]["f"], 3))
     print("model same hours:", {k: round(v, 3) for k, v in out["model_same_hours"].items()})
+    for k in ("co_p5_heldout", "no2_p5_heldout"):
+        print(k, out[k]["months"], "months", out[k]["hours"], "hours", out[k]["f"] and round(out[k]["f"], 3))
+    used_h = set(r["month"] for r in out["co_p5_heldout"]["per_month"])
+    hx = h.dropna(subset=["pm2_5", "co"]); hx = hx[hx.t_local.dt.to_period("M").astype(str).isin(used_h)]
+    Jx = M.reindex(hx.t_local.dt.floor("h")).dropna()
+    out["model_same_hours_heldout"] = dict(hours=int(len(Jx)), f_model_cell=float(1 - Jx.B.mean() / Jx.cell.mean()))
+    print("model held-out hours:", out["model_same_hours_heldout"])
+    tmp = p.with_suffix(".tmp.json"); tmp.write_text(json.dumps(out, indent=1), encoding="utf-8"); os.replace(tmp, p)
 
 
 if __name__ == "__main__":
