@@ -8,9 +8,12 @@ from the local variability of the field itself. That is elegant, and it is circu
 being asked how wrong its own unresolved spatial structure is, and a model that understates
 sub-grid variability would understate this term in the same proportion.
 
-The quantity can be identified without the model. Wherever two or more instruments fall inside a
-single model cell, the spread between them measures the point-versus-area error directly, with no
-field consulted and no pattern assumed. The panel contains {{claim:srep.panel_cells}} such cells
+Information about it can be obtained without the model. Wherever two or more instruments fall
+inside a single model cell, the spread between them is an empirical estimate of within-cell
+inter-monitor dispersion, computed with no field consulted and no pattern assumed. It is
+potentially informative about the representativeness error, but it is not a direct measurement of
+it: the spread between monitors also contains calibration offsets, differences in siting and
+exposure, and differences in the periods their records cover. The panel contains {{claim:srep.panel_cells}} such cells
 holding {{claim:srep.panel_stations}} instruments across {{claim:srep.panel_cities}} cities, and
 the Kandy transect of {{ref:ch-model-stops}} contributes {{claim:srep.kandy_cells}} more.
 
@@ -20,11 +23,11 @@ the Kandy transect of {{ref:ch-model-stops}} contributes {{claim:srep.kandy_cell
 | Kandy transect sites sharing a cell | {{claim:srep.kandy_cv}} | {{claim:srep.ratio_kandy}} |
 | the model estimator at the same places | {{claim:srep.model_cv}} | 1.0 |
 
-On the panel the estimator is too small by a factor of {{claim:srep.ratio_panel}}. That figure
+On the panel the inter-monitor dispersion exceeds the estimator by a factor of {{claim:srep.ratio_panel}}. That figure
 compares the long-term means of stations that share a cell, so it assumes those means are
 comparable: stations whose records cover different periods, or that differ in siting or instrument,
-contribute spread that is not within-cell variation. It is therefore evidence that the implemented
-term is too small, not a precise measurement of how much.
+contribute spread that is not within-cell variation. It is therefore an approximate diagnostic suggesting
+that the implemented term is too small, not a correction factor for the intervals.
 
 The Kandy figure, a factor of {{claim:srep.ratio_kandy}}, is weaker evidence and is not a lower
 bound. Three of its seven sites were censored at an upper sampling limit, which shrinks the observed
@@ -37,8 +40,8 @@ Two things follow, and they are different. The delivered interval is unaffected,
 comes from the temporal anchor's conformal quantiles, not from this term. What is affected is the
 observation model, which the specification requires to exist before any regulatory record is
 ingested. Had this term been used as written, the first point-level interval built against a real
-Kandy measurement would have been too narrow, by a factor of about two to three on the panel's
-evidence, and the resulting
+Kandy measurement would probably have been too narrow, by an amount the panel's diagnostic suggests
+but does not measure, and the resulting
 apparent over-confidence would have looked like an error in the field rather than an error in the
 comparison. The term must be taken from co-located, time-aligned instruments. The delivered
 interval describes an areal quantity, and it understates point-level uncertainty.

@@ -162,7 +162,7 @@ xichang_paper_figures.py --city slug         → results/figures/{slug}_paper_fi
 
 **Kandy production** (the deployed model): `predict_T_anchor_v3 → sharpen_T_diurnal →
 build_decomp_map → build_overlay_predictions (4factor) → build_spatial_uq →
-build_additive_field_v2 → build_additive_field_v3 → exposure_weighting + health_burden →
+build_additive_field_v2 → build_additive_field_v3 → exposure_weighting (+ health_burden, whose estimate is withdrawn from the thesis) →
 paper_figures.py → webapp_export.py (+ QA gate)` (regen order = gotcha #53).
 ⚠ **v2 and v3 must be rebuilt together** — the exporter reads v3 but derives its anchors from
 whichever field it is given, so a partial rebuild desyncs them and fails the QA gate

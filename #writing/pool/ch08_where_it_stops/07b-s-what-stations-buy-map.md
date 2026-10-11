@@ -5,7 +5,7 @@ acquires monitors asks a different question: how well can it rank its own neighb
 cleanest to dirtiest once it has some stations, and how does that skill grow as stations are
 added? That question was registered before it was scored [OSF rqn4y], with three dated
 amendments [OSF 26hp8; OSF 4whsc; OSF 4qs9c], and it is the only spatial test in this thesis that
-prices observations rather than covariates.
+measures the value of observations rather than covariates.
 
 **Design.** The test uses the densest monitoring networks in the public archives. In each city a
 fixed set of held-out sites, at least ten or a third of the network, whichever is larger, is set

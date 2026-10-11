@@ -34,9 +34,10 @@ a property of the decomposition, not a measurement of where material was emitted
 the increment is defined by spatial structure and timing, so it includes particulate mass formed
 inside the basin from any precursors and excludes regionally formed mass whatever its origin.
 
-Across that range the fraction implies a larger scope for local action than the value of about
-one quarter assumed in earlier versions of this work. It does not imply that eliminating every local
-source would remove about half the concentration, because the model contains no chemistry and
+That fraction is not directly comparable with the value of about one quarter taken from source
+apportionment in earlier versions of this work, and it does not show a larger scope for local
+action. It does not imply that eliminating every local source would remove about half the
+concentration, because the model contains no chemistry and
 part of the increment is formed in the atmosphere rather than emitted. The decomposition is a
 constrained split, not a source apportionment, and {{ref:s-partition-constraint-rather-than}}
 states in full what it does and does not support.

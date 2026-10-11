@@ -1,0 +1,58 @@
+src,cluster,country,lat,lon,n_stations,band,win_days,slug,stn_band,cell,rule
+OpenAQ,446.0,Colombia,6.23250686,-75.572616884,20,deep_tropical,2131.0,446,16-30,deep_tropical | 16-30 | OpenAQ,fully enumerated
+OpenAQ,445.0,Colombia,4.654778584545455,-74.10567225555556,18,deep_tropical,3273.0,445,16-30,deep_tropical | 16-30 | OpenAQ,fully enumerated
+OpenAQ,403.0,Côte d'Ivoire,5.353953635377889,-4.000929094343574,22,deep_tropical,2323.0,403,16-30,deep_tropical | 16-30 | OpenAQ,fully enumerated
+OpenAQ,391.0,Democratic Republic of the Congo,-4.362801344611134,15.290632212512424,10,deep_tropical,1500.0,391,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,921.0,Ghana,5.617185685203209,-0.1855500883601556,64,deep_tropical,2277.0,921,>30,deep_tropical | >30 | OpenAQ,fully enumerated
+OpenAQ,1016.0,Indonesia,-6.244311832473367,106.84500194505746,11,deep_tropical,3830.0,1016,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,1733.0,Nigeria,6.56023011422678,3.393769543760988,39,deep_tropical,1323.0,1733,>30,deep_tropical | >30 | OpenAQ,fully enumerated
+OpenAQ,1802.0,Peru,-12.035826534011155,-76.96531694094114,15,deep_tropical,3795.0,1802,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,1816.0,Philippines,14.590772283766537,121.0232962526502,53,deep_tropical,1053.0,1816,>30,deep_tropical | >30 | OpenAQ,fully enumerated
+OpenAQ,2095.0,Senegal,14.727237982779302,-17.377924875815502,14,deep_tropical,1055.0,2095,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,2063.0,Singapore,1.327962870187269,103.8166752995274,10,deep_tropical,3764.0,2063,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,2106.0,Thailand,13.73209974473098,100.58948140579656,194,deep_tropical,3830.0,2106,>30,deep_tropical | >30 | OpenAQ,fully enumerated
+OpenAQ,2146.0,Thailand,14.847931840441284,102.8534243414346,15,deep_tropical,1913.0,2146,10-15,deep_tropical | 10-15 | OpenAQ,fully enumerated
+OpenAQ,930.0,The Gambia,13.35663060526316,-16.69839656842105,16,deep_tropical,1375.0,930,16-30,deep_tropical | 16-30 | OpenAQ,fully enumerated
+OpenAQ,2324.0,Uganda,0.3167298451898865,32.58185685661795,28,deep_tropical,3445.0,2324,16-30,deep_tropical | 16-30 | OpenAQ,fully enumerated
+CNEMC,,China,29.613,106.6234,48,subtropical,,city314,>30,subtropical | >30 | CNEMC,balanced draw
+CNEMC,,China,31.2059,121.467,21,subtropical,,city004,16-30,subtropical | 16-30 | CNEMC,balanced draw
+CNEMC,,China,34.2629,108.9356,17,subtropical,,city283,16-30,subtropical | 16-30 | CNEMC,balanced draw
+CNEMC,,China,30.6556,104.0594,17,subtropical,,city143,16-30,subtropical | 16-30 | CNEMC,balanced draw
+OpenAQ,88.0,Australia,-27.50956269650275,153.018670963716,21,subtropical,3444.0,88,16-30,subtropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,67.0,Australia,-33.853099927882035,151.01226843337454,15,subtropical,3813.0,67,10-15,subtropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,407.0,Chile,-32.86048905550721,-71.41329296056408,19,subtropical,3830.0,407,16-30,subtropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,405.0,Chile,-33.436531538715805,-70.6516575249556,12,subtropical,3830.0,405,10-15,subtropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,1058.0,India,28.608281545163,77.21674299085925,90,subtropical,3830.0,1058,>30,subtropical | >30 | OpenAQ,balanced draw
+OpenAQ,1667.0,Mexico,25.70640309027788,-100.32149270833274,22,subtropical,3792.0,1667,16-30,subtropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,1827.0,Pakistan,24.875843133705946,67.0755592051435,32,subtropical,2621.0,1827,>30,subtropical | >30 | OpenAQ,balanced draw
+OpenAQ,3141.0,South Africa,-26.200465081799475,28.03008114753465,28,subtropical,3815.0,3141,16-30,subtropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,3147.0,South Africa,-29.65221662814748,31.06851288636248,14,subtropical,1913.0,3147,10-15,subtropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,3142.0,South Africa,-26.00769427384616,29.24757604307692,13,subtropical,1047.0,3142,10-15,subtropical | 10-15 | OpenAQ,balanced draw
+CNEMC,,China,39.96685,116.37935,28,temperate,,city044,16-30,temperate | 16-30 | CNEMC,balanced draw
+CNEMC,,China,39.10745,117.24035,22,temperate,,city090,16-30,temperate | 16-30 | CNEMC,balanced draw
+CNEMC,,China,38.03715,114.4994,18,temperate,,city251,16-30,temperate | 16-30 | CNEMC,balanced draw
+CNEMC,,China,36.65385,117.08975,16,temperate,,city203,16-30,temperate | 16-30 | CNEMC,balanced draw
+OpenAQ,406.0,Chile,-36.87276511986562,-73.10327261167973,18,temperate,3830.0,406,16-30,temperate | 16-30 | OpenAQ,balanced draw
+OpenAQ,758.0,France,47.2572512451788,-1.833356155619578,15,temperate,3533.0,758,10-15,temperate | 10-15 | OpenAQ,balanced draw
+OpenAQ,764.0,France,50.47597069395401,3.1461922447567368,14,temperate,3533.0,764,10-15,temperate | 10-15 | OpenAQ,balanced draw
+OpenAQ,1383.0,Japan,38.36166667647058,140.9591993529412,34,temperate,1107.0,1383,>30,temperate | >30 | OpenAQ,balanced draw
+OpenAQ,1504.0,Kazakhstan,43.26905674580799,76.90106150705935,158,temperate,2298.0,1504,>30,temperate | >30 | OpenAQ,balanced draw
+OpenAQ,1653.0,Malta,35.906629115087135,14.441171548733244,10,temperate,3228.0,1653,10-15,temperate | 10-15 | OpenAQ,balanced draw
+OpenAQ,2077.0,Slovakia,48.24356108460888,17.423296823928357,18,temperate,3228.0,2077,16-30,temperate | 16-30 | OpenAQ,balanced draw
+OpenAQ,2038.0,Sweden,59.36567243850802,18.01864788095876,28,temperate,3455.0,2038,16-30,temperate | 16-30 | OpenAQ,balanced draw
+OpenAQ,885.0,United Kingdom,52.22786228264764,0.1458303189089313,13,temperate,3801.0,885,10-15,temperate | 10-15 | OpenAQ,balanced draw
+OpenAQ,2328.0,United States,37.977305565925406,-122.03913973517516,383,temperate,3793.0,2328,>30,temperate | >30 | OpenAQ,balanced draw
+CNEMC,,China,23.1544,113.3505,21,tropical,,city123,16-30,tropical | 16-30 | CNEMC,balanced draw
+CNEMC,,China,22.59195,114.15205,16,tropical,,city216,16-30,tropical | 16-30 | CNEMC,balanced draw
+CNEMC,,China,22.7904,108.3141,11,tropical,,city049,10-15,tropical | 10-15 | CNEMC,balanced draw
+OpenAQ,210.0,Brazil,-22.8973393939394,-43.34960909090909,31,tropical,1206.0,210,>30,tropical | >30 | OpenAQ,balanced draw
+OpenAQ,959.0,Hong Kong,22.34431127080345,114.11912204443276,17,tropical,3126.0,959,16-30,tropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,1078.0,India,19.13096866037736,72.93478595849056,45,tropical,3778.0,1078,>30,tropical | >30 | OpenAQ,balanced draw
+OpenAQ,1063.0,India,17.458273925999997,78.383458271,16,tropical,3830.0,1063,16-30,tropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,1067.0,India,22.57124320947369,88.35434460368421,15,tropical,3830.0,1067,10-15,tropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,1507.0,Lao PDR,17.967450019959998,102.61071648338128,12,tropical,2597.0,1507,10-15,tropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,1665.0,Mexico,19.405717328058145,-99.11135045083331,27,tropical,3790.0,1665,16-30,tropical | 16-30 | OpenAQ,balanced draw
+OpenAQ,1677.0,Mexico,20.63155285763888,-103.35133730555438,13,tropical,2242.0,1677,10-15,tropical | 10-15 | OpenAQ,balanced draw
+OpenAQ,2115.0,Thailand,18.82003872414129,98.96628042031456,35,tropical,1913.0,2115,>30,tropical | >30 | OpenAQ,balanced draw
+OpenAQ,2168.0,Thailand,19.355258249571232,98.44023754497276,32,tropical,1282.0,2168,>30,tropical | >30 | OpenAQ,balanced draw
+OpenAQ,3133.0,Vietnam,21.005992902439026,105.7979392195122,33,tropical,3830.0,3133,>30,tropical | >30 | OpenAQ,balanced draw

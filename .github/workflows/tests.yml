@@ -1,0 +1,33 @@
+name: tests
+
+# Clean-environment check: install the pinned environment and run the test suite.
+# Tests that need derived data which is not redistributed (the ladder frame) are skipped with an
+# explicit reason; everything else must pass. This is not an independent reproduction of the
+# thesis results, which needs the source datasets (see THESIS_REPRODUCTION.md).
+
+on:
+  push:
+    branches: [main]
+    tags: ["thesis-*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: windows-latest          # the lock file was produced on Windows (it pins pywin32)
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.1"
+      - name: Install the pinned environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r kandy_pm25/requirements-lock.txt
+          python -m pip check
+      - name: Run the test suite
+        working-directory: kandy_pm25
+        env:
+          PYTHONUTF8: "1"
+        run: python -m pytest scripts/tests -q -p no:cacheprovider -rs

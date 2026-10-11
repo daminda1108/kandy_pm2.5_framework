@@ -6506,3 +6506,7 @@ NOT a lower bound**: censoring shrinks the spread but different-day PM10 samplin
 factor 2.61 uses long-term station means (not time-aligned). (iii) Humidity scenarios are alternatives, neither validated;
 they do not bound the true cycle. Metric renamed "morning peak / midday". (iv) December 2022 episode = "model-inferred
 regional episode" (uniformity is a property of the uniform background, not independent evidence of origin).
+
+**F.126 correction (2026-10-11).** In R2 and the r2b benchmark the "raw emission surface" S is **VIIRS night-time
+lights** (`calibrate_terrain_solver.load_city`), not the Kandy road-traffic surface; the comparison tests the dispersion
+step, not Kandy's source surface. Thesis §3.3.4 corrected (it had said "road-traffic").

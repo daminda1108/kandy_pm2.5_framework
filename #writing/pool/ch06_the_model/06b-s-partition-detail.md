@@ -72,10 +72,15 @@ who rejects the reasoning against windows longer than a day should read the uppe
 
 ### Interpreting the partition {#s-interpreting-partition}
 
-This replaces an earlier estimate of about a quarter taken from source apportionment, and the
-constraint refutes that value rather than refining it: every choice examined above places the
-fraction well above a quarter. Three statements about the new number have to be kept apart,
-because the strongest reading is not supported.
+Earlier versions of this work used a value of about a quarter taken from source-apportionment
+literature. The two numbers are not directly comparable, because the two approaches classify
+particulate matter differently: source apportionment attributes mass to emitting sources, whereas
+the local increment is defined by spatial structure and timing, includes secondary particles formed
+inside the basin from precursors of any origin, and excludes particles formed regionally. The
+constrained decomposition therefore does not refute the earlier estimate, and it does not show that
+the share of concentration removable by local emission control is larger than that estimate
+implied. Three statements about the new number have to be kept apart, because the strongest reading
+is not supported.
 
 **It is a constrained decomposition, not an observed apportionment.** The constraint rules out
 decompositions that are physically incoherent, given that local sources emit continuously. It
@@ -111,7 +116,7 @@ and {{claim:v2.f.cap_max}} of concentration. It requires every locally formed
 secondary particle to vanish with the local emissions, which is why the withdrawn claim sat at the
 top of a range and not in the middle of one.
 
-That is the honest form of the statement, and it is more useful than either the withdrawn
-version or silence: local action is worth substantially more than the retired quarter implied,
-and its immediate effect is bounded below half. A speciated measurement in the city is the
+That is the most the present evidence supports. The bound is conditional on the decomposition and
+on a composition model, its lower end lies below the earlier quarter and its upper end well above
+it, so it neither confirms nor overturns the earlier estimate of what local action could achieve. A speciated measurement in the city is the
 experiment that would narrow the range, and {{ref:s-measurement-would-settle-most}} lists it.

@@ -8,13 +8,20 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO)); sys.path.insert(0, str(REPO / "scripts"))
 
 from ladder_v2 import run   # noqa: E402
 
+# Needs the full ladder frame (derived from third-party monitoring archives, not redistributed).
+# In a clean clone without it the test is skipped with this reason rather than failing.
+FRAME = REPO / "data/processed/modular/ladder_maiac.csv"
+requires_frame = pytest.mark.skipif(not FRAME.exists(), reason="requires the local ladder frame (not redistributed)")
 
+
+@requires_frame
 def test_v2_at_v1_settings_reproduces_v1():
     S, _, _ = run(stream="maiac", splits=1, bag=1, w_mode="cv", complete=False, geo="sites",
                   nboot=200, prospective=False, cnemc_drivers="met_raw")

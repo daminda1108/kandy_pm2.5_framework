@@ -3,7 +3,8 @@
 
 Extends R2 (r2_score_atransport.py, registered OSF bkpyr): the same ten analogue cities, the same stations,
 the same solver call. Three arms are scored on exactly the same station set per city:
-  S      the raw road-traffic emission surface (undispersed)
+  S      the raw emission surface (undispersed): VIIRS night-time lights over the city, as in R2
+         (calibrate_terrain_solver.load_city), NOT the Kandy road-traffic surface
   C      the delivered surface: S carried through the terrain advection-dispersion solver (A_transport)
   BU     the best single free spatial predictor of the panel tests: ESA WorldCover 2021 built-up fraction
          within 1 km of each station (Earth Engine), which needs no model at all

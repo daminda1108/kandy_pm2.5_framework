@@ -17,10 +17,13 @@ measured it**, which is a failure of placement rather than of dynamic range or o
 
 An independent line agrees from the opposite direction, and it is the most actionable finding in
 {{this:ch-model-stops}}. Three surfaces were scored on exactly the same held-out stations in
-{{claim:r2b.cities}} monitored cities: the raw road-traffic emission surface, the same surface after
-the dispersion solver (the step the delivered field uses), and the simplest free alternative, the
-built-up fraction of land cover within one kilometre of each station, which involves no model. The
-median rank correlations are {{claim:r2b.rho_S}} for the raw surface, {{claim:r2b.rho_C}} after
+{{claim:r2b.cities}} monitored cities: a raw emission surface, the same surface after the
+dispersion solver (the step the delivered field uses), and the simplest free alternative, the
+built-up fraction of land cover within one kilometre of each station, which involves no model. In
+this comparison, as in the registered test it extends, the emission surface is the satellite
+night-time light intensity over each city, used as a proxy for where combustion happens; it is not
+the road-traffic surface used at Kandy, so the comparison tests the dispersion step itself rather
+than Kandy's particular source surface. The median rank correlations are {{claim:r2b.rho_S}} for the raw surface, {{claim:r2b.rho_C}} after
 dispersion and {{claim:r2b.rho_BU}} for the built-up fraction. Dispersion improves on the raw surface
 in only {{claim:r2b.C_minus_S_wins}} of the {{claim:r2b.cities}} cities, and the built-up fraction
 ranks above the dispersed surface in {{claim:r2b.BU_minus_C_wins}} of them. The magnitudes are

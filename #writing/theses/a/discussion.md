@@ -68,9 +68,9 @@ anchored years, from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across the
 boundary and of the statistic used for the daily minimum, and reaches
 {{claim:field.f_form_roll48}} under a 48-hour background window
 ({{ref:s-partition-constraint-rather-than}}). Under every one of these choices the local fraction
-is close to half and well above the quarter previously assumed, which is the policy-relevant
-statement. It does not establish how much of that share is emitted locally rather than formed in
-the air, which is the question a composition measurement would answer
+is close to half. That is not comparable with the quarter taken earlier from source apportionment,
+which classifies mass by emitting source rather than by spatial structure, and it does not establish
+how much of the increment is emitted locally rather than formed in the air, which is the question a composition measurement would answer
 ({{ref:s-measurement-would-settle-most}}).
 
 **What Kandy should measure next.** Each limit above points to the same need, local observation,

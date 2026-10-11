@@ -47,7 +47,7 @@ context that led here.
 | Level transfer (2-sensor anchored) | $-4\%$ to $+30\%$ | ″ |
 | Fine within-city spatial rank is significant above each city's own permutation null in 6 of 9 estimable cities (0.43-0.83), on a corrected estimator that cannot launder temporal skill (F.32-F.34).py` |
 | Kathmandu full-machinery showcase | 0.97 / 0.97 / −0.1% / ρ 0.39 (39 held-out) | `data/processed/decomp_kathmandu/` |
-| Robustness — sensitivity | deaths 421–425 invariant to f∈[0.15,0.35] & ±20% background | `scripts/sensitivity_analysis.py` (S1) |
+| Robustness — sensitivity | (historical; burden figures since withdrawn) deaths 421–425 invariant to f∈[0.15,0.35] & ±20% background | `scripts/sensitivity_analysis.py` (S1) |
 | Robustness — ablation | temporal anchor-driven; additive vs multiplicative +26% level | `scripts/ablation_scorecard.py` (S2) |
 | Independent corroboration | airport visibility r=−0.46 (n=364); literature seasonal cycle | `scripts/independent_visibility.py` (S3) |
 | Sensorless temporal anchor (**DAILY only**) | LOCO 97% beat baseline, seasonal r 0.95 | GeoAQ-Zero Track T-a |
@@ -67,7 +67,7 @@ context that led here.
 | 🔴 **Deliberate siting does NOT beat convenience siting** | 43 dense-network cities, 601 stations, each made into both designs from its own stations: **paired −0.044 [−0.095, +0.118]**, winning 19/43. ⚠ The difference of medians (+0.114) points the OTHER way. ⚠ The fixed-holdout re-check is uninformative on this panel (median held-out = 4, Spearman quantised to 0.1) | `scripts/siting_experiment.py` (F.103) |
 | 🔴 **The tropical inversion depends on the satellite stream** | paired over cities, n=13: raw MAIAC **+33.3 pp [+7.0, +50.1]**, 77% of cities; fused GHAP **+3.6 pp [−14.3, +36.3]**, 54% — **a coin flip**. **F.92 alone did not support the recommendation; quote F.96/MAIAC** | same (F.97) |
 | **Diurnal transfer** | works in the **deep tropics** (+25.8% vs flat, r 0.63, ~1 h phase); pooled 5.5% **worse** than flat | `scripts/diurnal_transfer_test.py` (F.55) |
-| **Kandy product** | basin **21.0** µg/m³, pop-weighted **23.0** (uplift **+9%**); local share **0.483** (⚠ a constrained decomposition, **not** source apportionment; honest range 0.482–0.547); **431 deaths/yr**, response-function-conditional interval **[237–632]**, 300 avoidable. ⚠ The interval carries ONLY the CRF uncertainty | additive_v3 field + `health_burden.py`, regenerated 2026-09-04 |
+| **Kandy product** | basin **21.0** µg/m³ (level unresolved), pop-weighted **23.0** (uplift **+9%**); local fraction **0.483** at baseline (0.433–0.492 across cap choices, 0.547 with a 48-h window; a decomposition property, **not** source apportionment). ⚠ **No burden estimate** (withdrawn 2026-10-10, F.126 addendum: needs age-specific mortality, settled level, propagated uncertainty) | additive_v3 field |
 
 ⚠ **The 25/75 split is a PRIOR and is now REFUTED by five independent lines (2026-08-06, ledger
 F.17–F.22).** A within-day-flat background cannot exceed the day's minimum total, which puts a hard

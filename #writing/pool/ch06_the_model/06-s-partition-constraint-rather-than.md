@@ -2,7 +2,8 @@
 
 The decomposition is only useful to a decision if the split between local and regional is
 credible, and for most of this project's history it was not. The value was taken from source
-apportionment literature and sat near a quarter.
+apportionment literature and sat near a quarter, although, as {{ref:s-interpreting-partition}}
+explains, that figure and the local fraction defined here measure different things.
 
 The argument that replaced it is short. Local sources emit continuously, and rain changes removal
 rather than emission, so at an emitting location some locally generated material is present at

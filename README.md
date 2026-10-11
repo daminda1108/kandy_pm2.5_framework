@@ -2,7 +2,7 @@
 
 Undergraduate thesis project — Daminda Alahakoon, Department of Environmental and Industrial Sciences, University of Peradeniya.
 
-**Last updated: 2026-10-10.** Canonical state is [`CLAUDE.md`](CLAUDE.md); this README mirrors it. Build detail is in [`PROJECT_ARCHITECTURE.md`](PROJECT_ARCHITECTURE.md).
+**Last updated: 2026-10-11.** Canonical state is [`CLAUDE.md`](CLAUDE.md); this README mirrors it. Build detail is in [`PROJECT_ARCHITECTURE.md`](PROJECT_ARCHITECTURE.md).
 
 **Reproducing the thesis:** see [`THESIS_REPRODUCTION.md`](THESIS_REPRODUCTION.md) (environment, command sequence, data manifest) and [`VERIFICATION_thesis_a.md`](VERIFICATION_thesis_a.md) (every cited number, its source and whether it rests on public inputs). The version built for review is tag `thesis-a-2026-10-10-r3` (earlier rounds: `thesis-a-2026-10-10`). The reconstruction's spatial pattern is not validated at neighbourhood scale, its absolute level is unresolved, and its local fraction is a property of the decomposition, not a source apportionment.
 
@@ -98,8 +98,8 @@ evidence ledger `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (F.117�
               ┌──────────────────────────────────────────────────────┐
               │  Additive decomposition  (PRODUCTION spatial product) │
               │  PM(x,y,t) = B(t) + [ T(t) − B(t) ] · P_local(x,y,t)  │
-              │  → Kandy 1 km hourly PM2.5 field + 90% PI + per-pixel │
-              │    σ  →  population-weighted exposure + health burden │
+              │  → Kandy 1 km hourly PM2.5 field + nominal 90% PI     │
+              │    →  population-weighted exposure (no burden estimate)│
               └──────────────────────────────────────────────────────┘
 
    Exploratory predecessor (Stage B): a cross-city ConvCNP residual learner trained on
@@ -174,7 +174,7 @@ For the production decomposition the Stage A anchor is regenerated as a **lag-fr
 
 ## Production Spatial Model — Additive Background + Increment Decomposition
 
-The deployable Kandy spatial product. It replaces the held ConvCNP zero-shot map and is the model carried into the supervisor-facing reporting and the health-burden layer. The concentration at position $(x,y)$ and hour $t$ is written as a regional background plus a locally shaped increment (Lenschow apportionment):
+The deployable Kandy spatial product. It replaces the held ConvCNP zero-shot map and is the model carried into the supervisor-facing reporting. The concentration at position $(x,y)$ and hour $t$ is written as a regional background plus a locally shaped increment (Lenschow apportionment):
 
 ```
 PM(x, y, t) = B(t) + [ T(t) − B(t) ] · P_local(x, y, t)
@@ -186,11 +186,11 @@ PM(x, y, t) = B(t) + [ T(t) − B(t) ] · P_local(x, y, t)
 
 **Level anchor (area-not-floor).** The basin level is set directly to the per-year Van Donkelaar area mean ($\beta \equiv 1$); KOALA 24.5 µg/m³ is a 2019 valley-**floor / populated-core** point, not the basin-area mean, and is no longer used to scale the level. Two independent satellite area products agree below it (VanD ≈ 19.7, GHAP ≈ 17.0 for 2019), and the confinement field reproduces KOALA at the NIFS pixel unforced.
 
-**Results (2019–2023).** Basin annual mean ≈ 21 µg/m³ (per year 19.7 / 19.0 / 17.0 / 18.7 / 20.9; 2021 COVID/fuel-crisis low). Seasonal MAM > DJF > SON ≈ JJA (monsoon washout); diurnal bimodal with morning and evening traffic peaks and a genuine deep-night low. Senarathna 2019 diurnal r = 0.75, monthly r = 0.83 (preserved through the additive re-anchor). Every cell and hour carries a calibrated 90 % prediction interval plus a per-pixel spatial-uncertainty layer.
+**Results (2019–2023).** Basin annual mean ≈ 21 µg/m³ (per year 19.7 / 19.0 / 17.0 / 18.7 / 20.9; 2021 COVID/fuel-crisis low). Seasonal MAM > DJF > SON ≈ JJA (monsoon washout); diurnal bimodal with morning and evening peaks either side of a midday dip; the depth of the cycle, and whether night falls below midday, depend on the humidity correction of the sensor record and are unresolved. Senarathna 2019 diurnal r = 0.75, monthly r = 0.83 (preserved through the additive re-anchor). Every cell and hour carries a nominal 90 % prediction interval; it under-covers (72 % at the two Kandy sensors, misses one-sided) and omits several uncertainty sources, so it is indicative, not calibrated.
 
-**Independent corroboration (not validation).** GHAP (Wei et al., 1 km, methodologically distinct from Van Donkelaar): seasonal r = +0.909; basin level within ≈ 6 %; fine-spatial r = +0.13 (both products smooth at that scale); inter-annual ≈ 0 (trend low-confidence). TROPOMI NO₂ corroborates emission placement (core > edge). The model independently reconstructs documented Kandy haze episodes (Nov 2019, Dec 2022) at the right level by the right mechanism.
+**Independent corroboration (not validation).** GHAP (Wei et al., 1 km, methodologically distinct from Van Donkelaar): seasonal r = +0.909; basin level within ≈ 6 %; fine-spatial r = +0.13 (both products smooth at that scale); inter-annual ≈ 0 (trend low-confidence). TROPOMI NO₂ corroborates emission placement (core > edge). The model reproduces high-concentration episodes on dates of documented haze (Nov 2019, Dec 2022); their regional origin is inferred by the model, not independently established.
 
-**Exposure and health (2023, shipped tier).** Population clusters in the higher-loading core, so the area mean understates exposure: area 21.0 → residential 21.5 → **dynamic population-weighted 22.6** → populated-core 22.0. Health statements use the dynamic population-weighted figure. A GEMM concentration–response layer gives **431 attributable deaths/yr [237–632]** over the 15 km domain (WorldPop 422,314 people), attributable fraction 18.2 %, of which 300 are avoidable against the WHO guideline; the interval carries only the response-function uncertainty. All four exposure tiers sit *below* the 2019 KOALA point (24.5 µg/m³), which is a valley-floor measurement, not an area mean.
+**Exposure and health (2023, shipped tier).** Population clusters in the higher-loading core, so the area mean understates exposure: area 21.0 → residential 21.5 → **dynamic population-weighted 22.6** → populated-core 22.0. Health statements use the dynamic population-weighted figure. No attributable-mortality estimate is reported: the response function needs age-specific (25+) mortality not yet obtained, the concentration level is unresolved, and the uncertainty cannot yet be propagated. An earlier figure was withdrawn. All four exposure tiers sit *below* the 2019 KOALA point (24.5 µg/m³), which is a valley-floor measurement, not an area mean.
 
 **Known limitations.** The fine-scale spatial *magnitude* of the core enhancement is imposed from physics and not independently measured — no public monitoring network anywhere samples the valley-floor-to-ridge gradient (a several-hundred-valley screen confirmed floor-clustering is universal), and **five independent tests** now establish that it cannot be learned from public covariates either (learned-pattern null; dynamic-transport null; two emission-proxy nulls; and an AlphaEarth Earth-representation-embedding null replicated in three valleys). The ceiling is information-limited, not model-limited. The confinement strength $\kappa$, the local fraction, the traffic emission scaling, and the transport amplitude are literature priors, not Kandy-calibrated. These are exactly the quantities that elevation-spanning local ground data would resolve.
 
@@ -227,7 +227,7 @@ The hierarchical fit also recovers a **multiplicative attenuation `ρ = 0.426 ±
 
 ## Transfer validation — the multi-city scorecard
 
-Kandy has no held-out network, so the model is validated where analogous cities *do* have one: the production pipeline is run end-to-end at each city under **the same two-sensor information budget Kandy has**, and scored against that city's withheld monitors. This is the "borrowed ground truth" design.
+Kandy has no held-out network, so the model is evaluated where analogous cities *do* have one: the production pipeline is run end-to-end at each city under **the same two-sensor information budget Kandy has**, and scored against that city's withheld monitors. This is the "borrowed ground truth" design.
 
 **Panel: N = 10 cities, 5 countries, 2 continents** (Xichang, Chiang Mai, Bazhong, Chandigarh, Kathmandu, Baoji, Tai'an, Yichang, Medellín, Bogotá).
 
@@ -447,7 +447,7 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 | GHAP / GlobalHighPM2.5 (Wei et al.) | 1 km / monthly | 2017–2022 | Independent corroboration (seasonal r = 0.91); not a model input |
 | SRTM 30 m DEM | 30 m static | — | Terrain confinement; WindNinja diagnostic winds |
 | OpenStreetMap road network | Vector | 2025 | Congestion-weighted traffic emission source; Stage B road density |
-| WorldPop population | ~100 m | 2020 | Population-weighted exposure and health burden |
+| WorldPop population | ~100 m | 2020 | Population-weighted exposure |
 | KOALA Kandy (Senarathna et al. 2024) | Annual + 12 monthly + diurnal | 2019 | 2019 floor/core consistency anchor; diurnal/monthly reference |
 | FECT PurpleAir Kandy (Akurana + Hantana) | Point / hourly | 2018–2026 | Stage A v3 labels (per-sensor calibrated) |
 | US Embassy Colombo (AirNow) | Point / hourly | 2019–2026 | Out-of-domain coverage check |
@@ -464,7 +464,7 @@ PYTHONUTF8=1 PYTHONIOENCODING=utf-8 .venv/Scripts/kaggle.exe \
 - **Additive, not multiplicative.** `PM = B + [T − B]·P_local` adds the regional background uniformly and structures only the local increment (the residual above the background estimate, not locally emitted mass); the earlier multiplicative `T·S·M` incorrectly modulated the transboundary background by the local pattern. A held-out ablation quantifies the difference: multiplicative inflates the held-out level by +26 % where monitors cluster on the valley floor, additive by −0 %.
 - **The local fraction is a constraint-dependent bound, not a source apportionment.** A non-negativity constraint on the local increment caps the background and gives **f = 0.483** at baseline (0.433–0.492 across cap specifications, 0.547 with a 48-hour window). The earlier source-apportionment prior (~0.25) is retired. Because the field is T-locked, the level and the health burden do not depend on it; the attribution does. See [Local/regional partition](#localregional-partition--a-constraint-dependent-bound-f--048).
 - **Native resolution 1 km hourly.** GEOS-CF (0.25°) and ERA5 (0.25°) have no spatial structure below ~25 km; resolving below 1 km from these inputs is unsupported.
-- **Uncertainty quantification.** CV+ Mondrian conformal on the Stage A anchor; calibrated 90 % prediction interval plus a per-pixel spatial-uncertainty layer on the production field. Coverage and calibration are reported alongside every r / RMSE.
+- **Uncertainty quantification.** CV+ Mondrian conformal on the Stage A anchor; nominal 90 % prediction interval on the production field, which under-covers at the Kandy sensors and across the ladder's cities. Coverage and calibration are reported alongside every r / RMSE.
 - **Anchors are calibration anchors, not validators.** KOALA, Senarathna, GHAP, and the FECT sensors double as upstream calibration anchors and downstream consistency checks; they cannot independently validate. Agreement is reported as *corroboration*, never validation.
 - **Fine-scale magnitude is the open item, and local ground data is the binding constraint.** The within-basin floor-to-ridge magnitude is imposed from physics and unmeasured — no public network anywhere samples that gradient (a several-hundred-valley screen confirmed floor-clustering is universal). Confinement strength, local fraction, traffic scaling, and transport amplitude are literature priors. Elevation-spanning local ground observation is the decisive next input; the transport overlay `A_transport` is shipped as a scenario, not a validated layer.
 - **Reproducibility.** Regeneration chain and gotchas are documented in `CLAUDE.md`; Kaggle kernels and per-version metric tables in `docs/kaggle_kernel_log.md`; pre-registrations and amendments in `docs/osf_prereg_*.md`.
