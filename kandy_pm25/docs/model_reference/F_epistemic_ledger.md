@@ -6539,3 +6539,39 @@ Old dispersed v2/v3 backed up in `decomp/backup_dispersed_2026-10-11/`. Webapp a
 fresh dense tropical low-cost network exists (OpenAQ census: all four ≥12-sensor tropical cells already in panels;
 Sensor.Community ~50 tropical sensors) — the registered tropical like-for-like test is not feasible on public data.
 (6) The NBRO Kandy unit reports CO2 and PM1 (live feed): likely a multi-sensor, not reference, instrument.
+
+## F.129 — 🟢 mean conservation restored; the drift traced to its real cause (2026-10-11)
+
+Fifth external review asked that the conservation explanation be reconciled with the code. The delivered field sat
+**0.39–0.56 % above T(t)** for two reasons. (a) `build_decomp_map`: S×M had hourly mean 1 + κ·w·cov(S, c) because the
+level surface and the confinement index covary on the valley floor (≈0.01 %, minor). (b) **Dominant:**
+`build_overlay_predictions` normalised the dispersion factor A to unit mean on its own, not against the core-high field
+it multiplies, so the 4factor field's hourly mean exceeded T; `build_additive_field_v2` then took its anchor from that
+field's hourly mean. Verified: per-hour excess vs within-hour CV of A, r 0.98. Fixes: `unit_mean_pattern()` renormalises
+S×M per hour; A is rescaled against the field it multiplies; v2 reads T05/T50/T95 **directly** from `T_kandy_hourly`.
+`scripts/tests/test_conservation.py` (synthetic + data-backed, annual |Δ| < 1e-4) passes; `gauge.drift_*` now 0.0 %.
+Field regenerated 2019–2023; all downstream diagnostics re-run.
+
+## F.130 — 🔴 the CEA Kandy regulatory station: day-to-day supported, level ~24 % HIGH, nights too high (2026-10-11)
+
+EXPLORATORY, post hoc. The CEA AirShare platform (`aq.cea.lk`) serves the Kandy AAQMS (locationId 4, equipment 1;
+7.2906 N, 80.6337 E, city centre) through the unauthenticated endpoint its own charts use
+(`scripts/pull_cea_kandy_aqms.py`; month window → daily, day window → hourly). 2019–2023: 858 PM2.5 days, 21,525 hours;
+station dark 2021-07 → 2022-10. **Hourly stamps are UTC, not local** (ozone peaks at stamps 04–08; +05:30 puts its 3-h
+maximum at 12 LT) — gotcha #106. `scripts/kandy_cea_reference_check.py`, delivered field at the station cell:
+- **Daily:** r **0.60** (benchmark: station's own monthly climatology 0.37); within-month anomaly r **0.72**; climatology
+  r 0.66; monthly r 0.51; sensors-reporting days r 0.54, other days 0.61 (agreement does NOT depend on the anchor
+  sensors). Much better day-to-day than NBRO (anomaly 0.28).
+- **Level:** model **+24 %** (21.1 vs 17.0); by year +27 / +28 / +10 / −3 (66 high-season days) / +36 %. The dispersed
+  field was +36 %, so removing dispersion moved the level the right way.
+- **Diurnal (hourly):** timing matches (peaks 07 and 18 LT, midday dip); morning peak/midday station **1.87** vs delivered
+  1.91 vs hourly-RH 1.67; **night/midday station 0.71** vs delivered 1.17 vs hourly-RH 0.96 — deep night is the daily
+  MINIMUM at the reference. Shape r 0.73 delivered / 0.86 hourly-RH. **Gotcha #54's "night above midday" is refuted at
+  the reference station**; the field's nights are too high, by more than either humidity correction explains.
+- **Attanayake 2025 site recomputed** (`scripts/kandy_attanayake_pixel.py`, replaces the typed F.65 25.01): model 21.6
+  over 2022-11-02 → 2023-12-31 vs published 19.49, **+11 %** (was +28 %).
+**Standing picture replaced:** the records no longer "bracket" the field. Regulatory (+24 %) and calibrated LCS (+11 %)
+say the model is high; only NBRO (−7/−12 %, undocumented, likely multi-sensor) says low. W11 resolves towards **level too
+high at the city centre, size uncertain** (one station, method/siting undocumented). The field was NOT recalibrated to
+CEA, so it stays a check. CEA conditions (cite; notify processing; send outputs) to be met via the R&D agreement; the
+public values were used, gases and met not used.

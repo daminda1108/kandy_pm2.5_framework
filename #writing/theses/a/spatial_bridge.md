@@ -9,7 +9,7 @@ the whole domain ({{ref:s-reason-change-support}}). A kilometre-scale map cannot
 variation that occurs inside its cells, however it is built, so the comparison of a cell mean with
 a kerbside point is a comparison of different quantities.
 
-**At matched support the model is of the right order.** Averaged over a month, the model's
+**At a matched averaging window the model is of the right order.** Averaged over a month, the model's
 between-cell contrast is {{claim:field.contrast_monthly}}, close to but below the range measured
 between stations of densely monitored cities at the same averaging window, and the contrast is
 smaller in the model than in those networks ({{ref:s-matched-support-model-close}}).

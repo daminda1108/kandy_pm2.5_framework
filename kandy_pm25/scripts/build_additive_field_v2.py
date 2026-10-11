@@ -245,10 +245,13 @@ def assemble_v2(year):
     m = pd.read_parquet(DEC / f"kandy_decomp_predictions_{year}_4factor.parquet")
     b = pd.read_parquet(DEC / f"B_background_hourly_{year}_v2.parquet")
     b["time"] = pd.to_datetime(b.datetime_utc); m["time"] = pd.to_datetime(m.time)
-    g = m.groupby("time")
-    m["T50"] = g["pm25_q50"].transform("mean")
-    m["T05"] = g["pm25_q05"].transform("mean")
-    m["T95"] = g["pm25_q95"].transform("mean")
+    # Anchor taken straight from T(t) (2026-10-11, F.129). It used to be the hourly mean of the 4factor field, which
+    # carried a 0.4-0.6 % excess from the dispersion product, so the delivered field sat that much above T(t).
+    Ta = pd.read_parquet(TANCHOR / f"T_kandy_hourly_{year}.parquet", columns=["datetime_utc", "T_q05", "T_q50", "T_q95"])
+    Ta["time"] = pd.to_datetime(Ta.datetime_utc)
+    Ta = Ta.set_index("time")
+    m["T50"] = m.time.map(Ta.T_q50); m["T05"] = m.time.map(Ta.T_q05); m["T95"] = m.time.map(Ta.T_q95)
+    assert m[["T05", "T50", "T95"]].notna().all().all(), "T(t) missing for some field hours"
     bmap = b.set_index("time")
     m["B"] = m.time.map(bmap["B"]); m["B_lo"] = m.time.map(bmap["B_lo"]); m["B_hi"] = m.time.map(bmap["B_hi"])
     if PATTERN == "undispersed":

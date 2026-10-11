@@ -27,17 +27,22 @@ relative humidity, and repeating the conversion with hourly humidity reduces the
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the delivered series, the alternative leaves the
 level, the timing of the peaks and of the midday dip, the day-to-day sequence and the local fraction
 essentially unchanged, but it reduces the depth of the cycle and reverses the ordering of night and
-midday ({{ref:s-rh-scenario}}). How deep the cycle is cannot be settled without a reference
-instrument co-located with the sensors.
+midday ({{ref:s-rh-scenario}}). The regulatory station's hourly record
+({{ref:s-cea-reference}}) supports the timing and the depth of the morning peak but places the
+daily minimum in the deep night, lower than either conversion gives, so the field's nights are too
+high. Which part of that is the humidity conversion and which the low-cost sensors' siting cannot
+be separated without co-locating them with the reference.
 
-**Open: the level.** Of four independent point records at Kandy, three sit below the field and
-one, the national record, sits above it, so the records bracket the field; the three low ones all
-carry a downward calibration correction applied to low-cost sensors. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
+**Probably too high: the level.** The one regulatory record at Kandy, a station in the city
+centre, sits {{claim:cea.del.all.bias_pct}} per cent below the field over the days it reported
+({{ref:s-cea-reference}}); a calibrated low-cost record also sits below it, and only the national
+research organisation's record, of undocumented instrument, sits above it. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
 the level is not independent of Kandy observations in the way the pattern is. Two readings remain
 possible. The offset may be a change of support, an area mean compared with points, or it may be
 an upward bias of the field at the sensor locations, for which the constant-humidity conversion
-is one candidate mechanism. Nothing available to this study separates those possibilities, and
-the discrepancy is reported as open rather than resolved by choosing one record. What can be
+is one candidate mechanism. The regulatory record makes the first harder to sustain, because its station lies in the
+city centre where the cell is among the highest in the basin, but one station cannot separate a
+level bias from a siting effect, and the field has not been recalibrated to it. What can be
 said is bounded: if the satellite level that anchors the field errs at Kandy as it does in the
 middle half of the tropical cities scored on the ladder, the basin mean lies between
 {{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least
@@ -126,8 +131,8 @@ equally confirmed: the like-for-like comparison is a post hoc re-analysis of the
 data, and the near-equivalence of station types it reports awaits a fresh pre-specified test.
 
 Read together, the field is a well-founded account of when Kandy's air is worse and by roughly
-how much relative to the rest of the year, on a level that remains open, with a daily amplitude
-that depends on a humidity correction still to be checked, and with a spatial pattern that is
+how much relative to the rest of the year, on a level that is probably too high, with nights that run too
+high relative to midday, and with a spatial pattern that is
 imposed rather than measured. That is less than a validated map, and the map should not be read
 as one: its differences between cells are a hypothesis to be tested, not a ranking of
 neighbourhoods. It is also more than Kandy has

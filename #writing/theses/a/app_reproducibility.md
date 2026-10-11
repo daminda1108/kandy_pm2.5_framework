@@ -44,8 +44,12 @@ documented and partly re-executed workflow, not a demonstrated independent repro
 Three local records would have changed what this thesis could establish. The national regulatory
 authority's Kandy station holds an hourly record of particulate matter, gases and meteorology from
 2019, with a gap of about fifteen months; access was granted in principle for academic use, subject
-to a formal request and a signed agreement, and the record was not obtained within the period of
-this work. The regional stations of the national research organisation supply the external check
+to a formal request and a signed agreement, which had not been concluded within the period of this
+work. The station's daily and hourly PM2.5 means are, however, served by the authority's public
+platform, and those public values are used in {{ref:s-cea-reference}} with the authority cited as
+their source. The authority's conditions for academic use (citation, notification of any processing
+of the data, and provision of the final outputs) are to be met through the agreement once it is
+signed; the gases and meteorology have not been used. The regional stations of the national research organisation supply the external check
 of {{ref:s-checks-kandy-carry-weight}} through a published paper; a direct request would provide a
 genuine regional background series. The university's own sensor network was identified late and not
 pursued. The reference monitor that anchored earlier published Kandy records is no longer operating.

@@ -2,16 +2,15 @@
 
 Undergrad thesis (Daminda Alahakoon, U. Peradeniya). **Redesigned 2026-05-08** — see [`docs/REDESIGN_2026-05-08.md`](docs/REDESIGN_2026-05-08.md) and [`docs/AUDIT_2026-05-08.md`](docs/AUDIT_2026-05-08.md).
 
-**Deployment pipeline (two stages):**
-- **Stage A — Temporal anchor.** Satellite-ML over Kandy. v1 daily XGBoost (2003–2025, KOALA-anchored) + v3 hourly LGBM/CatBoost/XGB blend with CV+ Mondrian conformal UQ (2018–2026, per-sensor FECT-anchored residual target).
-- **Stage B — Cross-city spatial residual learner.** ConvCNP (deepsensor) trained on N=3 source cities (Medellín, Chiang Mai, Kathmandu), predicts `pm25 − c_prior_scaled` against a per-city scaled GEOS-CF prior. Student-t(df=5) likelihood + per-(city × hour-of-day) Mondrian conformal UQ. Applied zero-shot at Kandy.
+**Deliverable (as of 2026-10-11):** an additive background-plus-increment reconstruction of Kandy PM2.5, **1 km
+hourly, 2019–2023**: `PM = B + max(T−B,0)·P + min(T−B,0) + ε(P−1)`. `T(t)` = lag-free LightGBM temporal anchor
+(trained on the two FECT low-cost sensors, re-anchored per year to van Donkelaar, sharpened); `B(t)` =
+coherence-capped regional background (f ≈ 0.48); `P = S_emit × M` (unit mean per hour; dispersion removed). Validated
+by three lines: Kandy records (incl. the **CEA regulatory station: daily r 0.60, level +24 % high**), the ten-city
+transfer scorecard, and the deployed anchor on the cross-city information ladder. Single target: **Kandy**.
 
-Native resolution **1 km hourly**. Single target: **Kandy**.
-
-**Supporting experiments (documented, not in deployment pipeline):**
-- Cross-continental PINN transfer (Mel → ChiMai, FourierPINNV3 TD-PDE). Code in `src/stage2_transfer/`.
-- SharedTerrainAnsatz identifiability diagnostic (rigid Whiteman ansatz, all 6 params bound-saturated). Code in `src/stage3_pinn/models/shared_terrain_ansatz.py`.
-- PVAF v1 — Physics-based Valley Analogue Finder, source-city expansion tool. Code in `src/pvaf/`.
+**Supporting / retired (not deployed):** v1 daily XGBoost chronology; v3 lagged blend (a nowcaster); ConvCNP
+cross-city Stage B; the PINN transfer experiments; SharedTerrainAnsatz; PVAF. Code kept for the record.
 
 > **🟢 [`CONTEXT.md`](CONTEXT.md) — read this first.** One page (<250 lines) of the load-bearing
 > facts: the model in one equation, the numbers you may quote, the numbers that are **retired**,
@@ -93,7 +92,20 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 | ⚖️ **"Manipulation" clause** | needs clarifying with R&D | The model applies bias correction, gap handling and aggregation. Ask R&D explicitly whether routine QA/analysis counts, so the agreement is not breached by ordinary work. |
 | **W5 — FECT calibration** | **CORROBORATED 2026-08-22 (F.64)** | Akurana full-record mean 17.8 against a BAM-anchored published study's ~18–19. The calibration slopes are no longer wholly unchecked. |
 
-## Current State (updated 2026-10-10, 🟢 **THESIS A RESTRUCTURED; THE DEPLOYED MODEL SCORED ON THE LADDER (F.125)**)
+## Current State (updated 2026-10-11, 🔴 **CEA REFERENCE STATION OBTAINED (public platform): LEVEL ~24 % HIGH, NIGHTS TOO HIGH; DRIFT FIXED (F.129/F.130)**)
+
+- 🔴 **2026-10-11 (F.130): CEA Kandy AAQMS via `aq.cea.lk` public endpoint** (`pull_cea_kandy_aqms.py`; 858 days,
+  21,525 h, 2019–2023). Delivered field at the station: daily r **0.60**, within-month **0.72**, level **+24 %**;
+  diurnal timing + morning peak match, **night/midday 0.71 obs vs 1.17 model**. Attanayake site recomputed **+11 %** (was
+  +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
+  T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
+  revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **F.129: mean conservation fixed** (S×M per-hour renormalised; dispersion A rescaled against its field; v2 anchor
+  read from T directly); `test_conservation.py`; field regenerated; tests 122 pass. Fifth-review wording done (matched
+  averaging window; panel+estimand beside 58.8/53.3; full-field vs pattern contrast; reco 7.87 vs pros 17.7 bias in
+  Table 4.1). Thesis body 93 pp, abstract 346 words.
+- ⚠ **Webapp + release repo still serve the OLD dispersed, drifting field** (gotcha #55). CEA academic-use conditions
+  (cite, notify processing, send outputs) must still be met via the R&D agreement — user action.
 
 - 🟢 **2026-10-11 (F.128): Kandy evidence without new data; DISPERSION REMOVED from the delivered field.** NBRO daily
   2021–22 digitised from Nirmani 2025 Fig. 3 (r 0.39 daily; 0.77 month-climatology; 2022 missed); leave-one-sensor-out
@@ -526,7 +538,7 @@ python src/comparison/publication_figures.py --all
 51. **Level anchor is AREA-not-FLOOR (2026-06-04): never force the basin MEAN to KOALA 24.5.** KOALA/NIFS is a valley-FLOOR/near-core point (7.2839 N/80.6322 E, ~27 m above floor), NOT the basin area mean. `features/vandonkelaar.py` `bias_factor`→**1.0**, β≡1. Evidence: two independent AREA products agree (VanD ~19.7, GHAP ~17.0) ~25–30% BELOW KOALA; FECT-Hantana RIDGE reads 10.5 → gradient floor 24.5 > area ~17–20 > ridge 10.5. Shape is β-invariant. Regen chain after any anchor change: `predict_T_anchor_v3`→`build_decomp_map`→`build_overlay_predictions`→`build_spatial_uq`.
 52. **KOALA 24.5 is the Jan–Dec 2019 NIFS annual mean ONLY — never propagate it as a per-year reference line.** It was NOT re-measured 2020–2023. In any per-year plot/CSV show KOALA as a single 2019 marker, not an axhline. FECT-Hantana ridge 10.5 is a 2018–23 sensor mean (a horizontal line is defensible there).
 53. **Additive-headline regen chain:** `predict_T_anchor_v3.py` → **`scripts/sharpen_T_diurnal.py`** (diurnal+seasonal amplitude bias-correction; preserves annual mean) → `build_decomp_map.py --year Y` → `scripts/build_overlay_predictions.py` → `scripts/build_spatial_uq.py` → `build_additive_field.py` → `exposure_weighting.py` + `health_burden.py` → figures (`paper_figures.py --figs all`). Basin mean preserved (verify G1 Δ<0.05). **sharpen_T_diurnal MUST run after predict_T_anchor (it overwrites the T_anchor parquets in place).**
-54. **Kandy is bimodal-rush; deep night is NOT the minimum — the MIDDAY trough is (CORRECTED 2026-08-07, ledger F.38).** ⚠ **2026-10-10 (F.126): this ordering holds only for the constant-RH label; with hourly-RH Barkjohn the night falls to 0.95× midday. Quote it as calibration-dependent.** Observed FECT diurnal, normalised 2019–2023: morning peak 07 (1.41), evening 18–19 (1.25), **midday trough 14 (0.725)**, deep night 00–04 (0.865). **Night runs ~15% ABOVE midday**, and the model reproduces it (1.110 vs observed 1.145). The previous wording — "deep-night ≈ daily MINIMUM" — is **WRONG** and caused a correct model behaviour to be read as a defect. In figures use deep-night `[0-5]` and morning-rush `[6-9]` separately. Kathmandu is NOT a Kandy analog.
+54. 🔴 **SUPERSEDED 2026-10-11 (F.130): at the CEA REFERENCE station the deep night IS the daily minimum (night/midday 0.71; field 1.17). The ordering below describes the low-cost FECT record only; the field's nights are too high.** Kandy is bimodal-rush (timing confirmed at CEA: peaks 07 and 18, morning peak/midday 1.87). Old text: *deep night is NOT the minimum — the MIDDAY trough is (CORRECTED 2026-08-07, ledger F.38).* ⚠ **2026-10-10 (F.126): this ordering holds only for the constant-RH label; with hourly-RH Barkjohn the night falls to 0.95× midday. Quote it as calibration-dependent.** Observed FECT diurnal, normalised 2019–2023: morning peak 07 (1.41), evening 18–19 (1.25), **midday trough 14 (0.725)**, deep night 00–04 (0.865). **Night runs ~15% ABOVE midday**, and the model reproduces it (1.110 vs observed 1.145). The previous wording — "deep-night ≈ daily MINIMUM" — is **WRONG** and caused a correct model behaviour to be read as a defect. In figures use deep-night `[0-5]` and morning-rush `[6-9]` separately. Kathmandu is NOT a Kandy analog.
 55. **Standalone release repo lives at `d:/ProjectCD/kandy_pm25_release/`** (own git repo `daminda1108/kandy_pm25_model`, gitignored by parent). Package `kandymodel/`. Imports are `kandymodel.*`, root depth `parents[1|2]` (NOT `parents[3]`). To PORT a confirmed change: copy the local file, rewrite imports `src.stage1_satml.* → kandymodel.*`, fix `parents[3]→parents[1|2]`, retest (`paper_figures.py --figs f3,f13` + `scripts/nowcast.py` must stay byte-identical), commit to BOTH repos. Release `data/`+`results/` are gitignored → clone needs `regenerate_all.py`. GitHub metadata via stored cred: `printf "protocol=https\nhost=github.com\n\n" | git credential fill` → PAT → `curl api.github.com`.
 56. **`build_station_terrain.resample_dem` returns NORTH-up arrays (row 0 = north).** The multi-city pipeline pairs it with ASCENDING lat + `origin="lower"` → every terrain-derived layer flips N–S. **Fix: `[::-1]` row-flip at each `resample_dem` call site.** Applied in `build_xichang_core_terrain`, `xichang_prod._solver_grids`, `xichang_paper_figures._elev_grid`. Affects only the city-generalised pipeline, NOT the locked Kandy decomp.
 57. **Additive form goes slightly NEGATIVE under extreme emission contrast (Kathmandu).** When a clean season drives [T−B]→0 and P_local is very high-contrast (KTM `S_traffic` core/edge **8.27×** vs Kandy ~1.2×), the lowest-emission ridge pixels go slightly negative. Station/floor pixels stay positive → station-level skill unaffected. **Fix = physical floor: clip at 0 at RENDER time** (`xichang_paper_figures.field()`). Cities with >~3× contrast want a non-negative-increment formulation. SEPARATE bug same run: `_pred_at_stations` used `RegularGridInterpolator(fill_value=None)` → a far out-of-box station extrapolated to −15,000; fixed to `fill_value=np.nan`+dropna.
@@ -723,6 +735,12 @@ python src/comparison/publication_figures.py --all
    still cited the old ones, and `t_tables.py` T7_5 failed on the 09-25 registry recount. The thesis did not build for two
    weeks and nobody noticed, because nothing ran the build. **Rule: after any change to `build_claims.py` keys or to
    `registrations.json`, run `#writing/build/build_docx.py --thesis a --no-word` and fix every unresolved token.**
+
+106. **🔴 The CEA AirShare hourly records are stamped in UTC, not Sri Lanka time (2026-10-11, F.130).** Taken as
+   local, the station's PM2.5 diurnal was ANTI-correlated with the model (r −0.66; peak at "01", minimum at "21"). The
+   check that settled it: **ozone** must peak in the early afternoon, and it peaked at stamps 04–08. +05:30 fixes it
+   (r +0.73). **Rule: for any new time series, check one species with a known diurnal phase (O3, or solar radiation)
+   before reading a diurnal shape.** The monthly (daily-resolution) records were left as served.
 
 ## Pending Tasks (updated 2026-10-06)
 

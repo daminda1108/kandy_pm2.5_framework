@@ -1,6 +1,6 @@
 # Kandy PM2.5 — Architecture
 
-**Last updated:** 2026-10-06. Companion to `PROJECT.md` (state) and `CLAUDE.md` (rules/tasks).
+**Last updated:** 2026-10-11. Companion to `PROJECT.md` (state) and `CLAUDE.md` (rules/tasks).
 This document is how the model and the evidence pipeline are built: the component maths, the
 module map, the execution/data flow, and the testing/reproducibility setup. All paths are
 relative to `d:/ProjectCD/kandy_pm25/` unless noted.
@@ -26,15 +26,24 @@ Where a number appears in both, `PROJECT.md` is authoritative.
 Hourly PM2.5 on a 1 km grid is an additive background-and-increment field (Lenschow 2001):
 
 ```
-PM(x,y,t) = B(t) + [ T(t) − B(t) ] · P_local(x,y,t)
+PM(x,y,t) = B(t) + max(T(t) − B(t), 0) · P(x,y,t) + min(T(t) − B(t), 0) + ε(t) · (P(x,y,t) − 1)
 ```
+
+**As delivered since 2026-10-11:** `P = S_emit × M`, renormalised to unit spatial mean **every hour**
+(`build_decomp_map.unit_mean_pattern`). The WindNinja dispersion factor `A_transport` is **no longer in the
+delivered field** (`build_additive_field_v2.PATTERN = "undispersed"`): on identical held-out stations in ten cities
+it lowered rank agreement (0.371 → 0.274). The anchor `T05/T50/T95` is read **directly** from
+`T_kandy_hourly_{y}.parquet`, never from a derived field's mean (ledger F.129). Level check against the CEA
+regulatory station: field +24 % high, nights too high (F.130).
 
 - `T(t)` — basin-mean concentration (the temporal anchor; carries the level and its evolution).
 - `B(t)` — regional/transboundary background (spatially near-uniform).
 - `P_local(x,y,t)` — dimensionless local pattern, **normalised to unit spatial mean**.
 
-**T-lock invariant.** Because `P_local` has unit mean, the basin average of the field returns
-`T(t)` exactly. The spatial pattern redistributes concentration within the valley without
+**T-lock invariant.** Because `P` has unit mean at every hour, the basin average of the field returns
+`T(t)` exactly; `scripts/tests/test_conservation.py` asserts it on the delivered files (annual |Δ| < 1e-4). Until
+2026-10-11 it did not hold: the dispersion factor was renormalised on its own rather than against the field it
+multiplied, and the field ran 0.39–0.56 % above `T(t)`. The spatial pattern redistributes concentration within the valley without
 changing the total the anchor specifies. This is what lets the level and the pattern be
 reasoned about — and validated — separately, and it is the basis of the sensitivity result
 (area mean invariant to the local fraction f).

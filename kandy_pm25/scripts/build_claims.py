@@ -2143,6 +2143,52 @@ def kandy_external_2026_10_11(c: Claims) -> None:
                   n=v["n"], source=f.name, ledger="F.128")
 
 
+def cea_reference(c: Claims) -> None:
+    """F.130: the delivered field against the CEA Kandy regulatory station (AAQMS), 2019-2023; and the Attanayake
+    low-cost site recomputed from the delivered field (replaces a hand-typed F.65 value). EXPLORATORY."""
+    f = DEC / "kandy_cea_reference_check.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("cea.days", S["days"], stat="matched station days, 2019-2023", n=S["days"], source=f.name, ledger="F.130")
+        b = S["monthly_climatology_benchmark"]
+        c.add("cea.bench.r", round(b["r"], 2), stat="daily r of the station's own monthly climatology", n=b["n"],
+              source=f.name, ledger="F.130")
+        for arm, tag in (("delivered", "del"), ("dispersed_previous", "disp")):
+            o = S[arm]
+            for scope in ("all", "sensors_reported", "sensors_absent"):
+                v = o[scope]
+                for k, nd in (("r", 2), ("rmse", 1), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1), ("n", None)):
+                    c.add(f"cea.{tag}.{scope}.{k}", round(v[k], nd) if nd is not None else v[k], stat=f"daily {k}",
+                          n=v["n"], source=f.name, ledger="F.130")
+            for k in ("climatology_r", "monthly_r", "anomaly_daily_r"):
+                c.add(f"cea.{tag}.{k}", round(o[k], 2), stat=k, n=o["all"]["n"], source=f.name, ledger="F.130")
+            for y, v in o["by_year"].items():
+                for k, nd in (("r", 2), ("bias_pct", 0), ("obs_mean", 1), ("model_mean", 1), ("n", None)):
+                    c.add(f"cea.{tag}.{y}.{k}", round(v[k], nd) if nd is not None else v[k], stat=f"daily {k}, {y}",
+                          n=v["n"], source=f.name, ledger="F.130")
+        if "hourly" in S:
+            H = S["hourly"]
+            c.add("cea.hourly.hours", H["hours"], stat="station hours", n=H["hours"], source=f.name, ledger="F.130")
+            c.add("cea.hourly.o3_peak_hour", S["hourly_o3_peak_hour_local"], stat="local hour of the ozone maximum "
+                  "(3-h mean): the timestamp check", n=H["hours"], source=f.name, ledger="F.130",
+                  note="platform stamps are UTC; shifted +05:30")
+            for arm in ("station", "production", "hourly_rh"):
+                for k in ("peak07_over_midday", "night_over_midday"):
+                    c.add(f"cea.hourly.{arm}.{k}", round(H[arm][k], 2), stat=k, n=H["hours"], source=f.name, ledger="F.130")
+                for k in ("min_hour", "max_hour"):
+                    c.add(f"cea.hourly.{arm}.{k}", H[arm][k], stat=k, n=H["hours"], source=f.name, ledger="F.130")
+            for arm in ("production", "hourly_rh"):
+                c.add(f"cea.hourly.{arm}.shape_r", round(H[arm]["shape_r"], 2), stat="diurnal-shape r vs station",
+                      n=24, source=f.name, ledger="F.130")
+    f = DEC / "kandy_attanayake_pixel.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("attan.model_pixel", round(S["model_pixel"], 1), stat="delivered field at the site, 2022-11-02..2023-12-31",
+              n=S["hours"], source=f.name, ledger="F.130")
+        c.add("attan.diff_pct", round(S["diff_pct"]), stat="model vs published 19.49 (%)", n=S["hours"],
+              source=f.name, ledger="F.130")
+
+
 def registered_v2(c: Claims) -> None:
     """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
     New keys under `v2.*`; the older ladder keys are left in place (they state what the
@@ -2311,6 +2357,10 @@ def registered_v2(c: Claims) -> None:
                         if v:
                             put(f"v2.review.k.{m}{k}", v, f"{k} stations, {'read daily' if m == 'day' else 'recalibration only'}"
                                 " (% daily RMSE over Bud0)", v["n"], pk.name, "F.124")
+                v = K.get("day2_rmse")
+                if v:
+                    c.add("v2.review.k.cities", v["n"], stat="cities in the station-count sweep (full networks)",
+                          n=v["n"], source=pk.name, ledger="F.124")
                 v = K.get("dayextra2_rmse")
                 if v:
                     put("v2.review.k.day_second_over_first", v, "second daily station over the first (points)",
@@ -2675,6 +2725,7 @@ def build() -> dict:
     kandy_model_rung(c)
     review2(c)
     kandy_external_2026_10_11(c)
+    cea_reference(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

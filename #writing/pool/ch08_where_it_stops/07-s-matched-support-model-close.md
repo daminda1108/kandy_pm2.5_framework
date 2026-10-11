@@ -1,7 +1,7 @@
-## At matched support, the gap is small but real {#s-matched-support-model-close}
+## At matched averaging window, the gap is small but real {#s-matched-support-model-close}
 
 The apparent catastrophe of {{ref:s-observation-sets-problem}} is a comparison between quantities defined at different
-supports. At matched support and matched averaging window the picture changes.
+supports. At a matched averaging window the picture changes. The monitor statistics still describe points and the model statistics one-kilometre cells, so a change of spatial support remains, and the contrasts below are of the full field, background included.
 
 At monthly averaging the model's between-cell ratio is {{claim:field.contrast_monthly}}, against
 1.26 to 1.51 measured across the stations of three panel cities with dense networks at the same

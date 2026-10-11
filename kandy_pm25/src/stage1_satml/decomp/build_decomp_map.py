@@ -29,6 +29,17 @@ DATA = HERE / "data" / "processed"
 DECOMP = DATA / "decomp"
 
 
+def unit_mean_pattern(Sf, cf, kappa, w):
+    """S x (1 + kappa w c), renormalised to unit spatial mean at every hour (2026-10-11, F.129).
+
+    S has unit mean and c zero mean, but S x c does not: both are highest on the valley floor, so without the
+    renormalisation the hourly spatial mean is 1 + kappa w cov(S, c) and the field drifts slightly above T(t)."""
+    import numpy as np
+    M = 1.0 + kappa * np.asarray(w, dtype=np.float64)[:, None] * np.asarray(cf, dtype=np.float64)
+    SM = np.asarray(Sf, dtype=np.float64) * M
+    return (SM / SM.mean(axis=1, keepdims=True)).astype(np.float32)
+
+
 def build(year: int = 2024, sensor_id: int = 12451):
     T = pd.read_parquet(DATA / "stage1_v3" / "T_anchor" / f"T_kandy_hourly_{year}.parquet")
     T["datetime_utc"] = pd.to_datetime(T["datetime_utc"], utc=True)
@@ -52,8 +63,7 @@ def build(year: int = 2024, sensor_id: int = 12451):
     n_t = len(T)
     Sf = S.ravel()[None, :]                                 # (1,256)
     cf = c.ravel()[None, :]                                 # (1,256)
-    M = 1.0 + kappa * w[:, None] * cf                       # (n_t,256)
-    SM = (Sf * M).astype(np.float32)                        # (n_t,256)
+    SM = unit_mean_pattern(Sf, cf, kappa, w)                # (n_t,256), spatial mean exactly 1 per hour
 
     out = {}
     for q in ("T_q05", "T_q50", "T_q95"):

@@ -123,23 +123,31 @@ def t3_2_point_records():
     """
     write(
         "T3_2_point_records",
-        "Independent point records at Kandy against the model at the same location",
-        ["record", "instrument", "observed", "model", "difference"],
+        "External point records at Kandy compared with the model",
+        ["record", "instrument", "evidential status", "observed", "model", "difference"],
         [
-            [f"National research organisation, 2021 [@Nirmani2025]", "undocumented", "19.6",
+            ["Regulatory station, city centre, 2019 to 2023 [@CEA2026AirShare]", "automated regulatory monitor",
+             "independent; the only regulatory record", tok("cea.del.all.obs_mean"),
+             tok("cea.del.all.model_mean"), tok("cea.del.all.bias_pct") + " per cent"],
+            [f"National research organisation, 2021 [@Nirmani2025]", "undocumented",
+             "independent; instrument unknown", "19.6",
              tok("nbro.model_pixel_2021"), tok("nbro.diff_pct_2021") + " per cent"],
-            [f"National research organisation, 2022 [@Nirmani2025]", "undocumented", "22.7",
+            [f"National research organisation, 2022 [@Nirmani2025]", "undocumented",
+             "independent; instrument unknown", "22.7",
              tok("nbro.model_pixel_2022"), tok("nbro.diff_pct_2022") + " per cent"],
-            ["Calibrated low-cost, 2022 to 2024 [@Attanayake2025]",
-             "low-cost, reference-anchored", "19.49", "25.01", "+28 per cent"],
-            ["Research sensor, full record [@Dhammapala2022]", "low-cost", "17.8", "--",
+            ["Calibrated low-cost, 2022 to 2024 [@Attanayake2025]", "low-cost, reference-anchored",
+             "independent; clear-sky subset of days", "19.49",
+             tok("attan.model_pixel"), "+" + tok("attan.diff_pct") + " per cent"],
+            ["Research sensor, full record [@Dhammapala2022]", "low-cost",
+             "an input to the model (one of its two anchor sensors)", "17.8", "--",
              "corroborates a reference-anchored 18 to 19"],
         ],
-        note="Observed values are published measurements and carry a citation each. Model "
-             "values are generated from the delivered field. The national record sits above the "
-             "model; the low-cost records, each carrying a downward calibration, sit below it. "
-             "The records bracket the field and the level is reported as open rather than "
-             "resolved by preferring one of them.")
+        note="Observed values are published or archived measurements and carry a citation each. Model "
+             "values are generated from the delivered field at the record's cell. The regulatory row is "
+             "the mean over the station's reporting days; the low-cost row compares a published mean over "
+             "164 clear-sky days with the model over the calendar window to the end of 2023, the last year "
+             "of the field. The research-organisation record sits above the model; the regulatory and "
+             "calibrated low-cost records sit below it.")
 
 
 def t5_1_attempts():
@@ -453,17 +461,18 @@ def t7_2_like_for_like_v2():
     k = "v2.review.k."
     write("T7_2_like_for_like_v2", "What a station is worth when it is read on the day (post hoc)",
           ["comparison", "median % reduction in daily RMSE, or paired points"],
-          [["first two stations, read on the day", _ci(r + "gL2s_rmse")],
-           ["background as registered, read on the day", _ci(r + "gBGall_rmse")],
-           ["background minus first two, both read on the day", _ci(r + "BGallmL2s_rmse")],
-           ["one station read daily", _ci(k + "day1")],
-           ["two stations read daily", _ci(k + "day2")],
-           ["five stations read daily", _ci(k + "day5")],
-           ["two stations used only as a recalibration", _ci(k + "cal2")]],
+          [["registered panels (100 cities), mean of stations 3 to 6: first two stations, read on the day", _ci(r + "gL2s_rmse")],
+           ["same frame: background as registered, read on the day", _ci(r + "gBGall_rmse")],
+           ["same frame: background minus first two, both read on the day", _ci(r + "BGallmL2s_rmse")],
+           ["full networks (86 cities), mean of all withheld stations: one station read daily", _ci(k + "day1")],
+           ["same frame: two stations read daily", _ci(k + "day2")],
+           ["same frame: five stations read daily", _ci(k + "day5")],
+           ["same frame: two stations used only as a recalibration", _ci(k + "cal2")]],
           note="Exploratory re-analysis of the registered data (ledger F.124): every stream regressed "
                "with the free estimate against stations not otherwise used, same-day, with shrinkage "
                "weights cross-fitted from other cities. The registered numbers are reproduced exactly "
-               "in the same run. Station-count rows: full networks, 86 cities.")
+               "in the same run. The two blocks differ in panel and target, so the two-station values in them "
+               "are not expected to agree.")
 
 
 def t3_km_rung():
@@ -521,17 +530,23 @@ def t4_ledger():
             f"conditionally supported: daily correlation {tok(km_r + 'K2_r.median')} where the anchor stations "
             f"observed the period, {tok(km_p + 'K2_r.median')} where they did not; at Kandy "
             f"{tok('nbrod.sensors_reported.model_cell.r')} and {tok('nbrod.sensors_absent.model_cell.r')} against "
-            f"the national record",
+            f"the national record; {tok('cea.del.all.r')} daily against the regulatory station, "
+            f"{tok('cea.del.anomaly_daily_r')} within the month",
             "better supported on days the sensors reported; weak on other days"],
-           ["Depth of the daily cycle",
-            f"calibration-sensitive: morning peak over midday {tok('rh2.production.peak_trough')} or "
-            f"{tok('rh2.hourly_rh.peak_trough')} depending on the humidity correction",
-            "scenario-dependent until a reference instrument settles the correction"],
+           ["Shape of the daily cycle",
+            f"timing and morning peak supported by the regulatory station (peak over midday "
+            f"{tok('cea.hourly.station.peak07_over_midday')} observed, {tok('cea.hourly.production.peak07_over_midday')} "
+            f"modelled); nights too high (night over midday {tok('cea.hourly.station.night_over_midday')} observed, "
+            f"{tok('cea.hourly.production.night_over_midday')} modelled)",
+            "peak timing usable; night-time levels relative to the day are not"],
            ["Absolute level",
-            f"unresolved but bounded: the national record above the field ({tok('nbro.diff_pct_2021')} and "
-            f"{tok('nbro.diff_pct_2022')} per cent), three low-cost records below; {tok('lvl.tropical.iqr_lo')} to "
-            f"{tok('lvl.tropical.iqr_hi')} micrograms per cubic metre if the satellite level errs as in tropical cities",
-            "a model estimate; the guideline exceedance is robust, the exact value is not"],
+            f"probably too high: {tok('cea.del.all.bias_pct')} per cent above the regulatory station, below the "
+            f"national research record ({tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent); "
+            f"across the ladder's cities the deployed anchor sits above the withheld mean by "
+            f"{tok(km_r + 'K2_bias.median')} per cent in reconstruction and {tok(km_p + 'K2_bias.median')} per cent "
+            f"prospectively; {tok('lvl.tropical.iqr_lo')} to {tok('lvl.tropical.iqr_hi')} micrograms per cubic "
+            f"metre if the satellite level errs as in tropical cities",
+            "a model estimate, likely high; the guideline exceedance is robust, the exact value is not"],
            ["Uncertainty interval",
             f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, a fraction "
             f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
@@ -562,7 +577,7 @@ def t3_validation_summary():
             "climatological; level there set by two stations, not the satellite"],
            ["Shape of the daily cycle", "ten analogue cities",
             f"diurnal correlation {tok('scorecard.diurnal_r_lo')} to {tok('scorecard.diurnal_r_hi')}",
-            "regime-dependent; depth also calibration-dependent at Kandy"],
+            "regime-dependent; at Kandy the nights are too high against the regulatory station"],
            ["Daily, anchor stations reporting", f"ladder, {tok('v2.km.cities_scored')} cities",
             f"error {tok(km_r + 'gK2_rmse.median')} per cent below the sensorless estimate; correlation "
             f"{tok(km_r + 'K2_r.median')}; bias {tok(km_r + 'K2_bias.median')} per cent",
@@ -582,13 +597,18 @@ def t3_validation_summary():
             f"daily correlation {tok('nbrod.all.model_cell.r')}; across calendar months {tok('nbrod.climatology_r')}; "
             f"within months {tok('nbrod.anomaly_daily_r')}",
             "digitised from a published figure; misses 2022"],
+           ["Daily and hourly, at Kandy", "regulatory station, city centre, 2019 to 2023",
+            f"daily correlation {tok('cea.del.all.r')}; within months {tok('cea.del.anomaly_daily_r')}; level "
+            f"{tok('cea.del.all.bias_pct')} per cent high; daily-cycle correlation "
+            f"{tok('cea.hourly.production.shape_r')}, nights too high",
+            "one station; method and siting undocumented"],
            ["Held-out sensor at Kandy", "train on one sensor, score the other",
             f"daily correlation {tok('loso.akurana.daily.pred.r')} and {tok('loso.hantana.daily.pred.r')}; prior alone "
             f"{tok('loso.akurana.daily.prior_only.r')} and {tok('loso.hantana.daily.prior_only.r')}",
             "two low-cost sensors sharing a calibration"],
-           ["Independent Kandy records", "national organisation, two years; three low-cost records",
-            f"national record {tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent; low-cost records "
-            f"below the field",
+           ["Independent Kandy annual levels", "regulatory station; national organisation; a calibrated low-cost record",
+            f"regulatory {tok('cea.del.all.bias_pct')} per cent; national record {tok('nbro.diff_pct_2021')} and "
+            f"{tok('nbro.diff_pct_2022')} per cent; low-cost +{tok('attan.diff_pct')} per cent (model minus observed)",
             "point against cell; instruments differ"]],
           note="A high seasonal correlation does not imply accurate daily or hourly values; each "
                "condition is reported separately for that reason.")
@@ -629,6 +649,27 @@ def t3_nbro_daily():
                "against, so it is favoured.")
 
 
+def t3_cea():
+    """The delivered field against the CEA Kandy regulatory station, 2019-2023 (exploratory, F.130)."""
+    rows = []
+    for y in ("2019", "2020", "2021", "2022", "2023"):
+        k = f"cea.del.{y}."
+        rows.append([y, tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"), tok(k + "bias_pct"), tok(k + "r")])
+    k = "cea.del.all."
+    rows.append(["all years", tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"), tok(k + "bias_pct"), tok(k + "r")])
+    k = "cea.disp.all."
+    rows.append(["all years, field with the dispersion step", tok(k + "n"), tok(k + "obs_mean"), tok(k + "model_mean"),
+                 tok(k + "bias_pct"), tok(k + "r")])
+    write("T3_cea", "The delivered field against the regulatory monitoring station in Kandy city, daily means, 2019 to 2023",
+          ["period", "days", "observed mean (micrograms per cubic metre)", "model at the station's cell",
+           "bias (per cent)", "daily correlation"], rows,
+          note="Observed: the national regulatory authority's automated station [@CEA2026AirShare]; days are those "
+               "the station reported, so annual columns are means over reporting days, not calendar years. The "
+               "station did not operate from mid-2021 to late 2022. Model: the delivered field at the cell "
+               "containing the station; the last row is the field as delivered before the dispersion step was "
+               "removed.")
+
+
 def t9_1_next_v2():
     write("T9_1_next_v2", "Measurement priorities for Kandy, and the kind of evidence behind each",
           ["action", "what it would settle", "what ranks it, and of what kind"],
@@ -641,8 +682,8 @@ def t9_1_next_v2():
             f"{tok('v2.review.registered_loco.reco.BGallmL2s_rmse.median')} points"],
            ["Making one of them reference grade",
             "the level discrepancy, and a calibration anchor for the low-cost sensors",
-            "MEASUREMENT DESIGN, not the ladder: three of four independent Kandy records sit below the "
-            "model, and the diurnal shape depends on the humidity correction"],
+            "MEASUREMENT DESIGN, not the ladder: the regulatory station reads about a quarter below the "
+            "model, and the nights of the corrected sensor record are too high"],
            ["More than three to five stations for the daily mean",
             "little: the daily curve flattens",
             f"RE-ANALYSIS: five stations {tok('v2.review.k.day5.median')} per cent against "
@@ -659,7 +700,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_cea": t3_cea, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

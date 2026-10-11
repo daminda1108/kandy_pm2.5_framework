@@ -11,8 +11,9 @@ parts of it are supported by evidence.
 The annual basin mean runs from {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms
 per cubic metre across the five anchored years. The reconstructed annual basin means exceed the
 World Health Organization annual guideline of 5 micrograms per cubic metre [@WHO2021] in every
-satellite-anchored year, by a factor of three or more. Because the absolute level remains
-unresolved ({{ref:s-checks-kandy-carry-weight}}), this characterises the modelled field and is not
+satellite-anchored year, by a factor of three or more. Because the absolute level is not
+established, and the one regulatory record at Kandy reads below the field
+({{ref:s-checks-kandy-carry-weight}}), this characterises the modelled field and is not
 an independently established measurement of basin-wide exposure. The conclusion that the guideline
 is exceeded is nonetheless robust to the level. The satellite surface that sets the level was
 compared, in each of the ladder's cities, with the mean of stations withheld from it
@@ -40,12 +41,15 @@ background (panel b). It is highest on the built-up valley floor and lowest over
 to the south, which is the pattern the emission surface and the confinement term impose. Both are
 imposed rather than fitted to anything measured in Kandy, which is why the pattern is independent
 of the two local sensors and also why it has to be tested separately. Across the domain the
-annual mean varies by a factor of {{claim:kandy.annual_contrast}} between the tenth and ninetieth
-percentile cells and {{claim:kandy.contrast_maxmin}} between the lowest cell and the highest.
+annual mean of the full field, background included, varies by a factor of
+{{claim:kandy.annual_contrast}} between the tenth and ninetieth percentile cells and {{claim:kandy.contrast_maxmin}} between the lowest cell and the highest.
 Averaged over a month the corresponding between-cell ratio is {{claim:field.contrast_monthly}},
 and within a single hour it is {{claim:field.contrast_hourly}}. The hourly figure is the smaller
 because on well-ventilated hours the local increment, which carries the pattern, is small or
-absent, so the field over the city is close to uniform.
+absent, so the field over the city is close to uniform. These are contrasts of the full concentration
+field at one-kilometre cells. The pattern *P* itself, which multiplies only the increment above the
+background, has a larger contrast; the uniform background dilutes it in the full field, so the two
+are different quantities and not inconsistent results.
 
 ### Seasonal and daily cycles {#s-kandy-field-cycles}
 
@@ -76,9 +80,11 @@ relative humidity. Repeating the conversion with the hourly humidity reduces the
 evening peaks and of the midday dip unchanged. Carried through the delivered series
 ({{ref:s-rh-scenario}}), it also reverses the ordering of night and midday: the night falls to
 {{claim:rh2.hourly_rh.night_midday}} of the midday level. The shipped field uses the
-constant-humidity conversion, so the daily amplitudes above, and the statement that night exceeds
-midday, are calibration-dependent; which conversion is right can only be settled by co-locating the
-sensors with a reference instrument.
+constant-humidity conversion. The regulatory station's hourly record ({{ref:s-cea-reference}})
+supports the timing of the cycle and the depth of the morning peak, but at the station the deep
+night is the daily minimum, at {{claim:cea.hourly.station.night_over_midday}} of the midday level,
+so the field's nights are too high relative to midday and the statement that night exceeds midday
+should not be relied on.
 
 ### An episode {#s-kandy-field-episode}
 

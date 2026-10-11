@@ -10,13 +10,15 @@ Undergraduate thesis project — Daminda Alahakoon, Department of Environmental 
 
 ## Overview
 
-Kandy, Sri Lanka has no continuous PM2.5 monitoring stations. This repository develops a two-stage framework for spatiotemporally resolved PM2.5 estimation over Kandy at the intrinsic resolution of the available driving data — 1 km, hourly — with calibrated per-pixel uncertainty.
+Kandy, Sri Lanka has one regulatory PM2.5 monitor (the Central Environmental Authority's city-centre station, whose record is served on its public AirShare platform) and two low-cost sensors. This repository develops a framework for spatiotemporally resolved PM2.5 estimation over Kandy at the intrinsic resolution of the available driving data — 1 km, hourly — with a nominal 90 % interval that is **not** calibrated (it under-covers: about 72 % at the Kandy sensors, 0.70 across the ladder's cities).
 
-Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). The **deployable spatial product** is a physically-structured *additive background-plus-increment decomposition* that places the Stage A temporal anchor into a 1 km hourly field using measured satellite emission patterns, terrain confinement, and diagnostic terrain winds, separating a regional and transboundary background from the locally-generated, locally-actionable increment. An earlier exploratory route — a Convolutional Neural Process trained zero-shot across three source cities (Stage B) — is retained as the cross-city experiment that motivated the decomposition.
+Stage A produces a temporal anchor for Kandy from satellite reanalysis and machine learning, calibrated against the only published Kandy in-situ campaign (Senarathna et al. 2024). The **deployable spatial product** is a physically-structured *additive background-plus-increment decomposition* that places the Stage A temporal anchor into a 1 km hourly field using a satellite level surface and terrain confinement (a WindNinja dispersion step was removed on 2026-10-11 because it lowered agreement with held-out stations), separating a regional and transboundary background from the locally-generated, locally-actionable increment. An earlier exploratory route — a Convolutional Neural Process trained zero-shot across three source cities (Stage B) — is retained as the cross-city experiment that motivated the decomposition.
 
 The **local fraction `f`** is the local increment's share of the modelled total under the decomposition. It is set by a non-negativity constraint rather than a literature prior: because local sources emit continuously, a background at or above the hourly total is treated as an over-estimated background, and each day's background is capped just below that day's minimum total. Under the baseline specification this gives **`f = 0.483`**; it ranges **0.433–0.492** across the choices of day boundary and daily-floor statistic, reaches **0.547** with a 48-hour background window, and is 0.488 under an hourly-humidity correction of the sensor record. These describe the decomposition's sensitivity to its specification; they are **not** a confidence interval and **not** a source apportionment, and `f` is not the share of PM2.5 emitted inside Kandy. The earlier source-apportionment prior of ~0.25 is retired. The field is *T-locked*, so the level, exposure and health burden are arithmetically unchanged by `f`; what changes is the attribution.
 
-What the framework does *not* do, in its current form: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; and it does not chemically apportion sources. Outputs are hourly 1 km PM2.5 fields with calibrated uncertainty and a population-exposure / health-burden layer, plus a separately-labelled forecast tier shipped as a **demonstration**. Strict spatial validation requires field deployment at Kandy. ⚠ A 47-city test (2026-08) has since **measured** the ceiling on within-city spatial skill at rank correlation ≈ 0.2–0.28, unmoved by a full land-use-regression predictor set including road density — and found that a local station network does **not** predict its own held-out stations. Fine-scale spatial structure is therefore reported as imposed physics with a measured skill ceiling, not as a validated product.
+**Level check (2026-10-11).** Against the regulatory station (858 days, 2019–2023) the delivered field follows the day-to-day sequence (daily r 0.60, 0.72 within the month) but reads about **24 % high**, and its nights are too high relative to midday; the level is therefore stated as probably overstated at the city centre.
+
+What the framework does *not* do, in its current form: it does not replace physical monitoring; it does not provide point-level accuracy at sub-1 km; and it does not chemically apportion sources. Outputs are hourly 1 km PM2.5 fields with a nominal (under-covering) interval and a population-weighted exposure layer — no attributable-burden estimate is made — plus a separately-labelled forecast tier shipped as a **demonstration**. Strict spatial validation requires field deployment at Kandy. ⚠ A 47-city test (2026-08) has since **measured** the ceiling on within-city spatial skill at rank correlation ≈ 0.2–0.28, unmoved by a full land-use-regression predictor set including road density — and found that a local station network does **not** predict its own held-out stations. Fine-scale spatial structure is therefore reported as imposed physics with a measured skill ceiling, not as a validated product.
 
 ## Research result: what an air-quality observation is worth to a city without monitors
 
@@ -89,15 +91,15 @@ evidence ledger `kandy_pm25/docs/model_reference/F_epistemic_ledger.md` (F.117�
               v                             v                          v
    ┌──────────────────────┐     ┌──────────────────────┐   ┌───────────────────────────┐
    │ Stage A anchor  T(t) │     │ B(t)  regional /     │   │ P_local(x,y,t)  unit-mean │
-   │ lag-free GBM +       │     │ transboundary        │   │ S_emit · M · A_transport  │
-   │ conformal UQ +       │     │ background (rural    │   │ (traffic source, terrain  │
-   │ diurnal sharpening   │     │ floor × seasonal)    │   │ confinement, WindNinja)   │
+   │ lag-free GBM +       │     │ transboundary        │   │ S_emit · M  (unit mean    │
+   │ conformal UQ +       │     │ background (rural    │   │ per hour; dispersion step │
+   │ diurnal sharpening   │     │ floor × seasonal)    │   │ removed 2026-10-11)       │
    └──────────┬───────────┘     └──────────┬───────────┘   └─────────────┬─────────────┘
               └─────────────────┬──────────┴─────────────────────────────┘
                                 v
               ┌──────────────────────────────────────────────────────┐
               │  Additive decomposition  (PRODUCTION spatial product) │
-              │  PM(x,y,t) = B(t) + [ T(t) − B(t) ] · P_local(x,y,t)  │
+              │  PM = B + max(T−B,0)·P + min(T−B,0) + ε(t)(P−1)       │
               │  → Kandy 1 km hourly PM2.5 field + nominal 90% PI     │
               │    →  population-weighted exposure (no burden estimate)│
               └──────────────────────────────────────────────────────┘

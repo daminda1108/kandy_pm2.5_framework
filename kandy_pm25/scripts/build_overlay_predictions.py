@@ -83,6 +83,12 @@ def build_year(year, lats16, lons16, bin_means):
         amp = np.clip(e_at(r.lh) * 18.0 / (max(r.wind_speed_10m, 0.3) * max(r.blh_m, 1)), 0, 0.5)
         A = np.clip(1.0 + amp * (shape - 1.0), 0.5, 2.8)
         A_cube[i] = A / A.mean()
+    # A has unit mean, but it multiplies a field that is not uniform (core-high), so the product's mean exceeds
+    # T(t) wherever A and the field overlap: this was the 0.4-0.6 % annual excess of the 4factor field (F.129).
+    # Rescale each hour so the product keeps the hourly basin mean of the field it multiplies.
+    base = pred["pm25_q50"].to_numpy().reshape(nt, 256)
+    A_cube = A_cube.reshape(nt, 256)
+    A_cube = A_cube * (base.mean(axis=1, keepdims=True) / (base * A_cube).mean(axis=1, keepdims=True))
     Aflat = A_cube.reshape(nt * 256)
     for col in ("pm25_q05", "pm25_q50", "pm25_q95"):
         pred[col] = (pred[col].to_numpy() * Aflat).astype(np.float32)

@@ -34,7 +34,7 @@ on the many hours and days that neither sensor recorded.
 Three further results bear directly on Kandy. The **level** taken from the satellite surface sits
 above the withheld city mean by a median of {{claim:v2.km.reco.unio.K2_bias.median}} per cent in
 reconstruction and {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively, the same sign as
-the offset between the field and three of the four independent Kandy records. The chain's **nominal
+the offset between the field and the regulatory station at Kandy ({{ref:s-cea-reference}}). The chain's **nominal
 ninety per cent interval** covers a fraction {{claim:v2.km.reco.unio.K2_cov90.median}} of withheld
 daily means in reconstruction, close to its coverage of {{claim:kandy.cov90}} per cent at the Kandy
 sensors, so the under-coverage found at Kandy ({{ref:s-interval-calibration}}) is not peculiar to

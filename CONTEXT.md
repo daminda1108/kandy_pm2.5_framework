@@ -51,10 +51,17 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
+## 🔴 CEA Kandy reference station (2026-10-11, F.130) — level HIGH, nights too high
+Public `aq.cea.lk` endpoint, 858 days / 21,525 h 2019–23 (stamps are **UTC**, gotcha #106). Field at the station:
+daily r **0.60**, within-month **0.72**, bias **+24 %** (dispersed field +36 %); diurnal timing + morning peak match
+(peak/midday 1.87 obs, 1.91 model); **night/midday 0.71 obs vs 1.17 model**. Attanayake site now **+11 %**. Records no
+longer bracket the field → **level probably high at the city centre, size uncertain**. Not recalibrated (kept as check).
+Mean conservation fixed (F.129): field = T(t) to 0.0 %.
+
 ## 🟢 New Kandy evidence; dispersion removed (2026-10-11, F.128)
 NBRO daily (digitised Nirmani 2025): daily r 0.39 (0.60 sensor days / 0.33 other); month-climatology r 0.77; 2022 missed
 (r 0.12); within-month r 0.28. LOSO daily r 0.52/0.62. Level range (tropical bias IQR) 13.5–22.1 µg/m³, ≥2.7× WHO.
-Delivered P = S_emit×M (dispersion removed) → NBRO annual −7.4/−12.1 % (records BRACKET field); exposure uplift 6 %.
+Delivered P = S_emit×M (dispersion removed) → NBRO annual −7.4/−12.1 % (superseded by F.130: records no longer bracket); exposure uplift 6 %.
 
 ## 🟢 Clean rerun (2026-10-11, F.127)
 Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate exactly; dispersion benchmark exact from raw
@@ -105,7 +112,7 @@ rural or regional monitor. An independent network 30–300 km away recovers **71
 |---|---|---|
 | local fraction **f** | **≈0.48** (production); **0.433–0.492 across cap day/statistic choices** (F.124) and **0.489–0.547** across window forms — a bound under the coherence cap, not identified by data | coherence cap, F.43. ⚠ **A constrained decomposition, NOT observed source apportionment**, and **local increment ≠ locally emitted primary material** (no chemistry). **Never say "removing local sources would remove half the problem".** |
 | ε-floor `eps0`, Kandy | **3.69** | F.57 (scales with mean accumulation) |
-| T-lock accuracy | field runs **+0.39 to +0.56%** above anchor → say *"to within 0.6 per cent"* | 2026-08-14 build |
+| T-lock accuracy | field = T(t) exactly (annual |Δ| < 1e-4, `test_conservation.py`); the old +0.39–0.56 % was the dispersion A not renormalised against its field | F.129 |
 | basin annual means | 2019 **19.75** · 2020 **19.09** · 2021 **17.08** · 2022 **18.76** · 2023 **21.04** | `scalars_*.json` |
 | pop-weighted exposure uplift | **+9%** over the area mean (21.0 → 23.0) | `exposure_weighting.csv`, regenerated 2026-09-04 (the retired figure was +7%, computed on a pre-rebuild field) |
 | burden 2023 | **431/yr** [237–632], 300 avoidable — **illustrative** | `health_burden.py`. ⚠ **Corrected 2026-10-07:** the interval is the field's q05/q95 exposure through the CENTRAL GEMM (`health_burden.py:91–104`), so it carries **no** response-function uncertainty, nor population, W11 or structural uncertainty; GEMM is also applied to all ages (should be 25+). Never call it a total uncertainty interval. |
@@ -127,7 +134,7 @@ rural or regional monitor. An independent network 30–300 km away recovers **71
 | **f = 0.244 / 25.3%** | superseded by the coherence cap | **f ≈ 0.48** |
 | `eps0 = 2.573` | pre-cap | **3.69** |
 | **"Kandy ~90% vehicular"** | **REFUTED as a mass share (F.66)** | *traffic dominates local **timing**; it is a minority of local **mass*** |
-| "deep night is the daily minimum" | wrong — **midday** is | F.38 |
+| "deep night is the daily minimum" | **TRUE at the CEA reference** (0.71 of midday); midday-minimum is a property of the FECT LCS record only | F.130 (supersedes F.38) |
 | Spatial CV **R² = 0.911** | label-construction artefact | never report as a spatial result |
 | Chandigarh spatial **−0.80** | N=4/N=5-era; current value is **NaN**, not a measured null | report "—" |
 | Colombo as a background donor | **r 0.604** vs a **0.846** pooled / **0.822** matched benchmark | NBRO regional network |
@@ -196,11 +203,11 @@ tested and not supported** (OSF `2jyfg`: learned pattern +0.022 vs benchmark 0.3
 | | question | state |
 |---|---|---|
 | 🟡 **W6** | **Kandy's source mix — now resolved by GEOGRAPHY (F.71).** A 20-site study finds traffic **predominant in the urban core**, firewood **co-dominant there and dominant rurally**. So `emix vehic = 0.85` is refuted (F.66) *and* Katugastota's 7.6% bounds one suburban site, not the core. **Defensible core value: `vehic ≈ 0.5–0.6`, `burn ≈ 0.3–0.4`.** ⚠ PAHs are a combustion tracer, not mass — this licenses the ordering, not a percentage. | **narrowed, not closed** |
-| 🔴 **W11** | **The level discrepancy.** Of four independent Kandy point records, **three sit below the model** (FECT Hantana ~+44%, FECT Akurana, RF-CNN LCS +28%) and **one matches** (NBRO, +0.7%/−2.6%). The three low ones are all LCS carrying a downward calibration; the one that matches has an **undocumented instrument**. | **OPEN** |
+| 🟠 **W11** | **The level — now LEANS HIGH (F.130).** CEA regulatory station (city centre): model **+24 %** over 858 days; Attanayake LCS **+11 %**; FECT sensors below; only NBRO (−7/−12 %, undocumented, likely multi-sensor) sits above. Size of the excess unsettled: one regulatory station, method + siting undocumented. | **LEANS HIGH** |
 | 🟡 **generality** | **F.78's "the sensorless tier fails at Colombo" is RETRACTED as stated** — it was scored against the under-powered `Bud0` (F.84). Re-run with a spec-compliant `Bud0c` and Colombo's **real** geography (F.86/F.87): level bias **+31.3% → −4.4%**, seasonal r **0.55 → 0.93**, plain R² **−0.90 → +0.37**. 🔴 **What survives:** R² against a day-of-year climatology is still **−0.70**, so the model matches Colombo's level and season but adds **no day-to-day skill** — sea-breeze variation the seven drivers cannot resolve. A *located* deficiency, not a failure to transfer. | **narrowed** |
 | ⚪ | `A_transport` is entirely unscored; the panel is 10 cities, **all valley/basin, zero coastal**; the panel does not bracket Kandy. | by design |
 
-**Do not resolve W11 by picking the record that agrees.** State it as an open discrepancy.
+**Do not recalibrate the field to CEA** (it is the only regulatory check). Quote the level as *probably high at the city centre, size uncertain*.
 
 **Closed topics (detail in the archive file above):** the support-scaling ladder is **confounded** by
 siting, never a scaling law (F.76; amplitude question closed, `s_exp` = 1.0) · chemistry is a supporting

@@ -54,7 +54,7 @@ deep tropics, is established. The deployed model's own position on the ladder is
 gives the tests behind that statement: six attempts to recover within-city structure, each with
 the effect it could and could not have detected, the model-family comparison that shows the limit
 belongs to the information rather than to one model, the siting experiment, the change of support
-that explains the limit, the comparison at matched support, the registered test of what
+that explains the limit, the comparison at a matched averaging window, the registered test of what
 additional stations buy for a map, and the result on the radius over which a predictor carries
 information.
 

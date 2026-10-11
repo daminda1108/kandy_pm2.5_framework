@@ -83,14 +83,17 @@ recovered from a published figure, matches the field's seasonal shape (correlati
 {{claim:nbrod.climatology_r}} across calendar months) but not its day-to-day variation (within-month
 correlation {{claim:nbrod.anomaly_daily_r}}), and the field misses the crisis year 2022. Trained on one
 Kandy sensor, the temporal model tracks the other at a daily correlation of
-{{claim:loso.akurana.daily.pred.r}} and {{claim:loso.hantana.daily.pred.r}}.
+{{claim:loso.akurana.daily.pred.r}} and {{claim:loso.hantana.daily.pred.r}}. Against the regulatory
+station in Kandy city, whose public record covers {{claim:cea.days}} days of 2019 to 2023, the field's
+daily correlation is {{claim:cea.del.all.r}} ({{claim:cea.del.anomaly_daily_r}} within the month).
 
 ## The reconstructed field, and how far it can be trusted
 
 The modelled annual basin mean is {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms per
 cubic metre over 2019 to 2023, above the World Health Organization guideline of 5 in every year.
-The level itself is unresolved: the national record sits above the field and three low-cost records
-below. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
+The level is probably too high: the regulatory station reads {{claim:cea.del.all.bias_pct}} per cent
+below the field, as does a calibrated low-cost record, while the national research record, of
+undocumented instrument, sits above it. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
 half of the tropical cities on the ladder, the basin mean is {{claim:lvl.tropical.iqr_lo}} to
 {{claim:lvl.tropical.iqr_hi}}, at least {{claim:lvl.tropical.who_lo}} times the guideline. The seasonal cycle is the best-supported property, with the maximum in the
 north-east monsoon ({{claim:kandy.season_djf}} in December to February of {{claim:exposure.year}}) and
@@ -99,7 +102,10 @@ supported on days the sensors reported. Morning and evening peaks either side of
 robust in timing, but their depth depends on the humidity correction of the sensor record: with
 hourly rather than constant humidity the morning-peak-to-midday ratio falls from
 {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night falls below
-midday, while the level, the daily sequence and the local fraction barely move. The interval covers
+midday, while the level, the daily sequence and the local fraction barely move. The regulatory
+station's hourly record has the same timing and a morning peak like the delivered field's, but its
+deep night is the daily minimum ({{claim:cea.hourly.station.night_over_midday}} of midday), so the
+field's nights are too high. The interval covers
 {{claim:kandy.cov90}} per cent of sensor hours with misses almost all on one side, which points to a
 calibration bias at the sensors rather than proving the width right. Under the baseline decomposition
 the local increment is {{claim:partition.f}} of the modelled total, {{claim:v2.f.cap_min}} to
@@ -135,8 +141,8 @@ consistency check within a composition model, not a chemical measurement at Kand
 
 ## Ongoing work and verification
 
-The regulatory monitor at Kandy, once its record is released, will allow the level, the humidity
-correction and the daily shape to be checked against a reference instrument. A fresh pre-registered
+A formal agreement for the regulatory record, and co-locating the low-cost sensors with it, would
+fix the size of the level excess and show where the sensor record's nights go wrong. A fresh pre-registered
 like-for-like test and an independent reproduction are the next steps for the cross-city results.
 Every value in the report is regenerated from source at build time by a gate that refuses to build
 when prose and data disagree (github.com/daminda1108/kandy_pm2.5_framework);

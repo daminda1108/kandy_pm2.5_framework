@@ -59,6 +59,9 @@ The ones behind the main results:
 | local-fraction sensitivity | `scripts/kandy_f_sensitivity.py` |
 | Kandy daily record (digitised) and its comparison | `scripts/digitize_nirmani_kandy.py`, `scripts/kandy_nbro_daily_check.py` |
 | leave-one-sensor-out; level range | `scripts/kandy_loso_test.py`, `scripts/kandy_level_range.py` |
+| CEA regulatory station (public AirShare platform; hourly stamps are UTC) and its comparison | `scripts/pull_cea_kandy_aqms.py --daily --hourly`, `scripts/kandy_cea_reference_check.py` |
+| Attanayake low-cost site, model value | `scripts/kandy_attanayake_pixel.py` |
+| mean conservation of the delivered field | `scripts/tests/test_conservation.py` |
 | dispersion against simpler surfaces | `scripts/r2_score_atransport.py` (registered), `scripts/r2b_dispersion_benchmark.py` |
 | spatial learning curve | `scripts/spatial_curve_analysis.py`, `scripts/spatial_curve_fullrecord.py`, `scripts/spatial_curve_reanalysis.py` |
 

@@ -19,7 +19,7 @@ reconstruction, what the evidence supports and what it may be used for.
    every satellite-anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}}
    micrograms per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum, and
    morning and evening peaks either side of a midday dip. Because the absolute level is
-   unresolved (conclusion 3), these values characterise the modelled field. The exceedance itself is
+   not established and probably high (conclusion 3), these values characterise the modelled field. The exceedance itself is
    robust: if the satellite level errs at Kandy as it does in the middle half of the tropical cities
    on the ladder, the basin mean lies between {{claim:lvl.tropical.iqr_lo}} and
    {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least {{claim:lvl.tropical.who_lo}}
@@ -50,16 +50,22 @@ reconstruction, what the evidence supports and what it may be used for.
      its two anchor stations observed the period, and by no resolvable amount where they did not.
      At Kandy that means the daily sequence is credible on days the sensors reported and much less
      so on the many days they did not.
-   - *The daily cycle's timing is supported and its depth is not.* The daily cycle transfers to some
+   - *The daily cycle's timing and morning peak are supported; its nights are too high.* The daily cycle transfers to some
      analogue cities and not to others (diurnal correlation {{claim:scorecard.diurnal_r_lo}} to
      {{claim:scorecard.diurnal_r_hi}}), and hourly skill at Kandy is modest (a coefficient of
      determination of {{claim:v2.tanchor.lagfree.r2}} out of sample). Under the alternative humidity
      correction the timing of the peaks and of the midday dip is unchanged, but the morning-peak-to-midday ratio falls
      from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night
-     falls below midday; the depth of the cycle is calibration-dependent until a co-located reference
-     instrument settles the correction.
-   - *The absolute level is open, but bounded.* The independent records bracket the field: the
-     national record sits above it in both years and three low-cost records sit below it. The
+     falls below midday. The regulatory station's hourly record settles part of this: it has the same
+     timing and a morning peak {{claim:cea.hourly.station.peak07_over_midday}} times midday, as in the
+     delivered field, but its deep night is the daily minimum
+     ({{claim:cea.hourly.station.night_over_midday}} of midday), lower than either correction gives.
+   - *The absolute level is probably too high, by an amount not yet established.* The regulatory
+     station in the city centre reads {{claim:cea.del.all.bias_pct}} per cent below the field over
+     {{claim:cea.days}} days, and a calibrated low-cost record reads below it too; only the national
+     research organisation's record, of undocumented instrument, sits above it. The field nonetheless
+     follows the regulatory station's day-to-day sequence (daily correlation
+     {{claim:cea.del.all.r}}, {{claim:cea.del.anomaly_daily_r}} within the month). The
      satellite level used to anchor it sits above the withheld city mean in the median city on the
      ladder, by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
      {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per

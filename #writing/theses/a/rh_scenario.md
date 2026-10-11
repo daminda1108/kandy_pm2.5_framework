@@ -31,8 +31,11 @@ and lowest months. The interval's coverage of the corrected sensor record is
 
 Neither scenario is validated against a co-located reference instrument, and the two do not bound
 the true cycle: they are alternatives that show which conclusions depend on the correction. The
+regulatory station in the city centre, which is not co-located with the sensors, gives a partial
+answer ({{ref:s-cea-reference}}): its morning peak matches the production scenario and its nights
+are lower than either. The
 production scenario remains the delivered field because it is the one the model was built and
 validated on, not because it is known to be right. Statements in this thesis about the depth of the
-daily cycle, and about whether night exceeds midday, are therefore conditional on the humidity
-correction; statements about the level, the timing of the cycle, the day-to-day sequence and the
+daily cycle are therefore conditional on the humidity correction, and the delivered field's nights
+should not be read as exceeding midday; statements about the level, the timing of the cycle, the day-to-day sequence and the
 local fraction are not.

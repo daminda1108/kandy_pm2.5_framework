@@ -6,10 +6,11 @@ The limits identified in {{ref:a-results}} each point to a specific piece of fur
 
 **Continuously reporting stations at Kandy, read daily, with a reference-grade instrument among
 them.** This is the ranking of {{ref:s-measurement-priority-ordering}}. A reference instrument
-co-located with the low-cost sensors would also settle the level, which three low-cost records and
-one national record leave open, and the depth of the daily cycle, which depends on the humidity
-correction. The national regulatory authority's Kandy record, granted in principle
-({{ref:s-data-requested-but-obtained}}), is the first such record to obtain, and it would allow the
+co-located with the low-cost sensors would also fix the size of the level excess that the regulatory
+station indicates, and show where the nights of the corrected sensor record go wrong. The national
+regulatory authority's Kandy record, granted in principle ({{ref:s-data-requested-but-obtained}}) and
+already used through its public platform ({{ref:s-cea-reference}}), is the first such record to
+formalise, and it would allow the
 deployed model to be scored at Kandy on the same footing as the ladder scores it elsewhere.
 
 **A composition measurement.** The locally emitted primary share lies between

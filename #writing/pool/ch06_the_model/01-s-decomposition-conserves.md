@@ -55,13 +55,18 @@ model does not observe it: the local increment includes secondary aerosol formed
 from precursors of any origin, and excludes aerosol formed regionally. Where this thesis bounds it,
 it does so separately ({{ref:s-partition-detail}}).
 
-One qualification belongs here rather than in a limitations list. The satellite anchor is exact,
-in that the annual mean of *T* matches the reference product to four decimal places every year.
-The delivered field nonetheless sits {{claim:gauge.drift_lo_pct}} to {{claim:gauge.drift_hi_pct}}
-per cent above it, consistently and in the same direction. The cause is a small error accumulating across build steps rather than a fault in the
-normalisation itself: each step preserves the mean, but the pattern is recovered from the output of
-the previous step rather than from the anchor directly, so a small positive offset builds up. The condition holds by construction and to within about half a per cent
-in practice, and this thesis states it that way, not as an exact identity.
+One qualification belongs here rather than in a limitations list. The condition holds only if every
+spatial factor that multiplies the anchor has unit spatial mean at every hour, and an earlier build
+broke it in two places. The confinement term was multiplied with the level surface without being
+renormalised, and the two covary on the valley floor; and the dispersion factor was renormalised on
+its own rather than against the field it multiplied, so where it reinforced the core-high pattern the
+product's mean exceeded the anchor. The second effect dominated: the delivered field sat about half a
+per cent above the anchor, most on still rush-hour evenings when the dispersion factor was strongest.
+Both factors are now renormalised against the field they multiply, the anchor is read directly from
+*T*(*t*) rather than from a derived field, and a test asserts that the delivered field's annual mean
+equals *T*(*t*). The largest annual departure is now {{claim:gauge.drift_hi_pct}} per cent at one
+decimal place; individual hours can still depart slightly where the floor at zero applies on the
+cleanest hours.
 
 Two assumptions carry the construction: that the background can be treated as uniform across the
 domain, and that the imposed pattern is more than an arbitrary prior. Both are examined in

@@ -15,5 +15,5 @@ the concentration is counted, not its level, so it inherits the open level quest
 
 Projecting that exposure through a published concentration-response function would give an
 attributable mortality figure. No such figure is reported: the age-specific mortality the function
-requires was not available, the level the exposure rests on is unresolved, and the uncertainty
+requires was not available, the level the exposure rests on is not established and probably high, and the uncertainty
 could not be propagated ({{ref:app-attributable-burden-projection}}).

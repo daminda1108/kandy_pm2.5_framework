@@ -33,18 +33,21 @@ survived the change.
 recommendation of this thesis, and it is the one most robust to how the evidence is read. It holds
 for the city-mean estimation procedure that was tested, on a panel of mostly temperate cities: it is
 evidence for using readings continuously, not a universal procurement ranking. When a
-station's reading is used on the day it is taken, two stations reduce daily error in the
-reconstructed city mean by {{claim:v2.review.registered_loco.reco.gL2s_rmse.median}} per cent
+station's reading is used on the day it is taken, the registered first two stations reduce daily error in the
+reconstructed mean of stations three to six by {{claim:v2.review.registered_loco.reco.gL2s_rmse.median}} per cent
+(one hundred cities of the two registered panels, registered station split)
 [{{claim:v2.review.registered_loco.reco.gL2s_rmse.lo}}, {{claim:v2.review.registered_loco.reco.gL2s_rmse.hi}}].
 Used only to recalibrate the sensorless estimate, as the registered first rung used them, the
 same two stations gave {{claim:v2.conf.reco.first2_rmse.median}} per cent
 [{{claim:v2.conf.reco.first2_rmse.lo}}, {{claim:v2.conf.reco.first2_rmse.hi}}] on the fresh
 confirmation cities, and nothing detectable on high-pollution days. On cities with full station
-networks the same contrast holds at every station count:
+networks, where stations are added one at a time and scored against all the stations withheld, the
+same contrast holds at every station count; these figures come from a different panel and target
+from the one above, so their two-station value is not expected to equal it:
 
 {{fig:stationdaily}}
 
-One station read daily reduced error by {{claim:v2.review.k.day1.median}} per cent
+On these {{claim:v2.review.k.cities}} cities one station read daily reduced error by {{claim:v2.review.k.day1.median}} per cent
 [{{claim:v2.review.k.day1.lo}}, {{claim:v2.review.k.day1.hi}}], two by
 {{claim:v2.review.k.day2.median}} per cent [{{claim:v2.review.k.day2.lo}}, {{claim:v2.review.k.day2.hi}}]
 and five by {{claim:v2.review.k.day5.median}} per cent [{{claim:v2.review.k.day5.lo}}, {{claim:v2.review.k.day5.hi}}],
@@ -76,15 +79,16 @@ complementary rather than ranked.
 
 **Make at least one of them reference grade, for a reason the ladder does not price.** The case
 for a reference instrument is a measurement-design argument and stands on its own. It would
-settle the level discrepancy of {{ref:s-checks-kandy-carry-weight}}, where three of four
-independent records sit below the model and the one that matches carries an undocumented
-instrument. It would anchor the calibration of the low-cost sensors already in the basin, against
+settle the level discrepancy of {{ref:s-checks-kandy-carry-weight}}: the regulatory station
+reads about a quarter below the model, but its method and siting are undocumented, and the
+records disagree with one another. It would anchor the calibration of the low-cost sensors already in the basin, against
 which their performance can be assessed on a published protocol [@Duvall2021]. And it would settle
 the shape of the diurnal cycle, which at present depends on a humidity correction: with a constant
 relative humidity the corrected low-cost record has a morning-peak-to-midday ratio of
 {{claim:v2.rh.constant_rh80.peak_to_trough}}, and with hourly humidity
-{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Only a co-located reference record can say
-which is right. None of the station-count figures above is evidence for this case, and it does
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. The regulatory station's hourly record supports
+the first for the morning peak but shows lower nights than either ({{ref:s-cea-reference}}); only
+co-location with the low-cost sensors can say where the difference arises. None of the station-count figures above is evidence for this case, and it does
 not need them.
 
 **Do not expand the network to improve the daily mean.** Beyond two or three stations read daily,

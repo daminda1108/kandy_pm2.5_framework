@@ -17,8 +17,10 @@ The comparison is shown for completeness, at a seasonal correlation of
 {{claim:kandy.cycles_diurnal_r}}, and those numbers should be read as confirming that the
 calibration was applied rather than as evidence that the model works.
 
-**Two records do carry weight**, because the model played no part in producing them and they
-played no part in producing the model.
+**Three records do carry weight**, because the model played no part in producing them and they
+played no part in producing the model: the national research organisation's station, a calibrated
+low-cost record, and the regulatory station in the city centre, which is treated separately in
+{{ref:s-cea-reference}}.
 
 {{tbl:T3_2}}
 
@@ -51,23 +53,25 @@ near zero the comparison would have collapsed into a check on the anchor and car
 information at all. The station sits {{claim:nbro.station_offset_km}} kilometres from the centre
 of the cell it falls in, so the pairing is not marginal.
 
-**A level question remains open and is not resolved here.** Of four independent point records
-at Kandy, three sit below the model and one, the national record, sits above it, so the records
-bracket the field rather than agreeing with it. The three low ones are all low-cost sensors
-carrying a downward calibration correction; the one that matches has an undocumented instrument.
-The interval coverage at the two local sensors points the same way: when observations fall outside
-the interval they fall below it in {{claim:kandy.miss_below}} per cent of hours and above it in
-only {{claim:kandy.miss_above}} per cent ({{ref:s-interval-calibration}}).
+**The level at Kandy is probably too high.** Of the independent point records, the regulatory
+station ({{ref:s-cea-reference}}) and the calibrated low-cost record sit below the model, by
+{{claim:cea.del.all.bias_pct}} and {{claim:attan.diff_pct}} per cent of the observed mean, and the
+national research organisation's record sits above it. Only the last has an undocumented
+instrument, and only the first is a regulatory monitor. The interval coverage at the two local
+sensors points the same way: when observations fall outside the interval they fall below it in
+{{claim:kandy.miss_below}} per cent of hours and above it in only {{claim:kandy.miss_above}} per cent
+({{ref:s-interval-calibration}}).
 
-Two readings fit this pattern. The first is a change of support: the field is an area mean, the
-records are points, and low-cost points may sit systematically below the cell they fall in. The
-second is an upward level bias in the model at these points, and the external review of the chain
-read the one-sided coverage together with the three low records as evidence for it. A candidate
-mechanism is the humidity correction of the sensor record, which used a constant relative
-humidity; recomputed with hourly humidity, the ratio of the normalised morning peak to the
-midday level falls from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
-{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}, which changes the diurnal shape imposed on the
-anchor. The national record, which sits above the model, argues against a general upward bias.
-The records therefore bracket the field, and the level is stated as open rather than settled by
-choosing one of them. A
-co-located reference monitor would settle both the level and the diurnal shape.
+Two readings remain possible. The first is a change of support: the field is an area mean, the
+records are points, and points may sit below the cell they fall in. That is harder to sustain at a
+station in the city centre, where the cell is among the highest in the basin. The second is an
+upward bias in the level the field inherits from the satellite surface, which in the tropical
+cities of the panel overstates the mean of withheld stations by a median of
+{{claim:lvl.tropical.bias_p50}} per cent and by {{claim:lvl.tropical.bias_p75}} per cent or more in a
+quarter of them ({{ref:s-kandy-field-level}}); an excess of the size seen at the regulatory station
+is therefore not unusual. The weight of evidence now favours the second, but the size of the bias is
+not established: the regulatory station's method and siting are undocumented, and a single station
+cannot separate a level bias from a local siting effect. The field has not been recalibrated, so
+that the regulatory record remains a check rather than becoming an input. A co-located reference
+monitor with documented siting would settle the level, and the hourly record of the same station
+bears on the diurnal shape ({{ref:s-rh-scenario}}).
