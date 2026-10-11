@@ -2088,6 +2088,61 @@ def review2(c: Claims) -> None:
         c.add("r2b.cities", len(body), stat="count", n=len(body), source=f.name, ledger="F.126")
 
 
+
+def kandy_external_2026_10_11(c: Claims) -> None:
+    """F.128: NBRO daily record digitised from Nirmani et al. 2025; leave-one-sensor-out; level range. EXPLORATORY."""
+    f = REPO / "data" / "external" / "nbro" / "nirmani2025_kandy_check.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for y in ("2021", "2022"):
+            c.add(f"nbrod.digit.{y}.mean", round(S[y]["digitised_mean"], 1), stat="mean of digitised daily values",
+                  n=S[y]["days"], source=f.name, ledger="F.128")
+            c.add(f"nbrod.digit.{y}.diff_pct", S[y]["diff_pct"], stat="digitised vs published annual mean (%)",
+                  n=S[y]["days"], source=f.name, ledger="F.128")
+            c.add(f"nbrod.digit.{y}.days", S[y]["days"], stat="days recovered", n=S[y]["days"], source=f.name, ledger="F.128")
+    f = DEC / "kandy_nbro_daily_check.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("nbrod.days", S["days"], stat="matched days", n=S["days"], source=f.name, ledger="F.128")
+        for scope in ("all", "sensors_reported", "sensors_absent"):
+            for arm in ("model_cell", "monthly_climatology_benchmark"):
+                v = S[scope][arm]
+                for k in ("r", "rmse", "bias_pct", "n"):
+                    c.add(f"nbrod.{scope}.{arm}.{k}", round(v[k], 3) if k != "n" else v[k],
+                          stat=f"daily {k}", n=v["n"], source=f.name, ledger="F.128")
+        c.add("nbrod.monthly.r", round(S["monthly"]["r"], 3), stat="r of monthly means", n=S["monthly"]["n"],
+              source=f.name, ledger="F.128")
+        if "climatology_r" in S:
+            for k in ("climatology_r", "monthly_r_2021", "monthly_r_2022", "anomaly_daily_r"):
+                c.add(f"nbrod.{k}", round(S[k], 3), stat=k, n=S["days"], source=f.name, ledger="F.128")
+    f = REPO / "data" / "processed" / "stage1_v3" / "training" / "kandy_loso_test.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for key, tag in (("test_12451", "akurana"), ("test_33495", "hantana")):
+            v = S[key]
+            for lvl in ("hourly", "daily"):
+                for arm in ("pred", "prior_only"):
+                    c.add(f"loso.{tag}.{lvl}.{arm}.r", round(v[f"{lvl}.{arm}"]["r"], 3), stat=f"{lvl} r on the held-out sensor",
+                          n=v[f"{lvl}.{arm}"]["n"], source=f.name, ledger="F.128")
+            c.add(f"loso.{tag}.diurnal_r", round(v["diurnal_r.pred"], 3), stat="diurnal-cycle r", n=24,
+                  source=f.name, ledger="F.128")
+    f = DEC / "kandy_level_range.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for scope in ("all", "tropical"):
+            v = S[scope]
+            c.add(f"lvl.{scope}.n", v["n"], stat="cities", n=v["n"], source=f.name, ledger="F.128")
+            for p in ("25", "50", "75"):
+                c.add(f"lvl.{scope}.bias_p{p}", v["bias_pct"][p], stat=f"satellite-level bias, {p}th percentile (%)",
+                      n=v["n"], source=f.name, ledger="F.128")
+            c.add(f"lvl.{scope}.iqr_lo", v["iqr_range"][0], stat="Kandy level, lower end (IQR of bias)", n=v["n"], source=f.name, ledger="F.128")
+            c.add(f"lvl.{scope}.iqr_hi", v["iqr_range"][1], stat="Kandy level, upper end (IQR of bias)", n=v["n"], source=f.name, ledger="F.128")
+            c.add(f"lvl.{scope}.p10p90_lo", v["p10_p90_range"][0], stat="Kandy level, lower end (p10-p90)", n=v["n"], source=f.name, ledger="F.128")
+            c.add(f"lvl.{scope}.p10p90_hi", v["p10_p90_range"][1], stat="Kandy level, upper end (p10-p90)", n=v["n"], source=f.name, ledger="F.128")
+            c.add(f"lvl.{scope}.who_lo", v["iqr_range_times_who"][0], stat="lower end in multiples of the WHO guideline",
+                  n=v["n"], source=f.name, ledger="F.128")
+
+
 def registered_v2(c: Claims) -> None:
     """F.117-F.123 and the 2026-10-06 review (docs/review_remediation_plan_2026-10-06.md).
     New keys under `v2.*`; the older ladder keys are left in place (they state what the
@@ -2619,6 +2674,7 @@ def build() -> dict:
     kandy_model_config(c)
     kandy_model_rung(c)
     review2(c)
+    kandy_external_2026_10_11(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

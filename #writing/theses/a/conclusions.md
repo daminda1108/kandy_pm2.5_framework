@@ -19,9 +19,11 @@ reconstruction, what the evidence supports and what it may be used for.
    every satellite-anchored year**, at {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}}
    micrograms per cubic metre, with a north-east monsoon maximum, a south-west monsoon minimum, and
    morning and evening peaks either side of a midday dip. Because the absolute level is
-   unresolved (conclusion 3), this characterises the modelled field and is not an independently
-   established measurement of exposure; that PM2.5 is a substantial concern in Kandy is better
-   supported than the exact values. Under the baseline
+   unresolved (conclusion 3), these values characterise the modelled field. The exceedance itself is
+   robust: if the satellite level errs at Kandy as it does in the middle half of the tropical cities
+   on the ladder, the basin mean lies between {{claim:lvl.tropical.iqr_lo}} and
+   {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least {{claim:lvl.tropical.who_lo}}
+   times the guideline. Under the baseline
    decomposition the local increment accounts for {{claim:partition.f}} of the modelled
    concentration; the fraction ranges from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} under
    the tested choices of day boundary and daily-floor statistic, reaches
@@ -37,6 +39,11 @@ reconstruction, what the evidence supports and what it may be used for.
    - *The seasonal cycle is the best-supported property.* The construction reproduces it in every
      analogue city when their own observations are withheld (seasonal correlation
      {{claim:scorecard.seasonal_r_lo}} to {{claim:scorecard.seasonal_r_hi}}).
+   - *At Kandy, the daily record of the national research organisation (2021 and 2022) supports the
+     seasonal shape (correlation {{claim:nbrod.climatology_r}} across calendar months) but not the
+     day-to-day sequence (within-month correlation {{claim:nbrod.anomaly_daily_r}}), and the field
+     misses the crisis year 2022.* A sensor withheld from training is tracked at a daily correlation of
+     {{claim:loso.akurana.daily.pred.r}} and {{claim:loso.hantana.daily.pred.r}}.
    - *The day-to-day sequence is supported where the sensors reported.* Placed on the ladder in
      {{claim:v2.km.cities_scored}} cities, the deployed temporal model reduces daily error by
      {{claim:v2.km.reco.unio.gK2_rmse.median}} per cent against a generic sensorless estimate where
@@ -51,14 +58,17 @@ reconstruction, what the evidence supports and what it may be used for.
      from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night
      falls below midday; the depth of the cycle is calibration-dependent until a co-located reference
      instrument settles the correction.
-   - *The absolute level is open.* An independent national record agrees with the field in two
-     years, three low-cost records sit below it, and the satellite level used to anchor it sits
-     above the withheld city mean across the ladder's cities. The interval's nominal ninety per
+   - *The absolute level is open, but bounded.* The independent records bracket the field: the
+     national record sits above it in both years and three low-cost records sit below it. The
+     satellite level used to anchor it sits above the withheld city mean in the median city on the
+     ladder, by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
+     {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per
      cent coverage is not achieved, at Kandy or in those cities.
 4. **The field is not supported below the kilometre scale, and its spatial pattern is a hypothesis,
    not a measurement.** More of the variation within a city lies inside a single cell than between
    cells, no model built from freely available covariates recovers it, the dispersion step meant to
-   place the local increment lowers its agreement with withheld stations, and a handful of
+   place the local increment lowered its agreement with withheld stations and has been removed, and a
+   handful of
    interpolated stations does not recover it either; the limit is one of support and of the
    information available, not of the model chosen. The map may illustrate the construction and
    guide where to measure. It must not be used to rank neighbourhoods or to place interventions as

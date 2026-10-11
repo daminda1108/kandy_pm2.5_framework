@@ -42,7 +42,7 @@ against held-out monitors is reported rather than assumed, with a median of
 {{claim:scorecard.spatial_rho_median}}.
 
 **And it has been partly refuted, which an arbitrary prior cannot be.** {{ref:s-spatial-contrast-lost}} reports that
-the dispersion step, which is the part of the model that redistributes the emission
-surface through terrain-steered flow, **lowers** rank from {{claim:r2.rho_emission_surface}} to
-{{claim:r2.rho_with_atransport}}. A prior that cannot fail would not have produced that result,
-and the appropriate response is {{ref:s-construction-step-most-worth}}'s rather than a defence of the model.
+the dispersion step, which redistributed the emission surface through terrain-steered flow,
+**lowered** rank from {{claim:r2.rho_emission_surface}} to {{claim:r2.rho_with_atransport}}. A prior
+that cannot fail would not have produced that result, and the response was to remove the step from
+the delivered field ({{ref:s-construction-step-most-worth}}) rather than to defend it.

@@ -13,7 +13,17 @@ per cubic metre across the five anchored years. The reconstructed annual basin m
 World Health Organization annual guideline of 5 micrograms per cubic metre [@WHO2021] in every
 satellite-anchored year, by a factor of three or more. Because the absolute level remains
 unresolved ({{ref:s-checks-kandy-carry-weight}}), this characterises the modelled field and is not
-an independently established measurement of basin-wide exposure. In
+an independently established measurement of basin-wide exposure. The conclusion that the guideline
+is exceeded is nonetheless robust to the level. The satellite surface that sets the level was
+compared, in each of the ladder's cities, with the mean of stations withheld from it
+({{ref:s-kandy-model-rung}}); across the {{claim:lvl.tropical.n}} tropical cities its error has a
+median of {{claim:lvl.tropical.bias_p50}} per cent and an interquartile range of
+{{claim:lvl.tropical.bias_p25}} to {{claim:lvl.tropical.bias_p75}} per cent. If Kandy's level errs
+like the middle half of those cities, the basin mean in the anchored years lies between
+{{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, and between
+{{claim:lvl.tropical.p10p90_lo}} and {{claim:lvl.tropical.p10p90_hi}} for the tenth to ninetieth
+percentiles: at least {{claim:lvl.tropical.who_lo}} times the guideline in every case. This
+transfers an error distribution from other cities; it is not a measurement at Kandy. In
 {{claim:exposure.year}} the regional background averages {{claim:kandy.background_annual}}, so
 roughly half of the basin mean is carried by air that is the same everywhere in the city. That
 is the local fraction of {{claim:partition.f}} seen in a single year. {{ref:s-partition-constraint-rather-than}} shows

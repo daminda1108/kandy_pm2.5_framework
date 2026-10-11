@@ -6521,3 +6521,21 @@ CSVs the tests read were untracked (added); ladder-parity test now skips with a 
 VIIRS grids; 6 older cities from stored processed inputs): **0.0 difference** on every per-city value and median. NOT an
 independent reproduction. Thesis wording (fourth review): the local fraction is not comparable with the source-
 apportionment quarter (no "refutes", no "local action worth more"); C.2 = inter-monitor dispersion diagnostic.
+
+## F.128 — 🟢 new Kandy evidence without new data; dispersion removed from the delivered field (2026-10-11)
+
+EXPLORATORY. (1) **NBRO Kandy daily PM2.5 2021–22 recovered by digitising Nirmani et al. 2025 Fig. 3**
+(`scripts/digitize_nirmani_kandy.py`; 258/320 days; digitised annual means +4.0 / −2.0 % vs published). Against the
+delivered field at the station cell (`scripts/kandy_nbro_daily_check.py`, 578 days): daily r 0.39; sensors-reporting days
+0.60, other days 0.33; calendar-month climatology r 0.77; 2021 monthly r 0.88, **2022 monthly r 0.12** (economic-crisis
+months too high, Sep–Dec 2022 island-wide high missed); within-month daily r 0.28. (2) **Leave-one-sensor-out**
+(`scripts/kandy_loso_test.py`; 35 shared days only): held-out daily r 0.52 / 0.62 vs prior alone 0.31 / 0.38; diurnal r
+0.71 / 0.77. (3) **Level range** (`scripts/kandy_level_range.py`): satellite-level bias across 25 tropical ladder cities
+median +8.5 %, IQR −4.8…+26.3 % ⇒ Kandy basin mean 13.5–22.1 (IQR), 12.4–25.7 (p10–p90), ≥2.7× WHO. (4) **Dispersion
+removed** (`build_additive_field_v2.PATTERN="undispersed"`): Kandy now ships S_emit×M, the construction the ten-city
+scorecard actually scored (xichang_prod `Psm`). G1 Δ 0.000; T-lock worst 0.004. Consequences: NBRO pixel lift 15.6→6.3 %,
+NBRO annual diff +0.7/−2.6 → **−7.4/−12.1 %** (records now BRACKET the field); exposure uplift 9→6 %; contrasts ~1.08.
+Old dispersed v2/v3 backed up in `decomp/backup_dispersed_2026-10-11/`. Webapp and release repo NOT yet rebuilt. (5) No
+fresh dense tropical low-cost network exists (OpenAQ census: all four ≥12-sensor tropical cells already in panels;
+Sensor.Community ~50 tropical sensors) — the registered tropical like-for-like test is not feasible on public data.
+(6) The NBRO Kandy unit reports CO2 and PM1 (live feed): likely a multi-sensor, not reference, instrument.

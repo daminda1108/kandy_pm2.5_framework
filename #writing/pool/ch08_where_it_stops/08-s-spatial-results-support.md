@@ -3,7 +3,8 @@
 The operational statement is narrow and, this thesis argues, honest.
 
 **Can a user rank neighbourhoods against what a monitor would read there?** No. The fine spatial
-rank of the delivered construction is {{claim:r2.rho_with_atransport}}, and {{ref:s-six-negative-results-their}} gives the
+rank of the delivered construction across the ten analogue cities is
+{{claim:scorecard.spatial_rho_median}}, no better than a free built-up layer, and {{ref:s-six-negative-results-their}} gives the
 bound on what a learned alternative could add.
 
 Would a handful of local stations change that answer? Not at a resolvable size. The spatial
@@ -33,11 +34,11 @@ reading is the one carried forward.
 The argument of {{this:ch-model-stops}} is easy to compress into something stronger than the evidence, so the
 components are separated here and graded.
 
-**Established.** The delivered construction is worse than one of its own intermediate products.
-Passing the emission surface through the dispersion solver takes rank from
-{{claim:r2.rho_emission_surface}} down to {{claim:r2.rho_with_atransport}}, on two independently
-selected sets of cities. This is a defect in the present implementation and it is not a statement
-about information.
+**Established.** A physically motivated step made the construction worse. Passing the emission
+surface through the dispersion solver took rank from {{claim:r2.rho_emission_surface}} down to
+{{claim:r2.rho_with_atransport}}, on two independently selected sets of cities, and the step has been
+removed from the delivered field. This was a defect in an implementation, not a statement about
+information.
 
 Established. Within-cell spread exceeds between-cell spread, and a tenfold refinement of the
 grid does not recover the paired contrast. Sub-kilometre structure cannot be placed from the

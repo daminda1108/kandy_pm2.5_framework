@@ -26,14 +26,19 @@ The published record from the national research organisation gives annual means 
 neither of the two sensors. The model at that cell reads {{claim:nbro.model_pixel_2021}} in the first year, a
 difference of {{claim:nbro.diff_pct_2021}} per cent from the observed annual mean, and
 {{claim:nbro.model_pixel_2022}} in the second, a difference of {{claim:nbro.diff_pct_2022}} per
-cent.
+cent: the field sits below this record in both years. The field before the dispersion step was
+removed ({{ref:s-spatial-pattern}}) placed more of the local increment in the city core, where the
+station is, and matched these annual means more closely; at this one site the dispersion step
+helped, whereas across ten monitored cities it lowered agreement with held-out stations, and the
+delivered field follows the larger test.
 
 An off-the-shelf alternative gives the comparison a baseline. The global satellite-derived surface
 of Wei and colleagues [@Wei2023], read at the same cell, sits below the observed annual mean in
 both years and by clearly more than the model does, so at the one reference-like record available
 the constructed field is closer to the observation than the free product it could have been
-replaced with. That is one site and two years, from an instrument whose type is not documented,
-and it is a comparison of levels rather than of spatial skill.
+replaced with. That is one site and two years, from an instrument whose type is not documented
+(the network's present Kandy unit also reports carbon dioxide and fine-mode counts, which suggests
+a multi-sensor instrument), and it is a comparison of levels rather than of spatial skill.
 
 The reason that comparison is genuinely external deserves stating rather than asserting. The
 anchor is calibrated to the two low-cost sensors, so the model's basin **mean** is not
@@ -47,7 +52,8 @@ information at all. The station sits {{claim:nbro.station_offset_km}} kilometres
 of the cell it falls in, so the pairing is not marginal.
 
 **A level question remains open and is not resolved here.** Of four independent point records
-at Kandy, three sit below the model and one matches it. The three low ones are all low-cost sensors
+at Kandy, three sit below the model and one, the national record, sits above it, so the records
+bracket the field rather than agreeing with it. The three low ones are all low-cost sensors
 carrying a downward calibration correction; the one that matches has an undocumented instrument.
 The interval coverage at the two local sensors points the same way: when observations fall outside
 the interval they fall below it in {{claim:kandy.miss_below}} per cent of hours and above it in
@@ -59,9 +65,9 @@ second is an upward level bias in the model at these points, and the external re
 read the one-sided coverage together with the three low records as evidence for it. A candidate
 mechanism is the humidity correction of the sensor record, which used a constant relative
 humidity; recomputed with hourly humidity, the ratio of the normalised morning peak to the
-afternoon trough falls from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
+midday level falls from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}, which changes the diurnal shape imposed on the
-anchor. The record that matches the model argues against a general bias, and it is the only one
-not from a low-cost sensor. This is a level question on the axis this thesis calls well
-supported, and it is stated as open rather than settled by choosing the record that agrees. A
+anchor. The national record, which sits above the model, argues against a general upward bias.
+The records therefore bracket the field, and the level is stated as open rather than settled by
+choosing one of them. A
 co-located reference monitor would settle both the level and the diurnal shape.

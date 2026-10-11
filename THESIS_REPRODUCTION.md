@@ -57,6 +57,8 @@ The ones behind the main results:
 | deployed model on the ladder (exploratory) | `scripts/pull_kandy_model_priors.py`, `scripts/ladder_v2_kandy_model.py` (spec `kandy_pm25/docs/kandy_model_rung_spec_2026-10-10.md`) |
 | humidity scenario | `scripts/kandy_rh_sensitivity.py`, `scripts/kandy_rh_scenario.py` |
 | local-fraction sensitivity | `scripts/kandy_f_sensitivity.py` |
+| Kandy daily record (digitised) and its comparison | `scripts/digitize_nirmani_kandy.py`, `scripts/kandy_nbro_daily_check.py` |
+| leave-one-sensor-out; level range | `scripts/kandy_loso_test.py`, `scripts/kandy_level_range.py` |
 | dispersion against simpler surfaces | `scripts/r2_score_atransport.py` (registered), `scripts/r2b_dispersion_benchmark.py` |
 | spatial learning curve | `scripts/spatial_curve_analysis.py`, `scripts/spatial_curve_fullrecord.py`, `scripts/spatial_curve_reanalysis.py` |
 
@@ -82,6 +84,7 @@ version.
 | Monitoring networks (ladder, spatial tests) | OpenAQ public S3 archive; CNEMC national archive (public mirror) | public | 2026-09 to 2026-10 | ladder and spatial tests |
 | Analogue-city stations | OpenAQ, CNEMC, SIATA (Medellín) | public | 2026-03 to 2026-09 | ten-city validation |
 | Independent Kandy records | published values (Nirmani et al. 2025; Attanayake et al. 2025; Dhammapala et al. 2022) | published | n/a | level checks |
+| NBRO Kandy daily PM2.5, 2021–22 | digitised from Nirmani et al. (2025), CLEAN Soil Air Water, Fig. 3 (place the paper PDF under `references/papers/`) | published figure | 2026-10-11 | daily check at Kandy |
 | Regulatory Kandy monitor | Central Environmental Authority | **restricted**: signed agreement; not used | n/a | not used in this thesis |
 
 An authorised reader with PurpleAir access can regenerate the Kandy chain; every cross-city result needs only the

@@ -44,7 +44,8 @@ Two readings of the offset remain open. The first is the change of support descr
 field is an area mean and the sensors are points, so a systematic offset between them is expected.
 The second is that the model is biased upward at these points. The second reading is supported by
 the independent Kandy records of {{ref:s-checks-kandy-carry-weight}}, three of which also sit below
-the model, and opposed by the one record from a non-low-cost instrument, which agrees with it. The
+the model, and opposed by the national record, whose instrument type is undocumented and which
+sits above it. The
 humidity correction of the sensor record, which uses a constant relative humidity
 ({{ref:s-excluded-processes-known-limits}}), is one candidate mechanism for such a bias. The
 offset is reported as a level question that a co-located reference monitor would settle.

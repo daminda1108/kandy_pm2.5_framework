@@ -231,6 +231,16 @@ def build_B_v2(year, b_annual, T_override: pd.DataFrame | None = None) -> pd.Dat
                          "B_lo": 0.70 * B, "B_hi": 1.25 * B})  # proportional bg band
 
 
+# Spatial pattern source (2026-10-11, ledger F.128). "undispersed" = S_emit x M, the construction the ten-city
+# validation actually scored (xichang_prod.py `Psm`); "4factor" = S_emit x M x A_transport, the dispersed pattern
+# shipped until 2026-10-11. On identical held-out sites in ten cities the dispersion step LOWERS rank correlation
+# (r2b_dispersion_benchmark.py), so the delivered field now uses the validated, undispersed pattern. The anchor
+# (T05/T50/T95 = hourly basin means) is taken from the 4factor file either way: A has unit spatial mean, and the
+# 4factor file carries the current anchor (the smooth file predates later anchor updates; its PATTERN is current
+# because S_emit, M and BLH are unchanged since it was built).
+PATTERN = "undispersed"
+
+
 def assemble_v2(year):
     m = pd.read_parquet(DEC / f"kandy_decomp_predictions_{year}_4factor.parquet")
     b = pd.read_parquet(DEC / f"B_background_hourly_{year}_v2.parquet")
@@ -241,7 +251,17 @@ def assemble_v2(year):
     m["T95"] = g["pm25_q95"].transform("mean")
     bmap = b.set_index("time")
     m["B"] = m.time.map(bmap["B"]); m["B_lo"] = m.time.map(bmap["B_lo"]); m["B_hi"] = m.time.map(bmap["B_hi"])
-    P = m["pm25_q50"] / m["T50"]
+    if PATTERN == "undispersed":
+        sm = pd.read_parquet(DEC / f"kandy_decomp_predictions_{year}.parquet", columns=["time", "lat", "lon", "pm25_q50"])
+        sm["time"] = pd.to_datetime(sm.time)
+        sm["P"] = sm.pm25_q50 / sm.groupby("time").pm25_q50.transform("mean")
+        m = m.merge(sm[["time", "lat", "lon", "P"]], on=["time", "lat", "lon"], how="left", validate="one_to_one")
+        assert m.P.notna().all(), "undispersed pattern missing for some cells/hours"
+        P = m["P"]
+    elif PATTERN == "4factor":
+        P = m["pm25_q50"] / m["T50"]
+    else:
+        raise ValueError(PATTERN)
     out = m[["time", "lat", "lon"]].copy()
 
     # Increment-SPLIT assembly (2026-07-09 core-vs-periphery fix). The plain form

@@ -12,8 +12,8 @@ rather than of data, and shows that a handful of monitoring stations would not s
 It does not claim that the model represents atmospheric chemistry, because it contains none, and
 the share of concentration it assigns to the local increment is a bound set by a constraint, not
 a source apportionment. It does not claim that the absolute concentration at Kandy is
-independently validated, because the one external record that agrees with the field and the three
-that sit below it have not been reconciled. And it does not claim that the construction has been
+independently validated, because the external records bracket it, one above and three below, and
+have not been reconciled. And it does not claim that the construction has been
 validated at Kandy itself. What is validated is a procedure, tested on monitored valley and basin
 cities by withholding their own observations and applied to Kandy by analogy; Kandy is by
 construction the kind of city that validation set excludes, so the transfer is an argument from

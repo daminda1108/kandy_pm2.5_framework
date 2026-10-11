@@ -11,14 +11,14 @@ coarsening. It is **relocated**. Tracking the spread through the build:
 | after solving at {{claim:subgrid.production_res_m}} m | {{claim:s1.contrast.solve_at_238_m_production}} |
 | reported at {{claim:subgrid.coarse_res_m}} m | {{claim:s1.contrast.report_at_998_m}} |
 
-The dispersed field still spans {{claim:s1.contrast.report_at_998_m}} times at the delivered
-resolution. There is no shortage of contrast. **It is in different places from where the survey
+The dispersed variant, which was the delivered pattern when this was measured, still spans
+{{claim:s1.contrast.report_at_998_m}} times at a kilometre. There is no shortage of contrast. **It is in different places from where the survey
 measured it**, which is a failure of placement rather than of dynamic range or of support.
 
 An independent line agrees from the opposite direction, and it is the most actionable finding in
 {{this:ch-model-stops}}. Three surfaces were scored on exactly the same held-out stations in
 {{claim:r2b.cities}} monitored cities: a raw emission surface, the same surface after the
-dispersion solver (the step the delivered field uses), and the simplest free alternative, the
+dispersion solver (the step the delivered field used until this comparison), and the simplest free alternative, the
 built-up fraction of land cover within one kilometre of each station, which involves no model. In
 this comparison, as in the registered test it extends, the emission surface is the satellite
 night-time light intensity over each city, used as a proxy for where combustion happens; it is not
@@ -33,9 +33,10 @@ between their ninetieth and tenth percentiles, while the raw and dispersed surfa
 is already too wide. (In the delivered field the surface shapes only the local increment, which is
 why the field's own contrast is far smaller.)
 
-**The dispersion step has therefore not earned its place.** It is physically motivated, and it
-remains in the delivered field as a declared modelling choice, but it is not a validated
-improvement: on every comparison made, a simpler surface places concentration at least as well.
+**The dispersion step has therefore not earned its place, and it has been removed from the delivered
+field.** It is physically motivated, but on every comparison made across cities a simpler surface
+places concentration at least as well. The delivered pattern is now the undispersed construction
+scored in the ten analogue cities.
 Physical sophistication and predictive skill did not improve together here.
 
 {{fig:dispersion}}

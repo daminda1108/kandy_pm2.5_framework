@@ -7,4 +7,4 @@ Table: Independent point records at Kandy against the model at the same location
 | Calibrated low-cost, 2022 to 2024 [@Attanayake2025] | low-cost, reference-anchored | 19.49 | 25.01 | +28 per cent |
 | Research sensor, full record [@Dhammapala2022] | low-cost | 17.8 | -- | corroborates a reference-anchored 18 to 19 |
 
-Observed values are published measurements and carry a citation each. Model values are generated from the delivered field. Three of the four records sit below the model and all three are low-cost sensors carrying a downward calibration; the one that matches has an undocumented instrument. The discrepancy is reported as open rather than resolved by preferring the record that agrees.
+Observed values are published measurements and carry a citation each. Model values are generated from the delivered field. The national record sits above the model; the low-cost records, each carrying a downward calibration, sit below it. The records bracket the field and the level is reported as open rather than resolved by preferring one of them.

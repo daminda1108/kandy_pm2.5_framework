@@ -136,11 +136,10 @@ def t3_2_point_records():
              "corroborates a reference-anchored 18 to 19"],
         ],
         note="Observed values are published measurements and carry a citation each. Model "
-             "values are generated from the delivered field. Three of the four records sit "
-             "below the model and all three are low-cost sensors carrying a downward "
-             "calibration; the one that matches has an undocumented instrument. The "
-             "discrepancy is reported as open rather than resolved by preferring the record "
-             "that agrees.")
+             "values are generated from the delivered field. The national record sits above the "
+             "model; the low-cost records, each carrying a downward calibration, sit below it. "
+             "The records bracket the field and the level is reported as open rather than "
+             "resolved by preferring one of them.")
 
 
 def t5_1_attempts():
@@ -520,24 +519,26 @@ def t4_ledger():
             "broad seasonal comparisons, subject to the limits of transfer"],
            ["Day-to-day sequence",
             f"conditionally supported: daily correlation {tok(km_r + 'K2_r.median')} where the anchor stations "
-            f"observed the period, {tok(km_p + 'K2_r.median')} where they did not",
-            "better supported on days the sensors reported"],
+            f"observed the period, {tok(km_p + 'K2_r.median')} where they did not; at Kandy "
+            f"{tok('nbrod.sensors_reported.model_cell.r')} and {tok('nbrod.sensors_absent.model_cell.r')} against "
+            f"the national record",
+            "better supported on days the sensors reported; weak on other days"],
            ["Depth of the daily cycle",
             f"calibration-sensitive: morning peak over midday {tok('rh2.production.peak_trough')} or "
             f"{tok('rh2.hourly_rh.peak_trough')} depending on the humidity correction",
             "scenario-dependent until a reference instrument settles the correction"],
            ["Absolute level",
-            f"unresolved: a national record within {tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} "
-            f"per cent, three low-cost records below, the satellite level {tok(km_r + 'K2_bias.median')} per cent "
-            f"above withheld city means",
-            "a model estimate, not an independently established exposure"],
+            f"unresolved but bounded: the national record above the field ({tok('nbro.diff_pct_2021')} and "
+            f"{tok('nbro.diff_pct_2022')} per cent), three low-cost records below; {tok('lvl.tropical.iqr_lo')} to "
+            f"{tok('lvl.tropical.iqr_hi')} micrograms per cubic metre if the satellite level errs as in tropical cities",
+            "a model estimate; the guideline exceedance is robust, the exact value is not"],
            ["Uncertainty interval",
             f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, a fraction "
             f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
             "indicative only; not calibrated for the basin field"],
            ["Spatial pattern at the kilometre scale",
-            f"not validated: rank correlation {tok('r2b.rho_C')} as delivered, below a free built-up layer "
-            f"({tok('r2b.rho_BU')})",
+            f"not validated: median rank correlation {tok('scorecard.spatial_rho_median')} in ten cities, of the "
+            f"order of a free built-up layer ({tok('r2b.rho_BU')}); the dispersion step lowered it and was removed",
             "a hypothesis to test, not a ranking of neighbourhoods"],
            ["Regional and local partition",
             f"specification-dependent: {tok('partition.f')} at baseline, {tok('v2.f.cap_min')} to "
@@ -577,8 +578,17 @@ def t3_validation_summary():
            ["Interval coverage", "Kandy sensors; ladder cities",
             f"{tok('kandy.cov90')} per cent; a fraction {tok(km_r + 'K2_cov90.median')}",
             "nominal 90; misses one-sided at Kandy"],
+           ["Daily, at Kandy", "national organisation's daily record, 2021 and 2022",
+            f"daily correlation {tok('nbrod.all.model_cell.r')}; across calendar months {tok('nbrod.climatology_r')}; "
+            f"within months {tok('nbrod.anomaly_daily_r')}",
+            "digitised from a published figure; misses 2022"],
+           ["Held-out sensor at Kandy", "train on one sensor, score the other",
+            f"daily correlation {tok('loso.akurana.daily.pred.r')} and {tok('loso.hantana.daily.pred.r')}; prior alone "
+            f"{tok('loso.akurana.daily.prior_only.r')} and {tok('loso.hantana.daily.prior_only.r')}",
+            "two low-cost sensors sharing a calibration"],
            ["Independent Kandy records", "national organisation, two years; three low-cost records",
-            f"{tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent; low-cost records below the field",
+            f"national record {tok('nbro.diff_pct_2021')} and {tok('nbro.diff_pct_2022')} per cent; low-cost records "
+            f"below the field",
             "point against cell; instruments differ"]],
           note="A high seasonal correlation does not imply accurate daily or hourly values; each "
                "condition is reported separately for that reason.")
@@ -601,6 +611,22 @@ def ta_ladder_status():
            ["Deployed model as a rung", "exploratory; design committed before scoring, not registered",
             "conditional on whether the anchor stations reported"]],
           note="No post hoc result is presented as a registered confirmation anywhere in this thesis.")
+
+
+def t3_nbro_daily():
+    """The delivered field against the NBRO Kandy daily record, 2021-2022 (digitised; exploratory, F.128)."""
+    rows = []
+    for scope, lab in (("all", "all matched days"), ("sensors_reported", "low-cost sensors reporting"),
+                       ("sensors_absent", "low-cost sensors not reporting")):
+        k = f"nbrod.{scope}."
+        rows.append([lab, tok(k + "model_cell.n"), tok(k + "model_cell.r"), tok(k + "model_cell.rmse"),
+                     tok(k + "model_cell.bias_pct"), tok(k + "monthly_climatology_benchmark.r")])
+    write("T3_nbro_daily", "The delivered field against the national research organisation's daily Kandy record, 2021 and 2022",
+          ["days", "n", "daily correlation", "daily RMSE (micrograms per cubic metre)", "bias (per cent)",
+           "correlation of the record's own monthly climatology"], rows,
+          note="Observed values digitised from a published figure; digitised annual means are within a few per "
+               "cent of the published ones. The climatology benchmark is computed from the record it is scored "
+               "against, so it is favoured.")
 
 
 def t9_1_next_v2():
@@ -633,7 +659,7 @@ def t9_1_next_v2():
 
 
 BUILDERS = {
-    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
+    "T7_1v2": t7_1_ladder_v2, "T7_2v2": t7_2_like_for_like_v2, "T9_1v2": t9_1_next_v2, "T3_km": t3_km_rung, "T3_nbro": t3_nbro_daily, "T3_rh": t3_rh_scenario, "T4_ledger": t4_ledger, "T3_val": t3_validation_summary, "TA_status": ta_ladder_status,
     "T3_1": t3_1_literature, "T3_2": t3_2_point_records, "T4_1": t4_1_data, "T4_3": t4_3_panel, "T5_1": t5_1_attempts,
     "T7_1": t7_1_ladder, "T7_2": t7_2_bands, "T7_5": t7_5_registrations,
     "T9_1": t9_1_next,

@@ -10,13 +10,13 @@ when their own observations are withheld ({{ref:s-model-across-ten-cities}}). It
 placed on the ladder, follows the withheld daily city mean at a correlation of
 {{claim:v2.km.reco.unio.K2_r.median}} where its anchor stations observed the period, though only
 {{claim:v2.km.pros.unio.K2_r.median}} where they did not, so the day-to-day sequence at Kandy is
-best supported on the days its sensors reported ({{ref:s-kandy-model-rung}}). And at Kandy the
-independent national record differs from the field by {{claim:nbro.diff_pct_2021}} and
-{{claim:nbro.diff_pct_2022}} per cent in two separate years, at a cell whose value the model lifts
-{{claim:nbro.lift_pct_2021}} and {{claim:nbro.lift_pct_2022}} per cent above the basin mean
-({{ref:s-checks-kandy-carry-weight}}). That record is one site over two years, with an
-undocumented instrument, and a global satellite-derived product read lower than it at the same
-cell in both years, so it supports the field without validating it. The interval around the field
+best supported on the days its sensors reported ({{ref:s-kandy-model-rung}}). At Kandy itself the
+daily record of the national research organisation, recovered for 2021 and 2022, supports the
+seasonal shape (correlation {{claim:nbrod.climatology_r}} across the twelve calendar months) but
+not the day-to-day sequence (correlation {{claim:nbrod.anomaly_daily_r}} within months), and the
+field misses the year 2022 almost entirely ({{ref:s-kandy-daily-record}}). The timing evidence is
+therefore strongest for the seasonal cycle, weaker for the daily cycle, and weakest for individual
+days. The interval around the field
 under-covers: nominal ninety per cent intervals cover {{claim:kandy.cov90}} per cent of the two
 sensors' hours. Removing each sensor's own offset, with the width unchanged, raises that to
 {{claim:kandy.cov90_recentred}} per cent ({{ref:s-interval-calibration}}), which diagnoses a possible
@@ -31,13 +31,17 @@ midday ({{ref:s-rh-scenario}}). How deep the cycle is cannot be settled without 
 instrument co-located with the sensors.
 
 **Open: the level.** Of four independent point records at Kandy, three sit below the field and
-one agrees with it, and the three low ones all carry a downward calibration correction applied to
-low-cost sensors. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
+one, the national record, sits above it, so the records bracket the field; the three low ones all
+carry a downward calibration correction applied to low-cost sensors. The temporal anchor is itself calibrated to the city's two low-cost sensors, so
 the level is not independent of Kandy observations in the way the pattern is. Two readings remain
 possible. The offset may be a change of support, an area mean compared with points, or it may be
 an upward bias of the field at the sensor locations, for which the constant-humidity conversion
 is one candidate mechanism. Nothing available to this study separates those possibilities, and
-the discrepancy is reported as open rather than resolved by choosing the record that agrees. The
+the discrepancy is reported as open rather than resolved by choosing one record. What can be
+said is bounded: if the satellite level that anchors the field errs at Kandy as it does in the
+middle half of the tropical cities scored on the ladder, the basin mean lies between
+{{claim:lvl.tropical.iqr_lo}} and {{claim:lvl.tropical.iqr_hi}} micrograms per cubic metre, at least
+{{claim:lvl.tropical.who_lo}} times the guideline ({{ref:s-kandy-field-level}}). The
 consequence runs through every number in {{ref:s-kandy-field}}: the cycles and the partition are
 statements about shape and proportion that survive a shift in level, while the annual means, the
 exposure figures and the comparison with the guideline do not. For that reason, among others,

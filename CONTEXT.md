@@ -51,6 +51,11 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
+## 🟢 New Kandy evidence; dispersion removed (2026-10-11, F.128)
+NBRO daily (digitised Nirmani 2025): daily r 0.39 (0.60 sensor days / 0.33 other); month-climatology r 0.77; 2022 missed
+(r 0.12); within-month r 0.28. LOSO daily r 0.52/0.62. Level range (tropical bias IQR) 13.5–22.1 µg/m³, ≥2.7× WHO.
+Delivered P = S_emit×M (dispersion removed) → NBRO annual −7.4/−12.1 % (records BRACKET field); exposure uplift 6 %.
+
 ## 🟢 Clean rerun (2026-10-11, F.127)
 Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate exactly; dispersion benchmark exact from raw
 (4 valley cities). Author rerun, NOT independent reproduction. Never compare f with the old ~0.25 (different quantities).

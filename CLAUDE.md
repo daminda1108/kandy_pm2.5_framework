@@ -95,6 +95,14 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 
 ## Current State (updated 2026-10-10, 🟢 **THESIS A RESTRUCTURED; THE DEPLOYED MODEL SCORED ON THE LADDER (F.125)**)
 
+- 🟢 **2026-10-11 (F.128): Kandy evidence without new data; DISPERSION REMOVED from the delivered field.** NBRO daily
+  2021–22 digitised from Nirmani 2025 Fig. 3 (r 0.39 daily; 0.77 month-climatology; 2022 missed); leave-one-sensor-out
+  daily r 0.52/0.62; level range 13.5–22.1 (≥2.7× WHO). `build_additive_field_v2.PATTERN="undispersed"` (S_emit×M, the
+  ten-city-scored construction) → NBRO annual −7.4/−12.1 % (records bracket the field), exposure uplift 6 %. Backups of the
+  dispersed v2/v3 in `decomp/backup_dispersed_2026-10-11/`. ⚠ **Webapp + release repo still serve the dispersed field**
+  (gotcha #55 propagation pending). CEA AirShare has an external API (`aq.cea.lk`, needs CEA-API-KEY via registration);
+  NBRO AirSL `wp-json/aq/v1/sensors` gives current values only. Fifth review received; its plan awaits the user.
+
 - 🟢 **2026-10-11, fourth review + clean rerun (F.127), tag `thesis-a-2026-10-11-r4`.** f no longer compared with the old
   quarter; C.2 is a dispersion diagnostic; abstract "evaluated through three lines of evidence". README burden/per-pixel/
   deep-night claims removed. Clean clone: lock fixed (unused aiobotocore/s3fs), 2 metadata CSVs tracked, tests 115/1 skip,

@@ -57,8 +57,8 @@ sensors and a composition-model prior, driven by reanalysis meteorology and sate
 shifted each year to a satellite-derived area mean and shaped to the sensors' daily and seasonal
 cycles. $B$ is a regional-background estimate built from the same satellite level, the composition
 model and an air-mass classification, capped so that it never reaches the hourly total. $P$ combines
-a satellite surface, a terrain-confinement term and a road-traffic emission surface carried through a
-terrain-steered dispersion step. The field averages to $T$ (to within {{claim:gauge.drift_hi_pct}}
+a satellite surface with a terrain-confinement term; a terrain-steered dispersion step was removed
+after it lowered agreement with held-out stations. The field averages to $T$ (to within {{claim:gauge.drift_hi_pct}}
 per cent in practice), so misplacing material cannot create more of it, and each component declares
 which observations it may use. The local increment is a residual of this decomposition, not the mass
 emitted inside the city.
@@ -78,16 +78,21 @@ error by {{claim:v2.km.reco.unio.gK2_rmse.median}} per cent against a generic se
 {{claim:v2.km.pros.unio.gK2_rmse.median}} per cent, not distinguishable from zero. Its
 satellite-derived level sat {{claim:v2.km.reco.unio.K2_bias.median}} per cent above the withheld city
 means and its nominal 90 per cent interval covered a fraction
-{{claim:v2.km.reco.unio.K2_cov90.median}}. At Kandy an independent national record differs from the
-field by {{claim:nbro.diff_pct_2021}} and {{claim:nbro.diff_pct_2022}} per cent in two years, while
-three low-cost records sit below it.
+{{claim:v2.km.reco.unio.K2_cov90.median}}. At Kandy the national research organisation's daily record for 2021 and 2022,
+recovered from a published figure, matches the field's seasonal shape (correlation
+{{claim:nbrod.climatology_r}} across calendar months) but not its day-to-day variation (within-month
+correlation {{claim:nbrod.anomaly_daily_r}}), and the field misses the crisis year 2022. Trained on one
+Kandy sensor, the temporal model tracks the other at a daily correlation of
+{{claim:loso.akurana.daily.pred.r}} and {{claim:loso.hantana.daily.pred.r}}.
 
 ## The reconstructed field, and how far it can be trusted
 
 The modelled annual basin mean is {{claim:kandy.mean_min}} to {{claim:kandy.mean_max}} micrograms per
-cubic metre over 2019 to 2023, above the World Health Organization guideline of 5 in every year;
-because the absolute level is unresolved, this describes the modelled field rather than an
-established exposure. The seasonal cycle is the best-supported property, with the maximum in the
+cubic metre over 2019 to 2023, above the World Health Organization guideline of 5 in every year.
+The level itself is unresolved: the national record sits above the field and three low-cost records
+below. The exceedance is robust to it: if the satellite level errs at Kandy as it does in the middle
+half of the tropical cities on the ladder, the basin mean is {{claim:lvl.tropical.iqr_lo}} to
+{{claim:lvl.tropical.iqr_hi}}, at least {{claim:lvl.tropical.who_lo}} times the guideline. The seasonal cycle is the best-supported property, with the maximum in the
 north-east monsoon ({{claim:kandy.season_djf}} in December to February of {{claim:exposure.year}}) and
 the minimum in the south-west monsoon ({{claim:kandy.season_jja}}). The day-to-day sequence is
 supported on days the sensors reported. Morning and evening peaks either side of a midday dip are
@@ -121,10 +126,10 @@ The field is not supported below the kilometre scale. Two sites three hundred me
 model cell differ in measured PM10 by a factor of {{claim:spatial.paired_obs_ratio}}, though on
 different days, so the pair illustrates sub-grid variation without isolating location; on densely
 monitored cities the spread inside a cell ({{claim:s2.within_pixel_p90p10}}) exceeds the spread
-between cells ({{claim:s2.between_pixel_p90p10}}). The dispersion step meant to place the local
-increment ranks held-out stations at {{claim:r2b.rho_C}}, below the undispersed surface
-({{claim:r2b.rho_S}}) and a free built-up layer ({{claim:r2b.rho_BU}}), so it is a declared choice,
-not a validated improvement, and three to eight stations do not rank neighbourhoods usefully either.
+between cells ({{claim:s2.between_pixel_p90p10}}). A dispersion step meant to place the local
+increment ranked held-out stations at {{claim:r2b.rho_C}}, below the undispersed surface
+({{claim:r2b.rho_S}}) and a free built-up layer ({{claim:r2b.rho_BU}}), and was removed; three to eight
+stations do not rank neighbourhoods usefully either.
 The map is a hypothesis for testing, not a ranking of neighbourhoods. The chemical check is a
 consistency check within a composition model, not a chemical measurement at Kandy.
 

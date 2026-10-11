@@ -38,11 +38,12 @@ That is the check that would turn a documented workflow into a demonstrated one.
 
 ### The construction step most worth revisiting {#s-construction-step-most-worth}
 
-Scored against held-out stations, the dispersion step lowers the pattern's rank correlation from
+Scored against held-out stations, the dispersion step lowered the pattern's rank correlation from
 {{claim:r2.rho_emission_surface}} to {{claim:r2.rho_with_atransport}}
-({{ref:s-spatial-contrast-lost}}). A construction that declined to redistribute would already be
-better than the one delivered, so the undispersed surface, not the delivered field, is the
-benchmark for any replacement.
+({{ref:s-spatial-contrast-lost}}), and it has been removed from the delivered field. A transport
+calculation that improves on the undispersed surface, judged on held-out stations, is the
+construction step most worth revisiting; the free built-up layer is the benchmark it would have to
+beat.
 
 ### Improvements to the temporal model {#s-improvements-temporal-model}
 
