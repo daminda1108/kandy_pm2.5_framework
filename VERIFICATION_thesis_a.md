@@ -1,6 +1,6 @@
 # Verification report, thesis A
 
-- Built: 2026-10-10T21:28:13  ·  repository commit at report time: `823890a`
+- Built: 2026-10-11T10:39:04  ·  repository commit at report time: `ddb21cc`
 - Claims generated: 2026-10-10  ·  claims in the registry: 1875  ·  cited by this thesis: 507
 - Claims cited but missing from the registry: 0
 - Every cited claim was recomputed and compared at build time; the build refuses on any drift.

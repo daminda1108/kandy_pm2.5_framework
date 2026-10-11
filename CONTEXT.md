@@ -51,6 +51,10 @@ Plan + log: `kandy_pm25/docs/review_remediation_plan_2026-10-06.md`.
 Registry (`#writing/registrations.json`): **17 lodged, 14 run, 105 predictions: 66 held, 23 refuted, 6 not tested, 10
 two-sided/descriptive**; `mhgna`, `fu59b` awaiting OSF approval.
 
+## 🟢 Clean rerun (2026-10-11, F.127)
+Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate exactly; dispersion benchmark exact from raw
+(4 valley cities). Author rerun, NOT independent reproduction. Never compare f with the old ~0.25 (different quantities).
+
 ## 🔬 Second review (2026-10-10, F.126, exploratory)
 Humidity scenario: f 0.483→0.488; morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
 level unchanged. Dispersion on identical sites: raw 0.371, dispersed 0.274, built-up 0.393 → dispersion is NOT validated.

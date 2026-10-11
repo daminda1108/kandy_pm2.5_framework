@@ -95,6 +95,12 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
 
 ## Current State (updated 2026-10-10, 🟢 **THESIS A RESTRUCTURED; THE DEPLOYED MODEL SCORED ON THE LADDER (F.125)**)
 
+- 🟢 **2026-10-11, fourth review + clean rerun (F.127), tag `thesis-a-2026-10-11-r4`.** f no longer compared with the old
+  quarter; C.2 is a dispersion diagnostic; abstract "evaluated through three lines of evidence". README burden/per-pixel/
+  deep-night claims removed. Clean clone: lock fixed (unused aiobotocore/s3fs), 2 metadata CSVs tracked, tests 115/1 skip,
+  claims 1,875 exact, dispersion benchmark exact from raw. GitHub Actions `tests.yml` added (windows-latest).
+  Benchmark S is **VIIRS night lights**, not the Kandy traffic surface (§3.3.4 corrected).
+
 - 🟢 **Two external review rounds answered (same day), tag `thesis-a-2026-10-10` pushed.** Round 1: missing Table 3.2/G.1
   and stale 'Table 7.2/9.1' fixed; `assemble.py` now REFUSES a visual referenced-but-unplaced or a typed 'Table N.N' with no
   placed visual. Round 2 (F.126): humidity scenario (`kandy_rh_scenario.py`: f 0.483→0.488, peak/trough 1.93→1.68, **night

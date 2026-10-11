@@ -4,7 +4,7 @@ Undergraduate thesis project — Daminda Alahakoon, Department of Environmental 
 
 **Last updated: 2026-10-11.** Canonical state is [`CLAUDE.md`](CLAUDE.md); this README mirrors it. Build detail is in [`PROJECT_ARCHITECTURE.md`](PROJECT_ARCHITECTURE.md).
 
-**Reproducing the thesis:** see [`THESIS_REPRODUCTION.md`](THESIS_REPRODUCTION.md) (environment, command sequence, data manifest) and [`VERIFICATION_thesis_a.md`](VERIFICATION_thesis_a.md) (every cited number, its source and whether it rests on public inputs). The version built for review is tag `thesis-a-2026-10-10-r3` (earlier rounds: `thesis-a-2026-10-10`). The reconstruction's spatial pattern is not validated at neighbourhood scale, its absolute level is unresolved, and its local fraction is a property of the decomposition, not a source apportionment.
+**Reproducing the thesis:** see [`THESIS_REPRODUCTION.md`](THESIS_REPRODUCTION.md) (environment, command sequence, data manifest) and [`VERIFICATION_thesis_a.md`](VERIFICATION_thesis_a.md) (every cited number, its source and whether it rests on public inputs). The version built for review is tag `thesis-a-2026-10-11-r4` (earlier rounds: `thesis-a-2026-10-10`, `-r3`). The reconstruction's spatial pattern is not validated at neighbourhood scale, its absolute level is unresolved, and its local fraction is a property of the decomposition, not a source apportionment.
 
 ---
 

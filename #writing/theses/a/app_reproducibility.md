@@ -31,8 +31,13 @@ claim, generate the figures and tables, assemble the chapters with every token r
 against a reference document that carries the typography. The observational inputs are third-party
 and are not redistributed; their sources are given in {{ref:ch-available-data-deliberate-constraint}}.
 The work is therefore auditable, and reproducible conditional on obtaining the source datasets.
-It has not yet been reproduced by anyone outside the project, and this thesis claims a documented
-workflow rather than a demonstrated independent reproduction.
+The author has rerun part of the chain from fresh copies of the public repository in a newly built
+environment: the test suite passes, every claim regenerates exactly from the stored scored files,
+and the dispersion benchmark of {{ref:s-spatial-contrast-lost}} regenerates exactly from raw
+monitoring and satellite inputs for the cities whose ingestion is packaged. That rerun found and
+fixed an uninstallable dependency pin and two untracked input files. It is not an independent
+reproduction: no one outside the project has yet re-run the chain, and this thesis claims a
+documented and partly re-executed workflow, not a demonstrated independent reproduction.
 
 ## Data requested but not obtained {#s-data-requested-but-obtained}
 

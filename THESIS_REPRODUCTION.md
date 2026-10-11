@@ -3,12 +3,26 @@
 *An hourly kilometre-scale fine particulate matter reconstruction for Kandy, Sri Lanka: construction, validation
 without local ground truth, and measurement priorities* (A. M. D. W. B. Alahakoon, University of Peradeniya, 2026).
 
-The version built for review corresponds to the git tag **`thesis-a-2026-10-10-r3`** of this repository (an earlier round is `thesis-a-2026-10-10`). Every number in the
+The version built for review corresponds to the git tag **`thesis-a-2026-10-11-r4`** of this repository (earlier rounds: `thesis-a-2026-10-10`, `thesis-a-2026-10-10-r3`). Every number in the
 thesis is a token resolved from `kandy_pm25/data/processed/modular/claims.json`, which `build_claims.py` regenerates
 from the scored files; the build refuses to produce a document when a stored value and a recomputation disagree.
 `VERIFICATION_thesis_a.md` lists every cited claim, its source artefact and whether it rests on public or restricted
 inputs. **The pipeline is designed to be reproducible; independent reproduction by a third party has not yet been
 carried out.**
+
+## Clean-environment rerun by the author (2026-10-11)
+
+This is a rerun by the author from fresh clones of the public repository into empty folders, with a fresh virtual
+environment built only from `kandy_pm25/requirements-lock.txt`. It is **not** an independent reproduction.
+
+| stage | what was run | result |
+|---|---|---|
+| 1. environment and tests | fresh clone; `pip install -r requirements-lock.txt`; `pytest scripts/tests` | the lock as first published could not be installed (two unused packages pinned against an incompatible `botocore`; removed) and two small metadata files the tests read were untracked (added). After those fixes: **115 passed, 1 skipped** (the ladder-parity test, which needs the non-redistributed ladder frame), 0 failed. The same suite runs on GitHub Actions (`.github/workflows/tests.yml`). |
+| 2. claim regeneration | `build_claims.py --check` from the clean clone's code and environment, reading the existing scored artefacts (`data/`, `results/`) read-only | **all 1,875 claims reproduce exactly**, including the 507 the thesis cites. This shows the numbers follow from the artefacts and the public code; it does not show that the artefacts themselves regenerate. |
+| 3. one public result from raw inputs | the dispersion benchmark (thesis §3.3.4): for the four valley cities, station means rebuilt from the raw CNEMC archive (`extract_more_cnemc_valleys.py`) and terrain and night-light grids pulled fresh from Earth Engine (`build_valley_terrain_ntl.py`); the other six cities from their stored processed inputs, whose ingestion chain is not packaged; then `r2_score_atransport.py` and `r2b_dispersion_benchmark.py` | **identical to the thesis**: every per-city value and every median (0.371 / 0.274 / 0.393) matches with zero difference, and the rebuilt station means match the stored ones exactly. |
+
+Not yet done: rebuilding the six older analogue cities' station inputs from raw, the information ladder from the
+OpenAQ and CNEMC archives, and the Kandy chain (which needs PurpleAir access).
 
 ## Environment
 

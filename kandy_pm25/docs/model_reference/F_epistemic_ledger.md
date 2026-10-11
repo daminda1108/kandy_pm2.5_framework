@@ -6510,3 +6510,14 @@ regional episode" (uniformity is a property of the uniform background, not indep
 **F.126 correction (2026-10-11).** In R2 and the r2b benchmark the "raw emission surface" S is **VIIRS night-time
 lights** (`calibrate_terrain_solver.load_city`), not the Kandy road-traffic surface; the comparison tests the dispersion
 step, not Kandy's source surface. Thesis §3.3.4 corrected (it had said "road-traffic").
+
+## F.127 — 🟢 clean-environment rerun by the author; fourth review answered (2026-10-11)
+
+Fresh clones of the public repo + a fresh venv from `requirements-lock.txt` (THESIS_REPRODUCTION.md table). (1) The lock as
+published at r3 was **not installable** (aiobotocore/s3fs pinned against botocore 1.43.5; unused, removed); two metadata
+CSVs the tests read were untracked (added); ladder-parity test now skips with a reason without the frame. Result **115 passed,
+1 skipped**; GitHub Actions workflow added. (2) `build_claims.py --check` in the clean clone against the stored artefacts:
+**1,875/1,875 claims exact**. (3) Dispersion benchmark from raw (4 valley cities: CNEMC archive → station means; GEE SRTM +
+VIIRS grids; 6 older cities from stored processed inputs): **0.0 difference** on every per-city value and median. NOT an
+independent reproduction. Thesis wording (fourth review): the local fraction is not comparable with the source-
+apportionment quarter (no "refutes", no "local action worth more"); C.2 = inter-monitor dispersion diagnostic.
