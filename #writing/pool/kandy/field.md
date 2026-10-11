@@ -18,9 +18,11 @@ as that one station, and its check on later years covers only {{claim:ceasplit.m
 conclusion that the guideline is exceeded is robust to it: at either end of the factor's interval the
 annual basin means lie between {{claim:ceabeta.level_lo}} and {{claim:ceabeta.level_hi}} micrograms
 per cubic metre, at least {{claim:ceabeta.who_lo}} times the guideline. In
-{{claim:exposure.year}} the regional background averages {{claim:kandy.background_annual}}, so
-roughly half of the basin mean is carried by air that is the same everywhere in the city. That
-is the local fraction of {{claim:partition.f}} seen in a single year. {{ref:s-partition-constraint-rather-than}} shows
+{{claim:exposure.year}} the regional background averages {{claim:partition.B_2023}} against a basin mean of
+{{claim:partition.T_2023}}, so roughly half of the basin mean is carried by air that is the same everywhere in the
+city: the local fraction that year is {{claim:partition.f_2023}}. Over the anchored years the annual fractions run
+from {{claim:partition.f_lo}} to {{claim:partition.f_hi}}, and their mean, {{claim:partition.f}}, is the local
+fraction quoted elsewhere. {{ref:s-partition-constraint-rather-than}} shows
 that it is a property of the decomposition, set by a non-negativity constraint on the increment:
 {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} across the tested day-boundary and daily-floor
 choices and {{claim:field.f_form_roll48}} with a 48-hour background window, rather than a value the

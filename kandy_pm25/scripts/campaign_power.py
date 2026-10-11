@@ -171,7 +171,7 @@ def main() -> None:
         alpha=ALPHA, power=POWER, benchmark_rho=BENCHMARK_RHO,
         n_fit=n_fit, n_pair_locations=n_pair_loc, n_receptor_heldout=S["n_receptor"],
         n_all_locations=n_all_loc,
-        h1_spatial=h1, h2_ratio_precision=h2,
+        h1_spatial=h1, h2_ratio_precision=h2, h2_cv_site_assumed=0.35, h4_sided=1,
         h3_vertical_mde=round(m3, 3), h4_sign_test=h4,
         r_pred_pred_range=R_PRED_PRED,
         panel_detection_limit_for_comparison=0.130,

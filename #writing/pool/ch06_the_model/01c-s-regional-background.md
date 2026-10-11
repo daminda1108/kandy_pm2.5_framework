@@ -25,7 +25,7 @@ at a fixed fraction just below that day's lowest hourly value of *T*(*t*). The r
 consequence for the local fraction and the sensitivity of the result to how the cap is defined
 are given in {{ref:s-partition-constraint-rather-than}}.
 
-The resulting background averages {{claim:kandy.background_annual}} micrograms per cubic metre
-across the anchored years. Because the background is uniform and the pattern has unit mean,
+The resulting background averages {{claim:partition.B_mean}} micrograms per cubic metre over the
+anchored years, from {{claim:partition.B_2021}} in 2021 to {{claim:partition.B_2023}} in 2023. Because the background is uniform and the pattern has unit mean,
 every choice made in building it changes the **division** of the field into regional and local
 parts, and none of them changes the field's city mean, which is fixed by *T*(*t*).

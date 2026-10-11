@@ -6654,3 +6654,10 @@ estimate, 0.53 a separate estimate with two-sided biases. E2 shares the CEA PM2.
 **0.505 [0.43, 0.58]** (CO) and 0.495 (NO2), model 0.51 on the same hours. Also found: Figure 3.1(c) drew the
 partition file as it stood before F.133's regeneration (bars at the satellite level); every thesis figure was then
 regenerated from its builder (8 changed, incl. F11 coverage 72.4 → 77.3 % and the contrast-window figure).
+
+**F.133 addendum (eighth review, 2026-10-11).** 8.95 µg/m³ is the **2023** background (f_2023 = 0.467), not a
+five-year mean: the anchored-year mean background is **7.96** (6.83 in 2021 → 8.95 in 2023) and 0.479 is the mean of
+the annual fractions (0.465–0.499). Per-year claims `partition.{B,f,T}_{y}` and `partition.B_mean` now carry them.
+The continuation design's 38 low-cost units = 12 design + 9 paired (3 triplets) + 5 vertical + 8 receptor + **4
+drainage-test sites** outside the five strata; power assumptions (α 0.05, power 0.8, CV 0.35, r_pp 0.5–0.85,
+Steiger 1980) are now claims and stated in §4.2.3.

@@ -36,14 +36,27 @@ step settles the calibration of the two sensors the temporal anchor is trained o
 
 ### Phase 3: a distributed network as a test of the field {#s-future-network}
 
-The network re-uses a design prepared during this work: {{claim:net.total}} sites in five strata, an anchor at the
-reference, {{claim:net.design}} sites spanning the model's predicted contrasts, {{claim:net.paired}} sites in pairs
-inside single cells, {{claim:net.vertical}} sites from {{claim:net.vertical_lo}} to {{claim:net.vertical_hi}} metres
-above the valley floor along the axis no network samples, and {{claim:net.receptor}} sites at schools and hospitals held
-out of everything. Its purpose changes from learning the pattern to testing it, and the design analysis says what each
+The network re-uses a design prepared during this work: {{claim:net.total}} sites in five strata, namely an anchor
+at the reference, {{claim:net.design}} sites spanning the model's predicted contrasts, {{claim:net.paired}} sites as
+{{claim:camp.n_pair_locations}} triplets of three, each triplet inside a single model cell,
+{{claim:net.vertical}} sites from {{claim:net.vertical_lo}} to {{claim:net.vertical_hi}} metres above the valley floor
+along the axis no network samples, and {{claim:net.receptor}} sites at schools and hospitals held out of everything;
+the night-time drainage test adds {{claim:cost.n_drainage}} sites at the predicted drainage sink and in the core. The
+anchor is the reference instrument, so the low-cost requirement is {{claim:cost.n_lcs}} units, with
+{{claim:cost.spares}} spares. Its purpose changes from learning the pattern to testing it, and the design analysis says what each
 test can show before any data exist.
 
 {{tbl:T5_continuation}}
+
+The power figures in the table rest on stated assumptions, set before any data exist and kept in the design
+analysis (`campaign_power.py`, registered at the Open Science Framework, `ad3py`). Every test uses a significance
+level of {{claim:camp.alpha}} and power of {{claim:camp.power}}. The within-cell ratio's precision assumes an
+hour-to-hour coefficient of variation of {{claim:camp.cv_site}} at a site, pooled over the
+{{claim:camp.n_pair_locations}} triplets over one week of hourly data; it is the hours averaged, not the number of sites, that make it
+precise. The drainage test is a one-sided sign test with the night as its unit. The rank test compares two
+correlations that share the observations [@Steiger1980], against the built-up layer's {{claim:camp.benchmark_rho}},
+with the correlation between the two predictors assumed to lie between {{claim:camp.rpp_lo}} and {{claim:camp.rpp_hi}};
+the detectable gain is reported across that range because it cannot be known in advance.
 
 Three findings of this thesis set that design. A network of a few dozen sites cannot show that the map is good at one
 kilometre: with {{claim:camp.n_fit}} sites available to fit, only a gain of {{claim:camp.h1_gain_lo}} to
@@ -54,7 +67,8 @@ every day, not from the size of the network ({{ref:s-measurement-priority-orderi
 around the tests that resolve quickly (the level at many points, the within-cell ratio, the night-time drainage and the
 daily cycle by site), states in advance that the rank test can detect only a gross failure, and reports the anchor and a
 few contrast sites continuously so that they improve the daily estimate while the spatial tests run. The instruments
-cost about {{claim:cost.lcs_total_usd}} US dollars for {{claim:cost.n_lcs}} units plus spares; mounting, power,
+cost about {{claim:cost.lcs_total_usd}} US dollars for those {{claim:cost.n_lcs}} units and
+{{claim:cost.spares}} spares; mounting, power,
 connectivity, import duty and servicing remain to be priced locally.
 
 ### Phase 4: the regional background and composition {#s-future-background}

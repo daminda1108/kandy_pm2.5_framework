@@ -587,6 +587,19 @@ def partition(c: Claims) -> None:
           n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43")
     c.add("partition.f_hi", round(float(hi), 3), stat="max over anchored years",
           n=len(d["anchored_years"]), source="decomp/kandy_partition_v2.json", ledger="F.43")
+    # per-year values (seventh review: a single year's B and f must not be quoted as the multi-year mean)
+    py = {r["year"]: r for r in json.loads(p.read_text(encoding="utf-8"))["per_year"]}
+    yrs = d["anchored_years"]
+    c.add("partition.B_mean", round(float(np.mean([py[y]["B"] for y in yrs])), 2),
+          stat="mean of the annual background over the anchored years", n=len(yrs),
+          source="decomp/kandy_partition_v2.json", ledger="F.133")
+    for y in yrs:
+        c.add(f"partition.B_{y}", round(float(py[y]["B"]), 2), stat=f"annual mean background, {y}", n=1,
+              source="decomp/kandy_partition_v2.json", ledger="F.133")
+        c.add(f"partition.f_{y}", round(float(py[y]["local_frac"]), 3), stat=f"local fraction, {y}", n=1,
+              source="decomp/kandy_partition_v2.json", ledger="F.133")
+        c.add(f"partition.T_{y}", round(float(py[y]["basin"]), 1), stat=f"annual basin mean, {y}", n=1,
+              source="decomp/kandy_partition_v2.json", ledger="F.133")
     c.add("partition.f_min_parameter", float(d["f_min_parameter"]), stat="parameter value", n=1,
           source="decomp/kandy_partition_v2.json", ledger="F.43",
           note="chosen as the smallest that removes the defect, BEFORE the resulting f was known")
@@ -1118,6 +1131,19 @@ def campaign_power(c: Claims) -> None:
               source=src, ledger="F.100",
               note="the competing hypotheses are 1.58 and 27.5, so this test is decisive in "
                    "weeks and its power comes from HOURS averaged, not from the number of sites")
+    # design assumptions behind the continuation table (seventh review: make them auditable)
+    c.add("camp.alpha", P["alpha"], stat="significance level of every design test", n=1, source=src, ledger="F.100")
+    c.add("camp.power", P["power"], stat="power of every design test", n=1, source=src, ledger="F.100")
+    c.add("camp.benchmark_rho", P["benchmark_rho"], stat="benchmark rank correlation (built-up land cover)", n=46,
+          source=src, ledger="F.100")
+    c.add("camp.rpp_lo", min(P["r_pred_pred_range"]), stat="assumed correlation between the two predictors, low",
+          n=1, source=src, ledger="F.100")
+    c.add("camp.rpp_hi", max(P["r_pred_pred_range"]), stat="assumed correlation between the two predictors, high",
+          n=1, source=src, ledger="F.100")
+    c.add("camp.n_pair_locations", P["n_pair_locations"], stat="within-cell triplet locations", n=1, source=src, ledger="F.100")
+    if "h2_cv_site_assumed" in P:
+        c.add("camp.cv_site", P["h2_cv_site_assumed"], stat="assumed hour-to-hour coefficient of variation at a site",
+              n=1, source=src, ledger="F.100")
     if "90" in P["h4_sign_test"]:
         c.add("camp.h4_nights90", round(100 * P["h4_sign_test"]["90"], 1),
               stat="per cent of nights the drainage sink must exceed the core, over 90 nights",
@@ -1156,6 +1182,11 @@ def campaign_cost(c: Claims) -> None:
           stat="same unit as a self-assembly kit, USD", n=1, source=src, ledger="F.101")
     c.add("cost.n_lcs", K["n_lcs"], stat="low-cost units the full design requires",
           n=K["n_lcs"], source=src, ledger="F.101")
+    _cc = pd.read_csv(DEC / "campaign_costing.csv")
+    _dr = _cc[_cc.stratum.str.contains("drainage")]
+    if len(_dr):
+        c.add("cost.n_drainage", int(_dr.sites.sum()), stat="drainage-test sites (sink and core), outside the five strata",
+              n=1, source="campaign_costing.csv", ledger="F.101")
     c.add("cost.spares", K["spares"],
           stat="spare units for attrition and co-location rotation", n=K["n_lcs"],
           source=src, ledger="F.101")

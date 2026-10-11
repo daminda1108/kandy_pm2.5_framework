@@ -100,6 +100,9 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **Eighth review answered (tag r13):** 8.95 = 2023 background (f_2023 0.467); 5-yr mean B 7.96; 0.479 = mean of
+  annual fractions — per-year claims `partition.{B,f,T}_{y}`. Network: 9 paired = 3 triplets; +4 drainage sites → 38 LCS.
+  Power assumptions stated (§4.2.3) as claims. CI run links in the guide. Reviewer: "make those corrections and freeze".
 - 🟢 **Thesis reshaped toward the continuation programme (tag r12, user will pursue it):** §4.2 future work = the
   delivered field as a LOCKED HYPOTHESIS, four phases (CEA provenance/register → collocation over two monsoons → 35-site
   falsification network, Table `T5_continuation` with stated power → rural background + composition) + outcomes→redesign
