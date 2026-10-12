@@ -128,20 +128,28 @@ def main():
         cl = {lab: (lclim(L[lab], L.ts, "h"), lclim(L[lab], L.ts, "m")) for lab in ("production", "hourly_rh")}
         tan = REPO / "data" / "processed" / "stage1_v3" / "T_anchor"
         rows = {}
+        bak = DEC / "backup_fect_diurnal_2026-10-12" / "T_anchor"     # the anchor before F.137 (FECT-shaped cycle)
+        held = h.t_local >= pd.Timestamp("2021-07-01")
         if EXT:
             fld = arms["delivered"]
             fld = fld[fld.index.floor("h").isin(h.t_local.dt.floor("h"))]
             mh = fld.groupby(fld.index.hour).mean(); rows["production"] = mh / mh.mean()
-        for lab in (() if EXT else ("production", "hourly_rh")):
+        # production = the delivered anchor; before_f137 = the anchor before its daily cycle was reshaped to this station
+        # (F.137); hourly_rh = the humidity scenario, which is defined on the FECT-shaped anchor (kandy_rh_scenario.py)
+        held_rows = {}
+        for lab, src, tgt in (() if EXT else (("production", tan, "production"), ("before_f137", bak, "production"),
+                                              ("hourly_rh", bak, "hourly_rh"))):
             parts = []
             for y in YEARS:
-                T0 = pd.read_parquet(tan / f"T_kandy_hourly_{y}.parquet", columns=["datetime_utc", "T_q05", "T_q50", "T_q95"])
-                parts.append(rescale(T0, cl["production"], cl[lab]))
+                T0 = pd.read_parquet(src / f"T_kandy_hourly_{y}.parquet", columns=["datetime_utc", "T_q05", "T_q50", "T_q95"])
+                parts.append(rescale(T0, cl["production"], cl[tgt]))
             T = pd.concat(parts)
             t = pd.to_datetime(T.datetime_utc, utc=True).dt.tz_convert(TZ).dt.tz_localize(None)
             T = T.assign(t=t).set_index("t")
             T = T[T.index.floor("h").isin(h.t_local.dt.floor("h"))]      # same hours as the station
             mh = T.groupby(T.index.hour).T_q50.mean(); rows[lab] = mh / mh.mean()
+            Th = T[T.index >= pd.Timestamp("2021-07-01")]                    # held-out hours only (F.137 fitted before)
+            mh = Th.groupby(Th.index.hour).T_q50.mean(); held_rows[lab] = mh / mh.mean()
         D = pd.DataFrame({"station": oh, **rows})
         D.to_csv(DEC / f"kandy_cea_reference_check{sfx}_hourly_diurnal.csv")
         ratio = lambda s: dict(peak07_over_midday=float(s[7] / s[14]), night_over_midday=float(s[[0, 1, 2, 3, 4]].mean() / s[14]),
@@ -149,9 +157,13 @@ def main():
         out["hourly"] = {"hours": int(len(h)), "station": ratio(D.station),
                          **{lab: {**ratio(D[lab]), "shape_r": float(D.station.corr(D[lab])),
                                   "shape_rmse": float(np.sqrt(((D.station - D[lab]) ** 2).mean()))} for lab in rows}}
+        if held_rows:
+            oh2 = h[held].groupby("hour").pm2_5.mean(); oh2 = oh2 / oh2.mean()
+            out["hourly_held_out"] = {"hours": int(held.sum()), "station": ratio(oh2),
+                                      **{lab: {**ratio(v), "shape_r": float(oh2.corr(v))} for lab, v in held_rows.items()}}
     p = DEC / f"kandy_cea_reference_check{sfx}.json"
     tmp = p.with_suffix(".tmp.json"); tmp.write_text(json.dumps(out, indent=2), encoding="utf-8"); os.replace(tmp, p)
-    print(json.dumps({k: (v if k in ("days", "station", "monthly_climatology_benchmark", "hourly", "hourly_o3_peak_hour_local") else
+    print(json.dumps({k: (v if k in ("days", "station", "monthly_climatology_benchmark", "hourly", "hourly_held_out", "hourly_o3_peak_hour_local") else
                           {kk: v[kk] for kk in ("all", "sensors_reported", "sensors_absent", "climatology_r", "monthly_r", "anomaly_daily_r")})
                       for k, v in out.items()}, indent=1)[:5000])
 

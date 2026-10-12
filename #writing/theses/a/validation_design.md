@@ -4,8 +4,9 @@ Kandy has three local PM2.5 records and none of them is a spatially resolved ref
 two low-cost sensors cannot serve as a check: the temporal anchor is trained on them, its interval
 is calibrated on them and its amplitude is sharpened to them ({{ref:s-temporal-anchor}}), so
 agreement with them measures the calibration, not the model. The regulatory station in the city
-centre is used in two ways: its record to June 2021 sets the field's level, and its later record
-checks it ({{ref:s-cea-reference}}). No local dataset can score the spatial pattern, because no
+centre is used in two ways: its record to June 2021 sets the field's level, the shape of its
+daily cycle and the width of its interval, and its later record checks all three
+({{ref:s-cea-reference}}). No local dataset can score the spatial pattern, because no
 network samples the basin at more than one point.
 
 The validation therefore rests on three lines of evidence. Each answers a different question, and none of them

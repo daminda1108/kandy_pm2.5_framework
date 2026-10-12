@@ -28,6 +28,9 @@ that a reader of earlier drafts or presentations can see what replaced what.
 | detection limit of the spatial learning curve | 0.24 | 0.35 | the registered value assumed a spread smaller than the one observed |
 | diurnal swing of the sensor record | constant-humidity correction | morning peak to midday 1.82 becomes 1.62 with hourly humidity | the correction had used a fixed relative humidity; the shipped field is not yet rebuilt |
 | interval coverage, diagnosis | one-sided miss at the sensors: centring, width adequate | at the regulatory station 68.7 per cent of held-out hours, misses two-sided: the hourly interval is too narrow (half-widths x1.86) | the earlier diagnosis rested only on the two sensors that calibrated the anchor; the station is independent of it |
+| shape of the daily cycle | the low-cost sensors' (night 1.17 times midday at the station's hours) | fitted to the regulatory station on 2019 to mid-2021: 0.77 on held-out hours against the station's 0.69 | the sensors' nights run high, consistent with their constant-humidity correction; adopted under a rule fixed before scoring |
+| hourly interval width | conformal, unwidened (68.7 per cent of the station's held-out hours) | widened by 1.55 (87.1 per cent) | fitted on the station's 2019 to mid-2021 hours |
+| local fraction | 0.479 | 0.505 | lower nights lower the capped background |
 | attributable burden | a number of deaths per year with an interval | withdrawn; the method is given without a number | the response function is defined for adults of 25 and older and was applied to all ages, the interval omitted most of the uncertainty and the level is unresolved; an estimate awaits age-specific mortality data |
 
 

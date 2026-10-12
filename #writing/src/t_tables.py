@@ -542,11 +542,12 @@ def t4_ledger():
             f"{tok('cea.del.anomaly_daily_r')} within the month",
             "better supported on days the sensors reported; weak on other days"],
            ["Shape of the daily cycle",
-            f"timing and morning peak supported by the regulatory station (peak over midday "
-            f"{tok('cea.hourly.station.peak07_over_midday')} observed, {tok('cea.hourly.production.peak07_over_midday')} "
-            f"modelled); nights too high (night over midday {tok('cea.hourly.station.night_over_midday')} observed, "
-            f"{tok('cea.hourly.production.night_over_midday')} modelled)",
-            "peak timing usable; night-time levels relative to the day are not"],
+            f"timing supported by the regulatory station; shape refitted to it on 2019 to mid-2021. Held-out "
+            f"hours: night over midday {tok('cea.hourlyho.station.night_over_midday')} observed, "
+            f"{tok('cea.hourlyho.production.night_over_midday')} modelled ({tok('cea.hourlyho.before_f137.night_over_midday')} "
+            f"before the refit); morning peak over midday {tok('cea.hourlyho.station.peak07_over_midday')} observed, "
+            f"{tok('cea.hourlyho.production.peak07_over_midday')} modelled",
+            "usable at the city centre; one station sets the shape"],
            ["Absolute level",
             f"anchored to one regulatory station: the satellite level read {tok('cea.sat.all.bias_pct')} per cent "
             f"high; re-anchored on 2019 to mid-2021, {tok('ceasplit.bias_re')} per cent on held-out days "
@@ -557,11 +558,11 @@ def t4_ledger():
             "as good as one station of undocumented method; the guideline exceedance is robust "
             f"(at least {tok('ceabeta.who_lo')} times across the factor's interval)"],
            ["Uncertainty interval",
-            f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, {tok('ceaiv.held.coverage')} per "
-            f"cent of held-out hours at the regulatory station (misses on both sides; "
-            f"{tok('ceaiv.held.daily.coverage')} per cent of daily means), a fraction "
-            f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
-            "hourly interval too narrow; indicative only for daily means"],
+            f"widened by {tok('iw.k')} after it contained {tok('ceaiv0.held.coverage')} per cent of the regulatory "
+            f"station's held-out hours; now {tok('ceaiv.held.coverage')} per cent there "
+            f"({tok('ceaiv.held.daily.coverage')} per cent of daily means) and {tok('kandy.cov90')} per cent at the "
+            f"Kandy sensors; a fraction {tok(km_r + 'K2_cov90.median')} across the ladder's cities (unwidened)",
+            "sized for a point at the city centre from one station; conservative for a cell mean"],
            ["Spatial pattern at the kilometre scale",
             f"not validated: median rank correlation {tok('scorecard.spatial_rho_median')} in ten cities, of the "
             f"order of a free built-up layer ({tok('r2b.rho_BU')}); the dispersion step lowered it and was removed",
@@ -591,7 +592,7 @@ def t3_validation_summary():
             "climatological; level there set by two stations, not the satellite"],
            ["Shape of the daily cycle", "ten analogue cities",
             f"diurnal correlation {tok('scorecard.diurnal_r_lo')} to {tok('scorecard.diurnal_r_hi')}",
-            "regime-dependent; at Kandy the nights are too high against the regulatory station"],
+            "regime-dependent; at Kandy the shape is fitted to the regulatory station"],
            ["Daily, anchor stations reporting", f"ladder, {tok('v2.km.cities_scored')} cities",
             f"error {tok(km_r + 'gK2_rmse.median')} per cent below the sensorless estimate; correlation "
             f"{tok(km_r + 'K2_r.median')}; bias {tok(km_r + 'K2_bias.median')} per cent",
@@ -605,9 +606,9 @@ def t3_validation_summary():
             f"coefficient of determination {tok('v2.tanchor.lagfree.r2')}; RMSE {tok('v2.tanchor.lagfree.rmse')}",
             "the same sensors calibrate the anchor's amplitude"],
            ["Interval coverage", "Kandy sensors; regulatory station, held-out hours; ladder cities",
-            f"{tok('kandy.cov90')} per cent; {tok('ceaiv.held.coverage')} per cent; a fraction "
-            f"{tok(km_r + 'K2_cov90.median')}",
-            "nominal 90; misses one-sided at the sensors, two-sided at the station"],
+            f"{tok('kandy.cov90')} per cent; {tok('ceaiv.held.coverage')} per cent (before widening "
+            f"{tok('ceaiv0.held.coverage')}); a fraction {tok(km_r + 'K2_cov90.median')}",
+            "nominal 90; widening fitted on the station's earlier hours"],
            ["Background, daily", "regional network towns, 2024 and 2025 (construction, not delivered series)",
             f"correlation {tok('bgr.bmeth.r')}; within months {tok('bgr.bmeth.anom')} (station "
             f"{tok('bgr.kst.anom')})",
@@ -619,8 +620,10 @@ def t3_validation_summary():
            ["Daily and hourly, at Kandy", "regulatory station, city centre, 2019 to 2023",
             f"daily correlation {tok('cea.del.all.r')}; within months {tok('cea.del.anomaly_daily_r')}; level on "
             f"held-out days {tok('ceasplit.bias_re')} per cent (satellite level {tok('ceasplit.bias_sat')}); daily-cycle correlation "
-            f"{tok('cea.hourly.production.shape_r')}, nights too high",
-            "one station, also used to fit the level; method and siting undocumented"],
+            f"{tok('cea.hourlyho.production.shape_r')} on held-out hours ({tok('cea.hourlyho.before_f137.shape_r')} "
+            f"before the refit)",
+            "one station, also used to fit the level, the daily cycle and the interval width; method and siting "
+            "undocumented"],
            ["Local share at Kandy", "regulatory station against regional towns; combustion-tracer intercept",
             f"lower bound {tok('lfs.e1min.f')}; tracer estimate {tok('lfs.e2.co_p5.f')}; model at the station's cell "
             f"{tok('lfs.model.e2_cell')}",
@@ -783,8 +786,8 @@ def t9_1_next_v2():
             f"{tok('v2.review.registered_loco.reco.BGallmL2s_rmse.median')} points"],
            ["Making one of them reference grade",
             "the level discrepancy, and a calibration anchor for the low-cost sensors",
-            "MEASUREMENT DESIGN, not the ladder: the level now rests on one regulatory station of undocumented "
-            "method, and the nights of the corrected sensor record are too high"],
+            "MEASUREMENT DESIGN, not the ladder: the level, the daily cycle and the interval width now rest on one "
+            "regulatory station of undocumented method, and the nights of the corrected sensor record are too high"],
            ["More than three to five stations for the daily mean",
             "little: the daily curve flattens",
             f"RE-ANALYSIS: five stations {tok('v2.review.k.day5.median')} per cent against "

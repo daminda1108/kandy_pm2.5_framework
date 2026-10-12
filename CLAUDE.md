@@ -5,7 +5,7 @@ Undergrad thesis (Daminda Alahakoon, U. Peradeniya). **Redesigned 2026-05-08** �
 **Deliverable (as of 2026-10-11):** an additive background-plus-increment reconstruction of Kandy PM2.5, **1 km
 hourly, 2019–2023**: `PM = B + max(T−B,0)·P + min(T−B,0) + ε(P−1)`. `T(t)` = lag-free LightGBM temporal anchor
 (trained on the two FECT low-cost sensors, re-anchored per year to van Donkelaar, sharpened); `B(t)` =
-coherence-capped regional background (f ≈ 0.48); `P = S_emit × M` (unit mean per hour; dispersion removed). Validated
+coherence-capped regional background (f ≈ 0.51); `P = S_emit × M` (unit mean per hour; dispersion removed). Validated
 by three lines: Kandy records (incl. the **CEA regulatory station: daily r 0.60, level +24 % high**), the ten-city
 transfer scorecard, and the deployed anchor on the cross-city information ladder. Single target: **Kandy**.
 
@@ -31,7 +31,7 @@ Git: [last commit message]
 Quote from the NEWEST `## Current State` block only — the ones below it are archived
 narrative. **Never brief Stage A/B metrics as project status:** the ConvCNP zero-shot maps
 and the PINN work are supporting experiments with no production role, and the v1/v3 anchor
-R² is an internal component number, not the deliverable. **f ≈ 0.48**, not 0.244.
+R² is an internal component number, not the deliverable. **f ≈ 0.51** (0.505 since F.137; 0.48 before), not 0.244.
 Skip if first message is a quick question (<10 words) or `/session-start`.
 
 **Expert input:** When user pastes >200-word analytical block, list planned changes and confirm before coding.
@@ -100,6 +100,10 @@ Skip if first message is a quick question (<10 words) or `/session-start`.
   +28). **Records no longer bracket the field: level probably high.** Thesis §3.2.3 `cea_reference.md`, Table `T3_cea`,
   T3_2 renamed "External point records…" with an evidential-status column; abstract/conclusions/discussion/summary
   revised. Hourly stamps are UTC (gotcha #106). Field NOT recalibrated to CEA (kept as a check).
+- 🟢 **F.137 (2026-10-12, tag r18): DAILY CYCLE REFITTED TO CEA + INTERVAL WIDENED ×1.55** (both fitted 2019→mid-2021,
+  adopted by pre-set rules; spec `febb94d`). Held-out: night/midday 0.77 vs station 0.69 (was 1.17), coverage 87.1 %
+  (was 68.7). **f now 0.505** (cap choices 0.447–0.518). `sharpen_T_diurnal.DIURNAL_TARGET="cea_split"`, builders read
+  `decomp/interval_widening.json`. Pre-F.137 products in `decomp/backup_fect_diurnal_2026-10-12/` (rh scenario reads it).
 - 🔴 **F.136 (2026-10-12, tag r17): hourly interval TOO NARROW at the CEA station** — held-out coverage 68.7 %, misses
   two-sided, offset +0.8, needs ×1.86; daily ~85 %. Reverses the FECT-only "centring not width" (gotcha #75). Background
   construction vs AirShare regional towns 2024–25: anomaly r 0.54 vs station 0.79, all from GEOS-CF (class adds nothing).
@@ -584,7 +588,8 @@ python src/comparison/publication_figures.py --all
 52. **KOALA 24.5 is the Jan–Dec 2019 NIFS annual mean ONLY — never propagate it as a per-year reference line.** It was NOT re-measured 2020–2023. In any per-year plot/CSV show KOALA as a single 2019 marker, not an axhline. FECT-Hantana ridge 10.5 is a 2018–23 sensor mean (a horizontal line is defensible there).
 53. **Additive-headline regen chain** (since F.132 also: re-fit β with `kandy_cea_level_calibration.py` only from a
    β=1 field, and rebuild the extension: `kandy_driver_tier_build.py --years 2024 2025 2026` → `kandy_extension_fields.py
-   --years 2024 2025 2026` → `build_additive_field_v3.py`): `predict_T_anchor_v3.py` → **`scripts/sharpen_T_diurnal.py`** (diurnal+seasonal amplitude bias-correction; preserves annual mean) → `build_decomp_map.py --year Y` → `scripts/build_overlay_predictions.py` → `scripts/build_spatial_uq.py` → `build_additive_field.py` → `exposure_weighting.py` + `health_burden.py` → figures (`paper_figures.py --figs all`). Basin mean preserved (verify G1 Δ<0.05). **sharpen_T_diurnal MUST run after predict_T_anchor (it overwrites the T_anchor parquets in place).**
+   --years 2024 2025 2026` → `build_additive_field_v3.py`; since F.137 the field builders need `decomp/interval_widening.json`
+   — after any T change rebuild with it, run `kandy_interval_widen_fit.py`, and rebuild v2/v3 if k moved): `predict_T_anchor_v3.py` → **`scripts/sharpen_T_diurnal.py`** (diurnal+seasonal amplitude bias-correction; preserves annual mean) → `build_decomp_map.py --year Y` → `scripts/build_overlay_predictions.py` → `scripts/build_spatial_uq.py` → `build_additive_field.py` → `exposure_weighting.py` + `health_burden.py` → figures (`paper_figures.py --figs all`). Basin mean preserved (verify G1 Δ<0.05). **sharpen_T_diurnal MUST run after predict_T_anchor (it overwrites the T_anchor parquets in place).**
 54. 🔴 **SUPERSEDED 2026-10-11 (F.130): at the CEA REFERENCE station the deep night IS the daily minimum (night/midday 0.71; field 1.17). The ordering below describes the low-cost FECT record only; the field's nights are too high.** Kandy is bimodal-rush (timing confirmed at CEA: peaks 07 and 18, morning peak/midday 1.87). Old text: *deep night is NOT the minimum — the MIDDAY trough is (CORRECTED 2026-08-07, ledger F.38).* ⚠ **2026-10-10 (F.126): this ordering holds only for the constant-RH label; with hourly-RH Barkjohn the night falls to 0.95× midday. Quote it as calibration-dependent.** Observed FECT diurnal, normalised 2019–2023: morning peak 07 (1.41), evening 18–19 (1.25), **midday trough 14 (0.725)**, deep night 00–04 (0.865). **Night runs ~15% ABOVE midday**, and the model reproduces it (1.110 vs observed 1.145). The previous wording — "deep-night ≈ daily MINIMUM" — is **WRONG** and caused a correct model behaviour to be read as a defect. In figures use deep-night `[0-5]` and morning-rush `[6-9]` separately. Kathmandu is NOT a Kandy analog.
 55. **Standalone release repo lives at `d:/ProjectCD/kandy_pm25_release/`** (own git repo `daminda1108/kandy_pm25_model`, gitignored by parent). Package `kandymodel/`. Imports are `kandymodel.*`, root depth `parents[1|2]` (NOT `parents[3]`). To PORT a confirmed change: copy the local file, rewrite imports `src.stage1_satml.* → kandymodel.*`, fix `parents[3]→parents[1|2]`, retest (`paper_figures.py --figs f3,f13` + `scripts/nowcast.py` must stay byte-identical), commit to BOTH repos. Release `data/`+`results/` are gitignored → clone needs `regenerate_all.py`. GitHub metadata via stored cred: `printf "protocol=https\nhost=github.com\n\n" | git credential fill` → PAT → `curl api.github.com`.
 56. **`build_station_terrain.resample_dem` returns NORTH-up arrays (row 0 = north).** The multi-city pipeline pairs it with ASCENDING lat + `origin="lower"` → every terrain-derived layer flips N–S. **Fix: `[::-1]` row-flip at each `resample_dem` call site.** Applied in `build_xichang_core_terrain`, `xichang_prod._solver_grids`, `xichang_paper_figures._elev_grid`. Affects only the city-generalised pipeline, NOT the locked Kandy decomp.
@@ -807,6 +812,15 @@ python src/comparison/publication_figures.py --all
    0.521 → 0.538). **Rules: figure builders exit non-zero on any failure (done for f_chapters); before a release run
    `#writing/build/figure_provenance.py` (traces every read/write; flags retired inputs; must report 0 changed / 0
    orphans / 0 flags); and grep scripts for retired artefact names, not just figure builders.**
+
+109. **🔴 `sharpen_T_diurnal.py` is NOT idempotent, and re-running a step on its own output is not a rebuild
+   (2026-10-12, F.137).** Its hour/month factors are per-year ratios of the CURRENT climatology, so sharpening an
+   already-sharpened anchor moves it again by up to ~3 %. I added the CEA hour factors and re-ran it on the stored
+   anchor; every gate passed (T-lock, G1, QA), but the release's `--from-anchor` rebuild differed by up to 3.4 µg/m³,
+   because the documented chain (predict → sharpen once) did not produce the delivered field. Fixed: sharpen marks its
+   output (`sharpened` column) and refuses a second run without `--force`; YEARS = the years predict regenerates.
+   **Rule: after changing any step of a chain, rebuild from the chain's head, and treat the release parity diff as the
+   check that the delivered product is what the code makes.** Family of #70, #80.
 
 ## Pending Tasks (updated 2026-10-06)
 

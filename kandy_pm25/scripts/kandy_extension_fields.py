@@ -98,7 +98,10 @@ def build_year(year, clim, grid):
         inc = (Tq - Bq).to_numpy()[:, None]
         return Bq.to_numpy()[:, None] + np.maximum(inc, 0.0) * Pm + np.minimum(inc, 0.0)
 
-    q50 = split(d.T_q50, d.B); q05 = split(d.T_q05, d.B); q95 = split(d.T_q95, d.B)
+    sys.path.insert(0, str(REPO / "scripts"))
+    import build_additive_field_v2 as bv                                   # the same widening as the locked years (F.137)
+    t05, t95 = bv.widen(d.T_q05, d.T_q50, d.T_q95)
+    q50 = split(d.T_q50, d.B); q05 = split(t05, d.B); q95 = split(t95, d.B)
     blo = split(d.T_q50, d.B_hi); bhi = split(d.T_q50, d.B_lo)
     nt = len(d)
     LA, LO = np.meshgrid(lats, lons, indexing="ij")

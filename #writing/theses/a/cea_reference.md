@@ -91,7 +91,8 @@ climatology reaches {{claim:ceaext.bench.r}} over the same days, so the extensio
 there is no better than the season. The station's hourly cycle over these years has the same shape
 as before, with a morning peak {{claim:ceaext.hourly.station.peak07_over_midday}} times midday and
 nights at {{claim:ceaext.hourly.station.night_over_midday}} of it; the extension exaggerates the
-morning peak ({{claim:ceaext.hourly.production.peak07_over_midday}}) and keeps its nights high
+morning peak ({{claim:ceaext.hourly.production.peak07_over_midday}}), while its nights, which
+inherit the station-fitted cycle of the anchored years, match
 ({{claim:ceaext.hourly.production.night_over_midday}}). The station reads much higher in these years than before 2023, while the
 model's level does not rise, and the re-anchoring makes the gap larger. Whether the rise is real or
 a change in the station's record cannot be settled from the platform: the ratio to the Hantana
@@ -106,23 +107,47 @@ which peaks in the early afternoon, peaks at {{claim:cea.hourly.o3_peak_hour}} l
 batch records are shifted by five and a half hours, and the carbon monoxide cycle of the live feed
 matches that of the batches only without the shift. Every hourly comparison uses the corrected
 times. The
-station's cycle has the timing of the delivered anchor: its highest hour is
-{{claim:cea.hourly.station.max_hour}} in the morning, with a second peak in the evening and a dip
-around midday. The morning peak is {{claim:cea.hourly.station.peak07_over_midday}} times the
-midday level, against {{claim:cea.hourly.production.peak07_over_midday}} in the delivered anchor and
+station's cycle had the timing of the anchor as first delivered, which took its daily shape from the
+two low-cost sensors: its highest hour is {{claim:cea.hourly.station.max_hour}} in the morning, with
+a second peak in the evening and a dip around midday, and the morning peak is
+{{claim:cea.hourly.station.peak07_over_midday}} times the midday level, against
+{{claim:cea.hourly.before_f137.peak07_over_midday}} in that anchor and
 {{claim:cea.hourly.hourly_rh.peak07_over_midday}} under the hourly-humidity correction
-({{ref:s-rh-scenario}}). The night is different. At the station the deep night is the daily
-minimum, at {{claim:cea.hourly.station.night_over_midday}} of the midday level, whereas the delivered
-anchor, on the same hours as the station, runs {{claim:cea.hourly.production.night_over_midday}} times midday at night and the
-hourly-humidity scenario {{claim:cea.hourly.hourly_rh.night_over_midday}}. The correlation of the
-mean daily cycles is {{claim:cea.hourly.production.shape_r}} for the delivered anchor and
-{{claim:cea.hourly.hourly_rh.shape_r}} for the hourly-humidity scenario. The reference therefore
-settles the question left open in {{ref:s-rh-scenario}} in one direction: the timing of the cycle
-and the depth of the morning peak are supported, and the nights of the delivered field are too
-high relative to midday, by more than either humidity correction accounts for. The anchor's daily
-shape is inherited from the two low-cost sensors through the amplitude sharpening
-({{ref:s-temporal-anchor}}), so this is a property of the calibration record rather than of the
-model's predictors.
+({{ref:s-rh-scenario}}). The night was different. At the station the deep night is the daily
+minimum, at {{claim:cea.hourly.station.night_over_midday}} of the midday level, whereas the
+sensor-shaped anchor, on the same hours, ran {{claim:cea.hourly.before_f137.night_over_midday}} times
+midday at night and the hourly-humidity scenario {{claim:cea.hourly.hourly_rh.night_over_midday}}.
+The nights were too high by more than either humidity correction accounts for, and the excess
+belonged to the calibration record rather than to the model's predictors, because the anchor's daily
+shape is inherited from the sensors through the amplitude correction ({{ref:s-temporal-anchor}}).
+
+**Correcting the daily cycle.** The shape was therefore refitted to the station in the same way as
+the level: one factor for each local hour, chosen so that the field at the station's cell reproduces
+the station's mean daily cycle over January 2019 to June 2021, with the later record held back. The
+step was adopted under a rule written before the later years were scored: on those years the hourly
+error had to fall, the error of the night-to-midday ratio had to halve, and the daily correlation
+could not fall by more than two hundredths. All three held. On the held-out hours, comparing the
+field at the station's cell before and after, the correlation of the mean daily cycles rises from
+{{claim:dcs.fect.held.diurnal_clim_r}} to {{claim:dcs.cea.held.diurnal_clim_r}}, the
+night-to-midday ratio moves from {{claim:dcs.fect.held.night_midday_model}} to
+{{claim:dcs.cea.held.night_midday_model}} against the station's
+{{claim:dcs.cea.held.night_midday_obs}}, the hourly correlation from
+{{claim:dcs.fect.held.hourly_r}} to {{claim:dcs.cea.held.hourly_r}} and the hourly error from
+{{claim:dcs.fect.held.hourly_rmse}} to {{claim:dcs.cea.held.hourly_rmse}} micrograms per cubic
+metre, while the daily correlation is unchanged ({{claim:dcs.fect.held.daily_r}} and
+{{claim:dcs.cea.held.daily_r}}). A variant with separate factors for the south-west monsoon scored
+better still on the hourly error ({{claim:dcs.ceas.held.hourly_rmse}}) but had been named in advance
+as a sensitivity and was not adopted. The delivered anchor, rebuilt with the step, runs
+{{claim:cea.hourlyho.production.night_over_midday}} times midday at night on the station's held-out
+hours, against {{claim:cea.hourlyho.station.night_over_midday}} at the station and
+{{claim:cea.hourlyho.before_f137.night_over_midday}} before the refit; its morning peak is
+{{claim:cea.hourlyho.production.peak07_over_midday}} times midday against the station's
+{{claim:cea.hourlyho.station.peak07_over_midday}}, slightly shallower than the
+{{claim:cea.hourlyho.before_f137.peak07_over_midday}} it had before. The low-cost sensors still set
+the seasonal cycle. Two consequences follow. The anchor no longer reproduces the sensors' own daily
+cycle, whose nights run {{claim:dcs.fect_record_night_midday}} times midday. And because the
+coherence cap reads each day's lowest hour, lower nights lower the background, so the local fraction
+rises from {{claim:dcs.fect.f}} to {{claim:partition.f}}.
 
 **What it changes.** Before this record was available, the external records at Kandy bracketed the
 field and the level was reported as open. The regulatory record showed the satellite level about a
@@ -131,5 +156,6 @@ low-cost calibration, and allowed it to be corrected with a check on years not u
 delivered level is therefore set by one regulatory station through a single factor, and its
 uncertainty is that factor's interval, roughly a tenth either way, together with whatever the
 station's undocumented method and siting contribute. The cost is independence: the station is now an
-input for 2019 to mid-2021, and only its later record remains a check. The authority's conditions for
+input for 2019 to mid-2021, where it sets the level, the shape of the daily cycle and the width of the
+interval, and only its later record remains a check of all three. The authority's conditions for
 academic use of its data are acknowledged in {{ref:s-data-requested-but-obtained}}.

@@ -28,16 +28,16 @@ makes available. The interval is nominal at ninety per cent by construction and 
 checked here, which is the distinction that matters: conformal calibration earns its coverage
 under exchangeability [@Vovk2005; @Angelopoulos2023], and hourly air quality in a monsoon
 climate is not exchangeable, so the
-nominal level is a design target and the measured coverage is the evidence. It covers
-{{claim:kandy.cov90}} per cent of
-observations at the two Kandy sensors. Read alone, that suggests the interval is too narrow, but
-the misses are not symmetric. Observations fall below the lower bound in {{claim:kandy.miss_below}} per cent of hours
-and above the upper bound in {{claim:kandy.miss_above}} per cent, which is a one-sided failure
-rather than a width failure. Removing each sensor's own median offset restores coverage to
-{{claim:kandy.cov90_recentred}} per cent. That pattern is a diagnostic of a possible calibration
-bias at these two sensors, and only an explicit *b*~*k*~ makes it visible at all. It is not evidence
-that the interval's width is correct for the basin field: the re-centred coverage is measured on the
-same two sensors that calibrated the anchor, and the interval omits several sources of uncertainty
+nominal level is a design target and the measured coverage is the evidence. The delivered
+interval, widened against the regulatory station ({{ref:s-interval-calibration}}), covers
+{{claim:kandy.cov90}} per cent of observations at the two Kandy sensors, but its misses still lean
+to one side: observations fall below the lower bound in {{claim:kandy.miss_below}} per cent of hours
+and above the upper bound in {{claim:kandy.miss_above}} per cent, around a median offset of
+{{claim:kandy.median_offset}} micrograms per cubic metre, and removing each sensor's own median
+offset raises coverage to {{claim:kandy.cov90_recentred}} per cent. That asymmetry is a diagnostic of
+a possible calibration bias at these two sensors, and only an explicit *b*~*k*~ makes it visible at
+all. It is not evidence about the interval's width for the basin field: the coverage is measured on
+the same two sensors that calibrated the anchor, and the interval omits several sources of uncertainty
 listed below.
 
 Two readings of the offset remain open. The first is the change of support described above: the
@@ -49,9 +49,9 @@ sits above it. The
 humidity correction of the sensor record, which uses a constant relative humidity
 ({{ref:s-excluded-processes-known-limits}}), is one candidate mechanism for such a bias. The
 offset is reported as a level question that a co-located reference monitor would settle. The
-regulatory station, which is not co-located with the sensors but which the anchor was not fitted to,
-shows the other half of the diagnosis: there the misses fall on both sides and the hourly interval
-is too narrow ({{ref:s-interval-calibration}}), so the one-sided pattern belongs to the sensors.
+regulatory station, which is not co-located with the sensors, shows the other half of the diagnosis:
+there the misses of the interval as first delivered fell on both sides, so it was too narrow, and the
+one-sided pattern belongs to the sensors ({{ref:s-interval-calibration}}).
 
 The interval is also incomplete in a way the coverage figure cannot reveal. It carries the
 conformal uncertainty of the anchor and the spread of the local pattern, and the background enters

@@ -31,7 +31,7 @@ used once to score the calibration fitted on the rest. The quantities are bias, 
 (repeated at the end of the network deployment) and the response to humidity. The last decides between the two
 humidity corrections the thesis carries ({{ref:s-rh-scenario}}): the prediction, to be registered in advance, is that the
 hourly correction brings the sensors' night-to-midday ratio close to the reference's
-{{claim:cea.hourly.station.night_over_midday}}, which the delivered constant-humidity correction does not. The same
+{{claim:cea.hourly.station.night_over_midday}}, which the constant-humidity correction does not (the delivered field's daily cycle is fitted to the station instead). The same
 step settles the calibration of the two sensors the temporal anchor is trained on.
 
 ### Phase 3: a distributed network as a test of the field {#s-future-network}

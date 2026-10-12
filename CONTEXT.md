@@ -21,7 +21,7 @@ PM(x,y,t) = B(t)  +  max(T(t)−B(t), 0)·P_local(x,y,t)  +  min(T(t)−B(t), 0)
 ```
 
 - **T(t)** — temporal anchor. GBM on exogenous drivers, conformal-wrapped, re-anchored per year
-  to Van Donkelaar, then amplitude-sharpened to the observed FECT swing.
+  to Van Donkelaar, then amplitude-sharpened: seasonal swing to FECT, hour-of-day shape to the CEA station (F.137).
 - **B(t)** — regional/transboundary background. Rural-VanD floor × GEOS-CF seasonal shape.
 - **P_local** — unit-mean local pattern = normalised `S_emit · M` (`A_transport` = scenario).
 - **ε(t)** — bounded, mean-zero floor so ventilated hours are not perfectly flat.
@@ -85,9 +85,9 @@ Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate e
 ## 🔬 Second review (2026-10-10, F.126, exploratory)
 Humidity scenario: f 0.479→0.486 (recomputed 2026-10-11); morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
 level unchanged. Dispersion on identical sites: raw 0.371, dispersed 0.274, built-up 0.393 → dispersion is NOT validated.
-Interval (F.136): at the CEA station **68.7 %** of held-out hours, misses two-sided → hourly interval **too narrow** (×1.86); ~85 % of daily means. FECT 77.3 % one-sided is in-sample — never call it "centring, width right". Background construction vs regional towns (2024–25): anomaly r **0.54** (station 0.79), all from GEOS-CF.
+Interval: as first delivered **68.7 %** of CEA held-out hours, misses two-sided (F.136) → widened ×**1.55** on 2019→mid-2021 hours: held-out **87.1 %** (F.137); daily ~95 %. Daily cycle refitted to CEA (F.137): held-out night/midday **0.77** vs 0.69 (was 1.17). FECT 77.3 % one-sided is in-sample — never call it "centring, width right". Background construction vs regional towns (2024–25): anomaly r **0.54** (station 0.79), all from GEOS-CF.
 
-Quote f as **0.479** (0.428–0.489 cap choices; 0.521 at 48 h; recomputed 2026-10-11 — 0.483 came from a file stale since 2026-08-13) — a decomposition property, never a confidence interval.
+Quote f as **0.505** (0.447–0.518 cap choices; 0.565 at 48 h; F.137 2026-10-12 — was 0.479 before the daily cycle was refitted to the CEA station; 0.483 was a stale file) — a decomposition property, never a confidence interval.
 **Burden withdrawn** (no number; method only — never quote 431/300). Kandy s_rep factor 16.9 is confounded, NOT a lower
 bound. Dec 2022 = model-inferred regional episode.
 

@@ -57,7 +57,7 @@ reconstruction, what the evidence supports and what it may be used for.
      its two anchor stations observed the period, and by no resolvable amount where they did not.
      At Kandy that means the daily sequence is credible on days the sensors reported and much less
      so on the many days they did not.
-   - *The daily cycle's timing and morning peak are supported; its nights are too high.* The daily cycle transfers to some
+   - *The daily cycle's timing is supported, and its shape is fitted to the regulatory station.* The daily cycle transfers to some
      analogue cities and not to others (diurnal correlation {{claim:scorecard.diurnal_r_lo}} to
      {{claim:scorecard.diurnal_r_hi}}), as well as the anchor stations' own cycle does (median
      {{claim:sbd.anchors.median}} against {{claim:sbd.model.median}}) and far better than the prior alone, and hourly skill at Kandy is modest (a coefficient of
@@ -65,9 +65,13 @@ reconstruction, what the evidence supports and what it may be used for.
      correction the timing of the peaks and of the midday dip is unchanged, but the morning-peak-to-midday ratio falls
      from {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night
      falls below midday. The regulatory station's hourly record settles part of this: it has the same
-     timing and a morning peak {{claim:cea.hourly.station.peak07_over_midday}} times midday, as in the
-     delivered field, but its deep night is the daily minimum
-     ({{claim:cea.hourly.station.night_over_midday}} of midday), lower than either correction gives.
+     timing and a morning peak {{claim:cea.hourly.station.peak07_over_midday}} times midday, but its
+     deep night is the daily minimum ({{claim:cea.hourly.station.night_over_midday}} of midday), lower
+     than either correction gives. The delivered cycle was therefore refitted to the station on its
+     first thirty months; on the later hours its night runs
+     {{claim:cea.hourlyho.production.night_over_midday}} of midday, against
+     {{claim:cea.hourlyho.station.night_over_midday}} observed and
+     {{claim:cea.hourlyho.before_f137.night_over_midday}} before the refit.
    - *The absolute level is anchored to the regulatory station, with a held-out check that points
      the right way but is short.* Taken from the satellite surface, the level read
      {{claim:cea.sat.all.bias_pct}} per cent above the regulatory station over {{claim:cea.days}} days.
@@ -87,10 +91,10 @@ reconstruction, what the evidence supports and what it may be used for.
      {{claim:ceasplit.ext_bias}} per cent against the station, so the correction is not supported
      there. Across the ladder's cities the satellite level likewise sits above the withheld city mean,
      by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
-     {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per
-     cent coverage is not achieved, at Kandy or in those cities; at the regulatory station the hourly
-     interval contains {{claim:ceaiv.held.coverage}} per cent of held-out hours, missing on both sides,
-     so it is too narrow rather than misplaced.
+     {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval as first delivered was too narrow at
+     the regulatory station, containing {{claim:ceaiv0.held.coverage}} per cent of held-out hours with
+     misses on both sides; widened by a factor fitted on the station's earlier hours it contains
+     {{claim:ceaiv.held.coverage}} per cent of the held-out hours, at the cost of a wider band.
 4. **The field is not supported below the kilometre scale, and its spatial pattern is a hypothesis,
    not a measurement.** More of the variation within a city lies inside a single cell than between
    cells, no model built from freely available covariates recovers it, the dispersion step meant to

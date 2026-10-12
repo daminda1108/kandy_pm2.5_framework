@@ -32,6 +32,10 @@ from src.stage1_satml.data.calibrate_fect import CLIM_RH_KANDY, barkjohn     # n
 
 STG = REPO / "data" / "processed" / "stage1_v3"
 OUT = REPO / "data" / "processed" / "decomp" / "rh_scenario.csv"
+# The scenario concerns the humidity correction of the FECT sensor record, so it runs on the anchor as sharpened to that
+# record: the products before the daily cycle was reshaped to the CEA station (F.137, 2026-10-12), kept in this backup.
+# Pointing it at the current anchor would apply a FECT label ratio on top of a station-shaped cycle, which means nothing.
+SRC = REPO / "data" / "processed" / "decomp" / "backup_fect_diurnal_2026-10-12"
 YEARS = range(2019, 2024)
 
 
@@ -106,10 +110,10 @@ def main():
     cl = {lab: (clim(L[lab], L.ts, "h"), clim(L[lab], L.ts, "m")) for lab in ("production", "hourly_rh")}
     rows = []
     for y in YEARS:
-        T0 = pd.read_parquet(bv.TANCHOR / f"T_kandy_hourly_{y}.parquet",
+        T0 = pd.read_parquet(SRC / "T_anchor" / f"T_kandy_hourly_{y}.parquet",
                              columns=["datetime_utc", "T_q05", "T_q50", "T_q95"])
         b_annual = (1 - bv.FRAC_LOCAL_YEAR[y]) * float(vand.loc[y, "L_corrected"])   # the level T(t) is anchored to (F.132)
-        stored = pd.read_parquet(bv.DEC / f"B_background_hourly_{y}_v2.parquet").B.to_numpy()
+        stored = pd.read_parquet(SRC / f"B_background_hourly_{y}_v2.parquet").B.to_numpy()
         for lab in ("production", "hourly_rh"):
             T = rescale(T0, cl["production"], cl[lab])
             B = bv.build_B_v2(y, b_annual, T_override=T[["datetime_utc", "T_q50"]]).B.to_numpy()

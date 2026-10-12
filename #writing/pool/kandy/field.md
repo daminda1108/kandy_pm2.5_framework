@@ -61,28 +61,26 @@ Within the day the field has two peaks and a trough. Averaged over the same year
 {{claim:kandy.phase_morning}} in the morning traffic window, {{claim:kandy.phase_midday}} at
 midday, {{claim:kandy.phase_evening}} in the evening and {{claim:kandy.phase_night}} at night, a
 ratio of {{claim:kandy.phase_swing}} between the highest window and the lowest. In the delivered
-field the midday trough and not the night is the daily minimum: the night runs
+field the night is the daily minimum, as it is at the regulatory station: the night runs
 {{claim:kandy.night_over_midday}} times the midday level (basin mean of the delivered field in 2023, night and midday
-windows as above; the temporal anchor over all hours of 2019 to 2023 gives {{claim:rh2.production.night_midday}}
-and on the regulatory station's reporting hours {{claim:cea.hourly.production.night_over_midday}}, all well above the
-station's own {{claim:cea.hourly.station.night_over_midday}}), consistent with the boundary layer that
-dilutes emissions during the day collapsing after sunset. The same ordering is in the two Kandy
-sensors' record as currently corrected, but it is not robust to the humidity correction (below). That agreement is expected rather
-than earned, because the temporal anchor is calibrated to those sensors, and
-{{ref:s-checks-kandy-carry-weight}} explains why it cannot be counted as validation.
+windows as above), because the daily cycle was refitted to that station ({{ref:s-cea-reference}}). The two Kandy
+sensors' record as currently corrected has the opposite ordering, with the night above midday, and the anchor no
+longer follows it there; its agreement with that record in other respects is expected rather than earned, because
+the temporal anchor is calibrated to those sensors, and {{ref:s-checks-kandy-carry-weight}} explains why it cannot
+be counted as validation.
 
 The depth of the daily cycle carries a further qualification. The sensor record to which the
 temporal anchor is sharpened was converted from the sensors' raw readings with a constant
 relative humidity. Repeating the conversion with the hourly humidity reduces the ratio of the morning peak to the midday level in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}} while leaving the timing of the morning and
-evening peaks and of the midday dip unchanged. Carried through the delivered series
+evening peaks and of the midday dip unchanged. Carried through the sensor-shaped anchor
 ({{ref:s-rh-scenario}}), it also reverses the ordering of night and midday: the night falls to
 {{claim:rh2.hourly_rh.night_midday}} of the midday level. The shipped field uses the
-constant-humidity conversion. The regulatory station's hourly record ({{ref:s-cea-reference}})
-supports the timing of the cycle and the depth of the morning peak, but at the station the deep
-night is the daily minimum, at {{claim:cea.hourly.station.night_over_midday}} of the midday level,
-so the field's nights are too high relative to midday and the statement that night exceeds midday
-should not be relied on.
+constant-humidity conversion for its seasonal cycle, but its daily cycle was refitted to the
+regulatory station's ({{ref:s-cea-reference}}), whose deep night is the daily minimum at
+{{claim:cea.hourly.station.night_over_midday}} of the midday level; on the station's held-out hours
+the delivered anchor's night runs {{claim:cea.hourlyho.production.night_over_midday}} of midday,
+against {{claim:cea.hourlyho.before_f137.night_over_midday}} before the refit.
 
 ### An episode {#s-kandy-field-episode}
 

@@ -1,244 +1,244 @@
 {
- "built": "2026-10-11T23:31:38",
- "field_mtime": "2026-10-11 15:37",
+ "built": "2026-10-12T09:18:16",
+ "field_mtime": "2026-10-12 09:09",
  "figures": [
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D11_valley.png",
    "builder": "src/d_schematics.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D1_pipeline.png",
    "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:18"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D2_decomposition.png",
    "builder": "src/d_schematics.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D3_budget_tiers.png",
    "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:18"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D4_observation_operator.png",
    "builder": "src/d_schematics.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\diagrams\\D5_validation_protocol.png",
    "builder": "(rewritten during the run by an untraced renderer: graphviz builders d_flowcharts/d05)",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:18"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F1_1_observing_density.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F2_2_reference_by_band.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F3_2_transect.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F4_3_panel.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F5_5_dispersion_costs.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F6_partition.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "changed": true,
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_contrast_window.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "changed": true,
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F8_tournament.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_3_radius.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\F9_paired_trap.png",
    "builder": "src/f_chapters.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_confirmation.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_like_for_like.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_robustness.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FA_station_count_daily.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_curve.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\#writing\\thesis\\figures\\FB_spatial_noise.png",
    "builder": "src/f_paper1.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:31"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F11_uncertainty.png",
    "builder": "scripts/paper2026_fig11_uncertainty.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F12_null_power.png",
    "builder": "scripts/paper2026_fig12_null_power.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F1_paired.png",
    "builder": "scripts/paper2026_figures.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F5_withinpixel.png",
    "builder": "scripts/paper2026_figures_b.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F6_chemistry.png",
    "builder": "scripts/paper2026_figures_b.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F7_scorecard.png",
    "builder": "scripts/paper2026_fig7_scorecard.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F8_kathmandu.png",
    "builder": "scripts/paper2026_fig8_kathmandu.py",
    "rebuilt": true,
    "changed": false,
-   "mtime": "2026-10-11 23:30"
+   "mtime": "2026-10-12 09:17"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_cycles.png",
    "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_episode.png",
    "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_field.png",
    "builder": "scripts/paper2026_figures_d.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   },
   {
    "figure": "D:\\ProjectCD\\kandy_pm25\\results\\figures\\paper2026\\F_spatiotemporal.png",
    "builder": "scripts/paper2026_figures_d.py",
    "rebuilt": true,
-   "changed": false,
-   "mtime": "2026-10-11 23:29"
+   "changed": true,
+   "mtime": "2026-10-12 09:16"
   }
  ],
  "builders": [
   {
    "builder": "scripts/paper2026_figures.py",
    "exit": 0,
-   "seconds": 18.0,
+   "seconds": 23.7,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -257,7 +257,7 @@
   {
    "builder": "scripts/paper2026_figures_b.py",
    "exit": 0,
-   "seconds": 6.7,
+   "seconds": 5.6,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -284,7 +284,7 @@
   {
    "builder": "scripts/paper2026_figures_c.py",
    "exit": 0,
-   "seconds": 5.6,
+   "seconds": 5.9,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -302,7 +302,7 @@
   {
    "builder": "scripts/paper2026_figures_d.py",
    "exit": 0,
-   "seconds": 9.4,
+   "seconds": 7.9,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -324,7 +324,7 @@
   {
    "builder": "scripts/paper2026_fig_cycles_episode_burden.py",
    "exit": 0,
-   "seconds": 11.1,
+   "seconds": 7.7,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -351,7 +351,7 @@
   {
    "builder": "scripts/paper2026_fig11_uncertainty.py",
    "exit": 0,
-   "seconds": 4.0,
+   "seconds": 4.2,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -367,7 +367,7 @@
   {
    "builder": "scripts/paper2026_fig12_null_power.py",
    "exit": 0,
-   "seconds": 3.9,
+   "seconds": 3.3,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -383,7 +383,7 @@
   {
    "builder": "scripts/paper2026_fig7_scorecard.py",
    "exit": 0,
-   "seconds": 5.7,
+   "seconds": 4.3,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -400,7 +400,7 @@
   {
    "builder": "scripts/paper2026_fig8_kathmandu.py",
    "exit": 0,
-   "seconds": 26.5,
+   "seconds": 19.2,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -418,7 +418,7 @@
   {
    "builder": "src/f_chapters.py",
    "exit": 0,
-   "seconds": 31.7,
+   "seconds": 23.9,
    "reads": [
     "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.dbf",
     "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.prj",
@@ -519,7 +519,7 @@
   {
    "builder": "src/f_paper1.py",
    "exit": 0,
-   "seconds": 9.6,
+   "seconds": 8.0,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",
@@ -584,7 +584,7 @@
   {
    "builder": "src/d_schematics.py",
    "exit": 0,
-   "seconds": 13.3,
+   "seconds": 11.7,
    "reads": [
     "C:\\Users\\levi08\\.local\\share\\cartopy\\shapefiles\\natural_earth\\cultural\\ne_10m_admin_0_countries.shp",
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
@@ -617,7 +617,7 @@
   {
    "builder": "src/d_flowcharts.py",
    "exit": 0,
-   "seconds": 11.9,
+   "seconds": 11.4,
    "reads": [
     "C:\\Users\\levi08\\.matplotlib\\fontlist-v390.json",
     "D:\\Program Files\\Python311\\python311.zip",

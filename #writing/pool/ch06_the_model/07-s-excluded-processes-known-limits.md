@@ -43,14 +43,18 @@ cycle from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 implausible for a valley whose diurnal cycle is set by the boundary layer. These are alternative
 correction scenarios, and neither is validated against a co-located reference instrument; judging
 one of them implausible does not make the other two a bound on the true shape. The shipped field
-keeps the constant-humidity correction, and {{ref:s-rh-scenario}} carries the hourly correction
-through the delivered series as an alternative to show which conclusions depend on the choice.
+keeps the constant-humidity correction for the seasonal cycle, but its daily cycle is no longer the
+sensor record's: it was refitted to the regulatory station ({{ref:s-temporal-anchor}}), which removes
+the high nights that both corrections leave. {{ref:s-rh-scenario}} carries the hourly correction
+through the anchor as it was before that refit, to show which conclusions depended on the choice.
 Because the local fraction is a function of the diurnal amplitude of *T*
 ({{ref:s-partition-constraint-rather-than}}), the choice reaches the partition as well, though only
 slightly.
 
-**The sensor record is used three times.** The same two sensors train the anchor, set the width of
-its conformal interval and supply the diurnal and seasonal profile to which it is sharpened. The
+**The sensor record is used three times, and the regulatory station three more.** The same two
+sensors train the anchor, set its conformal interval and supply the seasonal profile and the
+starting daily profile to which it is sharpened. The regulatory station's record to June 2021 sets
+the level, the daily cycle and the widening of the interval. The
 van Donkelaar surface sets both the annual level and the background. Agreement between the model
 and either source is therefore calibration, not validation, and {{ref:s-checks-kandy-carry-weight}}
 separates these shared inputs from the records that are independent of them.

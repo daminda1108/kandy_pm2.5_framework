@@ -48,10 +48,27 @@ series reproduces the shape of the observed daily and seasonal cycles while damp
 amplitude. Multiplicative factors for each hour of the day and each month map the model's
 climatology onto the climatology of the sensor record, and the annual mean is then restored.
 
+**A correction of the daily cycle to the regulatory station.** The sensor record's nights run well
+above its midday level and the regulatory station's do not ({{ref:s-cea-reference}}), which is the
+signature expected of the constant-humidity conversion of that record ({{ref:s-rh-scenario}}). The
+hour-of-day factors are therefore multiplied by a second set, one per local hour, chosen so that the
+field at the station's cell reproduces the station's mean daily cycle over January 2019 to June
+2021, the period already used for the level; each year's mean is restored again. The month factors
+still come from the sensor record. The step was adopted under a rule written before the later
+years were scored ({{ref:s-cea-reference}}).
+
+**A wider interval.** At the regulatory station the conformal interval proved too narrow, with
+misses on both sides ({{ref:s-interval-calibration}}). Before the field is assembled, the spread of
+the anchor's outer quantiles about its median is therefore multiplied by a single factor of
+{{claim:iw.k}}, the smallest that contains ninety per cent of the station's hours from January 2019
+to June 2021. Because the factor acts on the anchor before the background and the pattern are
+applied, every quantile of the field still averages exactly to its widened anchor.
+
 Three properties of this construction matter for everything that follows. The anchor is
-**calibrated to the two Kandy sensors** three times over (the residual, the interval and the
+**calibrated to the two Kandy sensors** (the residual, the conformal interval and the seasonal
 amplitude), so agreement with those sensors cannot be used as validation, and
-{{ref:s-checks-kandy-carry-weight}} does not use it. Its **level** comes from the satellite
-surface rather than from the sensors. And its **skill is modest at the hourly scale**: the figures
+{{ref:s-checks-kandy-carry-weight}} does not use it. Its **level, the shape of its daily cycle and
+the width of its interval** are fitted to the regulatory station's record to June 2021, so only
+that station's later record checks them. And its **skill is modest at the hourly scale**: the figures
 are given in {{ref:s-excluded-processes-known-limits}}, and most of the anchor's skill lies in the
 daily and seasonal variation that {{ref:ch-validation-without-local-ground}} tests elsewhere.

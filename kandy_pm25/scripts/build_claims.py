@@ -2211,14 +2211,23 @@ def cea_reference(c: Claims) -> None:
             c.add("cea.hourly.o3_peak_hour", S["hourly_o3_peak_hour_local"], stat="local hour of the ozone maximum "
                   "(3-h mean): the timestamp check", n=H["hours"], source=f.name, ledger="F.130",
                   note="platform stamps are UTC; shifted +05:30")
-            for arm in ("station", "production", "hourly_rh"):
-                for k in ("peak07_over_midday", "night_over_midday"):
-                    c.add(f"cea.hourly.{arm}.{k}", round(H[arm][k], 2), stat=k, n=H["hours"], source=f.name, ledger="F.130")
-                for k in ("min_hour", "max_hour"):
-                    c.add(f"cea.hourly.{arm}.{k}", H[arm][k], stat=k, n=H["hours"], source=f.name, ledger="F.130")
-            for arm in ("production", "hourly_rh"):
-                c.add(f"cea.hourly.{arm}.shape_r", round(H[arm]["shape_r"], 2), stat="diurnal-shape r vs station",
-                      n=24, source=f.name, ledger="F.130")
+            # production = the delivered anchor (since F.137 its cycle is fitted to this station on 2019-01..2021-06, so
+            # the all-years comparison is partly in-sample; hourly_held_out is the independent one); before_f137 = the
+            # FECT-shaped anchor; hourly_rh = the humidity scenario on the FECT-shaped anchor
+            for blk, pre in (("hourly", "cea.hourly"), ("hourly_held_out", "cea.hourlyho")):
+                if blk not in S:
+                    continue
+                H = S[blk]
+                for arm in [a for a in ("station", "production", "before_f137", "hourly_rh") if a in H]:
+                    for k in ("peak07_over_midday", "night_over_midday"):
+                        c.add(f"{pre}.{arm}.{k}", round(H[arm][k], 2), stat=f"{blk}: {k}", n=H["hours"], source=f.name,
+                              ledger="F.130 / F.137")
+                    for k in ("min_hour", "max_hour"):
+                        c.add(f"{pre}.{arm}.{k}", H[arm][k], stat=f"{blk}: {k}", n=H["hours"], source=f.name,
+                              ledger="F.130 / F.137")
+                    if arm != "station":
+                        c.add(f"{pre}.{arm}.shape_r", round(H[arm]["shape_r"], 2), stat=f"{blk}: diurnal-shape r vs station",
+                              n=24, source=f.name, ledger="F.130 / F.137")
     f = REPO / "data" / "processed" / "stage1_v3" / "cea_level_beta.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))
@@ -2347,8 +2356,9 @@ def cea_reference(c: Claims) -> None:
 
 def interval_background_checks(c: Claims) -> None:
     """F.136: the shipped 90 % interval at the CEA station; the background's daily signal against the regional network."""
-    f = DEC / "kandy_cea_interval_check.json"
-    if f.exists():
+    for fname, P in (("kandy_cea_interval_check.json", "ceaiv"), ("kandy_cea_interval_check_pre_f137.json", "ceaiv0")):
+      f = DEC / fname
+      if f.exists():
         S = json.load(open(f, encoding="utf-8"))
         for blk, tag in (("calibration_2019_2021H1", "cal"), ("held_out_2021H2_2023", "held"), ("all_2019_2023", "all"),
                          ("extension_2024_2026", "ext")):
@@ -2357,28 +2367,28 @@ def interval_background_checks(c: Claims) -> None:
             for k, nm, scale, nd in (("coverage", "coverage", 100, 1), ("below", "below", 100, 1), ("above", "above", 100, 1),
                                      ("mean_width", "width", 1, 1), ("median_offset", "offset", 1, 2),
                                      ("coverage_recentred", "recentred", 100, 1), ("width_factor_for_90", "k90", 1, 2)):
-                c.add(f"ceaiv.{tag}.{nm}", round(a[k] * scale, nd), stat=f"hourly 90 % interval at the CEA station, {blk}: {k}",
-                      n=a["n"], source=f.name, ledger="F.136")
+                c.add(f"{P}.{tag}.{nm}", round(a[k] * scale, nd), stat=f"hourly 90 % interval at the CEA station, {blk}: {k}",
+                      n=a["n"], source=f.name, ledger="F.136" if P == "ceaiv0" else "F.136 / F.137")
             for band, short in (("night_00_05", "night"), ("morning_06_09", "morning"), ("midday_11_15", "midday"),
                                 ("evening_17_20", "evening")):
                 v = B["by_band"].get(band)
                 if v:
                     for k in ("coverage", "below", "above"):
-                        c.add(f"ceaiv.{tag}.{short}.{k}", round(v[k] * 100, 1), stat=f"{blk}, {band}: {k}", n=v["n"],
-                              source=f.name, ledger="F.136")
+                        c.add(f"{P}.{tag}.{short}.{k}", round(v[k] * 100, 1), stat=f"{blk}, {band}: {k}", n=v["n"],
+                              source=f.name, ledger="F.136" if P == "ceaiv0" else "F.136 / F.137")
             for s in ("DJF", "MAM", "JJA", "SON"):
                 v = B["by_season"].get(s)
                 if v:
-                    c.add(f"ceaiv.{tag}.{s}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {s}: coverage",
-                          n=v["n"], source=f.name, ledger="F.136")
+                    c.add(f"{P}.{tag}.{s}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {s}: coverage",
+                          n=v["n"], source=f.name, ledger="F.136" if P == "ceaiv0" else "F.136 / F.137")
             for k, nm in (("daily_approx", "daily"), ("posthoc_3h_mean", "h3")):
                 v = B.get(k)
                 if v:
-                    c.add(f"ceaiv.{tag}.{nm}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {k}: coverage",
-                          n=v["n"], source=f.name, ledger="F.136",
+                    c.add(f"{P}.{tag}.{nm}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {k}: coverage",
+                          n=v["n"], source=f.name, ledger="F.136" if P == "ceaiv0" else "F.136 / F.137",
                           note="daily/3-h means of hourly quantiles: overstates coverage if hourly errors are not fully correlated")
-                    c.add(f"ceaiv.{tag}.{nm}.k90", round(v["width_factor_for_90"], 2), stat=f"{blk}, {k}: width factor for 90 %",
-                          n=v["n"], source=f.name, ledger="F.136")
+                    c.add(f"{P}.{tag}.{nm}.k90", round(v["width_factor_for_90"], 2), stat=f"{blk}, {k}: width factor for 90 %",
+                          n=v["n"], source=f.name, ledger="F.136" if P == "ceaiv0" else "F.136 / F.137")
     f = DEC / "background_regional_check.json"
     if f.exists():
         S = json.load(open(f, encoding="utf-8"))
@@ -2398,6 +2408,46 @@ def interval_background_checks(c: Claims) -> None:
                           source=f.name, ledger="F.136")
                 c.add(f"{pre}.{a}.days", v["days"], stat=f"{blk}: {arm} days", n=None, source=f.name, ledger="F.136")
                 c.add(f"{pre}.{a}.months", v["months"], stat=f"{blk}: {arm} months", n=None, source=f.name, ledger="F.136")
+
+
+def diurnal_and_widening(c: Claims) -> None:
+    """F.137: the daily cycle reshaped to the CEA station (adopted by a pre-set rule) and the interval widening."""
+    f = DEC / "diurnal_cea_scenario.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for arm, tag in (("production", "fect"), ("hour", "cea"), ("season_hour", "ceas")):
+            for per, pt in (("calibration", "cal"), ("held_out", "held")):
+                m = S[arm][per]
+                for k, nd in (("diurnal_clim_r", 3), ("night_midday_obs", 2), ("night_midday_model", 2),
+                              ("morning_midday_obs", 2), ("morning_midday_model", 2), ("hourly_r", 3),
+                              ("hourly_rmse", 2), ("daily_r", 3), ("daily_bias_pct", 1)):
+                    c.add(f"dcs.{tag}.{pt}.{k}", round(m[k], nd), stat=f"daily-cycle scenario, {arm}, {per}: {k}",
+                          n=m["n"], source=f.name, ledger="F.137",
+                          note="fect = the field before F.137 (FECT-shaped cycle); cea = adopted; ceas = sensitivity")
+                c.add(f"dcs.{tag}.{pt}.cov90", round(m["cov90"] * 100, 1), stat=f"{arm}, {per}: unwidened coverage",
+                      n=m["n"], source=f.name, ledger="F.137")
+            c.add(f"dcs.{tag}.f", round(S[arm]["f"][0], 3), stat=f"{arm}: local fraction (scenario rebuild)",
+                  n=5, source=f.name, ledger="F.137")
+            c.add(f"dcs.{tag}.fect_night_midday", round(S[arm]["fect"]["night_midday_T"], 2),
+                  stat=f"{arm}: T night/midday (all hours)", n=None, source=f.name, ledger="F.137")
+        c.add("dcs.fect_record_night_midday", round(S["production"]["fect"]["night_midday_fect"], 2),
+              stat="FECT low-cost record night/midday", n=None, source=f.name, ledger="F.137")
+        c.add("dcs.cea_fect_shape_r", round(S["hour"]["fect"]["r"], 2),
+              stat="adopted T diurnal shape vs FECT climatology, r", n=24, source=f.name, ledger="F.137")
+    f = DEC / "interval_widening.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        if not S.get("provisional"):
+            c.add("iw.k", S["k"], stat="interval widening factor, fitted on CEA calibration hours", n=None,
+                  source=f.name, ledger="F.137")
+            for lab in ("unwidened", "widened"):
+                for per, pt in (("calibration", "cal"), ("held_out", "held")):
+                    m = S[lab][per]
+                    for k in ("coverage", "below", "above", "daily_coverage"):
+                        c.add(f"iw.{lab}.{pt}.{k}", round(m[k] * 100, 1), stat=f"{lab}, {per}: {k}", n=m["n"],
+                              source=f.name, ledger="F.137")
+                    c.add(f"iw.{lab}.{pt}.width", round(m["mean_width"], 1), stat=f"{lab}, {per}: mean width",
+                          n=m["n"], source=f.name, ledger="F.137")
 
 
 def seasonal_baseline(c: Claims) -> None:
@@ -2987,6 +3037,7 @@ def build() -> dict:
     cea_reference(c)
     seasonal_baseline(c)
     interval_background_checks(c)
+    diurnal_and_widening(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

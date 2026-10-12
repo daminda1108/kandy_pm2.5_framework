@@ -106,11 +106,13 @@ robust in timing, but their depth depends on the humidity correction of the sens
 hourly rather than constant humidity the morning-peak-to-midday ratio falls from
 {{claim:rh2.production.peak_trough}} to {{claim:rh2.hourly_rh.peak_trough}} and the night falls below
 midday, while the level, the daily sequence and the local fraction barely move. The regulatory
-station's hourly record has the same timing and a morning peak like the delivered field's, but its
-deep night is the daily minimum ({{claim:cea.hourly.station.night_over_midday}} of midday), so the
-field's nights are too high. The interval covers
-{{claim:kandy.cov90}} per cent of sensor hours, missing almost all on one side, but at the regulatory
-station {{claim:ceaiv.held.coverage}} per cent of held-out hours, missing on both sides: too narrow. Under the baseline decomposition
+station's hourly record has the same timing, but its deep night is the daily minimum
+({{claim:cea.hourly.station.night_over_midday}} of midday), so the delivered cycle was refitted to
+the station on 2019 to mid-2021; on later hours its night runs
+{{claim:cea.hourlyho.production.night_over_midday}} of midday, against
+{{claim:cea.hourlyho.before_f137.night_over_midday}} before. The interval, too narrow there at first
+({{claim:ceaiv0.held.coverage}} per cent of held-out hours), was widened on the same early years and
+now contains {{claim:ceaiv.held.coverage}} per cent. Under the baseline decomposition
 the local increment is {{claim:partition.f}} of the modelled total, {{claim:v2.f.cap_min}} to
 {{claim:v2.f.cap_max}} across the tested ways of applying the cap and {{claim:field.f_form_roll48}}
 with a 48-hour background window: a property of the decomposition, not a source apportionment. At the regulatory

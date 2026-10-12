@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -21,6 +22,10 @@ CEA = REPO / "data" / "external" / "cea"
 SLAT, SLON = 7.2906, 80.6337
 TZ = "Asia/Colombo"
 CAL_END = pd.Timestamp("2021-07-01")
+# --pre-f137: score the field as it was before the daily cycle was reshaped and the interval widened (F.137), from the
+# backup, so the F.136 record stays reproducible; writes ..._pre_f137.json
+PRE = "--pre-f137" in sys.argv
+FIELD_DIR = DEC / "backup_fect_diurnal_2026-10-12" if PRE else DEC
 BANDS = {"night_00_05": range(0, 6), "morning_06_09": range(6, 10), "midday_11_15": range(11, 16),
          "evening_17_20": range(17, 21)}
 SEASON = {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM", 6: "JJA", 7: "JJA", 8: "JJA",
@@ -30,7 +35,7 @@ SEASON = {12: "DJF", 1: "DJF", 2: "DJF", 3: "MAM", 4: "MAM", 5: "MAM", 6: "JJA",
 def cell(years, suffix):
     parts = []
     for y in years:
-        p = DEC / f"kandy_decomp_predictions_{y}_additive_v3{suffix}.parquet"
+        p = FIELD_DIR / f"kandy_decomp_predictions_{y}_additive_v3{suffix}.parquet"
         if not p.exists():
             continue
         f = pd.read_parquet(p, columns=["time", "lat", "lon", "pm25_q05", "pm25_q50", "pm25_q95"])
@@ -103,7 +108,7 @@ def main():
     E = cell(range(2024, 2027), "_drv")
     je = E.join(obs, how="inner").dropna()
     res["extension_2024_2026"] = block(je)
-    p = DEC / "kandy_cea_interval_check.json"
+    p = DEC / ("kandy_cea_interval_check_pre_f137.json" if PRE else "kandy_cea_interval_check.json")
     tmp = p.with_suffix(".tmp.json"); tmp.write_text(json.dumps(res, indent=1), encoding="utf-8"); os.replace(tmp, p)
     for k in ("calibration_2019_2021H1", "held_out_2021H2_2023", "all_2019_2023", "extension_2024_2026"):
         a = res[k]["all"]

@@ -6711,3 +6711,42 @@ extension T (built as a monthly multiple of T). Level ratio not read (towns are 
 Thesis: §interval calibration rewritten (new paragraph), point-vs-area section, discussion, conclusion 3, summary,
 Tables 3.x / 4.1 rows; new paragraph in §regional background. README interval paragraph corrected (the "standing
 prediction ≈40 % high at any point" is refuted: held-out offset +0.8). Claims `ceaiv.*`, `bgr*.*`.
+
+## F.137 — 🟢 daily cycle refitted to the CEA station and interval widened, both on 2019-01 → 2021-06, checked on later hours (2026-10-12)
+
+Spec `docs/diurnal_and_interval_widening_spec_2026-10-12.md`, committed before scoring (`febb94d`). Exploratory.
+
+**Daily cycle** (`kandy_diurnal_cea_scenario.py`): T′ = T × r(h), r fitted by a 3-step fixed point so the field at the
+station cell reproduces the station's hour-of-day climatology on calibration hours; B rebuilt (cap); cell reassembled
+with the recovered pattern (parity 4e-14). Held-out (6,142 h), FECT-shaped → CEA-shaped: climatology r 0.712 → 0.980,
+night/midday 1.12 → 0.79 (station 0.78), morning/midday 1.53 → 1.59 (1.66), hourly r 0.505 → 0.562, RMSE 11.85 → 11.40,
+daily r 0.535 → 0.532, unwidened coverage 68.7 → 71.5 %. Rule (a) RMSE lower, (b) night error halved, (c) daily r within
+0.02: **all three pass → adopted.** Hour×season variant better hourly (RMSE 10.56) but named a sensitivity in advance:
+not adopted. Implemented as `sharpen_T_diurnal.DIURNAL_TARGET = "cea_split"` (factors `decomp/diurnal_cea_r.json`;
+refuses without them). Rebuilt delivered anchor, held-out station hours: night/midday **0.77** vs station 0.69 (was
+1.17); 07/14 peak 1.80 vs 1.95 (was 1.90 — slightly shallower); shape r 0.98 (was 0.70). Daily skill unchanged (r 0.60,
+within-month 0.73, held-out bias −1 %). **f 0.479 → 0.505** (0.490–0.525 by year; cap choices 0.447–0.518; 48-h
+0.565): lower nights lower each day's minimum T and therefore the capped B. Model f at the station cell 0.53 = the CO
+tracer estimate. ε0 3.068 (was 2.907).
+
+**Interval** (`kandy_interval_widen_fit.py`): T05′ = T50 − k(T50 − T05), T95′ likewise, applied in
+`build_additive_field_v2.assemble_v2` and `kandy_extension_fields.py` (refuse without `decomp/interval_widening.json`).
+k = **1.55** (smallest with ≥ 90 % on calibration hours; refit after rebuild gives the same k). Held-out: **87.1 %**
+(4.5 below / 8.4 above), daily 95.2 %; mean width 26.3 → 38.6 µg/m³. FECT sensors now 88.6 % (7.6 below / 3.8 above,
+re-centred 92.5 %). Extension 66.8 % (misses above: level −40 %). Forecast tier keeps its own OOD ×1.35 (not stacked).
+
+**Records kept reproducible:** pre-F.137 products in `decomp/backup_fect_diurnal_2026-10-12/`; `kandy_rh_scenario.py`
+and the reference check's `before_f137`/`hourly_rh` arms read that backup; `kandy_cea_interval_check.py --pre-f137`
+reproduces F.136 exactly (claims `ceaiv0.*`). Consistency test now: headline f = cap sweep; humidity scenario = backup
+partition. Station now fits level, cycle shape and interval width on 2019 → mid-2021; only its later record checks them.
+Webapp re-exported (QA 0.0010), forecast boosters retrained (pedigree/evidence restored; retired "f_local~0.25" text
+removed at source), release ported (embedded constants, json overrides).
+
+**F.137 addendum (same day): the first rebuild was not the documented chain.** The CEA hour factors were first applied
+by re-running `sharpen_T_diurnal.py` on the stored (already sharpened) anchor. That step is not idempotent (per-year
+ratios of the current climatology), so the anchor moved by up to 3 % beyond r(h); every gate passed, and the release's
+`--from-anchor` rebuild exposed it (max diff 3.4 µg/m³). Fixed: the framework was rebuilt from `predict_T_anchor_v3`
+(sharpen once); the delivered anchor now equals the pre-F.137 anchor × r(h) to 1e-15, i.e. exactly the scored scenario;
+release parity 0.0 (after embedding r at full precision). Sharpen now marks its output and refuses a second run
+(gotcha #109). The numbers above are from the final rebuild; the scenario script reads the backup and reproduces its
+record exactly.

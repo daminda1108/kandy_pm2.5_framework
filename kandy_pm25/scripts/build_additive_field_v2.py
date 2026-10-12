@@ -21,6 +21,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import json
 import numpy as np
 import pandas as pd
 
@@ -240,6 +241,25 @@ def build_B_v2(year, b_annual, T_override: pd.DataFrame | None = None) -> pd.Dat
 # because S_emit, M and BLH are unchanged since it was built).
 PATTERN = "undispersed"
 
+# Interval widening (2026-10-12, F.137). At the CEA regulatory station the hourly 90 % interval contained 68.7 % of
+# held-out hours with misses on BOTH sides (F.136): too narrow, not off-centre. One factor k, fitted on the station's
+# 2019-01 -> 2021-06 hours (kandy_interval_widen_fit.py), scales the spread of T's quantiles about the median BEFORE the
+# split, so each field quantile's basin mean still equals its (widened) anchor and the webapp reconstruction stays exact.
+# The factors file is required: no silent fallback to the unwidened interval.
+WIDEN_FILE = DEC / "interval_widening.json"
+
+
+def interval_k() -> float:
+    if not WIDEN_FILE.exists():
+        raise SystemExit(f"{WIDEN_FILE} missing: run scripts/kandy_interval_widen_fit.py (write k=1 with --provisional "
+                         f"only for the first rebuild that the fit itself needs)")
+    return float(json.loads(WIDEN_FILE.read_text(encoding="utf-8"))["k"])
+
+
+def widen(T05, T50, T95, k=None):
+    k = interval_k() if k is None else k
+    return T50 - k * (T50 - T05), T50 + k * (T95 - T50)
+
 
 def assemble_v2(year):
     m = pd.read_parquet(DEC / f"kandy_decomp_predictions_{year}_4factor.parquet")
@@ -252,6 +272,7 @@ def assemble_v2(year):
     Ta = Ta.set_index("time")
     m["T50"] = m.time.map(Ta.T_q50); m["T05"] = m.time.map(Ta.T_q05); m["T95"] = m.time.map(Ta.T_q95)
     assert m[["T05", "T50", "T95"]].notna().all().all(), "T(t) missing for some field hours"
+    m["T05"], m["T95"] = widen(m["T05"], m["T50"], m["T95"])          # F.137
     bmap = b.set_index("time")
     m["B"] = m.time.map(bmap["B"]); m["B_lo"] = m.time.map(bmap["B_lo"]); m["B_hi"] = m.time.map(bmap["B_hi"])
     if PATTERN == "undispersed":

@@ -37,7 +37,7 @@ reconstruction and {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospective
 the offset between the field and the regulatory station at Kandy ({{ref:s-cea-reference}}). The chain's **nominal
 ninety per cent interval** covers a fraction {{claim:v2.km.reco.unio.K2_cov90.median}} of withheld
 daily means in reconstruction, close to its coverage of {{claim:kandy.cov90}} per cent at the Kandy
-sensors, so the under-coverage found at Kandy ({{ref:s-interval-calibration}}) is not peculiar to
+sensors, so the under-coverage found at Kandy before the interval was widened ({{ref:s-interval-calibration}}) is not peculiar to
 the Kandy sensors; it recurs where the truth is known. And the chain **without any station**, the composition
 prior shifted to the satellite level, follows the daily sequence more closely than the generic
 learner (correlation {{claim:v2.km.reco.unio.K0_r.median}} against
