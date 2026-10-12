@@ -94,7 +94,8 @@ the basin mean equals T(t) whatever B is. Resolution needs one in-basin or upwin
 
 **Weak-point register (opened 2026-08-06).** Six items closed by measurement, three open. Closed:
 the shipped interval's coverage (width correct at 91.5% once the area-vs-point centring offset is
-removed; raw 72.4%); the anchor-choice concern (the extremal pair *penalises* level and RMSE, and
+removed; raw 72.4%; ⚠ **reversed 2026-10-12, F.136**: at the CEA station, which the anchor was not fitted to,
+held-out hourly coverage is 68.7% with two-sided misses — the hourly interval is too narrow); the anchor-choice concern (the extremal pair *penalises* level and RMSE, and
 flatters seasonal r by ~+0.01); the never-verified data survey; the KOALA anchor's significant
 figures; the ~90% vehicular assumption (**corroborated** — the holiday effect is 3.67x stronger at
 rush hours); and the f prior (**refuted**, five converging lines). Open: the FECT calibration itself

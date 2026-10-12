@@ -21,7 +21,10 @@ under-covers: nominal ninety per cent intervals cover {{claim:kandy.cov90}} per 
 sensors' hours. Removing each sensor's own offset, with the width unchanged, raises that to
 {{claim:kandy.cov90_recentred}} per cent ({{ref:s-interval-calibration}}), which diagnoses a possible
 calibration bias at those sensors; it does not establish that the width is right for the basin
-field, and across the ladder's cities the interval under-covers as well. One qualification applies to the amplitude of the daily cycle rather than its
+field, and across the ladder's cities the interval under-covers as well. At the regulatory station,
+which the anchor was not fitted to, the hourly interval contains {{claim:ceaiv.held.coverage}} per
+cent of held-out hours with misses on both sides, so there it is too narrow rather than misplaced,
+while it contains {{claim:ceaiv.held.daily.coverage}} per cent of held-out daily means. One qualification applies to the amplitude of the daily cycle rather than its
 timing. The sensor record to which the temporal anchor is sharpened was converted with a constant
 relative humidity, and repeating the conversion with hourly humidity reduces the ratio of the morning peak to the midday level in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
 {{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the delivered series, the alternative leaves the

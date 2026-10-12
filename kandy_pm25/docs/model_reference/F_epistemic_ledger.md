@@ -6687,3 +6687,27 @@ median +0.008). Both cycles are carried from the anchors; where the model fails 
 Same round: title "…constrained reconstruction of fine particulate matter…", abstract re-led with the solid results
 (CEA day-to-day and timing, held-out level, station value; f demoted to a closing clause), Appendix H (changes during
 writing) moved to `CHANGELOG_thesis.md`. Rebuild with hourly RH / local-day cap declined: neither fixes the nights.
+
+## F.136 — 🔴 at the CEA station the hourly interval is TOO NARROW (two-sided), not off-centre; the background's daily signal is the prior's (2026-10-12)
+
+Spec `docs/interval_background_checks_spec_2026-10-12.md`, committed before scoring (`1272bea`). Exploratory.
+
+**Interval** (`scripts/kandy_cea_interval_check.py`): shipped `[q05, q95]` of `additive_v3` at the station cell, hourly,
+field hours floored to the station's stamp. Held-out (2021-07 → 2023; 6,142 h): coverage **68.7 %**, below 13.6 / above
+17.7 %, median offset **+0.77**, re-centred 69.6 %; half-widths need **×1.86** for 90 %. Calibration years 74.1 %; extension
+2024–26 56.1 % (almost all misses above: the extension's level is ~40 % low). Misses follow the cycle: night below 19.9 %,
+morning-peak above 32.2 %, midday above 29.0 %; JJA 46.7 %. 3-h means (post hoc) only 71.2 % → not instrument noise.
+Daily means (averaged quantiles, optimistic) 84.8 %. **Reading (spec rule): too narrow.** This REVERSES the FECT-only
+diagnosis "centring, not width" (F.25, gotcha #75): the one-sided miss belongs to the sensors. Part of the ×1.86 is the
+point-vs-cell representativeness term the interval does not carry; not separable here.
+
+**Background** (`scripts/background_regional_check.py`): regional IQAir towns (5 within 150 km outside Colombo,
+calibrated at Battaramulla) report from 2024-06 only, so the CONSTRUCTION (class level × GEOS-CF daily modulation,
+uncapped) was rebuilt for 2024–25 and scored, not the delivered series. Daily r **0.49 [0.31, 0.65]**, within-month anomaly
+r **0.54 [0.39, 0.66]** (383 d), vs the Kandy CEA station's own anomaly r with the towns **0.79**. GEOS-CF alone scores
+identically (0.54): the air-mass class adds nothing to the day-to-day sequence. Shipped extension B scores like the
+extension T (built as a monthly multiple of T). Level ratio not read (towns are urban).
+
+Thesis: §interval calibration rewritten (new paragraph), point-vs-area section, discussion, conclusion 3, summary,
+Tables 3.x / 4.1 rows; new paragraph in §regional background. README interval paragraph corrected (the "standing
+prediction ≈40 % high at any point" is refuted: held-out offset +0.8). Claims `ceaiv.*`, `bgr*.*`.

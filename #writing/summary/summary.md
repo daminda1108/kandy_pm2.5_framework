@@ -109,8 +109,8 @@ midday, while the level, the daily sequence and the local fraction barely move. 
 station's hourly record has the same timing and a morning peak like the delivered field's, but its
 deep night is the daily minimum ({{claim:cea.hourly.station.night_over_midday}} of midday), so the
 field's nights are too high. The interval covers
-{{claim:kandy.cov90}} per cent of sensor hours with misses almost all on one side, which points to a
-calibration bias at the sensors rather than proving the width right. Under the baseline decomposition
+{{claim:kandy.cov90}} per cent of sensor hours, missing almost all on one side, but at the regulatory
+station {{claim:ceaiv.held.coverage}} per cent of held-out hours, missing on both sides: too narrow. Under the baseline decomposition
 the local increment is {{claim:partition.f}} of the modelled total, {{claim:v2.f.cap_min}} to
 {{claim:v2.f.cap_max}} across the tested ways of applying the cap and {{claim:field.f_form_roll48}}
 with a 48-hour background window: a property of the decomposition, not a source apportionment. At the regulatory

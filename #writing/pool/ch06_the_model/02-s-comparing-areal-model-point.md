@@ -48,7 +48,10 @@ the model, and opposed by the national record, whose instrument type is undocume
 sits above it. The
 humidity correction of the sensor record, which uses a constant relative humidity
 ({{ref:s-excluded-processes-known-limits}}), is one candidate mechanism for such a bias. The
-offset is reported as a level question that a co-located reference monitor would settle.
+offset is reported as a level question that a co-located reference monitor would settle. The
+regulatory station, which is not co-located with the sensors but which the anchor was not fitted to,
+shows the other half of the diagnosis: there the misses fall on both sides and the hourly interval
+is too narrow ({{ref:s-interval-calibration}}), so the one-sided pattern belongs to the sensors.
 
 The interval is also incomplete in a way the coverage figure cannot reveal. It carries the
 conformal uncertainty of the anchor and the spread of the local pattern, and the background enters

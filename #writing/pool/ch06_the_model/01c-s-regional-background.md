@@ -29,3 +29,20 @@ The resulting background averages {{claim:partition.B_mean}} micrograms per cubi
 anchored years, from {{claim:partition.B_2021}} in 2021 to {{claim:partition.B_2023}} in 2023. Because the background is uniform and the pattern has unit mean,
 every choice made in building it changes the **division** of the field into regional and local
 parts, and none of them changes the field's city mean, which is fixed by *T*(*t*).
+
+**The daily series against the regional network.** The background's day-to-day variation has one
+direct check. The regulatory agency's network carries low-cost units in {{claim:bgr.n_sites}} towns
+within 150 kilometres of Kandy outside the Colombo area, calibrated against the reference monitor
+they share a site with near Colombo ({{ref:s-local-fraction-measured}}). They report only from
+mid-2024, after the delivered years, so what can be scored is the construction above applied to 2024
+and 2025, not the delivered series itself. Against the towns' daily median the constructed
+background correlates at {{claim:bgr.bmeth.r}} ({{claim:bgr.bmeth.r_lo}} to {{claim:bgr.bmeth.r_hi}},
+{{claim:bgr.bmeth.days}} days), and at {{claim:bgr.bmeth.anom}} ({{claim:bgr.bmeth.anom_lo}} to
+{{claim:bgr.bmeth.anom_hi}}) once each month's mean is removed, against {{claim:bgr.kst.anom}} for the
+Kandy regulatory station itself. The background therefore carries a real share of the regional
+day-to-day signal, but less of it than Kandy's own air shares with the region. All of that share comes
+from the composition prior, which scores the same alone ({{claim:bgr.geos.anom}}), so the air-mass
+classification adds nothing measurable to the daily sequence; its role is the level of marine days.
+The towns are themselves small urban areas, so their level is not the background's, and only the
+correlations are read. The check was made after the other results, with its reading written down
+before it was scored.

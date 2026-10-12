@@ -88,7 +88,9 @@ reconstruction, what the evidence supports and what it may be used for.
      there. Across the ladder's cities the satellite level likewise sits above the withheld city mean,
      by {{claim:v2.km.reco.unio.K2_bias.median}} per cent in reconstruction and
      {{claim:v2.km.pros.unio.K2_bias.median}} per cent prospectively. The interval's nominal ninety per
-     cent coverage is not achieved, at Kandy or in those cities.
+     cent coverage is not achieved, at Kandy or in those cities; at the regulatory station the hourly
+     interval contains {{claim:ceaiv.held.coverage}} per cent of held-out hours, missing on both sides,
+     so it is too narrow rather than misplaced.
 4. **The field is not supported below the kilometre scale, and its spatial pattern is a hypothesis,
    not a measurement.** More of the variation within a city lies inside a single cell than between
    cells, no model built from freely available covariates recovers it, the dispersion step meant to

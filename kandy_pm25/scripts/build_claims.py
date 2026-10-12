@@ -2345,6 +2345,61 @@ def cea_reference(c: Claims) -> None:
               source=f.name, ledger="F.130")
 
 
+def interval_background_checks(c: Claims) -> None:
+    """F.136: the shipped 90 % interval at the CEA station; the background's daily signal against the regional network."""
+    f = DEC / "kandy_cea_interval_check.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        for blk, tag in (("calibration_2019_2021H1", "cal"), ("held_out_2021H2_2023", "held"), ("all_2019_2023", "all"),
+                         ("extension_2024_2026", "ext")):
+            B = S[blk]
+            a = B["all"]
+            for k, nm, scale, nd in (("coverage", "coverage", 100, 1), ("below", "below", 100, 1), ("above", "above", 100, 1),
+                                     ("mean_width", "width", 1, 1), ("median_offset", "offset", 1, 2),
+                                     ("coverage_recentred", "recentred", 100, 1), ("width_factor_for_90", "k90", 1, 2)):
+                c.add(f"ceaiv.{tag}.{nm}", round(a[k] * scale, nd), stat=f"hourly 90 % interval at the CEA station, {blk}: {k}",
+                      n=a["n"], source=f.name, ledger="F.136")
+            for band, short in (("night_00_05", "night"), ("morning_06_09", "morning"), ("midday_11_15", "midday"),
+                                ("evening_17_20", "evening")):
+                v = B["by_band"].get(band)
+                if v:
+                    for k in ("coverage", "below", "above"):
+                        c.add(f"ceaiv.{tag}.{short}.{k}", round(v[k] * 100, 1), stat=f"{blk}, {band}: {k}", n=v["n"],
+                              source=f.name, ledger="F.136")
+            for s in ("DJF", "MAM", "JJA", "SON"):
+                v = B["by_season"].get(s)
+                if v:
+                    c.add(f"ceaiv.{tag}.{s}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {s}: coverage",
+                          n=v["n"], source=f.name, ledger="F.136")
+            for k, nm in (("daily_approx", "daily"), ("posthoc_3h_mean", "h3")):
+                v = B.get(k)
+                if v:
+                    c.add(f"ceaiv.{tag}.{nm}.coverage", round(v["coverage"] * 100, 1), stat=f"{blk}, {k}: coverage",
+                          n=v["n"], source=f.name, ledger="F.136",
+                          note="daily/3-h means of hourly quantiles: overstates coverage if hourly errors are not fully correlated")
+                    c.add(f"ceaiv.{tag}.{nm}.k90", round(v["width_factor_for_90"], 2), stat=f"{blk}, {k}: width factor for 90 %",
+                          n=v["n"], source=f.name, ledger="F.136")
+    f = DEC / "background_regional_check.json"
+    if f.exists():
+        S = json.load(open(f, encoding="utf-8"))
+        c.add("bgr.n_sites", len(S["regional_sites_near"]), stat="regional IQAir sites within 150 km outside Colombo",
+              n=None, source=f.name, ledger="F.136")
+        for blk, pre in (("against_regional_near", "bgr"), ("against_island_median", "bgri"), ("common_days", "bgrc")):
+            for arm, v in S[blk].items():
+                if not v:
+                    continue
+                a = {"B_method": "bmeth", "GEOS_CF": "geos", "B_ext": "bext", "T_ext_basin": "text", "K_station": "kst"}[arm]
+                for k, nm, nd in (("r", "r", 2), ("anomaly_r", "anom", 2)):
+                    c.add(f"{pre}.{a}.{nm}", round(v[k], nd), stat=f"{blk}: {arm} daily {k}", n=v["days"], source=f.name,
+                          ledger="F.136")
+                    c.add(f"{pre}.{a}.{nm}_lo", round(v[k + "_ci95"][0], nd), stat=f"{blk}: {arm} {k} 2.5 %", n=v["days"],
+                          source=f.name, ledger="F.136")
+                    c.add(f"{pre}.{a}.{nm}_hi", round(v[k + "_ci95"][1], nd), stat=f"{blk}: {arm} {k} 97.5 %", n=v["days"],
+                          source=f.name, ledger="F.136")
+                c.add(f"{pre}.{a}.days", v["days"], stat=f"{blk}: {arm} days", n=None, source=f.name, ledger="F.136")
+                c.add(f"{pre}.{a}.months", v["months"], stat=f"{blk}: {arm} months", n=None, source=f.name, ledger="F.136")
+
+
 def seasonal_baseline(c: Claims) -> None:
     """F.135: null baselines for the ten-city seasonal correlation (prior alone; the two anchor stations' climatology)."""
     f = REPO / "results" / "figures" / "multicity" / "scorecard_seasonal_baseline.json"
@@ -2931,6 +2986,7 @@ def build() -> dict:
     kandy_external_2026_10_11(c)
     cea_reference(c)
     seasonal_baseline(c)
+    interval_background_checks(c)
     spatial_tournament(c)
     srep_external(c)
     loss_sensitivity(c)

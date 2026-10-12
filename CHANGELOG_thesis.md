@@ -27,6 +27,7 @@ that a reader of earlier drafts or presentations can see what replaced what.
 | annual level of the field | the satellite area mean | the satellite mean times 0.8, fitted to the regulatory station | the regulatory record placed the satellite level 24 per cent above the station; the factor was fitted on 2019 to mid-2021 and checked on later years |
 | detection limit of the spatial learning curve | 0.24 | 0.35 | the registered value assumed a spread smaller than the one observed |
 | diurnal swing of the sensor record | constant-humidity correction | morning peak to midday 1.82 becomes 1.62 with hourly humidity | the correction had used a fixed relative humidity; the shipped field is not yet rebuilt |
+| interval coverage, diagnosis | one-sided miss at the sensors: centring, width adequate | at the regulatory station 68.7 per cent of held-out hours, misses two-sided: the hourly interval is too narrow (half-widths x1.86) | the earlier diagnosis rested only on the two sensors that calibrated the anchor; the station is independent of it |
 | attributable burden | a number of deaths per year with an interval | withdrawn; the method is given without a number | the response function is defined for adults of 25 and older and was applied to all ages, the interval omitted most of the uncertainty and the level is unresolved; an estimate awaits age-specific mortality data |
 
 

@@ -28,9 +28,38 @@ field, and the interval omits uncertainties listed below. The cause of the offse
 be the change of support of {{ref:ch-model-stops}}, in which case the interval may be adequate for
 the areal quantity it describes. It may instead be an upward level bias of the model at these points,
 for which the constant-humidity correction of the sensor record is one candidate mechanism, and
-{{ref:s-checks-kandy-carry-weight}} sets out the evidence on each side. The check cannot
-distinguish the two, because the sensors that score the interval are the same sensors that
-calibrated the anchor; a co-located reference monitor would.
+{{ref:s-checks-kandy-carry-weight}} sets out the evidence on each side. The check at the
+sensors cannot distinguish the two, because the sensors that score the interval are the same
+sensors that calibrated the anchor.
+
+The regulatory station ({{ref:s-cea-reference}}) does not settle the cause of the sensors' offset,
+since it is not co-located with them, but it does test the interval against an instrument the
+anchor was not fitted to. Only the level factor was estimated on the station, from its days before
+mid-2021, so the later days are the independent test. On those held-out hours the interval covers
+{{claim:ceaiv.held.coverage}} per cent, and the misses fall on both sides, {{claim:ceaiv.held.below}}
+per cent below and {{claim:ceaiv.held.above}} per cent above, around a median offset of only
+{{claim:ceaiv.held.offset}} micrograms per cubic metre; removing that offset leaves coverage at
+{{claim:ceaiv.held.recentred}} per cent. Against a reference instrument the hourly interval is
+therefore too narrow rather than misplaced: its half-widths would have to grow by a factor of
+{{claim:ceaiv.held.k90}} to contain ninety per cent of the hours. The misses follow the field's
+errors in the daily cycle. The station falls below the interval in {{claim:ceaiv.held.night.below}}
+per cent of night hours, where the field's nights run too high, and rises above it in
+{{claim:ceaiv.held.morning.above}} per cent of morning-peak hours and {{claim:ceaiv.held.midday.above}}
+per cent of midday hours; coverage is lowest in the south-west monsoon months
+({{claim:ceaiv.held.JJA.coverage}} per cent). Averaging both series over three hours, which damps the
+instrument's own hour-to-hour noise, raises coverage only to {{claim:ceaiv.held.h3.coverage}} per cent,
+so the shortfall is not measurement noise. Part of it is the difference between a point and a
+kilometre cell, which the interval does not carry and which
+{{ref:s-external-identification-representativeness-error}} finds the model underestimates; this check
+cannot separate that part from error in the cycle itself. For daily means the interval does better,
+containing {{claim:ceaiv.held.daily.coverage}} per cent of held-out days, although that figure averages
+hourly quantiles and so overstates what a properly constructed daily interval would earn. Over the
+calibration years the hourly coverage is {{claim:ceaiv.cal.coverage}} per cent, and in the extension
+years, whose level reads far below the station, it falls to {{claim:ceaiv.ext.coverage}} per cent with
+almost every miss above the interval. The one-sided pattern at the low-cost sensors is therefore a
+property of those sensors, not of the interval: at a reference instrument the hourly interval is too
+narrow, and close to nominal only for daily means. This check was made after the other validation
+results, with its reading rules written down before it was scored.
 
 The interval is also incomplete. Its width comes from the anchor's conformal quantiles and the
 spread of the local pattern, and the background enters through a fixed band. It omits the

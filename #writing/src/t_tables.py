@@ -557,9 +557,11 @@ def t4_ledger():
             "as good as one station of undocumented method; the guideline exceedance is robust "
             f"(at least {tok('ceabeta.who_lo')} times across the factor's interval)"],
            ["Uncertainty interval",
-            f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, a fraction "
+            f"under-covers: {tok('kandy.cov90')} per cent at the Kandy sensors, {tok('ceaiv.held.coverage')} per "
+            f"cent of held-out hours at the regulatory station (misses on both sides; "
+            f"{tok('ceaiv.held.daily.coverage')} per cent of daily means), a fraction "
             f"{tok(km_r + 'K2_cov90.median')} across the ladder's cities, against a nominal 90",
-            "indicative only; not calibrated for the basin field"],
+            "hourly interval too narrow; indicative only for daily means"],
            ["Spatial pattern at the kilometre scale",
             f"not validated: median rank correlation {tok('scorecard.spatial_rho_median')} in ten cities, of the "
             f"order of a free built-up layer ({tok('r2b.rho_BU')}); the dispersion step lowered it and was removed",
@@ -602,9 +604,14 @@ def t3_validation_summary():
            ["Hourly, at Kandy", "one month of one sensor withheld at a time",
             f"coefficient of determination {tok('v2.tanchor.lagfree.r2')}; RMSE {tok('v2.tanchor.lagfree.rmse')}",
             "the same sensors calibrate the anchor's amplitude"],
-           ["Interval coverage", "Kandy sensors; ladder cities",
-            f"{tok('kandy.cov90')} per cent; a fraction {tok(km_r + 'K2_cov90.median')}",
-            "nominal 90; misses one-sided at Kandy"],
+           ["Interval coverage", "Kandy sensors; regulatory station, held-out hours; ladder cities",
+            f"{tok('kandy.cov90')} per cent; {tok('ceaiv.held.coverage')} per cent; a fraction "
+            f"{tok(km_r + 'K2_cov90.median')}",
+            "nominal 90; misses one-sided at the sensors, two-sided at the station"],
+           ["Background, daily", "regional network towns, 2024 and 2025 (construction, not delivered series)",
+            f"correlation {tok('bgr.bmeth.r')}; within months {tok('bgr.bmeth.anom')} (station "
+            f"{tok('bgr.kst.anom')})",
+            "all of it from the composition prior; after the delivered years"],
            ["Daily, at Kandy", "national organisation's daily record, 2021 and 2022",
             f"daily correlation {tok('nbrod.all.model_cell.r')}; across calendar months {tok('nbrod.climatology_r')}; "
             f"within months {tok('nbrod.anomaly_daily_r')}",

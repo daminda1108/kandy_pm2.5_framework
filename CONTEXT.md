@@ -85,6 +85,8 @@ Fresh clone + fresh venv: tests 115 pass / 1 skip; all 1,875 claims regenerate e
 ## 🔬 Second review (2026-10-10, F.126, exploratory)
 Humidity scenario: f 0.479→0.486 (recomputed 2026-10-11); morning-peak/midday 1.93→1.68; **night/midday 1.16→0.95** (calibration-dependent); daily r and
 level unchanged. Dispersion on identical sites: raw 0.371, dispersed 0.274, built-up 0.393 → dispersion is NOT validated.
+Interval (F.136): at the CEA station **68.7 %** of held-out hours, misses two-sided → hourly interval **too narrow** (×1.86); ~85 % of daily means. FECT 77.3 % one-sided is in-sample — never call it "centring, width right". Background construction vs regional towns (2024–25): anomaly r **0.54** (station 0.79), all from GEOS-CF.
+
 Quote f as **0.479** (0.428–0.489 cap choices; 0.521 at 48 h; recomputed 2026-10-11 — 0.483 came from a file stale since 2026-08-13) — a decomposition property, never a confidence interval.
 **Burden withdrawn** (no number; method only — never quote 431/300). Kandy s_rep factor 16.9 is confounded, NOT a lower
 bound. Dec 2022 = model-inferred regional episode.
