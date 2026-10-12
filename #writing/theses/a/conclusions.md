@@ -25,9 +25,8 @@ reconstruction, what the evidence supports and what it may be used for.
    {{claim:ceabeta.who_lo}} times the guideline. Under the baseline
    decomposition the local increment accounts for {{claim:partition.f}} of the modelled
    concentration; the fraction ranges from {{claim:v2.f.cap_min}} to {{claim:v2.f.cap_max}} under
-   the tested choices of day boundary and daily-floor statistic, reaches
-   {{claim:field.f_form_roll48}} with a 48-hour background window, and is
-   {{claim:rh2.hourly_rh.f}} under the hourly-humidity label. These describe the decomposition's
+   the tested choices of day boundary and daily-floor statistic, and reaches
+   {{claim:field.f_form_roll48}} with a 48-hour background window. These describe the decomposition's
    sensitivity to its specification, not a confidence interval and not a source apportionment: they
    do not say that half of Kandy's PM2.5 is emitted in Kandy. At the regulatory station, the
    urban excess over the cleanest regional town gives a lower-bound estimate of {{claim:lfs.e1min.f}}

@@ -3,8 +3,9 @@
 The sensor record that sets the amplitude of the temporal anchor was corrected for the
 over-reading of optical sensors with a constant relative humidity of eighty per cent
 ({{ref:s-data-streams-their-uses}}). Which correction is right cannot be settled without a
-co-located reference instrument, so both were carried through the delivered series as alternative
-scenarios rather than waiting for one. The production scenario is the delivered field unchanged.
+co-located reference instrument, so both were carried through the temporal anchor as it was sharpened to
+the sensors, as alternative scenarios rather than waiting for one. The production scenario is that anchor
+unchanged, which was the delivered field until its daily cycle was refitted to the regulatory station.
 The alternative applies the same correction with the hourly reanalysis humidity, moves the anchor's
 hour-of-day and month climatology by the ratio of the two corrected records' climatologies, and
 restores each year's mean to the satellite level; the background and its cap are then rebuilt with
@@ -42,9 +43,4 @@ in the sensor record. Neither scenario is validated against a co-located referen
 the true cycle: they are alternatives that show which conclusions depend on the correction. The
 regulatory station in the city centre, which is not co-located with the sensors, gives a partial
 answer ({{ref:s-cea-reference}}): its morning peak matches the production scenario and its nights
-are lower than either. The
-production scenario remains the delivered field because it is the one the model was built and
-validated on, not because it is known to be right. Statements in this thesis about the depth of the
-daily cycle are therefore conditional on the humidity correction, and the delivered field's nights
-should not be read as exceeding midday; statements about the level, the timing of the cycle, the day-to-day sequence and the
-local fraction are not.
+are lower than either. Since that refit the delivered field's daily shape comes from the station rather than from either correction, so the scenarios bear on the sensor record and on the seasonal swing it still sets, not on the delivered daily cycle; statements about the level, the timing of the cycle, the day-to-day sequence and the local fraction do not depend on them.

@@ -27,13 +27,15 @@ cent of the two sensors' hours, with those misses still leaning to one side
 the interval under-covers. One qualification applies to the amplitude of the daily cycle rather than its
 timing. The sensor record to which the temporal anchor is sharpened was converted with a constant
 relative humidity, and repeating the conversion with hourly humidity reduces the ratio of the morning peak to the midday level in that record from {{claim:v2.rh.constant_rh80.peak_to_trough}} to
-{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the delivered series, the alternative leaves the
+{{claim:v2.rh.barkjohn_hourly_rh.peak_to_trough}}. Carried through the anchor as it was then sharpened, the alternative leaves the
 level, the timing of the peaks and of the midday dip, the day-to-day sequence and the local fraction
 essentially unchanged, but it reduces the depth of the cycle and reverses the ordering of night and
 midday ({{ref:s-rh-scenario}}). The regulatory station's hourly record
 ({{ref:s-cea-reference}}) supports the timing and the depth of the morning peak but places the
-daily minimum in the deep night, lower than either conversion gives, so the field's nights are too
-high. Which part of that is the humidity conversion and which the low-cost sensors' siting cannot
+daily minimum in the deep night, lower than either conversion gives, so the delivered cycle was
+refitted to the station; on its held-out hours the delivered night runs
+{{claim:cea.hourlyho.production.night_over_midday}} of midday against the station's
+{{claim:cea.hourlyho.station.night_over_midday}}. Which part of the sensors' high nights is the humidity conversion and which the low-cost sensors' siting cannot
 be separated without co-locating them with the reference.
 
 **Anchored to one station: the level.** Taken from the satellite surface, the field read

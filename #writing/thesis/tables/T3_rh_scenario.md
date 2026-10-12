@@ -1,6 +1,6 @@
-Table: The delivered series under the two humidity corrections (exploratory)
+Table: The sensor-shaped temporal anchor under the two humidity corrections (exploratory)
 
-| quantity | constant humidity (delivered) | hourly humidity |
+| quantity | constant humidity (delivered until the daily cycle was refitted) | hourly humidity |
 |---|---|---|
 | local fraction | {{claim:rh2.production.f}} | {{claim:rh2.hourly_rh.f}} |
 | morning peak over midday level | {{claim:rh2.production.peak_trough}} | {{claim:rh2.hourly_rh.peak_trough}} |

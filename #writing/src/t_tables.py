@@ -517,8 +517,8 @@ def t3_rh_scenario():
                      ("daily_rmse", "daily RMSE against the sensors (micrograms per cubic metre)"),
                      ("cov90", "nominal 90 per cent interval coverage"), ("cov90_rec", "coverage, sensor offsets removed")):
         rows.append([lab, tok(f"rh2.production.{tag}"), tok(f"rh2.hourly_rh.{tag}")])
-    write("T3_rh_scenario", "The delivered series under the two humidity corrections (exploratory)",
-          ["quantity", "constant humidity (delivered)", "hourly humidity"], rows,
+    write("T3_rh_scenario", "The sensor-shaped temporal anchor under the two humidity corrections (exploratory)",
+          ["quantity", "constant humidity (delivered until the daily cycle was refitted)", "hourly humidity"], rows,
           note="Means over 2019 to 2023. The annual level is identical by construction. Skill and "
                "coverage are against the sensor record corrected the same way; the sensors calibrated "
                "the anchor, so these are consistency measures, not validation.")
